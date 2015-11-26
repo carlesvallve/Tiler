@@ -1,0 +1,15 @@
+/.idea/
+/Build/
+/Library/
+/Temp/
+/Assembly-CSharp*.csproj
+/zappallas-toys-parade-unity*.sln
+
+
+*.csproj
+*.unityproj
+#*.sublime-project
+*.sln
+*.user
+*.userprefs
+*.DS_store
