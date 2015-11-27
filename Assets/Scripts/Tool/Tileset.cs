@@ -24,13 +24,17 @@ public class Tileset : MonoBehaviour {
 		grid = InitGrid();
 		overlay = InitOverlay();
 
-		Camera.main.orthographicSize = Screen.height / 4;
-		Camera.main.transform.position = new Vector3(source.bounds.center.x, source.bounds.center.y, -10);
+		InitCamera();
 	}
 
 	//=============================================
 	// Initialization
 	// ============================================
+
+	private void InitCamera () {
+		Camera.main.orthographicSize = Screen.height / 4;
+		Camera.main.transform.position = new Vector3(source.bounds.center.x, source.bounds.center.y, -10);
+	}
 
 	private Sprite InitSource () {
 		GameObject go = transform.Find("Source").gameObject;
@@ -137,8 +141,8 @@ public class Tileset : MonoBehaviour {
 		int finalX = x;
 		int finalY = source.texture.height - y - tileHeight;
 
-        Color[] colors = source.texture.GetPixels(finalX, finalY, tileWidth - 1, tileHeight - 1);
-        texture.SetPixels(0, 0, tileWidth - 1, tileHeight - 1, colors);
+        Color[] colors = source.texture.GetPixels(finalX, finalY, tileWidth, tileHeight);
+        texture.SetPixels(0, 0, tileWidth, tileHeight, colors);
         
         texture.Apply();
 
