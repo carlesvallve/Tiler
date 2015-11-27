@@ -3,64 +3,53 @@ using System.Collections;
 
 public class Camera2D : MonoBehaviour {
 
-	public float zoomSpeed = 1f;
-	public float panSpeed = 1f;
-
 	public static GameObject target;
+	public float zoomSpeed = 1f;
+	public float dragSpeed = 1f;
 
-	private bool isMouseDown;
 	private Vector3 lastMousePos;
-	private Vector2 delta;
-
-	public bool panning { get; private set; }
 
 
 	void LateUpdate () {
-		Zoom();
-		//Pan();
-		Track();	
-	}
+		ZoomIntoPosition(Input.GetAxis("Mouse ScrollWheel") * zoomSpeed, Input.mousePosition);
 
-
-	private void Zoom () {
-		float zoomDelta = -Input.GetAxis("Mouse ScrollWheel");
-		Camera.main.orthographicSize += zoomDelta * zoomSpeed;
-	}
-
-
-	private void Pan () {
-		if (Input.GetMouseButtonDown(0)) {
+		if (Input.GetMouseButtonDown(1)) {
 			lastMousePos = Input.mousePosition;
-			isMouseDown = true;
 		}
 
-		if (Input.GetMouseButtonUp(0)) {
-			isMouseDown = false;
-			panning = false;
-		}
-
-		if (isMouseDown) {
-			Vector3 vec = Input.mousePosition - lastMousePos;
+		if (Input.GetMouseButton(1)) {
+			Vector2 delta = (Input.mousePosition - lastMousePos) * dragSpeed;
+			Drag(delta);
 			lastMousePos = Input.mousePosition;
-
-			if (vec.magnitude >= 1) {
-				panning = true;
-				delta -= new Vector2(vec.x, vec.y) / (Camera.main.orthographicSize * 1);
-			}
-		}
+		}	
 	}
 
 
-	private void Track () {
-		if (target != null) {
-			Vector3 pos = new Vector3(
-				target.transform.position.x + delta.x, 
-				target.transform.position.y + delta.y, 
-				-10
-			);
-
-			Camera.main.transform.position = pos;
-			//Camera.main.transform.position = Vector3.Lerp(transform.position, pos, Time.time * 0.01f);
-		}
+	private void ZoomIntoPosition (float delta, Vector2 position) {
+		Vector3 preZoomWorldPosition = Camera.main.ScreenToWorldPoint(position);
+		PureZoom(delta);
+		Vector2 postZoomScreenPosition = Camera.main.WorldToScreenPoint(preZoomWorldPosition);
+		Drag(position- postZoomScreenPosition);
 	}
+
+
+	void PureZoom (float delta) {
+		float min = 1;
+		float max = 1000;
+		float newSize = Mathf.Clamp (Camera.main.orthographicSize - delta, min, max);
+		Camera.main.orthographicSize = newSize;
+		//Camera.main.transform.localScale = new Vector3 (newSize, newSize, 1);
+
+		// then constrain to bounds if needed
+	}
+ 
+	void Drag (Vector2 delta) {
+		float pixelSizeAdjustment = 1f;
+		delta *= pixelSizeAdjustment;
+		Vector2 offset = Vector2.Scale(delta, Camera.main.transform.localScale);
+		Camera.main.transform.localPosition -= (Vector3)offset;
+
+		// then constrain to bounds if needed
+	}
+
 }
