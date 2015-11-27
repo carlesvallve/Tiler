@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
+using System.Collections.Generic;
 
 public class Tileset : MonoBehaviour {
 
@@ -10,10 +12,14 @@ public class Tileset : MonoBehaviour {
 	private int tileWidth = 8;
 	private int tileHeight = 8;
 
+	private List<TileRect> tiles = new List<TileRect>();
+
+
 	void Awake () {
 		source = InitSource();
 		dots = InitDots();
 		overlay = InitOverlay();
+
 		Camera.main.transform.position = new Vector3(source.bounds.center.x, source.bounds.center.y, -10);
 	}
 
@@ -21,12 +27,12 @@ public class Tileset : MonoBehaviour {
 	// Initialization
 	// ============================================
 
-	private void ClearTexture (Texture2D texture) {
+	private void ClearTexture (Texture2D texture, Color color) {
 		// Set texture to transparent
 		// --> There isn't any default color and never was; the pixels in a new Texture2D are always empty (i.e., undefined).
-		Color[] texColors = new Color[texture.width * texture.height];
-		for (int i = 0; i < texColors.Length; i++) { texColors[i] = Color.clear; }
-		texture.SetPixels(texColors);
+		Color32[] texColors = new Color32[texture.width * texture.height];
+		for (int i = 0; i < texColors.Length; i++) { texColors[i] = color; } // Color.clear
+		texture.SetPixels32(texColors);
 	}
 
 
@@ -49,7 +55,9 @@ public class Tileset : MonoBehaviour {
 
 		// set dots texture
 		Texture2D texture = new Texture2D (source.texture.width, source.texture.height, TextureFormat.ARGB32, false);
-		ClearTexture(texture);
+		texture.filterMode = FilterMode.Point;
+
+		ClearTexture(texture, Color.clear);
 
 		// paint dots
 		Color color = new Color(0, 0, 0, 0.5f);
@@ -77,7 +85,9 @@ public class Tileset : MonoBehaviour {
 
 		// set overlay texture
 		Texture2D texture = new Texture2D (source.texture.width, source.texture.height, TextureFormat.ARGB32, false);
-		ClearTexture(texture);
+		texture.filterMode = FilterMode.Point;
+
+		ClearTexture(texture, Color.clear);
 		texture.Apply ();
 
 		// create sprite
@@ -93,10 +103,10 @@ public class Tileset : MonoBehaviour {
 	private void DrawSelector (int tileX, int tileY) {
 		Texture2D texture = overlay.texture;
 		
-		ClearTexture(texture);
+		ClearTexture(texture, Color.clear);
 
-		int x = tileX * tileWidth;
-		int y = tileY * tileHeight;
+		int x = 0 + tileX * tileWidth;
+		int y = 0 + tileY * tileHeight;
 		Color color = new Color(1, 1, 0, 0.3f);
 
 		print (x + " " + y);
@@ -105,12 +115,45 @@ public class Tileset : MonoBehaviour {
 		for (int i = 0; i < texColors.Length; i++) { texColors[i] = color; }
 
 		// SetPixels(int x, int y, int blockWidth, int blockHeight, Color[] colors, int miplevel = 0);
-		texture.SetPixels(x, texture.height - y - tileHeight, tileWidth, tileHeight, texColors);
+		int finalY = texture.height - y - tileHeight;
+		texture.SetPixels(x, finalY, tileWidth, tileHeight, texColors);
 		texture.Apply();
 
 		Transform go = transform.Find("Overlay");
 		Sprite sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0f, 1f), 1);
 		go.GetComponent<SpriteRenderer>().sprite = sprite;
+	}
+
+
+	private void DrawTileImage (int tileX, int tileY) {
+		int width = tileWidth * 2;
+		int height = tileHeight * 2;
+
+		//Texture2D texture = new Texture2D (16, 16, TextureFormat.ARGB32, false);
+		Texture2D texture = new Texture2D(width, height, TextureFormat.ARGB32, false);
+		texture.filterMode = FilterMode.Point;
+		
+		ClearTexture(texture, Color.magenta);
+		texture.Apply();
+
+		int x = 0 + tileX * tileWidth;
+		int y = 0 + tileY * tileHeight;
+
+		int finalX = x;
+		int finalY = source.texture.height - y - tileHeight;
+
+		print (y + " " + finalY);
+
+        Color[] colors = source.texture.GetPixels(finalX, finalY, tileWidth, tileHeight);
+        texture.SetPixels(tileWidth / 2, tileHeight / 2, tileWidth, tileHeight, colors);
+        texture.Apply();
+
+        Sprite sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), 1);
+        Image image = transform.Find("Hud/Header/TileImage").GetComponent<Image>();
+        image.sprite = sprite;
+
+
+        transform.Find("Sprite").GetComponent<SpriteRenderer>().sprite = sprite;
 	}
 
 
@@ -134,12 +177,21 @@ public class Tileset : MonoBehaviour {
     			print ("hitPos: " + hit.point + " pixelPos: "  + pixelX + "," + pixelY + " tilePos: " + tileX + "," + tileY);
 
     			DrawSelector(tileX, tileY);
+    			DrawTileImage(tileX, tileY);
+    			UpdtateTileInfo(tileX, tileY);
 			}
 		}
 
 	}
 
 
+	//=============================================
+	// Hud
+	// ============================================
+
+	private void UpdtateTileInfo (int tileX, int tileY) {
+		transform.Find("Hud/Header/TileInfo").GetComponent<Text>().text = "Tile [ " + tileX + ", " + tileY + " ]";
+	}
 
 
 
