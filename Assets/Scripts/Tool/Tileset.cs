@@ -16,8 +16,8 @@ public class Tileset : MonoBehaviour {
 	public bool showGrid = false;
 
 	private Sprite source;
-	private GameObject grid;
 	private Sprite overlay;
+	private GameObject grid;
 
 	private List<TileRect> tiles = new List<TileRect>();
 
@@ -28,6 +28,7 @@ public class Tileset : MonoBehaviour {
 
 	void Awake () {
 		Transform container = transform.Find("Container");
+
 		source = InitSource(container);
 		grid = InitGrid(container);
 		overlay = InitOverlay(container);
@@ -36,13 +37,22 @@ public class Tileset : MonoBehaviour {
 		InitHud();
 	}
 
+
+	void Update () {
+		UpdateUserInteraction();
+	}
+
 	//=============================================
 	// Initialization
 	// ============================================
 
 	private void InitCamera () {
-		Camera.main.orthographicSize = Screen.height / 8;
-		Camera.main.transform.position = new Vector3(source.bounds.center.x, source.bounds.center.y, -10);
+		Camera.main.orthographicSize = Screen.height / 4;
+		Camera.main.transform.position = new Vector3(
+			source.bounds.center.x, 
+			source.bounds.center.y, 
+			-10
+		);
 	}
 
 
@@ -65,6 +75,10 @@ public class Tileset : MonoBehaviour {
 		BoxCollider2D boxCollider = go.AddComponent<BoxCollider2D>();
 		boxCollider.offset = (Vector2)sprite.bounds.center;
 		boxCollider.size = (Vector2)sprite.bounds.extents * 2;
+
+		/*go.transform.position = Camera.main.ViewportToWorldPoint(
+			new Vector3(0, 1, -Camera.main.transform.position.z)
+		);*/
 
 		return sprite;
 	}
@@ -163,19 +177,18 @@ public class Tileset : MonoBehaviour {
 		
 		Vector2 coords = DrawUtils.GetPixelPosInTexture(source.texture, tileX, tileY, tileWidth, tileHeight);
 
-        Color[] colors = source.texture.GetPixels((int)coords.x, (int)coords.y, tileWidth, tileHeight);
-        texture.SetPixels(0, 0, tileWidth, tileHeight, colors);
-        
-        texture.Apply();
+		Color[] colors = source.texture.GetPixels((int)coords.x, (int)coords.y, tileWidth, tileHeight);
+		texture.SetPixels(0, 0, tileWidth, tileHeight, colors);
+		
+		texture.Apply();
 
-        Sprite sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), 1);
-        Image image = transform.Find("Hud/Header/Tile/TileImage").GetComponent<Image>();
-        image.sprite = sprite;
-        image.enabled = true;
+		// create sprite and update hud image
+		Sprite sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), 1);
+		Image image = transform.Find("Hud/Header/Tile/TileImage").GetComponent<Image>();
+		image.sprite = sprite;
+		image.enabled = true;
 
-        //transform.Find("Container/Sprite").GetComponent<SpriteRenderer>().sprite = sprite;
-
-        return texture;
+		return texture;
 	}
 
 
@@ -183,7 +196,7 @@ public class Tileset : MonoBehaviour {
 	// Interaction
 	// ============================================
 
-	void Update () {
+	private void UpdateUserInteraction () {
 		// escape if mouse is over hud
 		if (EventSystem.current.IsPointerOverGameObject()) {
 			return;
@@ -200,12 +213,12 @@ public class Tileset : MonoBehaviour {
 				int tileX = (int)tileCoords.x;
 				int tileY = (int)tileCoords.y;
 
-    			DrawOverlay(tileX, tileY);
-    			DrawTileImage(tileX, tileY);
-    			UpdateTileInfo(tileX, tileY);
+				DrawOverlay(tileX, tileY);
+				DrawTileImage(tileX, tileY);
+				UpdateTileInfo(tileX, tileY);
 
-    			// right mouse enables edit mode
-    			if (Input.GetMouseButtonDown(1)) {
+				// right mouse enables edit mode
+				if (Input.GetMouseButtonDown(1)) {
 					ShowPopupTileInfo(tileX, tileY);
 				}
 			}
