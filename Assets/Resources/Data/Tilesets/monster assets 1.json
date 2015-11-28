@@ -1,0 +1,10 @@
+{
+	"name":"monster assets 1",
+	"tiles":[
+		{
+			"name":"hunter",
+			"x":8,
+			"y":9
+		}
+	]
+}

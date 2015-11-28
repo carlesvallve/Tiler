@@ -249,38 +249,6 @@ public class Tileset : MonoBehaviour {
 	}
 
 
-	public void ButtonToggleGrid () {
-		showGrid = !showGrid;
-		grid.SetActive(showGrid);
-		transform.Find("Hud/Footer/ButtonGrid/Text").GetComponent<Text>().text = showGrid ? "GRID OFF" : "GRID ON";
-	}
-
-
-	public void ButtonSaveTile () {
-		TileRect tile = GetTile(currentTileX, currentTileY);
-		if (tile != null) {
-			string path = Application.dataPath + "/Resources/Tilesets/" + tilesetName + "/" + tile.name + ".png";
-			Texture2D texture = DrawTileImage(tile.x, tile.y);
-			DrawUtils.SaveTextureToPng(texture, path);
-		} else {
-			Debug.LogError("No available tile to save.");
-		}
-	}
-
-
-	public void ButtonSaveAll () {
-		if (tiles.Count > 0) {
-			foreach (TileRect tile in tiles) {
-				Texture2D texture = DrawTileImage(tile.x, tile.y);
-				string path = Application.dataPath + "/Resources/Tilesets/" + tilesetName + "/" + tile.name + ".png";
-				DrawUtils.SaveTextureToPng(texture, path);
-			}
-		} else {
-			Debug.LogError("No available tiles to save.");
-		}
-	}
-
-
 	private void ShowPopupTileInfo (int tileX, int tileY) {
 		currentTileX = tileX;
 		currentTileY = tileY;
@@ -313,8 +281,49 @@ public class Tileset : MonoBehaviour {
 		}
 	}
 
+
 	//=============================================
-	// Tile Data
+	// Buttons
+	// ============================================
+
+	public void ButtonToggleGrid () {
+		showGrid = !showGrid;
+		grid.SetActive(showGrid);
+		transform.Find("Hud/Footer/ButtonGrid/Text").GetComponent<Text>().text = showGrid ? "GRID OFF" : "GRID ON";
+	}
+
+
+	public void ButtonSaveTile () {
+		TileRect tile = GetTile(currentTileX, currentTileY);
+		if (tile != null) {
+			string path = Application.dataPath + "/Resources/Tilesets/" + tilesetName + "/" + tile.name + ".png";
+			Texture2D texture = DrawTileImage(tile.x, tile.y);
+			DrawUtils.SaveTextureToPng(texture, path);
+		} else {
+			Debug.LogError("No available tile to save.");
+		}
+	}
+
+
+	public void ButtonSaveAll () {
+		if (tiles.Count > 0) {
+			foreach (TileRect tile in tiles) {
+				Texture2D texture = DrawTileImage(tile.x, tile.y);
+				string path = Application.dataPath + "/Resources/Tilesets/" + tilesetName + "/" + tile.name + ".png";
+				DrawUtils.SaveTextureToPng(texture, path);
+			}
+		} else {
+			Debug.LogError("No available tiles to save.");
+		}
+	}
+
+
+	public void ButtonSaveTilesetData () {
+		SaveTilesetData();
+	}
+
+	//=============================================
+	// Tiles
 	// ============================================
 
 	private TileRect GetTile (int tileX, int tileY) {
@@ -324,7 +333,7 @@ public class Tileset : MonoBehaviour {
 			}
 		}
 
-		return null; //"unknown";
+		return null;
 	}
 
 
@@ -351,7 +360,13 @@ public class Tileset : MonoBehaviour {
 	}
 
 
-	public void SaveTilesetData (string name) {
+	//=============================================
+	// Json
+	// ============================================
+
+	public bool SaveTilesetData () {
+		string name = tilesetName;
+
 		// Note: your data can only be numbers and strings.
 		JSONObject data = new JSONObject(JSONObject.Type.OBJECT);
 
@@ -369,9 +384,18 @@ public class Tileset : MonoBehaviour {
 			tileData.AddField("x", tile.x);
 			tileData.AddField("y", tile.y);
 
-			tileArr.Add(tileData["name"]);
-			tileArr.Add(tileData["x"]);
-			tileArr.Add(tileData["y"]);
+			tileArr.Add(tileData);
+		}
+
+
+		//save json data to file
+		try { 
+			JsonFileManagerSync.SaveJsonFile("Data/Tilesets/" + name, data);
+			print ("Tileset data has been saved.");
+			return true;
+		} catch (System.Exception e) { 
+			Debug.LogError(e);
+			return false;
 		}
 	}
 }

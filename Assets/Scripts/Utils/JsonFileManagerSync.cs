@@ -20,8 +20,10 @@ public class JsonFileManagerSync : MonoBehaviour {
 
 		Directory.CreateDirectory(Path.GetDirectoryName(path));
 
-		// write data as a string
-		string str = data.ToString();
+		// write data as a pretty multiline string
+		string str = data.ToString(true);
+
+		// write string to file
 		using (FileStream fs = new FileStream(path, FileMode.Create)) {
 			using (StreamWriter writer = new StreamWriter(fs)) {
 				writer.Write(str);
