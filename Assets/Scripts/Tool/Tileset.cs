@@ -71,7 +71,7 @@ public class Tileset : MonoBehaviour {
 		texture.filterMode = FilterMode.Point;
 
 		DrawUtils.ClearTexture(texture);
-		DrawUtils.DrawGrid(texture, tileWidth, tileHeight, new Color(0, 0, 0, 0.25f));
+		DrawUtils.DrawGrid(texture, tileWidth, tileHeight, new Color(0, 0, 0, 0.1f));
 
 		texture.Apply ();
 
@@ -156,8 +156,9 @@ public class Tileset : MonoBehaviour {
         texture.Apply();
 
         Sprite sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), 1);
-        Image image = transform.Find("Hud/Header/TileImage").GetComponent<Image>();
+        Image image = transform.Find("Hud/Header/Tile/TileImage").GetComponent<Image>();
         image.sprite = sprite;
+        image.enabled = true;
 
         transform.Find("Sprite").GetComponent<SpriteRenderer>().sprite = sprite;
 	}
@@ -212,18 +213,21 @@ public class Tileset : MonoBehaviour {
 
 	private void InitHud () {
 		transform.Find("Hud/Popups/PopupTileInfo").gameObject.SetActive(false);
+		transform.Find("Hud/Header/Tile/TileImage").GetComponent<Image>().enabled = false;
+		transform.Find("Hud/Header/TileInfo").GetComponent<Text>().text = "unknown";
 	}
 
 
 	private void UpdtateTileInfo (int tileX, int tileY) {
 		Text info = transform.Find("Hud/Header/TileInfo").GetComponent<Text>();
-		info.text = "Tile " + tileX + "," + tileY + ": " + GetTileName(tileX, tileY);
+		info.text = GetTileName(tileX, tileY) + "  (" + tileX + "," + tileY + ")" ;
 	}
 
 
 	public void ButtonToggleGrid () {
 		showGrid = !showGrid;
 		grid.SetActive(showGrid);
+		transform.Find("Hud/Footer/ButtonGrid/Text").GetComponent<Text>().text = showGrid ? "GRID OFF" : "GRID ON";
 	}
 
 
