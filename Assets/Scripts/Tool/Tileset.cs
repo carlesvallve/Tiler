@@ -229,10 +229,14 @@ public class Tileset : MonoBehaviour {
 	}
 
 
-	public void AcceptPopupTileInfo () {
+	public void AcceptPopupTileInfo (bool value) {
 		Transform popup = transform.Find("Hud/Popups/PopupTileInfo");
 		popup.gameObject.SetActive(false);
 
+		if (!value) {
+			return;
+		}
+		
 		string name = popup.Find("Box/InputField").GetComponent<InputField>().text;
 
 		if (name != "unknown") {
