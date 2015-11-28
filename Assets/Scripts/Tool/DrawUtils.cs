@@ -11,6 +11,16 @@ public class DrawUtils : MonoBehaviour {
 	}
 
 
+	public static Vector2 GetTileCoordsInTexture (Vector2 pos, int tileWidth, int tileHeight) {
+		int pixelX = Mathf.FloorToInt(pos.x);
+		int pixelY = Mathf.FloorToInt(-pos.y);
+		int tileX = Mathf.RoundToInt(pixelX / tileWidth);
+		int tileY = Mathf.RoundToInt(pixelY / tileHeight);
+
+		return new Vector2(tileX, tileY);
+	}
+
+
 	public static void ClearTexture (Texture2D texture) {
 		Color32[] texColors = new Color32[texture.width * texture.height];
 		for (int i = 0; i < texColors.Length; i++) { texColors[i] = Color.clear; }

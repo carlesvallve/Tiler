@@ -37,7 +37,7 @@ public class Tileset : MonoBehaviour {
 	// ============================================
 
 	private void InitCamera () {
-		Camera.main.orthographicSize = Screen.height / 4;
+		Camera.main.orthographicSize = Screen.height / 8;
 		Camera.main.transform.position = new Vector3(source.bounds.center.x, source.bounds.center.y, -10);
 	}
 
@@ -181,24 +181,22 @@ public class Tileset : MonoBehaviour {
 			return;
 		}
 
+		// get tile coords and update interface
 		if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1)) {
 			RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
 
 			if(hit.collider != null) {
 				Vector2 hitPos = new Vector2(hit.point.x - transform.position.x, hit.point.y - transform.position.y);
 
-				int pixelX = Mathf.FloorToInt(hitPos.x);
-				int pixelY = Mathf.FloorToInt(-hitPos.y);
-				int tileX = Mathf.RoundToInt(pixelX / tileWidth);
-				int tileY = Mathf.RoundToInt(pixelY / tileHeight);
-    			
-    			//print ("hitPos: " + hit.point + " pixelPos: "  + pixelX + "," + pixelY + " tilePos: " + tileX + "," + tileY);
+				Vector2 tileCoords = DrawUtils.GetTileCoordsInTexture(hitPos, tileWidth, tileHeight);
+				int tileX = (int)tileCoords.x;
+				int tileY = (int)tileCoords.y;
 
-				//DrawEditedTiles();
     			DrawOverlay(tileX, tileY);
     			DrawTileImage(tileX, tileY);
     			UpdateTileInfo(tileX, tileY);
 
+    			// right mouse enables edit mode
     			if (Input.GetMouseButtonDown(1)) {
 					ShowPopupTileInfo(tileX, tileY);
 				}
