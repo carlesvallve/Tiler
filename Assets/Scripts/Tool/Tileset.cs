@@ -2,6 +2,7 @@
 using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.EventSystems;
 
 // SetPixels(int x, int y, int blockWidth, int blockHeight, Color[] colors, int miplevel = 0);
 
@@ -18,6 +19,9 @@ public class Tileset : MonoBehaviour {
 
 	private List<TileRect> tiles = new List<TileRect>();
 
+	private int currentTileX;
+	private int currentTileY;
+
 
 	void Awake () {
 		source = InitSource();
@@ -25,6 +29,7 @@ public class Tileset : MonoBehaviour {
 		overlay = InitOverlay();
 
 		InitCamera();
+		InitHud();
 	}
 
 	//=============================================
@@ -111,13 +116,10 @@ public class Tileset : MonoBehaviour {
 		
 		DrawUtils.ClearTexture(texture);
 
-		int x = 0 + tileX * tileWidth;
-		int y = 0 + tileY * tileHeight;
-		int finalY = texture.height - y - tileHeight;
+		Vector2 coords = DrawUtils.GetPixelPosInTexture(source.texture, tileX, tileY, tileWidth, tileHeight);
 
-		DrawUtils.DrawSquare (texture, x, finalY, tileWidth, tileHeight, new Color(0, 0, 0, 0.5f), true);
-		//DrawUtils.DrawSquare (texture, x + 1, finalY, tileWidth - 1, tileHeight - 1, new Color(1, 1, 0, 0.5f), true);
-		//DrawUtils.DrawSquare (texture, x, finalY, tileWidth, tileHeight, new Color(0, 0, 0, 0.5f), false);
+		Color color = new Color(0, 0, 0, 0.8f);
+		DrawUtils.DrawSquare(texture, (int)coords.x, (int)coords.y, tileWidth, tileHeight, color, true);
 
 		texture.Apply();
 
@@ -136,12 +138,9 @@ public class Tileset : MonoBehaviour {
 		
 		DrawUtils.ClearTexture(texture);
 		
-		int x = 0 + tileX * tileWidth;
-		int y = 0 + tileY * tileHeight;
-		int finalX = x;
-		int finalY = source.texture.height - y - tileHeight;
+		Vector2 coords = DrawUtils.GetPixelPosInTexture(source.texture, tileX, tileY, tileWidth, tileHeight);
 
-        Color[] colors = source.texture.GetPixels(finalX, finalY, tileWidth, tileHeight);
+        Color[] colors = source.texture.GetPixels((int)coords.x, (int)coords.y, tileWidth, tileHeight);
         texture.SetPixels(0, 0, tileWidth, tileHeight, colors);
         
         texture.Apply();
@@ -159,8 +158,12 @@ public class Tileset : MonoBehaviour {
 	// ============================================
 
 	void Update () {
+		// escape if mouse is over hud
+		if (EventSystem.current.IsPointerOverGameObject()) {
+			return;
+		}
 
-		if (Input.GetMouseButtonDown(0)) {
+		if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1)) {
 			RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
 
 			if(hit.collider != null) {
@@ -171,14 +174,17 @@ public class Tileset : MonoBehaviour {
 				int tileX = Mathf.RoundToInt(pixelX / tileWidth);
 				int tileY = Mathf.RoundToInt(pixelY / tileHeight);
     			
-    			print ("hitPos: " + hit.point + " pixelPos: "  + pixelX + "," + pixelY + " tilePos: " + tileX + "," + tileY);
+    			//print ("hitPos: " + hit.point + " pixelPos: "  + pixelX + "," + pixelY + " tilePos: " + tileX + "," + tileY);
 
     			DrawTileSelector(tileX, tileY);
     			DrawTileImage(tileX, tileY);
     			UpdtateTileInfo(tileX, tileY);
+
+    			if (Input.GetMouseButtonDown(1)) {
+					ShowPopupTileInfo(tileX, tileY);
+				}
 			}
 		}
-
 	}
 
 
@@ -186,14 +192,77 @@ public class Tileset : MonoBehaviour {
 	// Hud
 	// ============================================
 
+	private void InitHud () {
+		transform.Find("Hud/Popups/PopupTileInfo").gameObject.SetActive(false);
+	}
+
+
 	private void UpdtateTileInfo (int tileX, int tileY) {
-		transform.Find("Hud/Header/TileInfo").GetComponent<Text>().text = "Tile [ " + tileX + ", " + tileY + " ]";
+		Text info = transform.Find("Hud/Header/TileInfo").GetComponent<Text>();
+		info.text = "Tile " + tileX + "," + tileY + ": " + GetTileName(tileX, tileY);
 	}
 
 
 	public void ButtonToggleGrid () {
 		showGrid = !showGrid;
 		grid.SetActive(showGrid);
+	}
+
+
+	private void ShowPopupTileInfo (int tileX, int tileY) {
+		currentTileX = tileX;
+		currentTileY = tileY;
+
+		Transform popup = transform.Find("Hud/Popups/PopupTileInfo");
+		popup.gameObject.SetActive(true);
+
+		string name = GetTileName(tileX, tileY);
+
+		Text title = popup.Find("Box/Title").GetComponent<Text>();
+		title.text = "Tile " + tileX + "," + tileY + ": " + name;
+
+		if (name != "unknown") {
+			popup.Find("Box/InputField").GetComponent<InputField>().text = name;
+		} else {
+			popup.Find("Box/InputField").GetComponent<InputField>().text = "unknown";
+		}
+	}
+
+
+	public void AcceptPopupTileInfo () {
+		Transform popup = transform.Find("Hud/Popups/PopupTileInfo");
+		popup.gameObject.SetActive(false);
+
+		string name = popup.Find("Box/InputField").GetComponent<InputField>().text;
+
+		if (name != "unknown") {
+			SetTileData(currentTileX, currentTileY, name);
+		}
+	}
+
+
+	private string GetTileName (int tileX, int tileY) {
+		foreach (TileRect tile in tiles) {
+			if (tile.x == tileX && tile.y == tileY) {
+				return tile.name;
+			}
+		}
+
+		return "unknown";
+	}
+
+
+	private void SetTileData (int tileX, int tileY, string name) {
+		foreach (TileRect tile in tiles) {
+			if (tile.x == tileX && tile.y == tileY) {
+				tile.name = name;
+				UpdtateTileInfo(tileX, tileY);
+				return;
+			}
+		}
+
+		tiles.Add(new TileRect(tileX, tileY, name));
+		UpdtateTileInfo(tileX, tileY);
 	}
 
 }

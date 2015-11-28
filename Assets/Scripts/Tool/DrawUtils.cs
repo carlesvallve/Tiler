@@ -3,6 +3,13 @@ using System.Collections;
 
 public class DrawUtils : MonoBehaviour {
 
+	public static Vector2 GetPixelPosInTexture (Texture2D texture, int tileX, int tileY, int tileWidth, int tileHeight) {
+		int x = 0 + tileX * tileWidth;
+		int y = texture.height - tileHeight - tileY * tileHeight;
+
+		return new Vector2(x, y);
+	}
+
 
 	public static void ClearTexture (Texture2D texture) {
 		Color32[] texColors = new Color32[texture.width * texture.height];

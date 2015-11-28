@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.EventSystems;
+
 
 public class Camera2D : MonoBehaviour {
 
@@ -11,13 +13,18 @@ public class Camera2D : MonoBehaviour {
 
 
 	void LateUpdate () {
-		ZoomIntoPosition(Input.GetAxis("Mouse ScrollWheel") * zoomSpeed, Input.mousePosition);
-
-		if (Input.GetMouseButtonDown(1)) {
-			lastMousePos = Input.mousePosition;
+		// escape if mouse is over hud
+		if (EventSystem.current.IsPointerOverGameObject()) {
+			return;
 		}
 
-		if (Input.GetMouseButton(1)) {
+		// set zoom
+		ZoomIntoPosition(Input.GetAxis("Mouse ScrollWheel") * zoomSpeed, Input.mousePosition);
+
+		// set drag
+		if (Input.GetMouseButtonDown(2)) {
+			lastMousePos = Input.mousePosition;
+		} else if (Input.GetMouseButton(2)) {
 			Vector2 delta = (Input.mousePosition - lastMousePos) * dragSpeed;
 			Drag(delta);
 			lastMousePos = Input.mousePosition;
