@@ -26,6 +26,8 @@ public class Tileset : MonoBehaviour {
 	private int currentTileX;
 	private int currentTileY;
 
+	private Text info;
+
 
 	void Awake () {
 		container = transform.Find("Container");
@@ -224,6 +226,9 @@ public class Tileset : MonoBehaviour {
 				int tileX = (int)tileCoords.x;
 				int tileY = (int)tileCoords.y;
 
+				currentTileX = tileX;
+				currentTileY = tileY;
+				
 				DrawOverlay(tileX, tileY);
 				DrawTileImage(tileX, tileY);
 				UpdateTileInfo(tileX, tileY);
@@ -242,6 +247,9 @@ public class Tileset : MonoBehaviour {
 	// ============================================
 
 	private void InitHud () {
+		info = transform.Find("Hud/Footer/Info/Text").GetComponent<Text>();
+		info.text = "";
+
 		transform.Find("Hud/Popups/PopupTileInfo").gameObject.SetActive(false);
 		transform.Find("Hud/Header/Tile/TileImage").GetComponent<Image>().enabled = false;
 		transform.Find("Hud/Header/TileInfo").GetComponent<Text>().text = "unknown";
@@ -249,8 +257,8 @@ public class Tileset : MonoBehaviour {
 
 
 	private void UpdateTileInfo (int tileX, int tileY) {
-		Text info = transform.Find("Hud/Header/TileInfo").GetComponent<Text>();
-		info.text = GetTileName(tileX, tileY) + "  (" + tileX + "," + tileY + ")" ;
+		Text tileInfo = transform.Find("Hud/Header/TileInfo").GetComponent<Text>();
+		tileInfo.text = GetTileName(tileX, tileY) + "  (" + tileX + "," + tileY + ")" ;
 	}
 
 
@@ -304,7 +312,10 @@ public class Tileset : MonoBehaviour {
 			string path = Application.dataPath + "/Resources/Tilesets/" + tilesetName + "/Images/" + tile.name + ".png";
 			Texture2D texture = DrawTileImage(tile.x, tile.y);
 			DrawUtils.SaveTextureToPng(texture, path);
+
+			info.text = "Tile " + tile.name + " has been saved.";
 		} else {
+			info.text = "No available tile to save.";
 			Debug.LogError("No available tile to save.");
 		}
 	}
@@ -313,11 +324,14 @@ public class Tileset : MonoBehaviour {
 	public void ButtonSaveAll () {
 		if (tiles.Count > 0) {
 			foreach (TileRect tile in tiles) {
-				Texture2D texture = DrawTileImage(tile.x, tile.y);
 				string path = Application.dataPath + "/Resources/Tilesets/" + tilesetName + "/Images/" + tile.name + ".png";
+				Texture2D texture = DrawTileImage(tile.x, tile.y);
 				DrawUtils.SaveTextureToPng(texture, path);
+
+				info.text = "All tiles has been saved.";
 			}
 		} else {
+			info.text = "No available tiles to save.";
 			Debug.LogError("No available tiles to save.");
 		}
 	}
@@ -396,10 +410,13 @@ public class Tileset : MonoBehaviour {
 
 		//save json data to file
 		try { 
-			JsonFileManagerSync.SaveJsonFile("Tilesets/" + tilesetName + "/" + tilesetName, data);
+			string path = "Tilesets/" + tilesetName + "/" + tilesetName;
+			JsonFileManagerSync.SaveJsonFile(path, data);
+			info.text = "Tileset data has been saved.";
 			print ("Tileset data has been saved.");
 			return true;
 		} catch (System.Exception e) {
+			info.text = "<color=#ff000>" + e +"</color";
 			Debug.LogError(e);
 			return false;
 		}
@@ -407,17 +424,20 @@ public class Tileset : MonoBehaviour {
 
 
 	public bool LoadTilesetData () {
-		string path = "Tilesets/" + tilesetName + "/" + tilesetName;
+		
 
 		// load json data from file
+		string path = "Tilesets/" + tilesetName + "/" + tilesetName;
 		JSONObject json = JsonFileManagerSync.LoadJsonFile(path);
+
 		if (json == null) {
+			info.text = "Could not load " + path + ". File does not exist.";
 			Debug.LogWarning("Could not load " + path + ". File does not exist.");
 			return false;
 		}
 
-		print ("loaded " + json);
-
+		info.text = "Tileset data was loaded successfully.";
+		
 		// generate tiles list from json tiles array
 		JSONObject tileArr = json["tiles"];
 
