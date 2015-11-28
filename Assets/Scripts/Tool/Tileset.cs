@@ -197,7 +197,7 @@ public class Tileset : MonoBehaviour {
 				//DrawEditedTiles();
     			DrawOverlay(tileX, tileY);
     			DrawTileImage(tileX, tileY);
-    			UpdtateTileInfo(tileX, tileY);
+    			UpdateTileInfo(tileX, tileY);
 
     			if (Input.GetMouseButtonDown(1)) {
 					ShowPopupTileInfo(tileX, tileY);
@@ -218,7 +218,7 @@ public class Tileset : MonoBehaviour {
 	}
 
 
-	private void UpdtateTileInfo (int tileX, int tileY) {
+	private void UpdateTileInfo (int tileX, int tileY) {
 		Text info = transform.Find("Hud/Header/TileInfo").GetComponent<Text>();
 		info.text = GetTileName(tileX, tileY) + "  (" + tileX + "," + tileY + ")" ;
 	}
@@ -279,13 +279,13 @@ public class Tileset : MonoBehaviour {
 		foreach (TileRect tile in tiles) {
 			if (tile.x == tileX && tile.y == tileY) {
 				tile.name = name;
-				UpdtateTileInfo(tileX, tileY);
+				UpdateTileInfo(tileX, tileY);
 				return;
 			}
 		}
 
 		tiles.Add(new TileRect(tileX, tileY, name));
-		UpdtateTileInfo(tileX, tileY);
+		UpdateTileInfo(tileX, tileY);
 	}
 
 }
