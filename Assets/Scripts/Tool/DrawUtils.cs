@@ -1,7 +1,22 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.IO;
+
 
 public class DrawUtils : MonoBehaviour {
+
+
+	public static void SaveTextureToPng (Texture2D texture, string path) { // path/filename.png
+		Directory.CreateDirectory(Path.GetDirectoryName(path));
+		File.WriteAllBytes(path, texture.EncodeToPNG()); 
+
+		print ("saved tile into " + path);
+
+		#if UNITY_EDITOR
+			UnityEditor.AssetDatabase.Refresh();
+		#endif  
+	}
+
 
 	public static Vector2 GetPixelPosInTexture (Texture2D texture, int tileX, int tileY, int tileWidth, int tileHeight) {
 		int x = 0 + tileX * tileWidth;

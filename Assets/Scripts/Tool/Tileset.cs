@@ -4,11 +4,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.EventSystems;
 
+
 // SetPixels(int x, int y, int blockWidth, int blockHeight, Color[] colors, int miplevel = 0);
 
 
 public class Tileset : MonoBehaviour {
 
+	public Sprite tilesetSprite;
 	public int tileWidth = 8;
 	public int tileHeight = 8;
 	public bool showGrid = false;
@@ -19,14 +21,16 @@ public class Tileset : MonoBehaviour {
 
 	private List<TileRect> tiles = new List<TileRect>();
 
+	private string tilesetName;
 	private int currentTileX;
 	private int currentTileY;
 
 
 	void Awake () {
-		source = InitSource();
-		grid = InitGrid();
-		overlay = InitOverlay();
+		Transform container = transform.Find("Container");
+		source = InitSource(container);
+		grid = InitGrid(container);
+		overlay = InitOverlay(container);
 
 		InitCamera();
 		InitHud();
@@ -41,13 +45,22 @@ public class Tileset : MonoBehaviour {
 		Camera.main.transform.position = new Vector3(source.bounds.center.x, source.bounds.center.y, -10);
 	}
 
-	private Sprite InitSource () {
-		GameObject go = transform.Find("Source").gameObject;
+
+	private Sprite InitSource (Transform parent) {
+		GameObject go = new GameObject();
+		go.name = "Source";
+		go.transform.SetParent(parent, false);
+
+		//GameObject go = transform.Find("Source").gameObject;
 		
-		SpriteRenderer spriteRenderer = go.GetComponent<SpriteRenderer>();
-		spriteRenderer.sortingOrder = 1;
+		SpriteRenderer spriteRenderer = go.AddComponent<SpriteRenderer>();
+		spriteRenderer.sprite = tilesetSprite;
+		spriteRenderer.sortingOrder = 2;
 
 		Sprite sprite = spriteRenderer.sprite;
+
+		tilesetName = sprite.name;
+		print ("Tileset: " + tilesetName);
 		
 		BoxCollider2D boxCollider = go.AddComponent<BoxCollider2D>();
 		boxCollider.offset = (Vector2)sprite.bounds.center;
@@ -57,10 +70,10 @@ public class Tileset : MonoBehaviour {
 	}
 
 
-	private GameObject InitGrid () {
+	private GameObject InitGrid (Transform parent) {
 		GameObject go = new GameObject();
 		go.name = "Grid";
-		go.transform.SetParent(transform, false);
+		go.transform.SetParent(parent, false);
 		go.SetActive(showGrid);
 
 		int width = source.texture.width + 1;
@@ -87,10 +100,10 @@ public class Tileset : MonoBehaviour {
 	}
 
 
-	private Sprite InitOverlay () {
+	private Sprite InitOverlay (Transform parent) {
 		GameObject go = new GameObject();
 		go.name = "Overlay";
-		go.transform.SetParent(transform, false);
+		go.transform.SetParent(parent, false);
 
 		// set overlay texture
 		Texture2D texture = new Texture2D (source.texture.width, source.texture.height, TextureFormat.ARGB32, false);
@@ -133,13 +146,13 @@ public class Tileset : MonoBehaviour {
 
 		texture.Apply();
 
-		Transform go = transform.Find("Overlay");
+		Transform go = transform.Find("Container/Overlay");
 		Sprite sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0f, 1f), 1);
 		go.GetComponent<SpriteRenderer>().sprite = sprite;
 	}
 
 
-	private void DrawTileImage (int tileX, int tileY) {
+	private Texture2D DrawTileImage (int tileX, int tileY) {
 		int width = tileWidth;
 		int height = tileHeight;
 
@@ -160,15 +173,10 @@ public class Tileset : MonoBehaviour {
         image.sprite = sprite;
         image.enabled = true;
 
-        transform.Find("Sprite").GetComponent<SpriteRenderer>().sprite = sprite;
+        //transform.Find("Container/Sprite").GetComponent<SpriteRenderer>().sprite = sprite;
+
+        return texture;
 	}
-
-
-	/*private void DrawEditedTiles () {
-		foreach (TileRect tile in tiles) {
-			DrawTileSelector(tile.x, tile.y, new Color(1, 1, 0, 0.8f));
-		}
-	}*/
 
 
 	//=============================================
@@ -229,6 +237,31 @@ public class Tileset : MonoBehaviour {
 	}
 
 
+	public void ButtonSaveTile () {
+		TileRect tile = GetTile(currentTileX, currentTileY);
+		if (tile != null) {
+			string path = Application.dataPath + "/Resources/Tilesets/" + tilesetName + "/" + tile.name + ".png";
+			Texture2D texture = DrawTileImage(tile.x, tile.y);
+			DrawUtils.SaveTextureToPng(texture, path);
+		} else {
+			Debug.LogError("No available tile to save.");
+		}
+	}
+
+
+	public void ButtonSaveAll () {
+		if (tiles.Count > 0) {
+			foreach (TileRect tile in tiles) {
+				Texture2D texture = DrawTileImage(tile.x, tile.y);
+				string path = Application.dataPath + "/Resources/Tilesets/" + tilesetName + "/" + tile.name + ".png";
+				DrawUtils.SaveTextureToPng(texture, path);
+			}
+		} else {
+			Debug.LogError("No available tiles to save.");
+		}
+	}
+
+
 	private void ShowPopupTileInfo (int tileX, int tileY) {
 		currentTileX = tileX;
 		currentTileY = tileY;
@@ -261,14 +294,26 @@ public class Tileset : MonoBehaviour {
 		}
 	}
 
+	//=============================================
+	// Tile Data
+	// ============================================
 
-	private string GetTileName (int tileX, int tileY) {
+	private TileRect GetTile (int tileX, int tileY) {
 		foreach (TileRect tile in tiles) {
 			if (tile.x == tileX && tile.y == tileY) {
-				return tile.name;
+				return tile;
 			}
 		}
 
+		return null; //"unknown";
+	}
+
+
+	private string GetTileName (int tileX, int tileY) {
+		TileRect tile = GetTile(tileX, tileY);
+		if (tile != null) { 
+			return tile.name;
+		} 
 		return "unknown";
 	}
 
@@ -286,4 +331,28 @@ public class Tileset : MonoBehaviour {
 		UpdateTileInfo(tileX, tileY);
 	}
 
+
+	public void SaveTilesetData (string name) {
+		// Note: your data can only be numbers and strings.
+		JSONObject data = new JSONObject(JSONObject.Type.OBJECT);
+
+		// tileset name
+		data.AddField("name", name);
+
+		// tileset tiles array
+		JSONObject tileArr = new JSONObject(JSONObject.Type.ARRAY);
+		data.AddField("tiles", tileArr);
+
+		foreach (TileRect tile in tiles) {
+			JSONObject tileData = new JSONObject(JSONObject.Type.OBJECT);
+
+			tileData.AddField("name", tile.name);
+			tileData.AddField("x", tile.x);
+			tileData.AddField("y", tile.y);
+
+			tileArr.Add(tileData["name"]);
+			tileArr.Add(tileData["x"]);
+			tileArr.Add(tileData["y"]);
+		}
+	}
 }
