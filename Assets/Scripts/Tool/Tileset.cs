@@ -41,7 +41,9 @@ public class Tileset : MonoBehaviour {
 		container.localPosition = Camera.main.ScreenToWorldPoint(
 			new Vector3(10, - 58 + Screen.height, 10)
 		);
-		
+
+
+		LoadTilesetData();
 	}
 
 
@@ -141,7 +143,7 @@ public class Tileset : MonoBehaviour {
 	}
 
 
-	private void DrawOverlay (int tileX, int tileY) {
+	private void DrawOverlay (int tileX = -1, int tileY = -1) {
 		Texture2D texture = overlay.texture;
 		
 		DrawUtils.ClearTexture(texture);
@@ -149,18 +151,21 @@ public class Tileset : MonoBehaviour {
 		Vector2 coords;
 		Color color;
 
+		// draw edited tiles
 		foreach (TileRect tile in tiles) {
-			//DrawTileSelector(tile.x, tile.y, new Color(1, 1, 0, 0.8f));
 			color = new Color(0, 1, 1, 0.8f);
 			coords = DrawUtils.GetPixelPosInTexture(source.texture, tile.x, tile.y, tileWidth, tileHeight);
 			DrawUtils.DrawSquare(texture, (int)coords.x, (int)coords.y, tileWidth, tileHeight, color, true);
 		}
 
-		color = new Color(1, 0, 1, 0.8f);
-		coords = DrawUtils.GetPixelPosInTexture(source.texture, tileX, tileY, tileWidth, tileHeight);
+		// draw selected tile
+		if (tileX >= 0 && tileY >= 0) {
+			color = new Color(1, 0, 1, 0.8f);
+			coords = DrawUtils.GetPixelPosInTexture(source.texture, tileX, tileY, tileWidth, tileHeight);
 
-		DrawUtils.DrawSquare(texture, (int)coords.x, (int)coords.y, tileWidth, tileHeight, color, true);
-
+			DrawUtils.DrawSquare(texture, (int)coords.x, (int)coords.y, tileWidth, tileHeight, color, true);
+		}
+		
 		texture.Apply();
 
 		Transform go = transform.Find("Container/Overlay");
@@ -296,7 +301,7 @@ public class Tileset : MonoBehaviour {
 	public void ButtonSaveTile () {
 		TileRect tile = GetTile(currentTileX, currentTileY);
 		if (tile != null) {
-			string path = Application.dataPath + "/Resources/Tilesets/" + tilesetName + "/" + tile.name + ".png";
+			string path = Application.dataPath + "/Resources/Tilesets/" + tilesetName + "/Images/" + tile.name + ".png";
 			Texture2D texture = DrawTileImage(tile.x, tile.y);
 			DrawUtils.SaveTextureToPng(texture, path);
 		} else {
@@ -309,7 +314,7 @@ public class Tileset : MonoBehaviour {
 		if (tiles.Count > 0) {
 			foreach (TileRect tile in tiles) {
 				Texture2D texture = DrawTileImage(tile.x, tile.y);
-				string path = Application.dataPath + "/Resources/Tilesets/" + tilesetName + "/" + tile.name + ".png";
+				string path = Application.dataPath + "/Resources/Tilesets/" + tilesetName + "/Images/" + tile.name + ".png";
 				DrawUtils.SaveTextureToPng(texture, path);
 			}
 		} else {
@@ -320,6 +325,10 @@ public class Tileset : MonoBehaviour {
 
 	public void ButtonSaveTilesetData () {
 		SaveTilesetData();
+	}
+
+	public void ButtonLoadTilesetData () {
+		LoadTilesetData();
 	}
 
 	//=============================================
@@ -365,13 +374,11 @@ public class Tileset : MonoBehaviour {
 	// ============================================
 
 	public bool SaveTilesetData () {
-		string name = tilesetName;
-
-		// Note: your data can only be numbers and strings.
+		// create json data object
 		JSONObject data = new JSONObject(JSONObject.Type.OBJECT);
 
 		// tileset name
-		data.AddField("name", name);
+		data.AddField("name", tilesetName);
 
 		// tileset tiles array
 		JSONObject tileArr = new JSONObject(JSONObject.Type.ARRAY);
@@ -387,15 +394,40 @@ public class Tileset : MonoBehaviour {
 			tileArr.Add(tileData);
 		}
 
-
 		//save json data to file
 		try { 
-			JsonFileManagerSync.SaveJsonFile("Data/Tilesets/" + name, data);
+			JsonFileManagerSync.SaveJsonFile("Tilesets/" + tilesetName + "/" + tilesetName, data);
 			print ("Tileset data has been saved.");
 			return true;
-		} catch (System.Exception e) { 
+		} catch (System.Exception e) {
 			Debug.LogError(e);
 			return false;
 		}
+	}
+
+
+	public bool LoadTilesetData () {
+		string path = "Tilesets/" + tilesetName + "/" + tilesetName;
+
+		// load json data from file
+		JSONObject json = JsonFileManagerSync.LoadJsonFile(path);
+		if (json == null) {
+			Debug.LogWarning("Could not load " + path + ". File does not exist.");
+			return false;
+		}
+
+		print ("loaded " + json);
+
+		// generate tiles list from json tiles array
+		JSONObject tileArr = json["tiles"];
+
+		foreach (JSONObject tile in tileArr.list) {
+			tiles.Add(new TileRect((int)(tile["x"].n), (int)(tile["y"].n), tile["name"].str));
+		}
+
+		// draw overlay to display the results
+		DrawOverlay();
+
+		return true;
 	}
 }

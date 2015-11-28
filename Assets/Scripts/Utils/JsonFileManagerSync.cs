@@ -39,14 +39,13 @@ public class JsonFileManagerSync : MonoBehaviour {
 
 	public static JSONObject LoadJsonFile (string fileName) {
 		string path = GetPath(fileName);
-		
-		
+
 		if (File.Exists(path)) {
 			FileStream file = new FileStream (path, FileMode.Open, FileAccess.Read);
 			StreamReader sr = new StreamReader( file );
 
 			string str = null;
-			str = sr.ReadLine ();
+			str = sr.ReadToEnd();
 
 			sr.Close();
 			file.Close();
