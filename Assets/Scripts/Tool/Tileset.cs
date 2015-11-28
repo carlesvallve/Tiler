@@ -15,6 +15,7 @@ public class Tileset : MonoBehaviour {
 	public int tileHeight = 8;
 	public bool showGrid = false;
 
+	private Transform container;
 	private Sprite source;
 	private Sprite overlay;
 	private GameObject grid;
@@ -27,7 +28,7 @@ public class Tileset : MonoBehaviour {
 
 
 	void Awake () {
-		Transform container = transform.Find("Container");
+		container = transform.Find("Container");
 
 		source = InitSource(container);
 		grid = InitGrid(container);
@@ -35,6 +36,12 @@ public class Tileset : MonoBehaviour {
 
 		InitCamera();
 		InitHud();
+		
+
+		container.localPosition = Camera.main.ScreenToWorldPoint(
+			new Vector3(10, - 58 + Screen.height, 10)
+		);
+		
 	}
 
 
@@ -47,12 +54,8 @@ public class Tileset : MonoBehaviour {
 	// ============================================
 
 	private void InitCamera () {
-		Camera.main.orthographicSize = Screen.height / 4;
-		Camera.main.transform.position = new Vector3(
-			source.bounds.center.x, 
-			source.bounds.center.y, 
-			-10
-		);
+		Camera.main.orthographicSize = Screen.height / 8;
+		//Camera.main.transform.position = new Vector3(source.bounds.center.x, source.bounds.center.y, -10);
 	}
 
 
@@ -207,7 +210,10 @@ public class Tileset : MonoBehaviour {
 			RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
 
 			if(hit.collider != null) {
-				Vector2 hitPos = new Vector2(hit.point.x - transform.position.x, hit.point.y - transform.position.y);
+				Vector2 hitPos = new Vector2(
+					hit.point.x - container.position.x, 
+					hit.point.y - container.position.y
+				);
 
 				Vector2 tileCoords = DrawUtils.GetTileCoordsInTexture(hitPos, tileWidth, tileHeight);
 				int tileX = (int)tileCoords.x;
