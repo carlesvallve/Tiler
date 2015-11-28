@@ -71,7 +71,7 @@ public class Tileset : MonoBehaviour {
 		texture.filterMode = FilterMode.Point;
 
 		DrawUtils.ClearTexture(texture);
-		DrawUtils.DrawGrid(texture, tileWidth, tileHeight, new Color(0, 0, 0, 0.5f));
+		DrawUtils.DrawGrid(texture, tileWidth, tileHeight, new Color(0, 0, 0, 0.25f));
 
 		texture.Apply ();
 
@@ -111,14 +111,24 @@ public class Tileset : MonoBehaviour {
 	}
 
 
-	private void DrawTileSelector (int tileX, int tileY) {
+	private void DrawOverlay (int tileX, int tileY) {
 		Texture2D texture = overlay.texture;
 		
 		DrawUtils.ClearTexture(texture);
 
-		Vector2 coords = DrawUtils.GetPixelPosInTexture(source.texture, tileX, tileY, tileWidth, tileHeight);
+		Vector2 coords;
+		Color color;
 
-		Color color = new Color(0, 0, 0, 0.8f);
+		foreach (TileRect tile in tiles) {
+			//DrawTileSelector(tile.x, tile.y, new Color(1, 1, 0, 0.8f));
+			color = new Color(0, 1, 1, 0.8f);
+			coords = DrawUtils.GetPixelPosInTexture(source.texture, tile.x, tile.y, tileWidth, tileHeight);
+			DrawUtils.DrawSquare(texture, (int)coords.x, (int)coords.y, tileWidth, tileHeight, color, true);
+		}
+
+		color = new Color(1, 0, 1, 0.8f);
+		coords = DrawUtils.GetPixelPosInTexture(source.texture, tileX, tileY, tileWidth, tileHeight);
+
 		DrawUtils.DrawSquare(texture, (int)coords.x, (int)coords.y, tileWidth, tileHeight, color, true);
 
 		texture.Apply();
@@ -153,6 +163,13 @@ public class Tileset : MonoBehaviour {
 	}
 
 
+	/*private void DrawEditedTiles () {
+		foreach (TileRect tile in tiles) {
+			DrawTileSelector(tile.x, tile.y, new Color(1, 1, 0, 0.8f));
+		}
+	}*/
+
+
 	//=============================================
 	// Interaction
 	// ============================================
@@ -176,7 +193,8 @@ public class Tileset : MonoBehaviour {
     			
     			//print ("hitPos: " + hit.point + " pixelPos: "  + pixelX + "," + pixelY + " tilePos: " + tileX + "," + tileY);
 
-    			DrawTileSelector(tileX, tileY);
+				//DrawEditedTiles();
+    			DrawOverlay(tileX, tileY);
     			DrawTileImage(tileX, tileY);
     			UpdtateTileInfo(tileX, tileY);
 
@@ -232,11 +250,8 @@ public class Tileset : MonoBehaviour {
 	public void AcceptPopupTileInfo (bool value) {
 		Transform popup = transform.Find("Hud/Popups/PopupTileInfo");
 		popup.gameObject.SetActive(false);
+		if (!value) { return; }
 
-		if (!value) {
-			return;
-		}
-		
 		string name = popup.Find("Box/InputField").GetComponent<InputField>().text;
 
 		if (name != "unknown") {
