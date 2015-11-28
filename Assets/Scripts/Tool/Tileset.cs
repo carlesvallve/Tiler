@@ -72,7 +72,7 @@ public class Tileset : MonoBehaviour {
 		
 		SpriteRenderer spriteRenderer = go.AddComponent<SpriteRenderer>();
 		spriteRenderer.sprite = tilesetSprite;
-		spriteRenderer.sortingOrder = 2;
+		spriteRenderer.sortingOrder = 1;
 
 		Sprite sprite = spriteRenderer.sprite;
 
@@ -111,7 +111,7 @@ public class Tileset : MonoBehaviour {
 
 		// create sprite
 		SpriteRenderer spriteRenderer = go.AddComponent<SpriteRenderer>();
-		spriteRenderer.sortingOrder = 2;
+		spriteRenderer.sortingOrder = 0;
 
 		Sprite sprite = Sprite.Create(texture, new Rect(0, 0, width, height), new Vector2(0f, 1f), 1);
 		sprite.name = "DotsSprite";
@@ -135,7 +135,7 @@ public class Tileset : MonoBehaviour {
 
 		// create sprite
 		SpriteRenderer spriteRenderer = go.AddComponent<SpriteRenderer>();
-		spriteRenderer.sortingOrder = 0;
+		spriteRenderer.sortingOrder = 2;
 
 		Sprite sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0f, 1f), 1);
 		sprite.name = "OverlaySprite";
@@ -155,17 +155,18 @@ public class Tileset : MonoBehaviour {
 
 		// draw edited tiles
 		foreach (TileRect tile in tiles) {
-			color = new Color(0, 1, 1, 0.8f);
+			color = new Color(0, 1, 0, 0.3f);
 			coords = DrawUtils.GetPixelPosInTexture(source.texture, tile.x, tile.y, tileWidth, tileHeight);
-			DrawUtils.DrawSquare(texture, (int)coords.x, (int)coords.y, tileWidth, tileHeight, color, true);
+			DrawUtils.DrawSquare(texture, (int)coords.x, (int)coords.y, tileWidth - 1, tileHeight - 1, color, false);
+			//DrawUtils.DrawSquare(texture, (int)coords.x, (int)coords.y, tileWidth, tileHeight, color, true);
 		}
 
 		// draw selected tile
 		if (tileX >= 0 && tileY >= 0) {
-			color = new Color(1, 0, 1, 0.8f);
+			color = new Color(1, 0, 0, 0.4f);
 			coords = DrawUtils.GetPixelPosInTexture(source.texture, tileX, tileY, tileWidth, tileHeight);
-
-			DrawUtils.DrawSquare(texture, (int)coords.x, (int)coords.y, tileWidth, tileHeight, color, true);
+			DrawUtils.DrawSquare(texture, (int)coords.x, (int)coords.y, tileWidth - 1, tileHeight - 1, color, false);
+			//DrawUtils.DrawSquare(texture, (int)coords.x, (int)coords.y, tileWidth, tileHeight, color, true);
 		}
 		
 		texture.Apply();
@@ -302,7 +303,9 @@ public class Tileset : MonoBehaviour {
 	public void ButtonToggleGrid () {
 		showGrid = !showGrid;
 		grid.SetActive(showGrid);
-		transform.Find("Hud/Footer/ButtonGrid/Text").GetComponent<Text>().text = showGrid ? "GRID OFF" : "GRID ON";
+
+		Text buttonText = transform.Find("Hud/Footer/Buttons/ButtonGrid/Text").GetComponent<Text>();
+		buttonText.text = showGrid ? "GRID OFF" : "GRID ON";
 	}
 
 
