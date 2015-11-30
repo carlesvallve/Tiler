@@ -73,8 +73,12 @@ public class Dungeon : MonoSingleton <Dungeon> {
 
 	
 	private  IEnumerator ExitLevelCoroutine (int direction) {
+		yield return new WaitForSeconds (0.5f);
+
 		yield return StartCoroutine(Navigator.instance.FadeOut(0.5f));
 
+		yield return null;
+		
 		if (currentDungeonLevel + direction < 0) {
 			grid.ResetGrid();
 			print ("You escaped the dungeon!");

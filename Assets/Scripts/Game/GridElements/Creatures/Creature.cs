@@ -124,11 +124,11 @@ public class Creature : Entity {
 
 					if (door.state == EntityStates.Closed) { // open door
 						moving = false;
-						yield return StartCoroutine(door.Open());
+						StartCoroutine(door.Open()); // yield return 
 			
 					} else if (door.state == EntityStates.Locked) { // locked door
 						moving = false;
-						yield return StartCoroutine(door.Unlock(success => {}));
+						StartCoroutine(door.Unlock(success => {})); // yield return 
 					}
 				}
 			}
