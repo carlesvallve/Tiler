@@ -36,6 +36,22 @@ public class Grid : MonoSingleton <Grid> {
 			{ typeof(Entity), new GridLayer<Entity> (height, width) },
 			{ typeof(Creature), new GridLayer<Creature> (height, width) },
 		};
+
+		// initialize astar
+		InitializeAstar();
+	}
+
+
+	public void InitializeAstar () {
+		Cell [,] arr = new Cell[width, height];
+		for (int y = 0; y < height; y++) {
+			for (int x = 0; x < width; x++) {
+				Tile tile = GetTile(x, y);
+				arr[x, y] = new Cell(x, y, tile != null && tile.IsWalkable());
+			}
+		}
+		
+		new Astar(arr);
 	}
 
 
@@ -73,6 +89,9 @@ public class Grid : MonoSingleton <Grid> {
 
 
 	public void SetTile (int x, int y, Tile tile) {
+		// refresh astar walkability
+		Astar.instance.walkability[x, y] = (tile != null && !tile.IsWalkable()) ? 1 : 0;
+
 		layers.Set<Tile>(y, x, tile);
 	}
 
@@ -101,6 +120,9 @@ public class Grid : MonoSingleton <Grid> {
 
 
 	public void SetEntity (int x, int y, Entity entity) {
+		// refresh astar walkability
+		Astar.instance.walkability[x, y] = (entity != null && !entity.IsWalkable()) ? 1 : 0;
+
 		layers.Set<Entity>(y, x, entity);
 	}
 
@@ -129,6 +151,9 @@ public class Grid : MonoSingleton <Grid> {
 
 
 	public void SetCreature (int x, int y, Creature creature) {
+		// refresh astar walkability
+		Astar.instance.walkability[x, y] = (creature != null && !creature.IsWalkable()) ? 1 : 0;
+
 		layers.Set<Creature>(y, x, creature);
 	}
 

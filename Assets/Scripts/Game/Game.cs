@@ -28,8 +28,6 @@ public class Game : MonoBehaviour {
 	public Dungeon dungeon;
 	public Grid grid;
 
-	public Astar astar;
-
 	void Start () {
 		assets = new Assets();
 
@@ -47,35 +45,8 @@ public class Game : MonoBehaviour {
 
 		// Render dungeon in grid
 		dungeon.RenderDungeon();
-
-		//Camera.main.orthographicSize = (Screen.height / 2) / 8;
-
-		// Initialize Astar pathfinding
-		InitializeAstar();
 	}
 
-
-	private void InitializeAstar () {
-		Grid grid = Grid.instance;
-		print (grid);
-
-		Cell [,] arr = new Cell[grid.width, grid.height];
-		for (int y = 0; y < grid.height; y++) {
-			for (int x = 0; x < grid.width; x++) {
-				Tile tile = grid.GetTile(x, y);
-				arr[x, y] = new Cell(x, y, tile != null && tile.IsWalkable());
-			}
-		}
-		
-		astar = new Astar(arr);
-	}
-
-
-	public void MovePlayerToCoords (int x, int y) {
-		
-		
-
-	}
 }
 
 

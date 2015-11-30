@@ -1,120 +1,18 @@
-﻿using System.Collections;
+﻿using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-using System.IO;
-using System.Text;
 
-//===================================================================
-// Cell
-//===================================================================
 
 public class Cell {
-
-	public float x, y, z;
-	public string type;
-	public bool walkable = true, occupied = false;
-	public Vector3 NW, NE, SW, SE;
-	public Quaternion rot;
+	public float x, y;
+	public bool walkable = true;
 
 	public Cell(float x, float y, bool walkable) {
 		this.x = x;
 		this.y = y;
 		this.walkable = walkable;
 	}
-
-	public void Trace() {
-		//string msg = "Cell pos:" + x + "," + y + "," + z;
-		string msg = "Cell:" + type + (int)x + "," + (int)z + " walkable:" + walkable + " " + " occupied:" + occupied;
-		//msg +="NW:" + NW + " NE:" + NE + " SW:" + SW + " SE:" + SE;
-		Debug.Log(msg);
-	}
-	
-	
-	public bool GetWalkable () {
-		return this.walkable;
-	}
-	
-	
-	public void SetWalkable (bool walkable) {
-		this.walkable = walkable;
-	}
-
 }
-
-//===================================================================
-// Grid
-//===================================================================
-
-/*public class Grid : MonoBehaviour {
-
-	public static int xsize, ysize;
-	public static Cell[,] arr;
-	public static Astar astar;
-
-	public static void InitEmpty(int xsize, int ysize) {
-		// set grid size
-		Grid.xsize = xsize; Grid.ysize = ysize;
-
-		// create bidimensional array of empty cells
-		arr = new Cell[xsize, ysize];
-		for (int y = 0; y < ysize; y++) {
-			for (int x = 0; x < xsize; x++) {
-				arr[x, y] = new Cell("empty", x, 0, y, true);
-			}
-		}
-		astar = new Astar(arr);
-	}
-
-	
-	public static Cell GetCell(int x, int y) {
-		return arr[x, y];
-	}
-	
-	
-	public static string GetCellType(int x, int y) { //, bool occupied
-		Cell cell = GetCell (x, y);
-		return cell.type;
-	}
-
-
-	public static void SetCellType(string type, int x, int y) { //, bool occupied
-		Cell cell = GetCell (x, y);
-		cell.type = type;
-	}
-	
-	
-	public static bool GetWalkable(float px, float py) { //, bool occupied
-		return arr[(int)px, (int)py].walkable;
-	}
-
-	public static void SetWalkable(float px, float py, bool walkable) { //, bool occupied
-		int x = (int)px;
-		int y = (int)py;
-		arr[x, y].walkable = walkable;
-		if (arr[x, y].walkable) { astar.walkability[x, y] = 0; } else { astar.walkability[x, y] = 1; }
-		//setOccupied (px, py, true);
-	}
-	
-	public static bool GetOccupied(float px, float py) { //, bool occupied
-		return arr[(int)px, (int)py].occupied;
-	}
-
-	public static void SetOccupied(float px, float py, bool occupied) { //, bool occupied
-		int x = (int)px;
-		int y = (int)py;
-		arr[x, y].occupied = occupied;
-		//arr[x, y].occupied = occupied;
-	}
-
-	public static void TracePath(List<Vector2> path) {
-		string msg = "path: ";
-		for (int n = 0; n < path.Count; n++) {
-			msg += " -> " + path[n].x + "," + path[n].y;
-		}
-		print(msg);
-	}
-
-}*/
 
 
 public class Astar {
@@ -146,7 +44,7 @@ public class Astar {
 	// Desc: Initializes/Redimensionates all required vars and generates walkability map.
 	//-----------------------------------------------------------------------------
 
-	public Astar(Cell[,] arr) {
+	public Astar(Cell[,] arr) { 
 		instance = this;
 
 		//get map dimensions
@@ -163,11 +61,21 @@ public class Astar {
 		Fcost = new int[mapWidth * mapHeight + 2];	//1d array to store F cost of a cell on the open list
 		Gcost = new int[mapWidth + 1, mapHeight + 1]; 	//2d array to store G cost for each cell.
 		Hcost = new int[mapWidth * mapHeight + 2];	//1d array to store H cost of a cell on the open list	
-		//walkability array: is a bidimensional int-array of ones and zeros that we generate from cells walkable states.
+		
+		// walkability array: 
+		// is a bidimensional int-array of ones and zeros that we generate from cells walkable states.
+		
+		// TODO: Would be nice to be able to get walkability at real time from a given external function,
+		//       Right now, we have to refresh astar walkability from external grid
+
 		walkability = new int[mapWidth, mapHeight];
 		for (int y = 0; y < mapHeight; y++) {
 			for (int x = 0; x < mapWidth; x++) {
-				if (arr[x, y].walkable) { walkability[x, y] = walkable; } else { walkability[x, y] = unwalkable; }
+				if (arr[x, y].walkable) { 
+					walkability[x, y] = walkable; 
+				} else { 
+					walkability[x, y] = unwalkable; 
+				}
 			}
 		}
 	}
