@@ -8,6 +8,7 @@ public class Tile : MonoBehaviour {
 	
 	public int x { get; set; }
 	public int y { get; set; }
+	public bool walkable { get; set; }
 	public bool visited { get; set; }
 
 	protected Sprite asset;
@@ -23,6 +24,8 @@ public class Tile : MonoBehaviour {
 		this.x = x;
 		this.y = y;
 		this.asset = asset;
+
+		this.walkable = true;
 
 		transform.localPosition = new Vector3(x, y, 0);
 
@@ -50,16 +53,29 @@ public class Tile : MonoBehaviour {
 	}
 
 
+	public void SetColor (Color color) {
+		img.color = color; 
+	}
+
+
 	public bool IsWalkable () {
 		Entity entity = grid.GetEntity(x, y);
-		if (entity != null) { return false; }
-		return true;
+		if (entity != null && !entity.walkable) { return false; }
+
+		Creature creature = grid.GetCreature(x, y);
+		if (creature != null && !creature.walkable) { return false; }
+
+		return walkable;
 	}
 
 
 	public bool IsOccupied () {
 		Entity entity = grid.GetEntity(x, y);
 		if (entity != null) { return true; }
+
+		Creature creature = grid.GetCreature(x, y);
+		if (creature != null) { return true; }
+
 		return false;
 	}
 	

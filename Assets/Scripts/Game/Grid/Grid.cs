@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 
-public class Grid : MonoBehaviour {
+public class Grid : MonoSingleton <Grid> {
 
 	public Transform container;
 
@@ -41,7 +41,7 @@ public class Grid : MonoBehaviour {
 
 	private void ResetGrid () {
 		// destroy all previously generated gameobjects
-		
+
 		Tile[] tilesToDestroy = container.GetComponentsInChildren<Tile>();
 		foreach (Tile tile in tilesToDestroy) {
 			Destroy(tile.gameObject);
@@ -133,7 +133,7 @@ public class Grid : MonoBehaviour {
 	}
 
 
-	public Entity GetCreature (int x, int y) {
+	public Creature GetCreature (int x, int y) {
 		return layers.Get<Creature>(y, x);
 	}
 }

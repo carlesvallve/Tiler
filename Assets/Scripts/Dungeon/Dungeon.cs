@@ -6,7 +6,7 @@ using System.Linq;
 [RequireComponent (typeof (DungeonGenerator))]
 [RequireComponent (typeof (Grid))]
 
-public class Dungeon : MonoBehaviour {
+public class Dungeon : MonoSingleton <Dungeon> {
 
 	private Grid grid;
 	private DungeonGenerator dungeonGenerator;
@@ -118,7 +118,9 @@ public class Dungeon : MonoBehaviour {
 
 					// create walls
 					if (dtile.id == DungeonTileType.WALL || dtile.id == DungeonTileType.WALLCORNER) {
-						GenerateWall(dtile, x, y);
+						Wall wall = grid.CreateEntity<Wall>(x, y, Game.assets.dungeon["floor-sandstone"], 1);
+						wall.SetColor(new Color(0.8f, 0.8f, 0.6f));
+						//Generate3dWall(dtile, x, y);
 					}
 					
 					// create doors
@@ -138,14 +140,12 @@ public class Dungeon : MonoBehaviour {
 
 
 	// =====================================================
-	// Wall rendering logic
+	// Wall generation
 	// =====================================================
 
-	private void GenerateWall (DungeonTile dtile, int x, int y) {
-		grid.CreateEntity<Wall>(x, y, Game.assets.dungeon["wall-brick-dark"], 1); // 
-
+	/*private void Generate3dWall (DungeonTile dtile, int x, int y) {
 		// create 3d walls
-		/*if (dtile.id == DungeonTileType.WALL || dtile.id == DungeonTileType.WALLCORNER) {	
+		if (dtile.id == DungeonTileType.WALL || dtile.id == DungeonTileType.WALLCORNER) {	
 			//float d = 0.9f;
 			//Color wallColor = new Color(color.r * d, color.g * d, color.b * d, 1f);
 
@@ -157,7 +157,7 @@ public class Dungeon : MonoBehaviour {
 			}
 			//grid.CreateEntity(x, y, wallAsset);
 			grid.CreateEntity<Wall>(x, y, wallAsset, 1); // 
-		}*/
+		}
 	}
 
 
@@ -182,11 +182,11 @@ public class Dungeon : MonoBehaviour {
 		}
 
 		return true;
-	}
+	}*/
 
 	
 	// =====================================================
-	// Generate Dungeon features inside the game grid
+	// Creature generation
 	// =====================================================
 
 	private void GeneratePlayer (int x, int y) {
@@ -203,6 +203,9 @@ public class Dungeon : MonoBehaviour {
 		}
 	}
 
+	// =====================================================
+	// Ladder generation
+	// =====================================================
 
 	private void GenerateLadders () {
 		Tile tile = null;
@@ -220,6 +223,10 @@ public class Dungeon : MonoBehaviour {
 		}
 	}
 
+
+	// =====================================================
+	// Furniture generation
+	// =====================================================
 
 	private void GenerateFurniture (int max) {
 		for (int i = 1; i <= max; i++) {
@@ -244,7 +251,11 @@ public class Dungeon : MonoBehaviour {
 	// Feature generation Helpers
 	// =====================================================
 
+	// returns a tile which none of his neighbours at radius are occupied
+
 	private Tile GetRandomFreeTile (int radius = 0) {
+		
+
 		Tile tile = null;
 		Tile tile2 = null;
 		int c = 0;
