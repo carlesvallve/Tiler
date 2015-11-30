@@ -11,6 +11,7 @@ using UnityEngine.EventSystems;
 public class Tileset : MonoBehaviour {
 
 	public Sprite tilesetSprite;
+	
 	public int tileWidth = 8;
 	public int tileHeight = 8;
 	public bool showGrid = false;

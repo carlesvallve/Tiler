@@ -15,10 +15,10 @@ public enum DungeonTileType {
 
 
 public class DungeonTileNeighbours {
-	public Tile n = null;
-	public Tile s = null;
-	public Tile w = null;
-	public Tile e = null;
+	public DungeonTile n = null;
+	public DungeonTile s = null;
+	public DungeonTile w = null;
+	public DungeonTile e = null;
 }
 
 

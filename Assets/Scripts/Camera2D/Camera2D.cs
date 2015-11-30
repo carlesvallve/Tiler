@@ -19,6 +19,8 @@ public class Camera2D : MonoBehaviour {
 		}
 
 		// set zoom
+		//Vector3 screenPos = camera.WorldToScreenPoint(target.position);
+		//Vector3 worldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 		ZoomIntoPosition(Input.GetAxis("Mouse ScrollWheel") * zoomSpeed, Input.mousePosition);
 
 		// set drag
@@ -33,10 +35,11 @@ public class Camera2D : MonoBehaviour {
 
 
 	private void ZoomIntoPosition (float delta, Vector2 position) {
-		Vector3 preZoomWorldPosition = Camera.main.ScreenToWorldPoint(position);
+		//Vector3 preZoomWorldPosition = Camera.main.ScreenToWorldPoint(position);
 		PureZoom(delta);
-		Vector2 postZoomScreenPosition = Camera.main.WorldToScreenPoint(preZoomWorldPosition);
-		Drag(position- postZoomScreenPosition);
+		//Vector2 postZoomScreenPosition = Camera.main.WorldToScreenPoint(preZoomWorldPosition);
+		//Drag(position- postZoomScreenPosition);
+		Drag(Vector2.zero);
 	}
 
 

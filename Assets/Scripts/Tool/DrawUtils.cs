@@ -20,15 +20,15 @@ public class DrawUtils : MonoBehaviour {
 
 	public static Vector2 GetPixelPosInTexture (Texture2D texture, int tileX, int tileY, int tileWidth, int tileHeight) {
 		int x = 0 + tileX * tileWidth;
-		int y = texture.height - tileHeight - tileY * tileHeight;
+		int y = 0 + texture.height - tileHeight - tileY * tileHeight;
 
 		return new Vector2(x, y);
 	}
 
 
 	public static Vector2 GetTileCoordsInTexture (Vector2 pos, int tileWidth, int tileHeight) {
-		int pixelX = Mathf.FloorToInt(pos.x);
-		int pixelY = Mathf.FloorToInt(-pos.y);
+		int pixelX = 0 + Mathf.FloorToInt(pos.x);
+		int pixelY = 0 + Mathf.FloorToInt(-pos.y);
 		int tileX = Mathf.RoundToInt(pixelX / tileWidth);
 		int tileY = Mathf.RoundToInt(pixelY / tileHeight);
 

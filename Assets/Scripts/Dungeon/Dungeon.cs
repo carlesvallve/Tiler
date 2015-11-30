@@ -1,7 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
+[RequireComponent (typeof (DungeonGenerator))]
+[RequireComponent (typeof (Grid))]
 
 public class Dungeon : MonoBehaviour {
 
@@ -9,10 +12,10 @@ public class Dungeon : MonoBehaviour {
 	private DungeonGenerator dungeonGenerator;
 
 	public List<int> dungeonSeeds = new List<int>();
-	public int currentDungeonLevel = -1;
+	public int currentDungeonLevel = 0;
 
-	public delegate void DungeonGeneratedHandler(int dungeonLevel);
-	public event DungeonGeneratedHandler OnDungeonGenerated;
+	//public delegate void DungeonGeneratedHandler(int dungeonLevel);
+	//public event DungeonGeneratedHandler OnDungeonGenerated;
 
 
 	void Awake () {
@@ -22,26 +25,10 @@ public class Dungeon : MonoBehaviour {
 
 
 	// =====================================================
-	// Navigate Dungeon Levels
-	// =====================================================
-
-	public void ExitLevel (int direction) {
-		StartCoroutine(ExitLevelCoroutine(direction));
-	}
-
-	
-	private  IEnumerator ExitLevelCoroutine (int direction) {
-		yield return StartCoroutine(Navigator.instance.FadeOut(0.5f));
-		GenerateDungeon(direction);
-		yield return StartCoroutine(Navigator.instance.FadeIn(0.5f));
-	}
-
-	
-	// =====================================================
 	// Generate Dungeon
 	// =====================================================
 
-	public void GenerateDungeon (int direction) {
+	public void GenerateDungeon (int direction = 0) {
 		// Update current dungeon level
 		currentDungeonLevel += direction;
 		
@@ -63,21 +50,26 @@ public class Dungeon : MonoBehaviour {
 		// Generate dungeon data
 		dungeonGenerator.GenerateDungeon(dungeonGenerator.seed);
 
-		// Render dungeon on grid
-		//dungeonRenderer.Init(dungeonGenerator, grid);
-		RenderDungeonToGrid();
-
-		// Generate ladders
-		GenerateLadders();
-
-		// Generate player
-		Ladder ladder = direction == 1 ? grid.ladderUp : grid.ladderDown;
-		GeneratePlayer(ladder.x, ladder.y - 1);
-
 		// emit event
-		if (OnDungeonGenerated != null) {
+		/*if (OnDungeonGenerated != null) {
 			OnDungeonGenerated.Invoke(currentDungeonLevel);
-		}
+		}*/
+	}
+
+
+	// =====================================================
+	// Navigate Dungeon Levels
+	// =====================================================
+
+	public void ExitLevel (int direction) {
+		StartCoroutine(ExitLevelCoroutine(direction));
+	}
+
+	
+	private  IEnumerator ExitLevelCoroutine (int direction) {
+		yield return StartCoroutine(Navigator.instance.FadeOut(0.5f));
+		GenerateDungeon(direction);
+		yield return StartCoroutine(Navigator.instance.FadeIn(0.5f));
 	}
 
 
@@ -85,15 +77,25 @@ public class Dungeon : MonoBehaviour {
 	// Render dungeon in the game grid
 	// =====================================================
 
-	private void RenderDungeonToGrid () {
+	public void RenderDungeon (int direction = 1) {
 		// init grid
 		grid.InitializeGrid (dungeonGenerator.MAP_WIDTH, dungeonGenerator.MAP_HEIGHT);
 
 		// generate grid elements for each tree quad
 		GenerateGridOnTreeQuad(dungeonGenerator.quadTree);
-		
-		// batch all grid elements
-		grid.BatchGrid();
+
+		// Generate ladders
+		GenerateLadders();
+
+		//Generate furniture
+		GenerateFurniture (20);
+
+		//Generate monsters
+		GenerateMonsters(10);
+
+		// Generate player
+		Tile ladder = direction == 1 ? grid.ladderUp : grid.ladderDown;
+		GeneratePlayer(ladder.x, ladder.y);
 	}
 
 
@@ -106,29 +108,22 @@ public class Dungeon : MonoBehaviour {
 					DungeonTile dtile = dungeonGenerator.tiles[y, x];
 
 					// set render color 
-					Color color = _quadtree.color;
+					//Color color = _quadtree.color;
 	
 					// create floors
 					if (dtile.id == DungeonTileType.ROOM || dtile.id == DungeonTileType.CORRIDOR || 
 						dtile.id == DungeonTileType.DOORH || dtile.id == DungeonTileType.DOORV) {
-						grid.CreateTile(x, y, TileTypes.Floor, color);
+						grid.CreateTile<Tile>(x, y, Game.assets.dungeon["floor-sandstone"], 1);
 					}
 
 					// create walls
 					if (dtile.id == DungeonTileType.WALL || dtile.id == DungeonTileType.WALLCORNER) {
-						float d = 0.9f;
-						Color wallColor = new Color(color.r * d, color.g * d, color.b * d, 1f);
-						grid.CreateTile(x, y, TileTypes.Floor, wallColor);
-						grid.CreateObstacle(x, y, ObstacleTypes.Wall, wallColor);
+						GenerateWall(dtile, x, y);
 					}
-
+					
 					// create doors
-					if (dtile.id == DungeonTileType.DOORH) {
-						grid.CreateDoor(x, y, DoorTypes.Wood, DoorStates.Closed, DoorDirections.Horizontal);
-					}
-
-					if (dtile.id == DungeonTileType.DOORV) {
-						grid.CreateDoor(x, y, DoorTypes.Wood, DoorStates.Closed, DoorDirections.Vertical);
+					if (dtile.id == DungeonTileType.DOORH || dtile.id == DungeonTileType.DOORV) {
+						grid.CreateEntity<Door>(x, y, Game.assets.dungeon["door-closed"], 1);
 					}
 				}
 			}
@@ -141,14 +136,71 @@ public class Dungeon : MonoBehaviour {
 		}
 	}
 
+
+	// =====================================================
+	// Wall rendering logic
+	// =====================================================
+
+	private void GenerateWall (DungeonTile dtile, int x, int y) {
+		grid.CreateEntity<Wall>(x, y, Game.assets.dungeon["wall-brick-dark"], 1); // 
+
+		// create 3d walls
+		/*if (dtile.id == DungeonTileType.WALL || dtile.id == DungeonTileType.WALLCORNER) {	
+			//float d = 0.9f;
+			//Color wallColor = new Color(color.r * d, color.g * d, color.b * d, 1f);
+
+			Sprite wallAsset;
+			if (IsVerticalWall(dtile, x, y)) {
+				wallAsset = Game.assets.dungeon["wall-v"];
+			} else {
+				wallAsset = Game.assets.dungeon["wall-h"];
+			}
+			//grid.CreateEntity(x, y, wallAsset);
+			grid.CreateEntity<Wall>(x, y, wallAsset, 1); // 
+		}*/
+	}
+
+
+	private bool IsFloor (DungeonTile dtile) {
+		if (dtile.id == DungeonTileType.ROOM || dtile.id == DungeonTileType.CORRIDOR || 
+			dtile.id == DungeonTileType.DOORH || dtile.id == DungeonTileType.DOORV) {
+			return true;
+		}
+
+		return false;
+	}
+
+
+	private bool IsVerticalWall (DungeonTile dtile, int x, int y) {
+		if (y <= 0) { 
+			return false;
+		}
+
+		DungeonTile bottomTile = dungeonGenerator.tiles[y - 1, x]; 
+		if (bottomTile.id == DungeonTileType.EMPTY || IsFloor(bottomTile)) {
+			return false;
+		}
+
+		return true;
+	}
+
 	
 	// =====================================================
 	// Generate Dungeon features inside the game grid
 	// =====================================================
 
 	private void GeneratePlayer (int x, int y) {
-		grid.player = grid.CreatePlayer(x, y, PlayerTypes.Player);
-		grid.player.currentDungeonLevel = currentDungeonLevel;
+		grid.player = grid.CreateCreature<Creature>(x, y, Game.assets.monster["adventurer"], 0.8f);
+		//grid.player.currentDungeonLevel = currentDungeonLevel;
+	}
+
+
+	private void GenerateMonsters (int max) {
+		for (int i = 0; i < max; i ++) {
+			Tile tile = GetRandomFreeTile(0);
+			Sprite randomAsset = Game.assets.monster.ElementAt(Random.Range(0, Game.assets.monster.Count)).Value;
+			grid.monsters.Add( grid.CreateCreature<Creature>(tile.x, tile.y, randomAsset, 0.8f) );
+		}
 	}
 
 
@@ -158,13 +210,32 @@ public class Dungeon : MonoBehaviour {
 		// locate ladderUp so it has no entities on 1 tile radius
 		tile = GetRandomFreeTile(1);
 		if (tile != null) {
-			grid.ladderUp = grid.CreateLadder(tile.x, tile.y, LadderTypes.Wood, LadderDirections.Up);
+			grid.ladderUp = grid.CreateEntity<Entity>(tile.x, tile.y, Game.assets.dungeon["stairs-up"], 0.8f);
 		}
 
 		// locate ladderDown so it has no entities on 1 tile radius
 		tile = GetRandomFreeTile(1);
 		if (tile != null) {
-			grid.ladderDown = grid.CreateLadder(tile.x, tile.y, LadderTypes.Wood, LadderDirections.Down);
+			grid.ladderUp = grid.CreateEntity<Entity>(tile.x, tile.y, Game.assets.dungeon["stairs-down"], 0.8f);
+		}
+	}
+
+
+	private void GenerateFurniture (int max) {
+		for (int i = 1; i <= max; i++) {
+			Tile tile = GetRandomFreeTile(0);
+			int c = 0;
+			while (dungeonGenerator.tiles[tile.y, tile.x].id != DungeonTileType.ROOM && c < 100) {
+				tile = GetRandomFreeTile(0);
+			}
+
+			string[] arr = new string[] { 
+				"barrel-closed", "barrel-open", "bed-h", "bed-v", "chair-h", "chair-v", 
+				"chest-closed", "chest-open","fountain-fire", "fountain-water", 
+				"grave-1", "grave-2", "grave-3", "lever-left", "lever-right", 
+				"table-1", "vase" };
+
+			grid.CreateEntity<Entity>(tile.x, tile.y, Game.assets.dungeon[arr[Random.Range(0, arr.Length)]], 0.8f);
 		}
 	}
 
