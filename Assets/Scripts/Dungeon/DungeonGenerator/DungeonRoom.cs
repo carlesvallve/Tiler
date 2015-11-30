@@ -16,6 +16,11 @@ public class DungeonRoom {
 	public Color color = Color.white;
 	public List<DungeonTile> tiles;
 
+	// will turn true once we fill the room with stuff
+	public bool hasFurniture = false; 
+	public bool hasMonsters = false;
+
+
 	public DungeonRoom (int id, AABB b) {
 		boundary = b;
 

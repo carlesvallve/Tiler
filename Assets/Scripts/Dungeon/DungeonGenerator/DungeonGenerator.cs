@@ -57,7 +57,7 @@ public class DungeonGenerator : MonoSingleton <DungeonGenerator> {
 		tiles = new DungeonTile[MAP_HEIGHT,MAP_WIDTH];
 		for (int i = 0; i < MAP_HEIGHT; i++) {
 			for (int j = 0; j < MAP_WIDTH; j++) {
-				tiles[i,j] = new DungeonTile(DungeonTileType.EMPTY);
+				tiles[i,j] = new DungeonTile(DungeonTileType.EMPTY, j, i);
 			}
 		}
 		
@@ -74,7 +74,7 @@ public class DungeonGenerator : MonoSingleton <DungeonGenerator> {
 		// Reset tilemap
 		for (int i = 0; i < MAP_HEIGHT; i++) 
 			for (int j = 0; j < MAP_WIDTH; j++) 
-				tiles[i,j] = new DungeonTile(DungeonTileType.EMPTY);
+				tiles[i,j] = new DungeonTile(DungeonTileType.EMPTY, j, i);
 		
 		// Reset QuadTree
 		quadTree = new QuadTree(new AABB(new XY(MAP_WIDTH/2.0f,MAP_HEIGHT/2.0f),new XY(MAP_WIDTH/2.0f, MAP_HEIGHT/2.0f)));

@@ -9,12 +9,15 @@ public class Tile : MonoBehaviour {
 	
 	public int x { get; set; }
 	public int y { get; set; }
+	public int roomId { get; set; }
+
 	public bool walkable { get; set; }
 	public bool visited { get; set; }
 
 	public Sprite asset { get; private set; }
 	protected SpriteRenderer outline;
 	protected SpriteRenderer img;
+	protected TextMesh label;
 	
 
 	public virtual void Init (Grid grid, int x, int y, Sprite asset, float scale = 1) {
@@ -22,6 +25,10 @@ public class Tile : MonoBehaviour {
 
 		outline = transform.Find("Outline").GetComponent<SpriteRenderer>();
 		img = transform.Find("Sprite").GetComponent<SpriteRenderer>();
+		
+		label = transform.Find("Label").GetComponent<TextMesh>();
+		label.GetComponent<Renderer>().sortingLayerName = "Ui";
+		label.gameObject.SetActive(false);
 
 		this.grid = grid;
 		this.x = x;
@@ -35,6 +42,13 @@ public class Tile : MonoBehaviour {
 		SetAsset(asset);
 		SetImages(scale, Vector3.zero, 0);
 		SetSortingOrder(0);
+	}
+
+
+	public void SetInfo (string str, Color color) {
+		label.color = color;
+		label.text = str;
+		label.gameObject.SetActive(str != null && str != "");
 	}
 
 
@@ -61,6 +75,8 @@ public class Tile : MonoBehaviour {
 		zIndex += grid.height - this.y;
 		outline.sortingOrder = zIndex;
 		img.sortingOrder = zIndex + 1;
+		//label.offsetZ = -1; //zIndex + 2;
+		
 	}
 
 

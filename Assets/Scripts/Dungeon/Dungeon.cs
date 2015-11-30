@@ -87,7 +87,7 @@ public class Dungeon : MonoSingleton <Dungeon> {
 
 
 	// =====================================================
-	// Render dungeon in the game grid
+	// Render dungeon data on grid
 	// =====================================================
 
 	public void RenderDungeon (int direction) {
@@ -101,14 +101,15 @@ public class Dungeon : MonoSingleton <Dungeon> {
 		GenerateStairs();
 
 		//Generate furniture
-		GenerateFurniture (20);
+		GenerateFurniture ();
 
 		//Generate monsters
-		GenerateMonsters(10);
+		GenerateMonsters();
 
 		// Generate player
 		Stair stair = direction == -1 ? grid.stairDown : grid.stairUp;
 		GeneratePlayer(stair.x, stair.y);
+
 	}
 
 
@@ -126,7 +127,13 @@ public class Dungeon : MonoSingleton <Dungeon> {
 					// create floors
 					if (dtile.id == DungeonTileType.ROOM || dtile.id == DungeonTileType.CORRIDOR || 
 						dtile.id == DungeonTileType.DOORH || dtile.id == DungeonTileType.DOORV) {
-						grid.CreateTile<Tile>(x, y, Game.assets.dungeon["floor-sandstone"], 1);
+						Tile tile = grid.CreateTile<Tile>(x, y, Game.assets.dungeon["floor-sandstone"], 1);
+	
+						// set room info in floor tile
+						if (dtile.room != null) {
+							tile.roomId = dtile.room.id;
+							//ile.SetInfo(tile.roomId.ToString(), dtile.room.color);
+						}
 					}
 
 					// create walls
@@ -153,7 +160,7 @@ public class Dungeon : MonoSingleton <Dungeon> {
 
 
 	// =====================================================
-	// Wall generation
+	// Wall 3d generation
 	// =====================================================
 
 	/*private void Generate3dWall (DungeonTile dtile, int x, int y) {
@@ -197,138 +204,218 @@ public class Dungeon : MonoSingleton <Dungeon> {
 		return true;
 	}*/
 
-	
-	// =====================================================
-	// Creature generation
-	// =====================================================
-
-	private void GeneratePlayer (int x, int y) {
-		grid.player = grid.CreateCreature<Creature>(x, y, Game.assets.monster["adventurer"], 0.8f);
-		//grid.player.currentDungeonLevel = currentDungeonLevel;
-		Camera.main.transform.position = new Vector3(grid.player.x, grid.player.y, -10);
-	}
-
-
-	private void GenerateMonsters (int max) {
-		for (int i = 0; i < max; i ++) {
-			Tile tile = GetRandomFreeTile(0);
-			Sprite randomAsset = Game.assets.monster.ElementAt(Random.Range(0, Game.assets.monster.Count)).Value;
-			grid.monsters.Add( grid.CreateCreature<Creature>(tile.x, tile.y, randomAsset, 0.8f) );
-		}
-	}
 
 	// =====================================================
-	// Ladder generation
+	// Stairs generation
 	// =====================================================
 
 	private void GenerateStairs () {
 		Tile tile = null;
 
 		// locate ladderUp so it has no entities on 1 tile radius
-		tile = GetRandomFreeTile(1);
+		tile = GetFreeTileOnGrid(1);
 		if (tile != null) {
 			grid.stairUp = grid.CreateEntity<Stair>(tile.x, tile.y, Game.assets.dungeon["stairs-up"], 0.8f);
 			grid.stairUp.SetDirection(-1);
 		}
 
 		// locate ladderDown so it has no entities on 1 tile radius
-		tile = GetRandomFreeTile(1);
+		tile = GetFreeTileOnGrid(1);
 		if (tile != null) {
 			grid.stairDown = grid.CreateEntity<Stair>(tile.x, tile.y, Game.assets.dungeon["stairs-down"], 0.8f);
 			grid.stairDown.SetDirection(1);
 		}
 	}
 
-
 	// =====================================================
 	// Furniture generation
 	// =====================================================
 
-	private void GenerateFurniture (int max) {
-		for (int i = 1; i <= max; i++) {
-			Tile tile = GetRandomFreeTile(0);
+	private void GenerateFurniture () {
+		for (int n = 0; n < dungeonGenerator.rooms.Count; n++) {
+
+			DungeonRoom room = dungeonGenerator.rooms[n];
+			int maxFurniture = Random.Range(0, 100) <= 85 ? Random.Range(1, (int)(room.tiles.Count / 3)) : 0;
+
+			// get random room suitable for placing furniture
+			/*DungeonRoom room = GetRandomRoom();
+
 			int c = 0;
-			while (dungeonGenerator.tiles[tile.y, tile.x].id != DungeonTileType.ROOM && c < 100) {
-				tile = GetRandomFreeTile(0);
+			while (room.hasFurniture) {
+				room = GetRandomRoom();
+				c++;
+				if (c == 1000) { 
+					print ("No room is suitable to place furniture in it. Aborting.");
+					return; 
+				}
+			}*/
+
+			// place furniture in room
+			for (int i = 1; i <= maxFurniture; i ++) {
+				Tile tile = GetFreeTileOnRoom(room, 0);
+				if (tile == null) { continue; }
+				
+				string[] arr = new string[] { 
+					"barrel-closed", "barrel-open", "bed-h", "bed-v", "chair-h", "chair-v", 
+					"chest-closed", "chest-open","fountain-fire", "fountain-water", 
+					"grave-1", "grave-2", "grave-3", "lever-left", "lever-right", 
+					"table-1", "vase" };
+
+				grid.CreateEntity<Entity>(tile.x, tile.y, Game.assets.dungeon[arr[Random.Range(0, arr.Length)]], 0.8f);
 			}
 
-			string[] arr = new string[] { 
-				"barrel-closed", "barrel-open", "bed-h", "bed-v", "chair-h", "chair-v", 
-				"chest-closed", "chest-open","fountain-fire", "fountain-water", 
-				"grave-1", "grave-2", "grave-3", "lever-left", "lever-right", 
-				"table-1", "vase" };
-
-			grid.CreateEntity<Entity>(tile.x, tile.y, Game.assets.dungeon[arr[Random.Range(0, arr.Length)]], 0.8f);
+			// tell the room that has been filled with furniture
+			room.hasFurniture = true;
 		}
 	}
+
+	// =====================================================
+	// Creature generation
+	// =====================================================
+
+	private void GeneratePlayer (int x, int y) {
+		grid.player = grid.CreateCreature<Creature>(x, y, Game.assets.monster["adventurer"], 0.8f);
+		Camera.main.transform.position = new Vector3(grid.player.x, grid.player.y, -10);
+	}
+
+
+	private void GenerateMonsters () {
+		for (int n = 0; n < dungeonGenerator.rooms.Count; n++) {
+			DungeonRoom room = dungeonGenerator.rooms[n];
+			int maxMonsters = Random.Range(0, 100) <= 50 ? Random.Range(1, (int)(room.tiles.Count / 3)) : 0;
+
+			// get random room suitable for placing mosters
+			/*DungeonRoom room = GetRandomRoom();
+
+			int c = 0;
+			while (room.hasMonsters ) {
+				room = GetRandomRoom();
+				c++;
+				if (c == 1000) { 
+					print ("No room is suitable to place monsters in it. Aborting.");
+					return; 
+				}
+			}*/
+
+			//Color color = new Color (Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f));
+			//PaintRoom(room, color);
+
+			Sprite randomAsset = Game.assets.monster.ElementAt(Random.Range(0, Game.assets.monster.Count)).Value;
+
+			for (int i = 1; i <= maxMonsters; i ++) {
+				Tile tile = GetFreeTileOnRoom(room, 0);
+				if (tile == null) { continue; }
+				
+				grid.monsters.Add( grid.CreateCreature<Creature>(tile.x, tile.y, randomAsset, 0.8f) );
+			}
+
+			// tell the room that has been filled with monsters
+			room.hasFurniture = true;
+		}
+	}
+
+
+	
 
 
 	// =====================================================
 	// Feature generation Helpers
 	// =====================================================
 
-	// returns a tile which none of his neighbours at radius are occupied
-
-	private Tile GetRandomFreeTile (int radius = 0) {
-		
-
-		Tile tile = null;
-		Tile tile2 = null;
-		int c = 0;
-
-		while (true) {
-			tile = grid.GetTile(
-				Random.Range(0, grid.width), 
-				Random.Range(0, grid.height)
-			);
-
-			bool ok = false;
-
-			if (tile != null && !tile.IsOccupied()) {
-				ok = true;
-
-				// iterate on all surounding tiles
-				for (int i = 1; i <= radius; i++) {
-					tile2 = grid.GetTile(tile.x - i, tile.y);
-					if (tile2 == null || (tile2 != null  && tile2.IsOccupied())) { ok = false; }
-
-					tile2 = grid.GetTile(tile.x + i, tile.y);
-					if (tile2 == null || (tile2 != null  && tile2.IsOccupied())) { ok = false; }
-
-					tile2 = grid.GetTile(tile.x, tile.y - i);
-					if (tile2 == null || (tile2 != null  && tile2.IsOccupied())) { ok = false; }
-
-					tile2 = grid.GetTile(tile.x, tile.y + i);
-					if (tile2 == null || (tile2 != null  && tile2.IsOccupied())) { ok = false; }
+	private DungeonRoom GetRandomRoom (bool debug = false) {
+		DungeonRoom room = dungeonGenerator.rooms[Random.Range(0, dungeonGenerator.rooms.Count)];
+		if (debug) { PaintRoom(room, Color.black); }
+		return room;
+	}
 
 
-					tile2 = grid.GetTile(tile.x - i, tile.y - i);
-					if (tile2 == null || (tile2 != null  && tile2.IsOccupied())) { ok = false; }
-
-					tile2 = grid.GetTile(tile.x + i, tile.y - i);
-					if (tile2 == null || (tile2 != null  && tile2.IsOccupied())) { ok = false; }
-
-					tile2 = grid.GetTile(tile.x - i, tile.y + i);
-					if (tile2 == null || (tile2 != null  && tile2.IsOccupied())) { ok = false; }
-
-					tile2 = grid.GetTile(tile.x + i, tile.y + i);
-					if (tile2 == null || (tile2 != null  && tile2.IsOccupied())) { ok = false; }
-				}
-			}
-
-			// escape if tile is placeable
-			if (ok) {
-				break;
-			}
-			
-			c++;
-			if (c == 100) {
-				Debug.LogError("Tile could not be placed. Escaping...");
-				tile = null;
-				break;
+	private void PaintRoom (DungeonRoom room, Color color) {
+		foreach (DungeonTile dtile in room.tiles) {
+			Tile tile = grid.GetTile(dtile.x, dtile.y);
+			if (tile != null) {
+				tile.SetColor(color);
 			}
 		}
+	}
 
-		return tile;
+
+	private Tile GetFreeTileOnRoom (DungeonRoom room, int radius = 0) {
+		// get a random free tile inside the given room
+
+		int c = 0;
+		while (true) {
+			DungeonTile dtile = room.tiles[Random.Range(0, room.tiles.Count)];
+			Tile tile = grid.GetTile(dtile.x, dtile.y);
+			if (tile != null && TileIsFree(tile, radius)) {
+				return tile;
+			}
+
+			c++; if (c == 1000) { break; }
+		}
+
+		Debug.LogError("Tile could not be placed. Escaping...");
+		return null;
+	}
+
+
+	private Tile GetFreeTileOnGrid (int radius = 0) {
+		// get a random free tile inside the grid
+
+		int c = 0;
+		while (true) {
+			Tile tile = grid.GetTile(Random.Range(0, grid.width), Random.Range(0, grid.height));
+
+			if (tile != null && TileIsFree(tile, radius)) {
+				return tile;
+			}
+
+			c++; if (c == 1000) { break; }
+		}
+
+		Debug.LogError("Tile could not be placed. Escaping...");
+		return null;
+	}
+
+
+	private bool TileIsFree (Tile tile, int radius) {
+		// make sure that given tile, and all tiles around in given radius are not occupied
+
+		if (tile != null && !tile.IsOccupied()) {
+			Tile tile2 = null;
+
+			// iterate on all surounding tiles
+			for (int i = 1; i <= radius; i++) {
+				tile2 = grid.GetTile(tile.x - i, tile.y);
+
+				// horizontal
+				if (tile2 == null || (tile2 != null  && tile2.IsOccupied())) { return false; }
+
+				tile2 = grid.GetTile(tile.x + i, tile.y);
+				if (tile2 == null || (tile2 != null  && tile2.IsOccupied())) { return false; }
+
+				tile2 = grid.GetTile(tile.x, tile.y - i);
+				if (tile2 == null || (tile2 != null  && tile2.IsOccupied())) { return false; }
+
+				tile2 = grid.GetTile(tile.x, tile.y + i);
+				if (tile2 == null || (tile2 != null  && tile2.IsOccupied())) { return false; }
+
+				// diagonal
+				tile2 = grid.GetTile(tile.x - i, tile.y - i);
+				if (tile2 == null || (tile2 != null  && tile2.IsOccupied())) { return false; }
+
+				tile2 = grid.GetTile(tile.x + i, tile.y - i);
+				if (tile2 == null || (tile2 != null  && tile2.IsOccupied())) { return false; }
+
+				tile2 = grid.GetTile(tile.x - i, tile.y + i);
+				if (tile2 == null || (tile2 != null  && tile2.IsOccupied())) { return false; }
+
+				tile2 = grid.GetTile(tile.x + i, tile.y + i);
+				if (tile2 == null || (tile2 != null  && tile2.IsOccupied())) { return false; }
+			}
+
+			return true;
+		}
+
+		return false;
 	}
 }

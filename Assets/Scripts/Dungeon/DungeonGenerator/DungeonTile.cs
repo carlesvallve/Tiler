@@ -27,6 +27,9 @@ public class DungeonTileNeighbours {
 public class DungeonTile {
 
 	public DungeonTileType id;
+	public int x;
+	public int y;
+
 	public GameObject obj;
 
 	public DungeonRoom room;
@@ -35,8 +38,10 @@ public class DungeonTile {
 	public Material material;
 
 
-	public DungeonTile ( DungeonTileType id ) {
+	public DungeonTile ( DungeonTileType id, int x, int y ) {
 		this.id = id;
+		this.x = x;
+		this.y = y;
 	}
 
 
