@@ -7,7 +7,7 @@ using System.Linq;
 [RequireComponent (typeof (Grid))]
 
 public class Dungeon : MonoSingleton <Dungeon> {
-
+	private AudioManager sfx;
 	private Grid grid;
 	private DungeonGenerator dungeonGenerator;
 
@@ -19,6 +19,7 @@ public class Dungeon : MonoSingleton <Dungeon> {
 
 
 	void Awake () {
+		sfx = AudioManager.instance;
 		grid = GetComponent<Grid>();
 		dungeonGenerator = GetComponent<DungeonGenerator>();
 	}
@@ -31,7 +32,7 @@ public class Dungeon : MonoSingleton <Dungeon> {
 	public void GenerateDungeon (int direction = 0) {
 		// Update current dungeon level
 		currentDungeonLevel += direction;
-		
+
 		// Set random seed
 		int seed;
 		if (currentDungeonLevel > dungeonSeeds.Count - 1) {
@@ -49,6 +50,11 @@ public class Dungeon : MonoSingleton <Dungeon> {
 		
 		// Generate dungeon data
 		dungeonGenerator.GenerateDungeon(dungeonGenerator.seed);
+
+		// Render dungeon on grid
+		RenderDungeon(direction);
+
+		sfx.Play("Audio/Sfx/Musical/gong", 0.8f, Random.Range(0.8f, 1.2f));
 
 		// emit event
 		/*if (OnDungeonGenerated != null) {
@@ -68,6 +74,13 @@ public class Dungeon : MonoSingleton <Dungeon> {
 	
 	private  IEnumerator ExitLevelCoroutine (int direction) {
 		yield return StartCoroutine(Navigator.instance.FadeOut(0.5f));
+
+		if (currentDungeonLevel + direction < 0) {
+			grid.ResetGrid();
+			print ("You escaped the dungeon!");
+			yield break;
+		}
+
 		GenerateDungeon(direction);
 		yield return StartCoroutine(Navigator.instance.FadeIn(0.5f));
 	}
@@ -77,7 +90,7 @@ public class Dungeon : MonoSingleton <Dungeon> {
 	// Render dungeon in the game grid
 	// =====================================================
 
-	public void RenderDungeon (int direction = 1) {
+	public void RenderDungeon (int direction) {
 		// init grid
 		grid.InitializeGrid (dungeonGenerator.MAP_WIDTH, dungeonGenerator.MAP_HEIGHT);
 
@@ -85,7 +98,7 @@ public class Dungeon : MonoSingleton <Dungeon> {
 		GenerateGridOnTreeQuad(dungeonGenerator.quadTree);
 
 		// Generate ladders
-		GenerateLadders();
+		GenerateStairs();
 
 		//Generate furniture
 		GenerateFurniture (20);
@@ -94,8 +107,8 @@ public class Dungeon : MonoSingleton <Dungeon> {
 		GenerateMonsters(10);
 
 		// Generate player
-		Tile ladder = direction == 1 ? grid.ladderUp : grid.ladderDown;
-		GeneratePlayer(ladder.x, ladder.y);
+		Stair stair = direction == -1 ? grid.stairDown : grid.stairUp;
+		GeneratePlayer(stair.x, stair.y);
 	}
 
 
@@ -192,6 +205,7 @@ public class Dungeon : MonoSingleton <Dungeon> {
 	private void GeneratePlayer (int x, int y) {
 		grid.player = grid.CreateCreature<Creature>(x, y, Game.assets.monster["adventurer"], 0.8f);
 		//grid.player.currentDungeonLevel = currentDungeonLevel;
+		Camera.main.transform.position = new Vector3(grid.player.x, grid.player.y, -10);
 	}
 
 
@@ -207,19 +221,21 @@ public class Dungeon : MonoSingleton <Dungeon> {
 	// Ladder generation
 	// =====================================================
 
-	private void GenerateLadders () {
+	private void GenerateStairs () {
 		Tile tile = null;
 
 		// locate ladderUp so it has no entities on 1 tile radius
 		tile = GetRandomFreeTile(1);
 		if (tile != null) {
-			grid.ladderUp = grid.CreateEntity<Entity>(tile.x, tile.y, Game.assets.dungeon["stairs-up"], 0.8f);
+			grid.stairUp = grid.CreateEntity<Stair>(tile.x, tile.y, Game.assets.dungeon["stairs-up"], 0.8f);
+			grid.stairUp.SetDirection(-1);
 		}
 
 		// locate ladderDown so it has no entities on 1 tile radius
 		tile = GetRandomFreeTile(1);
 		if (tile != null) {
-			grid.ladderUp = grid.CreateEntity<Entity>(tile.x, tile.y, Game.assets.dungeon["stairs-down"], 0.8f);
+			grid.stairDown = grid.CreateEntity<Stair>(tile.x, tile.y, Game.assets.dungeon["stairs-down"], 0.8f);
+			grid.stairDown.SetDirection(1);
 		}
 	}
 

@@ -19,7 +19,6 @@ public class Game : MonoBehaviour {
 		// Generate dungeon level and render it in the game grid
 		Dungeon dungeon = Dungeon.instance; 
 		dungeon.GenerateDungeon();
-		dungeon.RenderDungeon();
 
 		// play level bgm
 		sfx = AudioManager.instance;

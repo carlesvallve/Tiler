@@ -11,16 +11,14 @@ public class Door : Entity {
 		base.Init(grid, x, y, asset, scale);
 		walkable = true;
 
-		SetImage(scale, Vector3.zero, 0.04f);
+		SetImages(scale, Vector3.zero, 0.04f);
 
-		state = EntityStates.Locked;
+		state = EntityStates.Closed;
 	}
 
 
 	public IEnumerator Open () {
-		asset = Game.assets.dungeon["door-open"];
-		outline.sprite = asset;
-		img.sprite = asset;
+		SetAsset(Game.assets.dungeon["door-open"]);
 		state = EntityStates.Open;
 		sfx.Play("Audio/Sfx/Door/key", 1f, Random.Range(0.4f, 0.6f));
 

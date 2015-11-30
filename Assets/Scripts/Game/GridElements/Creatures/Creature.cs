@@ -14,7 +14,7 @@ public class Creature : Entity {
 		base.Init(grid, x, y, asset, scale);
 		walkable = false;
 
-		SetImage(scale, new Vector3(0, 0.1f, 0), 0.04f);
+		SetImages(scale, new Vector3(0, 0.1f, 0), 0.04f);
 		LocateAtCoords(x, y);
 	}
 
@@ -70,12 +70,12 @@ public class Creature : Entity {
 			int x = (int)p.x;
 			int y = (int)p.y;
 
-			// before moving, we want to check for encounters on next coord in path
+			// before moving, we want to check for encounters on next tile in path
 			yield return StartCoroutine(ResolveEncounters(x, y));
 
 			// escape if we stopped moving for any reason
 			if (!moving) { 
-				DrawPath(Color.white);
+				StopMoving();
 				yield break;
 			}
 
@@ -97,7 +97,18 @@ public class Creature : Entity {
 			grid.GetTile(x, y).SetColor(Color.white);
 		}
 
+		// after moving, check for encounters on goal tile
+		yield return StartCoroutine(ResolveEncountersAtGoal(x, y));
+
 		moving = false;
+		StopMoving();
+	}
+
+
+	private void StopMoving () {
+		DrawPath(Color.white);
+		Camera2D.instance.StopAllCoroutines();
+		Camera2D.instance.StartCoroutine(Camera2D.instance.MoveToPos(new Vector2(this.x, this.y)));
 	}
 
 
@@ -108,13 +119,35 @@ public class Creature : Entity {
 			// resolve doors
 			if (entity is Door) {
 				Door door = (Door)entity;
-				if (door.state == EntityStates.Closed) { // open door
-					yield return StartCoroutine(door.Open());
-				} else if (door.state == EntityStates.Locked) { // locked door
-					yield return StartCoroutine(door.Unlock(success => {
-						moving = success; // stop moving if we could not unlock it
-					}));
+				if (door.state != EntityStates.Open) {
+					DrawPath(Color.white);
+
+					if (door.state == EntityStates.Closed) { // open door
+						moving = false;
+						yield return StartCoroutine(door.Open());
+			
+					} else if (door.state == EntityStates.Locked) { // locked door
+						moving = false;
+						yield return StartCoroutine(door.Unlock(success => {}));
+					}
 				}
+			}
+		}
+
+		yield break;
+	}
+
+
+	private IEnumerator ResolveEncountersAtGoal (int x, int y) {
+		Entity entity = grid.GetEntity(x, y);
+		if (entity != null) {
+
+			// resolve stairs
+			if (entity is Stair) {
+				Stair stair = (Stair)entity;
+				Dungeon.instance.ExitLevel (stair.direction);
+				moving = false;
+				//StopAllCoroutines();
 			}
 		}
 

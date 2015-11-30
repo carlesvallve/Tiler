@@ -16,19 +16,20 @@ public class Grid : MonoSingleton <Grid> {
 
 	public GridLayers layers;
 
-	public Tile ladderUp;
-	public Tile ladderDown;
+	public Stair stairUp;
+	public Stair stairDown;
 
 	public Creature player;
 	public List<Creature> monsters;
 
 
 	public void InitializeGrid (int width, int height) {
-		this.width = width;
-		this.height = height;
-
 		// reset grid
 		ResetGrid();
+
+		// set grid dimensions
+		this.width = width;
+		this.height = height;
 
 		// initialize grid layers
 		layers = new GridLayers () {
@@ -55,7 +56,7 @@ public class Grid : MonoSingleton <Grid> {
 	}
 
 
-	private void ResetGrid () {
+	public void ResetGrid () {
 		// destroy all previously generated gameobjects
 
 		Tile[] tilesToDestroy = container.GetComponentsInChildren<Tile>();
@@ -67,6 +68,9 @@ public class Grid : MonoSingleton <Grid> {
 		foreach (Entity entity in entitiesToDestroy) {
 			Destroy(entity.gameObject);
 		}
+
+		this.width = 0;
+		this.height = 0;
 	}
 
 

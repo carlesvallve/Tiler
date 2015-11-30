@@ -8,7 +8,7 @@ public class Wall : Entity {
 		base.Init(grid, x, y, asset, scale);
 		walkable = false;
 
-		SetImage(scale, Vector3.zero, 0.04f);
+		SetImages(scale, Vector3.zero, 0.04f);
 	}
 	
 }

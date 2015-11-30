@@ -5,12 +5,17 @@ using UnityEngine.EventSystems;
 
 public class Camera2D : MonoBehaviour {
 
-	public static GameObject target;
+	public static Camera2D instance;
+
+	public static Transform target;
 	public float zoomSpeed = 1f;
 	public float dragSpeed = 1f;
 
 	private Vector3 lastMousePos;
 
+	void Awake() {
+		instance = this;
+	}
 
 	void LateUpdate () {
 		// escape if mouse is over hud
@@ -31,6 +36,8 @@ public class Camera2D : MonoBehaviour {
 			Drag(delta);
 			lastMousePos = Input.mousePosition;
 		}	
+
+		//Track();
 	}
 
 
@@ -60,6 +67,32 @@ public class Camera2D : MonoBehaviour {
 		Camera.main.transform.localPosition -= (Vector3)offset;
 
 		// then constrain to bounds if needed
+	}
+
+
+	void Track () {
+		if (target == null) { return; }
+		Vector3 pos = new Vector3(target.localPosition.x, target.localPosition.y, -10);
+		Camera.main.transform.localPosition = Vector3.Lerp(transform.localPosition, pos, Time.deltaTime * 20f);
+	}
+
+
+	public IEnumerator MoveToPos (Vector2 pos) {
+		float duration = 1f;
+		float t = 0;
+		Vector3 endPos = new Vector3(pos.x, pos.y, -10);
+
+		while (t <= 1) {
+			t += Time.deltaTime / duration;
+			
+			Vector3 p = Vector3.Lerp(transform.localPosition, endPos, Mathf.SmoothStep(0f, 1f, t));
+			
+			transform.localPosition = new Vector3(
+				Mathf.Round(p.x * 100f) / 100f, Mathf.Round(p.y * 100f) / 100f, p.z
+			);
+
+			yield return null;
+		}
 	}
 
 }

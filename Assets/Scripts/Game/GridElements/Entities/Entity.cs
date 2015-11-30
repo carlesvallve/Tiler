@@ -16,6 +16,6 @@ public class Entity: Tile {
 		walkable = false;
 
 		SetSortingOrder(100);
-		SetImage(scale, new Vector3(0, 0.1f, 0), 0.04f);
+		SetImages(scale, new Vector3(0, 0.1f, 0), 0.04f);
 	}
 }
