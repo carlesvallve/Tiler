@@ -58,7 +58,6 @@ public class Creature : Entity {
 		foreach (Vector2 p in path) {
 			grid.GetTile((int)p.x, (int)p.y).SetColor(color);
 		}
-
 	}
 
 
@@ -80,9 +79,6 @@ public class Creature : Entity {
 				yield break;
 			}
 
-			// clear path color at tile
-			grid.GetTile(x, y).SetColor(Color.white);
-
 			// interpolate creature position
 			float t = 0;
 			Vector3 startPos = transform.localPosition;
@@ -95,6 +91,10 @@ public class Creature : Entity {
 
 			// update tile position in grid
 			LocateAtCoords (x, y);
+			sfx.Play("Audio/Sfx/Step/step", 0.8f, Random.Range(0.8f, 1.2f));
+
+			// clear path color at tile
+			grid.GetTile(x, y).SetColor(Color.white);
 		}
 
 		moving = false;
@@ -109,14 +109,13 @@ public class Creature : Entity {
 			if (entity is Door) {
 				Door door = (Door)entity;
 				if (door.state == EntityStates.Closed) { // open door
-					door.Open();
-					yield return new WaitForSeconds(0.25f);
-				} else if (door.state == EntityStates.Locked) { // stop infron of locked door
-					moving = false;
-					yield return new WaitForSeconds(0.25f);
+					yield return StartCoroutine(door.Open());
+				} else if (door.state == EntityStates.Locked) { // locked door
+					yield return StartCoroutine(door.Unlock(success => {
+						moving = success; // stop moving if we could not unlock it
+					}));
 				}
 			}
-
 		}
 
 		yield break;

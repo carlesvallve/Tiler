@@ -5,6 +5,7 @@ using System.Collections;
 public class Tile : MonoBehaviour {
 
 	protected Grid grid;
+	protected AudioManager sfx;
 	
 	public int x { get; set; }
 	public int y { get; set; }
@@ -17,6 +18,8 @@ public class Tile : MonoBehaviour {
 	
 
 	public virtual void Init (Grid grid, int x, int y, Sprite asset, float scale = 1) {
+		sfx = AudioManager.instance;
+		
 		outline = transform.Find("Outline").GetComponent<SpriteRenderer>();
 		img = transform.Find("Sprite").GetComponent<SpriteRenderer>();
 

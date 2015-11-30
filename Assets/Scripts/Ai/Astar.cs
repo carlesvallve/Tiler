@@ -90,6 +90,9 @@ public class Astar {
 		int[] mypath = FindPath(startingX, startingY, targetX, targetY);
 		//convert path to Vector2-list
 		List<Vector2> pathlist = ConvertPath(mypath);
+		// remove first pos in path, since we already are there
+		if (pathlist.Count > 0) { pathlist.RemoveAt(0); }
+		
 		//return path
 		return pathlist;
 	}
