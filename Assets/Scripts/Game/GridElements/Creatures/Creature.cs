@@ -34,9 +34,7 @@ public class Creature : Entity {
 	public void SetPath (int x, int y) {
 		// clear previous path
 		if (path != null) {
-			foreach (Vector2 p in path) {
-				grid.GetTile((int)p.x, (int)p.y).SetColor(Color.white);
-			}
+			DrawPath(Color.white);
 		}
 
 		// if already moving, abort current move
@@ -49,12 +47,18 @@ public class Creature : Entity {
 		path = Astar.instance.SearchPath(grid.player.x, grid.player.y, x, y);
 
 		// render new path
-		foreach (Vector2 p in path) {
-			grid.GetTile((int)p.x, (int)p.y).SetColor(Color.magenta);
-		}
+		DrawPath(Color.magenta);
 
 		// floow new path
 		StartCoroutine(FollowPath());
+	}
+
+
+	protected void DrawPath (Color color) {
+		foreach (Vector2 p in path) {
+			grid.GetTile((int)p.x, (int)p.y).SetColor(color);
+		}
+
 	}
 
 
@@ -62,12 +66,21 @@ public class Creature : Entity {
 		moving = true;
 
 		for (int i = 0; i < path.Count; i++) {
-			// get next coords
+			// get next tile coords
 			Vector2 p = path[i];
 			int x = (int)p.x;
 			int y = (int)p.y;
 
-			// clear path color
+			// before moving, we want to check for encounters on next coord in path
+			yield return StartCoroutine(ResolveEncounters(x, y));
+
+			// escape if we stopped moving for any reason
+			if (!moving) { 
+				DrawPath(Color.white);
+				yield break;
+			}
+
+			// clear path color at tile
 			grid.GetTile(x, y).SetColor(Color.white);
 
 			// interpolate creature position
@@ -82,12 +95,39 @@ public class Creature : Entity {
 
 			// update tile position in grid
 			LocateAtCoords (x, y);
-
-			// escape if not moving anymore
-			if (!moving) { yield break; }
 		}
 
 		moving = false;
 	}
+
+
+	private IEnumerator ResolveEncounters (int x, int y) {
+		Entity entity = grid.GetEntity(x, y);
+		if (entity != null) {
+
+			// resolve doors
+			if (entity is Door) {
+				Door door = (Door)entity;
+				if (door.state == EntityStates.Closed) { // open door
+					door.Open();
+					yield return new WaitForSeconds(0.25f);
+				} else if (door.state == EntityStates.Locked) { // stop infron of locked door
+					moving = false;
+					yield return new WaitForSeconds(0.25f);
+				}
+			}
+
+		}
+
+		yield break;
+	}
 	
 }
+
+
+
+
+
+
+
+
