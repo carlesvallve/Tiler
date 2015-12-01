@@ -78,7 +78,7 @@ public class Camera2D : MonoBehaviour {
 
 
 	public IEnumerator MoveToPos (Vector2 pos) {
-		float duration = 1f;
+		float duration = 0.5f;
 		float t = 0;
 		Vector3 endPos = new Vector3(pos.x, pos.y, -10);
 

@@ -92,6 +92,7 @@ public class Navigator : MonoSingleton<Navigator> {
 
 		group.gameObject.SetActive(true);
 		//group.alpha = 0;
+		yield return null;
 		
 		float elapsedTime = 0;
 		while (elapsedTime < duration) {

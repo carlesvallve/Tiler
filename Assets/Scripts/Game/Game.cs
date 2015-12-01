@@ -23,7 +23,7 @@ public class Game : MonoBehaviour {
 		// play level bgm
 		sfx = AudioManager.instance;
 		sfx.Play("Audio/Bgm/Music/Alone", 0.6f, 1f, true);
-		sfx.Play("Audio/Bgm/Ambient/BonusWind", 1f, 1f, true);
+		sfx.Play("Audio/Bgm/Ambient/forest-ambient", 0.1f, 1f, true);
 	}
 
 }

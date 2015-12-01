@@ -7,6 +7,7 @@ using System.Linq;
 [RequireComponent (typeof (Grid))]
 
 public class Dungeon : MonoSingleton <Dungeon> {
+	private Navigator navigator;
 	private AudioManager sfx;
 	private Grid grid;
 	private DungeonGenerator dungeonGenerator;
@@ -19,6 +20,7 @@ public class Dungeon : MonoSingleton <Dungeon> {
 
 
 	void Awake () {
+		navigator = Navigator.instance;
 		sfx = AudioManager.instance;
 		grid = GetComponent<Grid>();
 		dungeonGenerator = GetComponent<DungeonGenerator>();
@@ -73,20 +75,20 @@ public class Dungeon : MonoSingleton <Dungeon> {
 
 	
 	private  IEnumerator ExitLevelCoroutine (int direction) {
-		yield return new WaitForSeconds (0.5f);
-
-		yield return StartCoroutine(Navigator.instance.FadeOut(0.5f));
-
-		yield return null;
+		// fade out
+		yield return StartCoroutine(navigator.FadeOut(0.5f));
 		
-		if (currentDungeonLevel + direction < 0) {
+		// generate next dungeon level
+		if (currentDungeonLevel + direction >= 0) {
+			GenerateDungeon(direction);
+		} else {
 			grid.ResetGrid();
 			print ("You escaped the dungeon!");
 			yield break;
 		}
 
-		GenerateDungeon(direction);
-		yield return StartCoroutine(Navigator.instance.FadeIn(0.5f));
+		// fade in
+		yield return StartCoroutine(navigator.FadeIn(0.5f));
 	}
 
 

@@ -56,7 +56,10 @@ public class Creature : Entity {
 
 	protected void DrawPath (Color color) {
 		foreach (Vector2 p in path) {
-			grid.GetTile((int)p.x, (int)p.y).SetColor(color);
+			Tile tile = grid.GetTile((int)p.x, (int)p.y);
+			if (tile != null) {
+				tile.SetColor(color);
+			}
 		}
 	}
 
@@ -100,12 +103,13 @@ public class Creature : Entity {
 		// after moving, check for encounters on goal tile
 		yield return StartCoroutine(ResolveEncountersAtGoal(x, y));
 
-		moving = false;
 		StopMoving();
 	}
 
 
 	private void StopMoving () {
+		moving = false;
+
 		DrawPath(Color.white);
 		Camera2D.instance.StopAllCoroutines();
 		Camera2D.instance.StartCoroutine(Camera2D.instance.MoveToPos(new Vector2(this.x, this.y)));
@@ -144,10 +148,13 @@ public class Creature : Entity {
 
 			// resolve stairs
 			if (entity is Stair) {
+				StopMoving();
+				
+				yield return new WaitForSeconds(0.25f);
+
 				Stair stair = (Stair)entity;
 				Dungeon.instance.ExitLevel (stair.direction);
-				moving = false;
-				//StopAllCoroutines();
+
 			}
 		}
 
