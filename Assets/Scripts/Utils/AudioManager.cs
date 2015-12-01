@@ -78,4 +78,36 @@ public class AudioManager : MonoSingleton <AudioManager> {
 		return audioSources.ContainsKey(wav);
 	}
 
+
+	/*private IEnumerator WaitForSoundToEnd(string wav, AudioSource source, float duration) {
+		yield return new WaitForSeconds(duration);
+
+		Destroy(source);
+		audioSources.Remove(wav);
+
+	}*/
+
+	public void Fade(string wav, float volume, float duration) {
+		StartCoroutine(FadeCoroutine(wav, volume, duration));
+	}
+
+	private IEnumerator FadeCoroutine (string wav, float volume, float duration) {
+		if (!audioSources.ContainsKey(wav)) { yield break; }
+
+		AudioSource source = audioSources[wav];
+
+		float t = 0;
+		float start = source.volume;
+
+		while (t <= 1) {
+			t += Time.deltaTime / duration;
+			source.volume = Mathf.Lerp(start, volume, t); // Mathf.SmoothStep(0f, 1f, t)
+			yield return null;
+		}
+
+		if (volume == 0) {
+			Stop(wav);
+		}
+	}
+
 }

@@ -9,6 +9,7 @@ using System.Linq;
 public class Dungeon : MonoSingleton <Dungeon> {
 	private Navigator navigator;
 	private AudioManager sfx;
+	private Game game;
 	private Grid grid;
 	private DungeonGenerator dungeonGenerator;
 
@@ -22,6 +23,7 @@ public class Dungeon : MonoSingleton <Dungeon> {
 	void Awake () {
 		navigator = Navigator.instance;
 		sfx = AudioManager.instance;
+		game = GetComponent<Game>();
 		grid = GetComponent<Grid>();
 		dungeonGenerator = GetComponent<DungeonGenerator>();
 	}
@@ -56,7 +58,8 @@ public class Dungeon : MonoSingleton <Dungeon> {
 		// Render dungeon on grid
 		RenderDungeon(direction);
 
-		sfx.Play("Audio/Sfx/Musical/gong", 0.8f, Random.Range(0.8f, 1.2f));
+		//sfx.Play("Audio/Sfx/Step/step", 1f, Random.Range(0.8f, 1.2f));
+		sfx.Play("Audio/Sfx/Musical/gong", 0.6f, Random.Range(0.8f, 1.2f));
 
 		// emit event
 		/*if (OnDungeonGenerated != null) {
@@ -75,6 +78,8 @@ public class Dungeon : MonoSingleton <Dungeon> {
 
 	
 	private  IEnumerator ExitLevelCoroutine (int direction) {
+		game.CrossFadeRandomBgm();
+
 		// fade out
 		yield return StartCoroutine(navigator.FadeOut(0.5f));
 		
