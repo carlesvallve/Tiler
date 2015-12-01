@@ -306,6 +306,12 @@ public class Dungeon : MonoSingleton <Dungeon> {
 			//Color color = new Color (Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f));
 			//PaintRoom(room, color);
 
+			// TODO: find a way to pick a random class (using reflection?)
+			//System.Type randomCreatureClass 
+			//List<System.Type> types = new List<System.Type>() { typeof(Goblin), typeof(Demon) };
+			//System.Type creatureType = types[0];
+			//print (">>> " + creatureType);
+
 			Sprite randomAsset = Game.assets.monster.ElementAt(Random.Range(0, Game.assets.monster.Count)).Value;
 
 			for (int i = 1; i <= maxMonsters; i ++) {
