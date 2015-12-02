@@ -15,13 +15,13 @@ public class Player : Creature {
 
 		// update game turns
 		if (x == this.x && y == this.y) {
-			Game.instance.UpdateTurns();
+			Game.instance.UpdateTurn();
 		}
 	}
 
 
 	protected override IEnumerator FollowPathStep (int i) {
 		yield return StartCoroutine(base.FollowPathStep(i));
-		Game.instance.UpdateTurns();
+		Game.instance.UpdateTurn();
 	}
 }

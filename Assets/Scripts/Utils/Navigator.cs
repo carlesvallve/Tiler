@@ -4,9 +4,9 @@ using System.Collections;
 
 public class Navigator : MonoSingleton<Navigator> {
 	
-	public Color Color = Color.black;
+	public Color color = new Color(0.15f, 0.15f, 0.15f, 1); //Color.black;
 	public float Duration = 1f;
-	public short SortOrder = short.MaxValue;
+	public short SortOrder = short.MaxValue - 10;
 
 	private Canvas canvas;
 	private CanvasGroup group;
@@ -33,7 +33,7 @@ public class Navigator : MonoSingleton<Navigator> {
 		group.transform.SetParent(container.transform);
 
 
-		overlay.color = Color;
+		overlay.color = color;
 		canvas.sortingOrder = SortOrder;
 
 		StartCoroutine(FadeIn(Duration));

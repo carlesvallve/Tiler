@@ -7,7 +7,7 @@ public class Game : MonoSingleton <Game> {
 
 	public static Assets assets;
 
-	public int turns = 0;
+	public int turn = 0;
 	
 	private AudioManager sfx;
 	private List<string> bgmList;
@@ -29,9 +29,9 @@ public class Game : MonoSingleton <Game> {
 	}
 
 
-	public void UpdateTurns () {
-		turns += 1;
-		Hud.instance.Log("TURN " + turns);
+	public void UpdateTurn () {
+		turn += 1;
+		Hud.instance.LogTurn("TURN " + turn);
 	}
 
 

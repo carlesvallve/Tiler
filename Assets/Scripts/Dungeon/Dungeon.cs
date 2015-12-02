@@ -10,6 +10,7 @@ public class Dungeon : MonoSingleton <Dungeon> {
 	private Navigator navigator;
 	private AudioManager sfx;
 	private Game game;
+	private Hud hud;
 	private Grid grid;
 	private DungeonGenerator dungeonGenerator;
 
@@ -20,6 +21,7 @@ public class Dungeon : MonoSingleton <Dungeon> {
 	void Awake () {
 		navigator = Navigator.instance;
 		sfx = AudioManager.instance;
+		hud = Hud.instance;
 		game = Game.instance;
 		grid = Grid.instance;
 		dungeonGenerator = DungeonGenerator.instance;
@@ -80,7 +82,7 @@ public class Dungeon : MonoSingleton <Dungeon> {
 			GenerateDungeon(direction);
 		} else {
 			grid.ResetGrid();
-			print ("You escaped the dungeon!");
+			hud.Log("You escaped the dungeon!");
 			yield break;
 		}
 
@@ -113,8 +115,11 @@ public class Dungeon : MonoSingleton <Dungeon> {
 		Stair stair = direction == -1 ? grid.stairDown : grid.stairUp;
 		GeneratePlayer(stair.x, stair.y);
 
-		// Update game turns
-		game.UpdateTurns();
+		// Update game turn
+		game.UpdateTurn();
+
+		// Log welcome message
+		hud.Log("Welcome to dungeon level " + currentDungeonLevel + ".");
 	}
 
 
@@ -198,7 +203,7 @@ public class Dungeon : MonoSingleton <Dungeon> {
 		for (int n = 0; n < dungeonGenerator.rooms.Count; n++) {
 
 			DungeonRoom room = dungeonGenerator.rooms[n];
-			int maxFurniture = Random.Range(0, 100) <= 85 ? Random.Range(1, (int)(room.tiles.Count / 3)) : 0;
+			int maxFurniture = Random.Range(0, 100) <= 85 ? Random.Range(1, (int)(room.tiles.Count * 0.3f)) : 0;
 
 			// place furniture in room
 			for (int i = 1; i <= maxFurniture; i ++) {
@@ -226,7 +231,7 @@ public class Dungeon : MonoSingleton <Dungeon> {
 	private void GenerateMonsters () {
 		for (int n = 0; n < dungeonGenerator.rooms.Count; n++) {
 			DungeonRoom room = dungeonGenerator.rooms[n];
-			int maxMonsters = Random.Range(0, 100) <= 50 ? Random.Range(1, (int)(room.tiles.Count / 3)) : 0;
+			int maxMonsters = Random.Range(0, 100) <= 50 ? Random.Range(1, (int)(room.tiles.Count * 0.2f)) : 0;
 
 			//Color color = new Color (Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f));
 			//PaintRoom(room, color);

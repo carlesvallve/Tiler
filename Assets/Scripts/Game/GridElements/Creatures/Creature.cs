@@ -46,7 +46,7 @@ public class Creature : Entity {
 
 		// if goal is the creature's tile, wait one turn instead
 		if (x == this.x && y == this.y) {
-			print ("waiting...");
+			Hud.instance.Log("You wait...");
 			return;
 		}
 
@@ -86,6 +86,8 @@ public class Creature : Entity {
 
 
 	protected virtual IEnumerator FollowPathStep (int i) {
+		Hud.instance.Log("");
+
 		// get next tile coords
 		Vector2 p = path[i];
 		int x = (int)p.x;
@@ -152,11 +154,13 @@ public class Creature : Entity {
 
 					if (door.state == EntityStates.Closed) { // open door
 						moving = false;
-						StartCoroutine(door.Open()); // yield return 
+						StartCoroutine(door.Open()); // yield return
+						Hud.instance.Log("You open the door.");
 			
 					} else if (door.state == EntityStates.Locked) { // locked door
 						moving = false;
 						StartCoroutine(door.Unlock(success => {})); // yield return 
+						Hud.instance.Log("You unlock the door.");
 					}
 				}
 			}
