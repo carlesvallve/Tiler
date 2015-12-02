@@ -32,6 +32,7 @@ public class Creature : Entity {
 
 
 	public void SetPath (int x, int y) {
+
 		// clear previous path
 		if (path != null) {
 			DrawPath(Color.white);
@@ -39,7 +40,13 @@ public class Creature : Entity {
 
 		// if already moving, abort current move
 		if (moving) {
-			moving = false;
+			StopMoving();
+			return;
+		}
+
+		// if goal is the creature's tile, wait one turn instead
+		if (x == this.x && y == this.y) {
+			print ("waiting...");
 			return;
 		}
 
@@ -49,7 +56,7 @@ public class Creature : Entity {
 		// render new path
 		DrawPath(Color.magenta);
 
-		// floow new path
+		// follow new path
 		StartCoroutine(FollowPath());
 	}
 
@@ -98,6 +105,9 @@ public class Creature : Entity {
 
 			// clear path color at tile
 			grid.GetTile(x, y).SetColor(Color.white);
+
+			// check if camera needs to track player
+			CheckCamera();
 		}
 
 		// after moving, check for encounters on goal tile
@@ -107,12 +117,21 @@ public class Creature : Entity {
 	}
 
 
+	private void CheckCamera () {
+		Vector3 screenPos = Camera.main.WorldToScreenPoint(transform.position);
+
+		if (screenPos.x < Screen.width * 0.25f || screenPos.y < Screen.height * 0.25f || 
+			screenPos.x > Screen.width * 0.75f || screenPos.y > Screen.height * 0.75f) {
+
+			Camera2D.instance.StopAllCoroutines();
+			Camera2D.instance.StartCoroutine(Camera2D.instance.MoveToPos(new Vector2(this.x, this.y)));
+		}
+	}
+
+
 	private void StopMoving () {
 		moving = false;
-
 		DrawPath(Color.white);
-		Camera2D.instance.StopAllCoroutines();
-		Camera2D.instance.StartCoroutine(Camera2D.instance.MoveToPos(new Vector2(this.x, this.y)));
 	}
 
 
@@ -149,7 +168,7 @@ public class Creature : Entity {
 			// resolve stairs
 			if (entity is Stair) {
 				StopMoving();
-				
+
 				yield return new WaitForSeconds(0.25f);
 
 				Stair stair = (Stair)entity;

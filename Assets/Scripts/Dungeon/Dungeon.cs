@@ -133,7 +133,7 @@ public class Dungeon : MonoSingleton <Dungeon> {
 					// create floors
 					if (dtile.id == DungeonTileType.ROOM || dtile.id == DungeonTileType.CORRIDOR || 
 						dtile.id == DungeonTileType.DOORH || dtile.id == DungeonTileType.DOORV) {
-						Tile tile = grid.CreateTile<Tile>(x, y, Game.assets.dungeon["floor-sandstone"], 1);
+						Tile tile = grid.CreateTile(typeof(Tile), x, y, Game.assets.dungeon["floor-sandstone"], 1) as Tile;
 	
 						// set room info in floor tile
 						if (dtile.room != null) {
@@ -144,14 +144,14 @@ public class Dungeon : MonoSingleton <Dungeon> {
 
 					// create walls
 					if (dtile.id == DungeonTileType.WALL || dtile.id == DungeonTileType.WALLCORNER) {
-						Wall wall = grid.CreateEntity<Wall>(x, y, Game.assets.dungeon["floor-sandstone"], 1);
+						Wall wall = grid.CreateEntity(typeof(Wall), x, y, Game.assets.dungeon["floor-sandstone"], 1) as Wall;
 						wall.SetColor(new Color(0.8f, 0.8f, 0.6f));
 						//Generate3dWall(dtile, x, y);
 					}
 					
 					// create doors
 					if (dtile.id == DungeonTileType.DOORH || dtile.id == DungeonTileType.DOORV) {
-						grid.CreateEntity<Door>(x, y, Game.assets.dungeon["door-closed"], 1);
+						grid.CreateEntity(typeof(Door), x, y, Game.assets.dungeon["door-closed"], 1);
 					}
 				}
 			}
@@ -175,14 +175,14 @@ public class Dungeon : MonoSingleton <Dungeon> {
 		// locate ladderUp so it has no entities on 1 tile radius
 		tile = GetFreeTileOnGrid(1);
 		if (tile != null) {
-			grid.stairUp = grid.CreateEntity<Stair>(tile.x, tile.y, Game.assets.dungeon["stairs-up"], 0.8f);
+			grid.stairUp = (Stair)grid.CreateEntity(typeof(Stair), tile.x, tile.y, Game.assets.dungeon["stairs-up"], 0.8f) as Stair;
 			grid.stairUp.SetDirection(-1);
 		}
 
 		// locate ladderDown so it has no entities on 1 tile radius
 		tile = GetFreeTileOnGrid(1);
 		if (tile != null) {
-			grid.stairDown = grid.CreateEntity<Stair>(tile.x, tile.y, Game.assets.dungeon["stairs-down"], 0.8f);
+			grid.stairDown = (Stair)grid.CreateEntity(typeof(Stair), tile.x, tile.y, Game.assets.dungeon["stairs-down"], 0.8f) as Stair;
 			grid.stairDown.SetDirection(1);
 		}
 	}
@@ -208,7 +208,7 @@ public class Dungeon : MonoSingleton <Dungeon> {
 					"grave-1", "grave-2", "grave-3", "lever-left", "lever-right", 
 					"table-1", "vase" };
 
-				grid.CreateEntity<Entity>(tile.x, tile.y, Game.assets.dungeon[arr[Random.Range(0, arr.Length)]], 0.8f);
+				grid.CreateEntity(typeof(Entity), tile.x, tile.y, Game.assets.dungeon[arr[Random.Range(0, arr.Length)]], 0.8f);
 			}
 
 			// tell the room that has been filled with furniture
@@ -228,11 +228,9 @@ public class Dungeon : MonoSingleton <Dungeon> {
 			//Color color = new Color (Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f));
 			//PaintRoom(room, color);
 
-			// TODO: find a way to pick a random class (using reflection?)
-			//System.Type randomCreatureClass 
-			//List<System.Type> types = new List<System.Type>() { typeof(Goblin), typeof(Demon) };
-			//System.Type creatureType = types[0];
-			//print (">>> " + creatureType);
+			// Pick a random creature type
+			List<System.Type> types = new List<System.Type>() { typeof(Goblin), typeof(Demon) };
+			System.Type creatureType = types[0];
 
 			Sprite randomAsset = Game.assets.monster.ElementAt(Random.Range(0, Game.assets.monster.Count)).Value;
 
@@ -240,7 +238,7 @@ public class Dungeon : MonoSingleton <Dungeon> {
 				Tile tile = GetFreeTileOnRoom(room, 0);
 				if (tile == null) { continue; }
 				
-				grid.monsters.Add( grid.CreateCreature<Creature>(tile.x, tile.y, randomAsset, 0.8f) );
+				grid.monsters.Add( grid.CreateCreature(creatureType, tile.x, tile.y, randomAsset, 0.8f));
 			}
 
 			// tell the room that has been filled with monsters
@@ -254,7 +252,7 @@ public class Dungeon : MonoSingleton <Dungeon> {
 	// =====================================================
 
 	private void GeneratePlayer (int x, int y) {
-		grid.player = grid.CreateCreature<Creature>(x, y, Game.assets.monster["adventurer"], 0.8f);
+		grid.player = grid.CreateCreature(typeof(Creature), x, y, Game.assets.monster["adventurer"], 0.8f);
 		Camera.main.transform.position = new Vector3(grid.player.x, grid.player.y, -10);
 	}
 

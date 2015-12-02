@@ -76,17 +76,17 @@ public class Grid : MonoSingleton <Grid> {
 
 	// Tile
 
-	public T CreateTile <T> (int x, int y, Sprite asset, float scale = 1) where T: Tile {
-		Transform parent = container.Find("Tiles");
+	public Tile CreateTile (System.Type TileType, int x, int y, Sprite asset, float scale = 1) {
+		Transform parent = container.Find("Creatures");
 
 		GameObject obj = (GameObject)Instantiate(tilePrefab);
 		obj.transform.SetParent(parent, false);
-		obj.name = typeof(T).ToString();
+		obj.name = TileType.ToString(); //typeof(T).ToString();
 
-		T tile = obj.AddComponent<T>();
+		Tile tile = obj.AddComponent(TileType) as Tile;
 		tile.Init(this, x, y, asset, scale);
 
-		SetTile(x, y, (Tile)tile);
+		SetTile(x, y, tile);
 
 		return tile;
 	}
@@ -107,14 +107,14 @@ public class Grid : MonoSingleton <Grid> {
 
 	// Entity
 
-	public T CreateEntity<T> (int x, int y, Sprite asset, float scale = 1) where T: Entity {
-		Transform parent = container.Find("Entities");
+	public Entity CreateEntity (System.Type EntityType, int x, int y, Sprite asset, float scale = 1) {
+		Transform parent = container.Find("Creatures");
 
 		GameObject obj = (GameObject)Instantiate(tilePrefab);
 		obj.transform.SetParent(parent, false);
-		obj.name = typeof(T).ToString();
+		obj.name = EntityType.ToString(); //typeof(T).ToString();
 
-		T entity = obj.AddComponent<T>();
+		Entity entity = obj.AddComponent(EntityType) as Entity;
 		entity.Init(this, x, y, asset, scale);
 
 		SetEntity(x, y, entity);
@@ -138,14 +138,14 @@ public class Grid : MonoSingleton <Grid> {
 
 	// Creature
 
-	public T CreateCreature<T> (int x, int y, Sprite asset, float scale = 1) where T: Creature {
+	public Creature CreateCreature (System.Type CreatureType, int x, int y, Sprite asset, float scale = 1) {
 		Transform parent = container.Find("Creatures");
 
 		GameObject obj = (GameObject)Instantiate(tilePrefab);
 		obj.transform.SetParent(parent, false);
-		obj.name = typeof(T).ToString();
+		obj.name = CreatureType.ToString(); //typeof(T).ToString();
 
-		T creature = obj.AddComponent<T>();
+		Creature creature = obj.AddComponent(CreatureType) as Creature;
 		creature.Init(this, x, y, asset, scale);
 
 		SetCreature(x, y, creature);

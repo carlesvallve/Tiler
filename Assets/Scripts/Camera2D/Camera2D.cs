@@ -42,8 +42,6 @@ public class Camera2D : MonoBehaviour {
 			Drag(delta);
 			lastMousePos = Input.mousePosition;
 		}	
-
-		//Track();
 	}
 
 
@@ -73,13 +71,6 @@ public class Camera2D : MonoBehaviour {
 		Camera.main.transform.localPosition -= (Vector3)offset;
 
 		// then constrain to bounds if needed
-	}
-
-
-	void Track () {
-		if (target == null) { return; }
-		Vector3 pos = new Vector3(target.localPosition.x, target.localPosition.y, -10);
-		Camera.main.transform.localPosition = Vector3.Lerp(transform.localPosition, pos, Time.deltaTime * 20f);
 	}
 
 
