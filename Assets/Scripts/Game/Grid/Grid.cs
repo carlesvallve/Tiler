@@ -76,7 +76,7 @@ public class Grid : MonoSingleton <Grid> {
 
 	// Tile
 
-	public Tile CreateTile (System.Type TileType, int x, int y, Sprite asset, float scale = 1) {
+	public Tile CreateTile (System.Type TileType, int x, int y, float scale = 1, Sprite asset = null) {
 		Transform parent = container.Find("Tiles");
 
 		GameObject obj = (GameObject)Instantiate(tilePrefab);
@@ -84,7 +84,7 @@ public class Grid : MonoSingleton <Grid> {
 		obj.name = TileType.ToString(); //typeof(T).ToString();
 
 		Tile tile = obj.AddComponent(TileType) as Tile;
-		tile.Init(this, x, y, asset, scale);
+		tile.Init(this, x, y, scale, asset);
 
 		SetTile(x, y, tile);
 
@@ -107,7 +107,7 @@ public class Grid : MonoSingleton <Grid> {
 
 	// Entity
 
-	public Entity CreateEntity (System.Type EntityType, int x, int y, Sprite asset, float scale = 1) {
+	public Entity CreateEntity (System.Type EntityType, int x, int y, float scale = 1, Sprite asset = null) {
 		Transform parent = container.Find("Entities");
 
 		GameObject obj = (GameObject)Instantiate(tilePrefab);
@@ -115,7 +115,7 @@ public class Grid : MonoSingleton <Grid> {
 		obj.name = EntityType.ToString(); //typeof(T).ToString();
 
 		Entity entity = obj.AddComponent(EntityType) as Entity;
-		entity.Init(this, x, y, asset, scale);
+		entity.Init(this, x, y, scale, asset);
 
 		SetEntity(x, y, entity);
 
@@ -138,7 +138,7 @@ public class Grid : MonoSingleton <Grid> {
 
 	// Creature
 
-	public Creature CreateCreature (System.Type CreatureType, int x, int y, Sprite asset, float scale = 1) {
+	public Creature CreateCreature (System.Type CreatureType, int x, int y, float scale = 1, Sprite asset = null) {
 		Transform parent = container.Find("Creatures");
 
 		GameObject obj = (GameObject)Instantiate(tilePrefab);
@@ -146,7 +146,7 @@ public class Grid : MonoSingleton <Grid> {
 		obj.name = CreatureType.ToString(); //typeof(T).ToString();
 
 		Creature creature = obj.AddComponent(CreatureType) as Creature;
-		creature.Init(this, x, y, asset, scale);
+		creature.Init(this, x, y, scale,  asset);
 
 		SetCreature(x, y, creature);
 

@@ -5,13 +5,15 @@ using System.Collections.Generic;
 
 public class Creature : Entity {
 
+	public int hp = 5;
+
 	protected List<Vector2> path;
 	protected float speed = 0.15f;
 	protected bool moving = false;
 
 
-	public override void Init (Grid grid, int x, int y, Sprite asset, float scale = 1) {
-		base.Init(grid, x, y, asset, scale);
+	public override void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null) {
+		base.Init(grid, x, y, scale, asset);
 		walkable = false;
 
 		SetImages(scale, new Vector3(0, 0.1f, 0), 0.04f);

@@ -11,8 +11,8 @@ public enum EntityStates {
 
 public class Entity: Tile {
 
-	public override void Init (Grid grid, int x, int y, Sprite asset, float scale = 1) {
-		base.Init(grid, x, y, asset, scale);
+	public override void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null) {
+		base.Init(grid, x, y, scale, asset);
 		walkable = false;
 
 		SetSortingOrder(100);

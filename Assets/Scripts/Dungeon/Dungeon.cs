@@ -141,7 +141,7 @@ public class Dungeon : MonoSingleton <Dungeon> {
 					// create floors
 					if (dtile.id == DungeonTileType.ROOM || dtile.id == DungeonTileType.CORRIDOR || 
 						dtile.id == DungeonTileType.DOORH || dtile.id == DungeonTileType.DOORV) {
-						Tile tile = grid.CreateTile(typeof(Tile), x, y, Game.assets.dungeon["floor-sandstone"], 1) as Tile;
+						Tile tile = grid.CreateTile(typeof(Tile), x, y, 1, Game.assets.dungeon["floor-sandstone"]) as Tile;
 	
 						// set room info in floor tile
 						if (dtile.room != null) {
@@ -152,14 +152,14 @@ public class Dungeon : MonoSingleton <Dungeon> {
 
 					// create walls
 					if (dtile.id == DungeonTileType.WALL || dtile.id == DungeonTileType.WALLCORNER) {
-						Wall wall = grid.CreateEntity(typeof(Wall), x, y, Game.assets.dungeon["floor-sandstone"], 1) as Wall;
+						Wall wall = grid.CreateEntity(typeof(Wall), x, y, 1, Game.assets.dungeon["floor-sandstone"]) as Wall;
 						wall.SetColor(new Color(0.8f, 0.8f, 0.6f));
 						//Generate3dWall(dtile, x, y);
 					}
 					
 					// create doors
 					if (dtile.id == DungeonTileType.DOORH || dtile.id == DungeonTileType.DOORV) {
-						grid.CreateEntity(typeof(Door), x, y, Game.assets.dungeon["door-closed"], 1);
+						grid.CreateEntity(typeof(Door), x, y, 1, Game.assets.dungeon["door-closed"]);
 					}
 				}
 			}
@@ -183,14 +183,14 @@ public class Dungeon : MonoSingleton <Dungeon> {
 		// locate ladderUp so it has no entities on 1 tile radius
 		tile = GetFreeTileOnGrid(1);
 		if (tile != null) {
-			grid.stairUp = (Stair)grid.CreateEntity(typeof(Stair), tile.x, tile.y, Game.assets.dungeon["stairs-up"], 0.8f) as Stair;
+			grid.stairUp = (Stair)grid.CreateEntity(typeof(Stair), tile.x, tile.y, 0.8f, Game.assets.dungeon["stairs-up"]) as Stair;
 			grid.stairUp.SetDirection(-1);
 		}
 
 		// locate ladderDown so it has no entities on 1 tile radius
 		tile = GetFreeTileOnGrid(1);
 		if (tile != null) {
-			grid.stairDown = (Stair)grid.CreateEntity(typeof(Stair), tile.x, tile.y, Game.assets.dungeon["stairs-down"], 0.8f) as Stair;
+			grid.stairDown = (Stair)grid.CreateEntity(typeof(Stair), tile.x, tile.y, 0.8f, Game.assets.dungeon["stairs-down"]) as Stair;
 			grid.stairDown.SetDirection(1);
 		}
 	}
@@ -216,7 +216,7 @@ public class Dungeon : MonoSingleton <Dungeon> {
 					"grave-1", "grave-2", "grave-3", "lever-left", "lever-right", 
 					"table-1", "vase" };
 
-				grid.CreateEntity(typeof(Furniture), tile.x, tile.y, Game.assets.dungeon[arr[Random.Range(0, arr.Length)]], 0.8f);
+				grid.CreateEntity(typeof(Furniture), tile.x, tile.y, 0.8f, Game.assets.dungeon[arr[Random.Range(0, arr.Length)]]);
 			}
 
 			// tell the room that has been filled with furniture
@@ -240,13 +240,13 @@ public class Dungeon : MonoSingleton <Dungeon> {
 			List<System.Type> types = new List<System.Type>() { typeof(Goblin), typeof(Demon) };
 			System.Type creatureType = types[0];
 
-			Sprite randomAsset = Game.assets.monster.ElementAt(Random.Range(0, Game.assets.monster.Count)).Value;
+			//Sprite randomAsset = Game.assets.monster.ElementAt(Random.Range(0, Game.assets.monster.Count)).Value;
 
 			for (int i = 1; i <= maxMonsters; i ++) {
 				Tile tile = GetFreeTileOnRoom(room, 0);
 				if (tile == null) { continue; }
 				
-				grid.monsters.Add( grid.CreateCreature(creatureType, tile.x, tile.y, randomAsset, 0.8f));
+				grid.monsters.Add( grid.CreateCreature(creatureType, tile.x, tile.y, 0.8f)); // randomAsset, 
 			}
 
 			// tell the room that has been filled with monsters
@@ -260,7 +260,7 @@ public class Dungeon : MonoSingleton <Dungeon> {
 	// =====================================================
 
 	private void GeneratePlayer (int x, int y) {
-		grid.player = grid.CreateCreature(typeof(Player), x, y, Game.assets.monster["adventurer"], 0.8f) as Player;
+		grid.player = grid.CreateCreature(typeof(Player), x, y, 0.8f, Game.assets.monster["adventurer"]) as Player;
 		Camera.main.transform.position = new Vector3(grid.player.x, grid.player.y, -10);
 	}
 

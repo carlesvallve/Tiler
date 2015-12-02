@@ -3,12 +3,13 @@ using System.Collections;
 
 public class Player : Creature {
 
-	public int hp = 10;
 
+	public override void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null) {
+		base.Init(grid, x, y, scale, asset);	
 
-	public override void Init (Grid grid, int x, int y, Sprite asset, float scale = 1) {
-		base.Init(grid, x, y, asset, scale);	
+		hp = 20;
 	}
+	
 
 	public override void SetPath (int x, int y) {
 		base.SetPath(x, y);

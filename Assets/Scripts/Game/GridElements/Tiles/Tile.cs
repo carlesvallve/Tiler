@@ -20,7 +20,7 @@ public class Tile : MonoBehaviour {
 	protected TextMesh label;
 	
 
-	public virtual void Init (Grid grid, int x, int y, Sprite asset, float scale = 1) {
+	public virtual void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null) {
 		sfx = AudioManager.instance;
 
 		outline = transform.Find("Outline").GetComponent<SpriteRenderer>();
