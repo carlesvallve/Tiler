@@ -75,7 +75,7 @@ public class Dungeon : MonoSingleton <Dungeon> {
 		game.CrossFadeRandomBgm();
 
 		// fade out
-		yield return StartCoroutine(navigator.FadeOut(0.5f));
+		yield return StartCoroutine(hud.FadeOut(0.5f));
 		
 		// generate next dungeon level
 		if (currentDungeonLevel + direction >= 0) {
@@ -87,7 +87,7 @@ public class Dungeon : MonoSingleton <Dungeon> {
 		}
 
 		// fade in
-		yield return StartCoroutine(navigator.FadeIn(0.5f));
+		yield return StartCoroutine(hud.FadeIn(0.5f));
 	}
 
 

@@ -4,9 +4,9 @@ using System.Collections;
 
 public class Navigator : MonoSingleton<Navigator> {
 	
-	public Color color = new Color(0.15f, 0.15f, 0.15f, 1); //Color.black;
+	public Color color = Color.black;
 	public float Duration = 1f;
-	public short SortOrder = short.MaxValue - 10;
+	public short SortOrder = short.MaxValue;
 
 	private Canvas canvas;
 	private CanvasGroup group;
