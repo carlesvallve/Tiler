@@ -119,7 +119,7 @@ public class Dungeon : MonoSingleton <Dungeon> {
 		game.UpdateTurn();
 
 		// Log welcome message
-		hud.Log("Welcome to dungeon level " + currentDungeonLevel + ".");
+		hud.Log("Welcome to dungeon level " + currentDungeonLevel);
 	}
 
 
