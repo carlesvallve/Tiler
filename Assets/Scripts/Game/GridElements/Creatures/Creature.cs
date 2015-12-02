@@ -55,12 +55,21 @@ public class Creature : Entity {
 			return;
 		}
 
+		// escape if goal is not visible
+		Tile tile = grid.GetTile(x, y);
+		if (!tile.gameObject.activeSelf) {
+			return;
+		}
+
 		// search for new path
 		path = Astar.instance.SearchPath(grid.player.x, grid.player.y, x, y);
 		path = SetPathAfterEncounter(path);
 
+		// escape if no path was found
 		if (path.Count == 0) {
 			Hud.instance.Log("You cannot go there.");
+			StopMoving();
+			return;
 		}
 
 		// render new path
