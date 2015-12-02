@@ -31,7 +31,7 @@ public class Creature : Entity {
 	}
 
 
-	public void SetPath (int x, int y) {
+	public virtual void SetPath (int x, int y) {
 
 		// clear previous path
 		if (path != null) {
@@ -75,45 +75,50 @@ public class Creature : Entity {
 		moving = true;
 
 		for (int i = 0; i < path.Count; i++) {
-			// get next tile coords
-			Vector2 p = path[i];
-			int x = (int)p.x;
-			int y = (int)p.y;
-
-			// before moving, we want to check for encounters on next tile in path
-			yield return StartCoroutine(ResolveEncounters(x, y));
-
-			// escape if we stopped moving for any reason
-			if (!moving) { 
-				StopMoving();
-				yield break;
-			}
-
-			// interpolate creature position
-			float t = 0;
-			Vector3 startPos = transform.localPosition;
-			Vector3 endPos = new Vector3(x, y, 0);
-			while (t <= 1) {
-				t += Time.deltaTime / speed;
-				transform.localPosition = Vector3.Lerp(startPos, endPos, Mathf.SmoothStep(0f, 1f, t));
-				yield return null;
-			}
-
-			// update tile position in grid
-			LocateAtCoords (x, y);
-			sfx.Play("Audio/Sfx/Step/step", 0.8f, Random.Range(0.8f, 1.2f));
-
-			// clear path color at tile
-			grid.GetTile(x, y).SetColor(Color.white);
-
-			// check if camera needs to track player
-			CheckCamera();
+			yield return StartCoroutine (FollowPathStep(i));
 		}
 
 		// after moving, check for encounters on goal tile
-		yield return StartCoroutine(ResolveEncountersAtGoal(x, y));
+		yield return StartCoroutine(ResolveEncountersAtGoal(this.x, this.y));
 
 		StopMoving();
+	}
+
+
+	protected virtual IEnumerator FollowPathStep (int i) {
+		// get next tile coords
+		Vector2 p = path[i];
+		int x = (int)p.x;
+		int y = (int)p.y;
+
+		// before moving, we want to check for encounters on next tile in path
+		yield return StartCoroutine(ResolveEncounters(x, y));
+
+		// escape if we stopped moving for any reason
+		if (!moving) { 
+			StopMoving();
+			yield break;
+		}
+
+		// interpolate creature position
+		float t = 0;
+		Vector3 startPos = transform.localPosition;
+		Vector3 endPos = new Vector3(x, y, 0);
+		while (t <= 1) {
+			t += Time.deltaTime / speed;
+			transform.localPosition = Vector3.Lerp(startPos, endPos, Mathf.SmoothStep(0f, 1f, t));
+			yield return null;
+		}
+
+		// update tile position in grid
+		LocateAtCoords (x, y);
+		sfx.Play("Audio/Sfx/Step/step", 0.8f, Random.Range(0.8f, 1.2f));
+
+		// clear path color at tile
+		grid.GetTile(x, y).SetColor(Color.white);
+
+		// check if camera needs to track player
+		CheckCamera();
 	}
 
 

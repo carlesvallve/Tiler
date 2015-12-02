@@ -3,9 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 
 
-public class Game : MonoBehaviour {
+public class Game : MonoSingleton <Game> {
 
 	public static Assets assets;
+
+	public int turns = 0;
 	
 	private AudioManager sfx;
 	private List<string> bgmList;
@@ -19,6 +21,23 @@ public class Game : MonoBehaviour {
 		InitGame();
 	}
 
+
+	private void InitGame () {
+		// Generate dungeon level and render it in the game grid
+		Dungeon dungeon = Dungeon.instance; 
+		dungeon.GenerateDungeon();
+	}
+
+
+	public void UpdateTurns () {
+		turns += 1;
+		Hud.instance.Log("TURN " + turns);
+	}
+
+
+	// =====================================================
+	// Game Music
+	// =====================================================
 
 	private void SetBgm() {
 		sfx = AudioManager.instance;
@@ -65,13 +84,6 @@ public class Game : MonoBehaviour {
 		bgm2 = GetRandomBgm();
 		sfx.Play(bgm2, 0, 1f, true);
 		sfx.Fade(bgm2, 0.4f, 1f);
-	}
-
-
-	private void InitGame () {
-		// Generate dungeon level and render it in the game grid
-		Dungeon dungeon = Dungeon.instance; 
-		dungeon.GenerateDungeon();
 	}
 
 }

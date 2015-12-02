@@ -19,7 +19,7 @@ public class Grid : MonoSingleton <Grid> {
 	public Stair stairUp;
 	public Stair stairDown;
 
-	public Creature player;
+	public Player player;
 	public List<Creature> monsters;
 
 
@@ -77,7 +77,7 @@ public class Grid : MonoSingleton <Grid> {
 	// Tile
 
 	public Tile CreateTile (System.Type TileType, int x, int y, Sprite asset, float scale = 1) {
-		Transform parent = container.Find("Creatures");
+		Transform parent = container.Find("Tiles");
 
 		GameObject obj = (GameObject)Instantiate(tilePrefab);
 		obj.transform.SetParent(parent, false);
@@ -108,7 +108,7 @@ public class Grid : MonoSingleton <Grid> {
 	// Entity
 
 	public Entity CreateEntity (System.Type EntityType, int x, int y, Sprite asset, float scale = 1) {
-		Transform parent = container.Find("Creatures");
+		Transform parent = container.Find("Entities");
 
 		GameObject obj = (GameObject)Instantiate(tilePrefab);
 		obj.transform.SetParent(parent, false);

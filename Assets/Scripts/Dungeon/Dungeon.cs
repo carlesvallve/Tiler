@@ -20,9 +20,9 @@ public class Dungeon : MonoSingleton <Dungeon> {
 	void Awake () {
 		navigator = Navigator.instance;
 		sfx = AudioManager.instance;
-		game = GetComponent<Game>();
-		grid = GetComponent<Grid>();
-		dungeonGenerator = GetComponent<DungeonGenerator>();
+		game = Game.instance;
+		grid = Grid.instance;
+		dungeonGenerator = DungeonGenerator.instance;
 	}
 
 
@@ -112,6 +112,9 @@ public class Dungeon : MonoSingleton <Dungeon> {
 		// Generate player
 		Stair stair = direction == -1 ? grid.stairDown : grid.stairUp;
 		GeneratePlayer(stair.x, stair.y);
+
+		// Update game turns
+		game.UpdateTurns();
 	}
 
 
@@ -208,7 +211,7 @@ public class Dungeon : MonoSingleton <Dungeon> {
 					"grave-1", "grave-2", "grave-3", "lever-left", "lever-right", 
 					"table-1", "vase" };
 
-				grid.CreateEntity(typeof(Entity), tile.x, tile.y, Game.assets.dungeon[arr[Random.Range(0, arr.Length)]], 0.8f);
+				grid.CreateEntity(typeof(Furniture), tile.x, tile.y, Game.assets.dungeon[arr[Random.Range(0, arr.Length)]], 0.8f);
 			}
 
 			// tell the room that has been filled with furniture
@@ -252,7 +255,7 @@ public class Dungeon : MonoSingleton <Dungeon> {
 	// =====================================================
 
 	private void GeneratePlayer (int x, int y) {
-		grid.player = grid.CreateCreature(typeof(Creature), x, y, Game.assets.monster["adventurer"], 0.8f);
+		grid.player = grid.CreateCreature(typeof(Player), x, y, Game.assets.monster["adventurer"], 0.8f) as Player;
 		Camera.main.transform.position = new Vector3(grid.player.x, grid.player.y, -10);
 	}
 
