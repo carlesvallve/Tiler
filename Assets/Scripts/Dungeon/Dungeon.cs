@@ -7,7 +7,6 @@ using System.Linq;
 [RequireComponent (typeof (Grid))]
 
 public class Dungeon : MonoSingleton <Dungeon> {
-	private Navigator navigator;
 	private AudioManager sfx;
 	private Game game;
 	private Hud hud;
@@ -19,7 +18,6 @@ public class Dungeon : MonoSingleton <Dungeon> {
 
 
 	void Awake () {
-		navigator = Navigator.instance;
 		sfx = AudioManager.instance;
 		hud = Hud.instance;
 		game = Game.instance;
@@ -152,7 +150,7 @@ public class Dungeon : MonoSingleton <Dungeon> {
 
 					// create walls
 					if (dtile.id == DungeonTileType.WALL || dtile.id == DungeonTileType.WALLCORNER) {
-						Tile tile = grid.CreateTile(typeof(Tile), x, y, 1, Game.assets.dungeon["floor-sandstone"]) as Tile;
+						grid.CreateTile(typeof(Tile), x, y, 1, Game.assets.dungeon["floor-sandstone"]);
 						Wall wall = (Wall)grid.CreateEntity(typeof(Wall), x, y, 1, Game.assets.dungeon["floor-sandstone"]) as Wall;
 						wall.SetColor(new Color(0.8f, 0.8f, 0.6f));
 						//Generate3dWall(dtile, x, y);
