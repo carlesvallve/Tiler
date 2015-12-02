@@ -18,6 +18,9 @@ public class Controls : MonoBehaviour {
 
 
 	private void TapAtPos (Vector3 pos) {
+
+		
+
 		// get tap position in world/grid units
 		pos = Camera.main.ScreenToWorldPoint(new Vector3(pos.x, pos.y, Camera.main.nearClipPlane));
 

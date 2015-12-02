@@ -152,7 +152,8 @@ public class Dungeon : MonoSingleton <Dungeon> {
 
 					// create walls
 					if (dtile.id == DungeonTileType.WALL || dtile.id == DungeonTileType.WALLCORNER) {
-						Wall wall = grid.CreateEntity(typeof(Wall), x, y, 1, Game.assets.dungeon["floor-sandstone"]) as Wall;
+						Tile tile = grid.CreateTile(typeof(Tile), x, y, 1, Game.assets.dungeon["floor-sandstone"]) as Tile;
+						Wall wall = (Wall)grid.CreateEntity(typeof(Wall), x, y, 1, Game.assets.dungeon["floor-sandstone"]) as Wall;
 						wall.SetColor(new Color(0.8f, 0.8f, 0.6f));
 						//Generate3dWall(dtile, x, y);
 					}

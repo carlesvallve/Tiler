@@ -121,6 +121,16 @@ public class Grid : MonoSingleton <Grid> {
 	}
 
 
+	public bool TileIsOpaque (int x, int y) {
+		if (!IsInsideBounds(x, y)) { return true; }
+
+		Tile tile = GetTile(x, y);
+		if (tile == null) { return true; }
+
+		return tile.IsOpaque();
+	}
+
+
 	// Entity
 
 	public Entity CreateEntity (System.Type EntityType, int x, int y, float scale = 1, Sprite asset = null) {

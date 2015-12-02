@@ -15,6 +15,8 @@ public class Tile : MonoBehaviour {
 	public bool visited { get; set; }
 
 	public Sprite asset { get; private set; }
+
+	protected SpriteRenderer shadow;
 	protected SpriteRenderer outline;
 	protected SpriteRenderer img;
 	protected TextMesh label;
@@ -25,6 +27,7 @@ public class Tile : MonoBehaviour {
 
 		outline = transform.Find("Outline").GetComponent<SpriteRenderer>();
 		img = transform.Find("Sprite").GetComponent<SpriteRenderer>();
+		shadow = transform.Find("Shadow").GetComponent<SpriteRenderer>();
 		
 		label = transform.Find("Label").GetComponent<TextMesh>();
 		label.GetComponent<Renderer>().sortingLayerName = "Ui";
@@ -54,20 +57,23 @@ public class Tile : MonoBehaviour {
 
 	protected void SetAsset (Sprite asset) {
 		this.asset = asset;
+		
 		outline.sprite = asset;
 		img.sprite = asset;
+		shadow.sprite = asset;
 	}
 
 
 	protected void SetImages (float scale, Vector3 pos, float outlineDistance = 0f) {
 		outline.transform.localPosition = pos + new Vector3(outlineDistance, -outlineDistance, 0);
 		outline.transform.localScale = new Vector3(scale, scale, 1);
-		//outline.sprite = asset;
 		outline.gameObject.SetActive(outlineDistance != 0);
 		
 		img.transform.localPosition = pos + new Vector3(-outlineDistance, outlineDistance, 0);
-		img.transform.localScale = new Vector3(scale, scale, 1);
-		//img.sprite = asset; 
+		img.transform.localScale = new Vector3(scale, scale, 1); 
+
+		shadow.transform.localPosition = pos + new Vector3(-outlineDistance, outlineDistance, 0);
+		shadow.transform.localScale = new Vector3(scale, scale, 1);
 	}
 
 
@@ -75,6 +81,7 @@ public class Tile : MonoBehaviour {
 		zIndex += grid.height - this.y;
 		outline.sortingOrder = zIndex;
 		img.sortingOrder = zIndex + 1;
+		shadow.sortingOrder = zIndex + 2;
 		//label.offsetZ = -1; //zIndex + 2;
 		
 	}
@@ -82,6 +89,14 @@ public class Tile : MonoBehaviour {
 
 	public void SetColor (Color color) {
 		img.color = color; 
+		//outline.color = color;
+	}
+
+
+	public void SetShadow (float value) {
+		//Color bgColor = Camera.main.backgroundColor;
+		//shadow.color = new Color(bgColor.b, bgColor.g, bgColor.b, value);
+		shadow.color = new Color(0, 0, 0, value);
 	}
 
 
@@ -93,6 +108,17 @@ public class Tile : MonoBehaviour {
 		if (creature != null && !creature.walkable) { return false; }
 
 		return walkable;
+	}
+
+
+	public bool IsOpaque () {
+		Entity entity = grid.GetEntity(x, y);
+		if (entity != null) {
+			if (entity is Wall) { return true; }
+			if (entity is Door && ((Door)entity).state != EntityStates.Open) { return true; }
+		}
+		
+		return false;
 	}
 
 

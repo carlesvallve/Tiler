@@ -8,6 +8,8 @@ public class Player : Creature {
 		base.Init(grid, x, y, scale, asset);	
 
 		hp = 20;
+
+		UpdateVision();
 	}
 	
 

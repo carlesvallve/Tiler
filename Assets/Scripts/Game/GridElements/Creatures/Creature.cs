@@ -59,6 +59,10 @@ public class Creature : Entity {
 		path = Astar.instance.SearchPath(grid.player.x, grid.player.y, x, y);
 		path = SetPathAfterEncounter(path);
 
+		if (path.Count == 0) {
+			Hud.instance.Log("You cannot go there.");
+		}
+
 		// render new path
 		DrawPath(Color.magenta);
 
@@ -201,9 +205,7 @@ public class Creature : Entity {
 			t += Time.deltaTime / speed;
 			transform.localPosition = Vector3.Lerp(startPos, endPos, Mathf.SmoothStep(0f, 1f, t));
 
-			Tile currentTile = grid.GetTile(this.x, this.y);
-			CheckForMoveUpdate (currentTile);
-
+			CheckForTileChange ();
 			yield return null;
 		}
 
@@ -219,33 +221,28 @@ public class Creature : Entity {
 	}
 
 
-	protected Tile CheckForMoveUpdate (Tile lastTile) {
+	protected void CheckForTileChange () {
 		Tile newTile = grid.GetTile(transform.localPosition);
-		if (newTile != lastTile) {
+		if (newTile.x == this.x && newTile.y == this.y) { return; }
 
-			this.x = newTile.x;
-			this.y = newTile.y;
+		// update pos in grid
+		grid.SetCreature(this.x, this.y, null);
+		this.x = x;
+		this.y = y;
+		grid.SetCreature(newTile.x, newTile.y, this);
 
-			// pick collectables
-			//PickupItemAtPos(transform.localPosition);
+		// pick items
+		//PickupItemAtPos(transform.localPosition);
 
-			// TODO: update vision...
-			//UpdateVision();
-
-			// emit event
-			//if (OnMoveUpdate != null) { OnMoveUpdate.Invoke(); }
-
-			// update last tile reference
-			//lastTile = grid.GetTile(transform.localPosition);
-		}
-
-		return lastTile;
+		// update vision
+		UpdateVision();
 	}
 
 
 	private void StopMoving () {
 		moving = false;
 		DrawPath(Color.white);
+		UpdateVision();
 	}
 
 
@@ -261,17 +258,14 @@ public class Creature : Entity {
 	}
 
 
-
-	/*private void UpdateVision() {
+	protected void UpdateVision () {
 		// get lit array from shadowcaster class
 		bool[,] lit = new bool[grid.width, grid.height];
-		int radius = 5;
-
-		print ("Updating vision: " + this.x + "," + this.y);
+		int radius = 6;
 
 		ShadowCaster.ComputeFieldOfViewWithShadowCasting(
 			this.x, this.y, radius,
-			(x1, y1) => grid.IsInsideBounds(x1, y1) && !grid.GetTile(x1, y1).IsWalkable(),
+			(x1, y1) => grid.TileIsOpaque(x1, y1),
 			(x2, y2) => { lit[x2, y2] = true; });
 
 		// iterate grid tiles and render them
@@ -280,16 +274,27 @@ public class Creature : Entity {
 				// render tiles
 				Tile tile = grid.GetTile(x, y);
 				if (tile != null) {
+					float distance = Vector2.Distance(new Vector2(this.x, this.y), new Vector2(x, y));
+					float shadowValue = Mathf.Min((distance / radius) * 0.6f, 0.6f); 
+
 					tile.gameObject.SetActive(lit[x, y] || tile.visited);
-					Material tileMat = tile.transform.Find("Sprite").GetComponent<SpriteRenderer>().material;
-					tileMat.color = lit[x, y] ? Color.white : Color.gray;
+					tile.SetShadow(lit[x, y] ? shadowValue : 1);
+					if (!lit[x, y] && tile.visited) { tile.SetShadow(0.6f); }
 
 					// render entities
 					Entity entity = grid.GetEntity(x, y);
 					if (entity != null) {
 						entity.gameObject.SetActive(lit[x, y] || tile.visited);
-						Material entMat = entity.transform.Find("Sprite").GetComponent<SpriteRenderer>().material;
-						entMat = tileMat;
+						entity.SetShadow(lit[x, y] ? shadowValue : 1);
+						if (!lit[x, y] && tile.visited) { entity.SetShadow(0.6f); }
+					}
+
+					// render creatures
+					Creature creature = grid.GetCreature(x, y);
+					if (creature != null) {
+						creature.gameObject.SetActive(lit[x, y] || tile.visited);
+						creature.SetShadow(lit[x, y] ? shadowValue : 1);
+						if (!lit[x, y] && tile.visited) { creature.SetShadow(0.6f); }
 					}
 
 					// mark lit tiles as visited
@@ -299,7 +304,7 @@ public class Creature : Entity {
 				}
 			}
 		}
-	}*/
+	}
 }
 
 
