@@ -10,22 +10,28 @@ public class Camera2D : MonoBehaviour {
 	public static Transform target;
 	public float zoomSpeed = 1f;
 	public float dragSpeed = 1f;
+	public bool autoZoom = false;
 
 	private Vector3 lastMousePos;
 
 	void Awake() {
 		instance = this;
+
+		Camera.main.orthographicSize = Screen.height / 64;
 	}
 
 	void LateUpdate () {
+		// set fixed zoom
+		if (autoZoom) {
+			Camera.main.orthographicSize = Screen.height / 64;
+		}
+		
 		// escape if mouse is over hud
 		if (EventSystem.current.IsPointerOverGameObject()) {
 			return;
 		}
 
 		// set zoom
-		//Vector3 screenPos = camera.WorldToScreenPoint(target.position);
-		//Vector3 worldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 		ZoomIntoPosition(Input.GetAxis("Mouse ScrollWheel") * zoomSpeed, Input.mousePosition);
 
 		// set drag

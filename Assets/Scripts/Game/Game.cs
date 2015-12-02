@@ -24,31 +24,21 @@ public class Game : MonoBehaviour {
 		sfx = AudioManager.instance;
 
 		bgmList = new List<string>() {
-			"Audio/Bgm/Ambient/Alone-music",
-			"Audio/Bgm/Ambient/GambooPiano-music",
-			"Audio/Bgm/Ambient/PeacefulTown-music",
-			"Audio/Bgm/Ambient/Suspense-music",
+			"Audio/Bgm/Dungeon/Music/Alone",
+			"Audio/Bgm/Dungeon/Music/GambooPiano",
+			"Audio/Bgm/Dungeon/Music/Suspense",
+			"Audio/Bgm/Dungeon/Music/Elementarywave",
+			"Audio/Bgm/Dungeon/Music/Lifeline",
+			"Audio/Bgm/Dungeon/Music/Suspense",
 
-			"Audio/Bgm/Ambient/elementarywave-ambient",
-			"Audio/Bgm/Ambient/forest-ambient",
-			"Audio/Bgm/Ambient/lifeline-ambient",
-			"Audio/Bgm/Ambient/pulse-ambient",
-
-			"Audio/Bgm/Ambient/reaktor-ambient",
-			"Audio/Bgm/Ambient/space-ambient",
-			"Audio/Bgm/Ambient/suspense-ambient",
-			"Audio/Bgm/Ambient/waterflow-ambient"
+			"Audio/Bgm/Dungeon/Ambient/forest",
+			"Audio/Bgm/Dungeon/Ambient/pulse",
+			"Audio/Bgm/Dungeon/Ambient/reaktor",
+			"Audio/Bgm/Dungeon/Ambient/space",
+			"Audio/Bgm/Dungeon/Ambient/waterstream"
 		};
 
 		CrossFadeRandomBgm();
-		/*// play level bgm
-		bgm1 = GetRandomBgm();
-		sfx.Play(bgm1, 0, 1f, true);
-		sfx.Fade(bgm1, 0.4f, 1f);
-
-		bgm2 = GetRandomBgm();
-		sfx.Play(bgm2, 0, 1f, true);
-		sfx.Fade(bgm2, 0.4f, 1f);*/
 	}
 
 

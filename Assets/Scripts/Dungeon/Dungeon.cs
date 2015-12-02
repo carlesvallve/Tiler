@@ -16,9 +16,6 @@ public class Dungeon : MonoSingleton <Dungeon> {
 	public List<int> dungeonSeeds = new List<int>();
 	public int currentDungeonLevel = 0;
 
-	//public delegate void DungeonGeneratedHandler(int dungeonLevel);
-	//public event DungeonGeneratedHandler OnDungeonGenerated;
-
 
 	void Awake () {
 		navigator = Navigator.instance;
@@ -60,11 +57,6 @@ public class Dungeon : MonoSingleton <Dungeon> {
 
 		//sfx.Play("Audio/Sfx/Step/step", 1f, Random.Range(0.8f, 1.2f));
 		sfx.Play("Audio/Sfx/Musical/gong", 0.6f, Random.Range(0.8f, 1.2f));
-
-		// emit event
-		/*if (OnDungeonGenerated != null) {
-			OnDungeonGenerated.Invoke(currentDungeonLevel);
-		}*/
 	}
 
 
@@ -98,7 +90,7 @@ public class Dungeon : MonoSingleton <Dungeon> {
 
 
 	// =====================================================
-	// Render dungeon data on grid
+	// Render Dungeon
 	// =====================================================
 
 	public void RenderDungeon (int direction) {
@@ -120,9 +112,12 @@ public class Dungeon : MonoSingleton <Dungeon> {
 		// Generate player
 		Stair stair = direction == -1 ? grid.stairDown : grid.stairUp;
 		GeneratePlayer(stair.x, stair.y);
-
 	}
 
+
+	// =====================================================
+	// Dungeon Architecture: Floors, Walls and Doors
+	// =====================================================
 
 	private void GenerateGridOnTreeQuad (QuadTree _quadtree) {
 		if (_quadtree.HasChildren() == false) {
@@ -171,52 +166,6 @@ public class Dungeon : MonoSingleton <Dungeon> {
 
 
 	// =====================================================
-	// Wall 3d generation
-	// =====================================================
-
-	/*private void Generate3dWall (DungeonTile dtile, int x, int y) {
-		// create 3d walls
-		if (dtile.id == DungeonTileType.WALL || dtile.id == DungeonTileType.WALLCORNER) {	
-			//float d = 0.9f;
-			//Color wallColor = new Color(color.r * d, color.g * d, color.b * d, 1f);
-
-			Sprite wallAsset;
-			if (IsVerticalWall(dtile, x, y)) {
-				wallAsset = Game.assets.dungeon["wall-v"];
-			} else {
-				wallAsset = Game.assets.dungeon["wall-h"];
-			}
-			//grid.CreateEntity(x, y, wallAsset);
-			grid.CreateEntity<Wall>(x, y, wallAsset, 1); // 
-		}
-	}
-
-
-	private bool IsFloor (DungeonTile dtile) {
-		if (dtile.id == DungeonTileType.ROOM || dtile.id == DungeonTileType.CORRIDOR || 
-			dtile.id == DungeonTileType.DOORH || dtile.id == DungeonTileType.DOORV) {
-			return true;
-		}
-
-		return false;
-	}
-
-
-	private bool IsVerticalWall (DungeonTile dtile, int x, int y) {
-		if (y <= 0) { 
-			return false;
-		}
-
-		DungeonTile bottomTile = dungeonGenerator.tiles[y - 1, x]; 
-		if (bottomTile.id == DungeonTileType.EMPTY || IsFloor(bottomTile)) {
-			return false;
-		}
-
-		return true;
-	}*/
-
-
-	// =====================================================
 	// Stairs generation
 	// =====================================================
 
@@ -248,19 +197,6 @@ public class Dungeon : MonoSingleton <Dungeon> {
 			DungeonRoom room = dungeonGenerator.rooms[n];
 			int maxFurniture = Random.Range(0, 100) <= 85 ? Random.Range(1, (int)(room.tiles.Count / 3)) : 0;
 
-			// get random room suitable for placing furniture
-			/*DungeonRoom room = GetRandomRoom();
-
-			int c = 0;
-			while (room.hasFurniture) {
-				room = GetRandomRoom();
-				c++;
-				if (c == 1000) { 
-					print ("No room is suitable to place furniture in it. Aborting.");
-					return; 
-				}
-			}*/
-
 			// place furniture in room
 			for (int i = 1; i <= maxFurniture; i ++) {
 				Tile tile = GetFreeTileOnRoom(room, 0);
@@ -281,32 +217,13 @@ public class Dungeon : MonoSingleton <Dungeon> {
 	}
 
 	// =====================================================
-	// Creature generation
+	// Monster generation
 	// =====================================================
-
-	private void GeneratePlayer (int x, int y) {
-		grid.player = grid.CreateCreature<Creature>(x, y, Game.assets.monster["adventurer"], 0.8f);
-		Camera.main.transform.position = new Vector3(grid.player.x, grid.player.y, -10);
-	}
-
 
 	private void GenerateMonsters () {
 		for (int n = 0; n < dungeonGenerator.rooms.Count; n++) {
 			DungeonRoom room = dungeonGenerator.rooms[n];
 			int maxMonsters = Random.Range(0, 100) <= 50 ? Random.Range(1, (int)(room.tiles.Count / 3)) : 0;
-
-			// get random room suitable for placing mosters
-			/*DungeonRoom room = GetRandomRoom();
-
-			int c = 0;
-			while (room.hasMonsters ) {
-				room = GetRandomRoom();
-				c++;
-				if (c == 1000) { 
-					print ("No room is suitable to place monsters in it. Aborting.");
-					return; 
-				}
-			}*/
 
 			//Color color = new Color (Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f));
 			//PaintRoom(room, color);
@@ -327,12 +244,19 @@ public class Dungeon : MonoSingleton <Dungeon> {
 			}
 
 			// tell the room that has been filled with monsters
-			room.hasFurniture = true;
+			room.hasMonsters = true;
 		}
 	}
 
 
-	
+	// =====================================================
+	// Player generation
+	// =====================================================
+
+	private void GeneratePlayer (int x, int y) {
+		grid.player = grid.CreateCreature<Creature>(x, y, Game.assets.monster["adventurer"], 0.8f);
+		Camera.main.transform.position = new Vector3(grid.player.x, grid.player.y, -10);
+	}
 
 
 	// =====================================================
