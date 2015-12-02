@@ -74,6 +74,15 @@ public class Grid : MonoSingleton <Grid> {
 	}
 
 
+	public bool IsInsideBounds (int x, int y) {
+		if (x < 1 || y < 1 || x > width - 2 || y > height - 2) {
+			return false;
+		}
+
+		return true;
+	}
+
+
 	// Tile
 
 	public Tile CreateTile (System.Type TileType, int x, int y, float scale = 1, Sprite asset = null) {
@@ -101,6 +110,13 @@ public class Grid : MonoSingleton <Grid> {
 
 
 	public Tile GetTile (int x, int y) {
+		return layers.Get<Tile>(y, x);
+	}
+
+	public Tile GetTile (Vector3 pos) {
+		int x = Mathf.RoundToInt(pos.x);
+		int y = Mathf.RoundToInt(pos.y);
+
 		return layers.Get<Tile>(y, x);
 	}
 
