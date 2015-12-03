@@ -47,6 +47,8 @@ public class Tile : MonoBehaviour {
 		SetAsset(asset);
 		SetImages(scale, Vector3.zero, 0);
 		SetSortingOrder(0);
+
+		visible = true;
 	}
 
 
@@ -116,8 +118,8 @@ public class Tile : MonoBehaviour {
 		Entity entity = grid.GetEntity(x, y);
 		if (entity != null && !entity.walkable) { return false; }
 
-		Creature creature = grid.GetCreature(x, y);
-		if (creature != null && !creature.walkable) { return false; }
+		//Creature creature = grid.GetCreature(x, y);
+		//if (creature != null && !creature.walkable) { return false; }
 
 		return walkable;
 	}

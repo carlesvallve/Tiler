@@ -112,11 +112,15 @@ public class Dungeon : MonoSingleton <Dungeon> {
 		GenerateFurniture ();
 
 		//Generate monsters
-		GenerateMonsters();
+		//GenerateMonsters();
+		GenerateSingleMonster();
 
 		// Update game turn
 		//game.UpdateTurn();
 
+		// initialize vision
+		grid.player.UpdateVision();
+		
 		// Log welcome message
 		hud.Log("Welcome to dungeon level " + currentDungeonLevel);
 	}
@@ -265,6 +269,15 @@ public class Dungeon : MonoSingleton <Dungeon> {
 	private void GeneratePlayer (int x, int y) {
 		grid.player = grid.CreateCreature(typeof(Player), x, y, 0.8f, Game.assets.monster["adventurer"]) as Player;
 		Camera.main.transform.position = new Vector3(grid.player.x, grid.player.y, -10);
+	}
+
+
+	private void GenerateSingleMonster () {
+		Tile playerTile = grid.GetTile(grid.player.x, grid.player.y);
+		DungeonRoom room = dungeonGenerator.rooms[playerTile.roomId];
+
+		Tile tile = GetFreeTileOnRoom(room, 0);
+		grid.CreateCreature(typeof(Goblin), tile.x, tile.y, 0.8f);
 	}
 
 

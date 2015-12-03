@@ -6,15 +6,13 @@ public class Player : Creature {
 	public delegate void GameTurnUpdateHandler();
 	public event GameTurnUpdateHandler OnGameTurnUpdate;
 
-	protected bool useFovAlgorithm = true;
+	protected bool useFovAlgorithm = false;
 
 
 	public override void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null) {
 		base.Init(grid, x, y, scale, asset);	
 
 		hp = 20;
-
-		UpdateVision();
 	}
 
 
@@ -49,21 +47,21 @@ public class Player : Creature {
 	// Path and Movement
 	// =====================================================
 
-	public override void SetPath (int x, int y) {
-		base.SetPath(x, y);
+	public override void SetPath (int x, int y, bool forceStop = false) {
+		base.SetPath(x, y, forceStop);
 		DisplayTileMessages(x, y);
 	}
 
 
-	protected override IEnumerator FollowPathStep (int i) {
-		// emit update game turn event
-		OnGameTurnUpdate.Invoke();
-			
-
-		yield return StartCoroutine(base.FollowPathStep(i));
+	protected override IEnumerator FollowPathStep (int x, int y) {
 		
+		yield return StartCoroutine(base.FollowPathStep(x, y));
+
 		// check if camera needs to track player
 		CheckCamera();
+
+		// emit update game turn event
+		OnGameTurnUpdate.Invoke();
 	}
 
 
@@ -103,10 +101,12 @@ public class Player : Creature {
 	// Vision
 	// =====================================================
 
-	protected override void UpdateVision () {
+	public override void UpdateVision () {
 		if (!useFovAlgorithm) {
 			return;
 		}
+
+		//return;
 		
 		// TODO: We need to implement a Permissive Field of View algorithm instead, 
 		// to avoid dark corners and get a better roguelike feeling
@@ -137,15 +137,25 @@ public class Player : Creature {
 					// render entities
 					Entity entity = grid.GetEntity(x, y);
 					if (entity != null) {
+						/*entity.visible = lit[x, y];
+						entity.gameObject.SetActive(lit[x, y] || tile.visited);
+						entity.SetShadow(lit[x, y] ? shadowValue : 1);
+						if (!lit[x, y] && tile.visited) { entity.SetShadow(0.6f); }*/
+
+						//print ("Ok. Lighting up entities");
+
 						entity.visible = lit[x, y];
 						entity.gameObject.SetActive(lit[x, y] || tile.visited);
 						entity.SetShadow(lit[x, y] ? shadowValue : 1);
 						if (!lit[x, y] && tile.visited) { entity.SetShadow(0.6f); }
+
 					}
 
 					// render creatures
 					Creature creature = grid.GetCreature(x, y);
 					if (creature != null) {
+
+						//print ("Ok. Lighting up creatures");
 						creature.visible = lit[x, y];
 						creature.gameObject.SetActive(lit[x, y] || tile.visited);
 						creature.SetShadow(lit[x, y] ? shadowValue : 1);

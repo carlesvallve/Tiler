@@ -3,6 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 
 
+/*public enum CreatureStates  {
+	Idle = 0,
+	Moving = 1,
+	Attacking = 2
+}*/
+
+
 public class Creature : Entity {
 
 	public int hp = 5;
@@ -18,6 +25,8 @@ public class Creature : Entity {
 
 		SetImages(scale, new Vector3(0, 0.1f, 0), 0.04f);
 		LocateAtCoords(x, y);
+
+		//state = CreatureStates.Idle;
 	}
 
 
@@ -37,19 +46,16 @@ public class Creature : Entity {
 	// Path
 	// =====================================================
 
-	public virtual void SetPath (int x, int y) {
+	public virtual void SetPath (int x, int y, bool forceStop = false) {
+		if (moving && forceStop) {
+			moving = false;
+			return;
+		}
+
 		// clear previous path
 		if (path != null) {
 			DrawPath(Color.white);
 		}
-
-		// if already moving, abort current move
-		if (moving) {
-			StopMoving();
-			return;
-		}
-
-		
 
 		// escape if goal is not visible
 		Tile tile = grid.GetTile(x, y);
@@ -69,7 +75,6 @@ public class Creature : Entity {
 
 		// escape if no path was found
 		if (path.Count == 0) {
-			//Hud.instance.Log("You cannot go there.");
 			StopMoving();
 			return;
 		}
@@ -82,15 +87,6 @@ public class Creature : Entity {
 	}
 
 
-	/*protected void Wait () {
-		Hud.instance.Log("You wait...");
-		Hud.instance.CreateLabel(transform.position, "...", Color.yellow);
-
-		path = new List<Vector2>() { new Vector2(this.x, this.y) };
-		StartCoroutine(FollowPath());
-	}*/
-
-
 	protected void DrawPath (Color color) {
 		foreach (Vector2 p in path) {
 			Tile tile = grid.GetTile((int)p.x, (int)p.y);
@@ -98,6 +94,98 @@ public class Creature : Entity {
 				tile.SetColor(color);
 			}
 		}
+	}
+
+
+	// =====================================================
+	// Movement
+	// =====================================================
+
+	protected IEnumerator FollowPath () {
+		moving = true;
+		//state = CreatureStates.Moving;
+
+		for (int i = 0; i < path.Count; i++) {
+			Hud.instance.Log("");
+
+			// get next tile coords
+			Vector2 p = path[i];
+			int x = (int)p.x;
+			int y = (int)p.y;
+
+			// resolve encounters with next tile
+			ResolveEntityEncounters(x, y);
+			ResolveCreatureEncounters(x, y);
+
+			//bool encounter = false;
+			//encounter = ResolveEntityEncounters(x, y);
+			//encounter = ResolveCreatureEncounters(x, y);
+
+			/*if (encounter) {
+				StopMoving();
+				yield break;
+			}*/
+			
+			yield return StartCoroutine (FollowPathStep(x, y));
+		}
+
+		// stop moving once we reach the goal
+		StopMoving();
+
+		// resolve encounters with current tile after moving
+		ResolveEncountersAtGoal(this.x, this.y);
+	}
+
+
+	protected virtual void UpdatePosInGrid (int x, int y) {
+		grid.SetCreature(this.x, this.y, null);
+		this.x = x;
+		this.y = y;
+		grid.SetCreature(x, y, this);
+	}
+
+
+	protected virtual IEnumerator FollowPathStep (int x, int y) {
+		if (!moving) { yield break; }
+
+		// interpolate creature position
+		float t = 0;
+		Vector3 startPos = transform.localPosition;
+		Vector3 endPos = new Vector3(x, y, 0);
+		while (t <= 1) {
+			t += Time.deltaTime / speed;
+			transform.localPosition = Vector3.Lerp(startPos, endPos, Mathf.SmoothStep(0f, 1f, t));
+
+			MoveToNextTile(x, y);
+
+			yield return null;
+		}
+
+		// clear path color at tile
+		grid.GetTile(x, y).SetColor(Color.white);
+
+		sfx.Play("Audio/Sfx/Step/step", 0.8f, Random.Range(0.8f, 1.2f));
+		//yield return new WaitForSeconds(0.1f);
+
+		if (!moving) {
+			StopMoving();
+		}
+	}
+
+
+	protected void MoveToNextTile (int x, int y) {
+		UpdateVision();
+		UpdatePosInGrid(x, y);
+	}
+
+
+	protected void StopMoving () {
+		moving = false;
+		//state = CreatureStates.Idle;
+		StopAllCoroutines();
+
+		DrawPath(Color.white);
+		UpdateVision();
 	}
 
 
@@ -131,7 +219,7 @@ public class Creature : Entity {
 	}
 
 
-	private IEnumerator ResolveEncounters (int x, int y) {
+	private bool ResolveEntityEncounters (int x, int y) {
 		Entity entity = grid.GetEntity(x, y);
 		if (entity != null) {
 
@@ -144,32 +232,48 @@ public class Creature : Entity {
 					// closed door
 					if (door.state == EntityStates.Closed) { 
 						// open door
-						moving = false;
+						//moving = false;
+						StopMoving();
 						StartCoroutine(door.Open()); 
 						Hud.instance.Log("You open the door.");
 						CenterCamera();
+						return true;
 			
 					} else if (door.state == EntityStates.Locked) { 
 						// unlock door
-						moving = false;
+						//moving = false;
+						StopMoving();
 						StartCoroutine(door.Unlock(success => {}));
 						Hud.instance.Log("You unlock the door.");
 						CenterCamera();
+						return true;
 					}
 				}
 			}
 		}
 
-		yield break;
+		return false;
 	}
 
 
-	private IEnumerator ResolveEncountersAtGoal (int x, int y) {
+	private bool ResolveCreatureEncounters (int x, int y) {
+		Creature creature = grid.GetCreature(x, y);
+		if (creature != null && creature != this) {
+			StopMoving();
+			StartCoroutine(Attack(creature));
+			return true;
+		}
+
+		return false;
+	}
+
+
+	private bool ResolveEncountersAtGoal (int x, int y) {
 		Entity entity = grid.GetEntity(x, y);
 		if (entity != null) {
 
 			// resolve stairs
-			if (entity is Stair) {
+			if ((this is Player) && (entity is Stair)) {
 				StopMoving();
 				//yield return new WaitForSeconds(0.25f);
 
@@ -182,91 +286,7 @@ public class Creature : Entity {
 			}
 		}
 
-		yield break;
-	}
-
-
-	// =====================================================
-	// Movement
-	// =====================================================
-
-	protected IEnumerator FollowPath () {
-		moving = true;
-
-		for (int i = 0; i < path.Count; i++) {
-			yield return StartCoroutine (FollowPathStep(i));
-		}
-
-		// after moving, check for encounters on goal tile
-		yield return StartCoroutine(ResolveEncountersAtGoal(this.x, this.y));
-
-		StopMoving();
-	}
-
-
-	protected virtual IEnumerator FollowPathStep (int i) {
-		Hud.instance.Log("");
-
-		// get next tile coords
-		Vector2 p = path[i];
-		int x = (int)p.x;
-		int y = (int)p.y;
-
-		// before moving, check for encounters on next tile in path
-		yield return StartCoroutine(ResolveEncounters(x, y));
-
-		// escape if we stopped moving for any reason
-		if (!moving) { 
-			StopMoving();
-			yield break;
-		}
-
-		// interpolate creature position
-		float t = 0;
-		Vector3 startPos = transform.localPosition;
-		Vector3 endPos = new Vector3(x, y, 0);
-		while (t <= 1) {
-			t += Time.deltaTime / speed;
-			transform.localPosition = Vector3.Lerp(startPos, endPos, Mathf.SmoothStep(0f, 1f, t));
-
-			MoveToNextTile();
-
-			yield return null;
-		}
-
-		// update tile position in grid
-		LocateAtCoords (x, y);
-		sfx.Play("Audio/Sfx/Step/step", 0.8f, Random.Range(0.8f, 1.2f));
-
-		// clear path color at tile
-		grid.GetTile(x, y).SetColor(Color.white);
-	}
-
-
-	protected void MoveToNextTile () {
-		if (!moving) { return; }
-
-		Tile newTile = grid.GetTile(transform.localPosition);
-		if (newTile.x == this.x && newTile.y == this.y) { return; }
-
-		// update pos in grid
-		grid.SetCreature(this.x, this.y, null);
-		this.x = x;
-		this.y = y;
-		grid.SetCreature(newTile.x, newTile.y, this);
-
-		// pick items
-		//PickupItemAtPos(transform.localPosition);
-
-		// update vision
-		UpdateVision();
-	}
-
-
-	private void StopMoving () {
-		moving = false;
-		DrawPath(Color.white);
-		UpdateVision();
+		return false;
 	}
 
 
@@ -276,7 +296,44 @@ public class Creature : Entity {
 
 	protected virtual void MoveCameraTo (int x, int y) {}
 	protected virtual void CenterCamera () {}
-	protected virtual void UpdateVision () {}
+	public virtual void UpdateVision () {}
+
+
+	// =====================================================
+	// Attack
+	// =====================================================
+
+	protected IEnumerator Attack (Creature target) {
+		print ("Attacking " + target);
+
+		//target.StopAllCoroutines();
+		target.StopMoving();
+
+		// move towards target
+		float t = 0;
+		Vector3 startPos = transform.localPosition;
+		Vector3 endPos = startPos + (target.transform.position - transform.position).normalized / 2;
+		while (t <= 1) {
+			t += Time.deltaTime / speed;
+			transform.localPosition = Vector3.Lerp(startPos, endPos, Mathf.SmoothStep(0f, 1f, t));
+
+			yield return null;
+		}
+
+		// apply damage
+		int damage = Random.Range(1, 7);
+		Hud.instance.CreateLabel(target.transform.position, "-" + damage, Color.red);
+		sfx.Play("Audio/Sfx/Combat/hitB", 1f, Random.Range(0.8f, 1.2f));
+
+		// move back to position
+		t = 0;
+		while (t <= 1) {
+			t += Time.deltaTime / speed;
+			transform.localPosition = Vector3.Lerp(endPos, startPos, Mathf.SmoothStep(0f, 1f, t));
+
+			yield return null;
+		}
+	}
 	
 }
 
