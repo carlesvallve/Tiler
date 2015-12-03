@@ -32,8 +32,8 @@ public class Hud : MonoSingleton <Hud> {
 	// UI labels
 	// ==============================================================
 
-	public void CreateLabel (Vector3 pos, string str, Color color) {
-		pos = Camera.main.WorldToScreenPoint(pos + Vector3.up * 0.75f);
+	public void CreateLabel (Vector3 pos, string str, Color color, float distance = 0.75f, float duration = 1f) {
+		pos = Camera.main.WorldToScreenPoint(pos + Vector3.up * distance);
 
 		GameObject obj = (GameObject)Instantiate(labelPrefab);
 		obj.transform.SetParent(world, false);
@@ -45,25 +45,49 @@ public class Hud : MonoSingleton <Hud> {
 		text.color = color;
 		text.text = str;
 
-		CanvasGroup group = obj.GetComponent<CanvasGroup>();
-
-		StartCoroutine(AnimateLabel(obj, group, 1f));
+		StartCoroutine(AnimateLabel(obj, duration));
 	} 
 
+	
+	private IEnumerator AnimateLabel(GameObject obj, float duration) {
+		StartCoroutine(FadeLabel(obj, duration));
 
-	private IEnumerator AnimateLabel(GameObject obj, CanvasGroup group, float duration) {
-		float t = 0;
 		Vector3 startPos = obj.transform.localPosition;
-		Vector3 endPos = startPos + Vector3.up * 32f;
+		Vector3 endPos = startPos + Vector3.up * 32;
+
+		float t = 0;
 		while (t <= 1) {
 			t += Time.deltaTime / duration;
-			obj.transform.localPosition = Vector3.Lerp(startPos, endPos, Mathf.SmoothStep(0f, 1f, t));
 
-			group.alpha = (1 - t);
+			obj.transform.localPosition = Vector3.Lerp(startPos, endPos, Mathf.SmoothStep(0f, 1f, t));
+			
 			yield return null;
 		}
 
+		yield return null;
 		Destroy(obj);
+		
+	}
+
+
+	private IEnumerator FadeLabel(GameObject obj, float duration) {
+		CanvasGroup group = obj.GetComponent<CanvasGroup>();
+
+		float t = 0;
+		while (t <= 1) {
+			t += Time.deltaTime / (duration * 0.2f);
+			group.alpha = t;
+			yield return null;
+		}
+
+		yield return new WaitForSeconds(duration * 0.4f);
+
+		t = 0;
+		while (t <= 1) {
+			t += Time.deltaTime / (duration * 0.4f);
+			group.alpha = (1 - t);
+			yield return null;
+		}
 	}
 	
 	// ==============================================================
