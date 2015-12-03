@@ -22,22 +22,34 @@ public class Door : Entity {
 
 
 	public IEnumerator Open () {
-		SetAsset(Game.assets.dungeon["door-open"]);
 		state = EntityStates.Open;
 		sfx.Play("Audio/Sfx/Door/key", 1f, Random.Range(0.4f, 0.6f));
+		Hud.instance.Log("You open the door.");
 
+		SetAsset(Game.assets.dungeon["door-open"]);
+		
 		yield return new WaitForSeconds(0.5f);
 	}
 
 
 	public IEnumerator Unlock (System.Action<bool> cb) {
 		sfx.Play("Audio/Sfx/Door/unlock", 0.8f, Random.Range(0.8f, 1.2f));
-		yield return new WaitForSeconds(0.5f);
 
 		bool success = Random.Range(1, 100) < 50;
+		if (!success) {
+			Speak("Locked", Color.white);
+			Hud.instance.Log("The door is locked.");
+		}
+
+		yield return new WaitForSeconds(0.5f);
+
 		if (success) {
-			yield return StartCoroutine(Open());
-		} 
+			Speak("Success!", Color.white);
+			Hud.instance.Log("You unlock the door.");
+			sfx.Play("Audio/Sfx/Door/door-open2", 0.8f, Random.Range(0.8f, 1.2f));
+
+			state = EntityStates.Closed;
+		}
 
 		cb(success);
 		yield break;

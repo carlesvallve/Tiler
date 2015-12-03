@@ -5,7 +5,6 @@ using System.Collections.Generic;
 
 public class Monster : Creature {
 
-	Player player;
 
 	public override void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null) {
 		base.Init(grid, x, y, scale, asset);
@@ -30,7 +29,8 @@ public class Monster : Creature {
 		// get increments toward the target
 		Vector3 vec = (target.transform.position - transform.position).normalized;
 		Point incs = new Point(Mathf.RoundToInt(vec.x), Mathf.RoundToInt(vec.y));
-		//print ("I see you! " + dx + "," + dy);
+		
+		//print ("I see you! " + incs.x + "," + incs.y);
 
 		// get increments after avoiding any obstacles
 		incs = AvoidObstaclesInDirection(incs);

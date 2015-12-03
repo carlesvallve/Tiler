@@ -58,7 +58,7 @@ public class Hud : MonoSingleton <Hud> {
 
 			float y = Mathf.Lerp(startY, endY, Mathf.SmoothStep(0f, 1f, t));
 			Vector3 pos = Camera.main.WorldToScreenPoint(startPos) + Vector3.up * y;
-			obj.transform.position = pos;
+			if (obj != null) { obj.transform.position = pos; }
 			
 			yield return null;
 		}
@@ -85,6 +85,8 @@ public class Hud : MonoSingleton <Hud> {
 		}
 
 		yield return null;
+
+
 		Destroy(obj);
 	}
 	

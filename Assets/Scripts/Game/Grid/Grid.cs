@@ -182,7 +182,7 @@ public class Grid : MonoSingleton <Grid> {
 
 	public void SetCreature (int x, int y, Creature creature) {
 		// refresh astar walkability
-		Astar.instance.walkability[x, y] = (creature != null && !creature.IsWalkable()) ? 1 : 0;
+		//Astar.instance.walkability[x, y] = (creature != null && !creature.IsWalkable()) ? 1 : 0;
 
 		layers.Set<Creature>(y, x, creature);
 	}

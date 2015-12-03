@@ -3,8 +3,8 @@ using System.Collections;
 
 public class Player : Creature {
 
-	public delegate void GameTurnUpdateHandler();
-	public event GameTurnUpdateHandler OnGameTurnUpdate;
+	/*public delegate void GameTurnUpdateHandler();
+	public event GameTurnUpdateHandler OnGameTurnUpdate;*/
 
 	protected bool useFovAlgorithm = false;
 
@@ -20,7 +20,7 @@ public class Player : Creature {
 	// Player messages
 	// =====================================================
 
-	protected void DisplayTileMessages (int x, int y) {
+	protected void DisplayFooterMessages (int x, int y) {
 		Entity entity = grid.GetEntity(x, y);
 		if (entity == null) { return; }
 
@@ -49,7 +49,7 @@ public class Player : Creature {
 
 	public override void SetPath (int x, int y) {
 		base.SetPath(x, y);
-		DisplayTileMessages(x, y);
+		DisplayFooterMessages(x, y);
 	}
 
 
@@ -60,8 +60,8 @@ public class Player : Creature {
 		// check if camera needs to track player
 		CheckCamera();
 
-		// emit update game turn event
-		OnGameTurnUpdate.Invoke();
+		/*// emit update game turn event
+		OnGameTurnUpdate.Invoke();*/
 	}
 
 
@@ -130,41 +130,33 @@ public class Player : Creature {
 					float shadowValue = - 0.1f + Mathf.Min((distance / radius) * 0.6f, 0.6f);
 
 					tile.visible = lit[x, y];
-					tile.gameObject.SetActive(lit[x, y] || tile.visited);
+					tile.gameObject.SetActive(lit[x, y] || tile.explored);
 					tile.SetShadow(lit[x, y] ? shadowValue : 1);
-					if (!lit[x, y] && tile.visited) { tile.SetShadow(0.6f); }
+					if (!lit[x, y] && tile.explored) { tile.SetShadow(0.6f); }
 
 					// render entities
 					Entity entity = grid.GetEntity(x, y);
 					if (entity != null) {
-						/*entity.visible = lit[x, y];
-						entity.gameObject.SetActive(lit[x, y] || tile.visited);
-						entity.SetShadow(lit[x, y] ? shadowValue : 1);
-						if (!lit[x, y] && tile.visited) { entity.SetShadow(0.6f); }*/
-
-						//print ("Ok. Lighting up entities");
 
 						entity.visible = lit[x, y];
-						entity.gameObject.SetActive(lit[x, y] || tile.visited);
+						entity.gameObject.SetActive(lit[x, y] || tile.explored);
 						entity.SetShadow(lit[x, y] ? shadowValue : 1);
-						if (!lit[x, y] && tile.visited) { entity.SetShadow(0.6f); }
-
+						if (!lit[x, y] && tile.explored) { entity.SetShadow(0.6f); }
 					}
 
 					// render creatures
 					Creature creature = grid.GetCreature(x, y);
 					if (creature != null) {
 
-						//print ("Ok. Lighting up creatures");
 						creature.visible = lit[x, y];
-						creature.gameObject.SetActive(lit[x, y] || tile.visited);
+						creature.gameObject.SetActive(lit[x, y] || tile.explored);
 						creature.SetShadow(lit[x, y] ? shadowValue : 1);
-						if (!lit[x, y] && tile.visited) { creature.SetShadow(0.6f); }
+						if (!lit[x, y] && tile.explored) { creature.SetShadow(0.6f); }
 					}
 
-					// mark lit tiles as visited
+					// mark lit tiles as explored
 					if (lit[x, y]) { 
-						tile.visited = true; 
+						tile.explored = true; 
 					}
 				}
 			}

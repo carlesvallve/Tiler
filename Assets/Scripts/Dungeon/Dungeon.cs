@@ -55,7 +55,6 @@ public class Dungeon : MonoSingleton <Dungeon> {
 		// Render dungeon on grid
 		RenderDungeon(direction);
 
-		//sfx.Play("Audio/Sfx/Step/step", 1f, Random.Range(0.8f, 1.2f));
 		sfx.Play("Audio/Sfx/Musical/gong", 0.6f, Random.Range(0.8f, 1.2f));
 	}
 
@@ -71,6 +70,7 @@ public class Dungeon : MonoSingleton <Dungeon> {
 	
 	private  IEnumerator ExitLevelCoroutine (int direction) {
 		game.CrossFadeRandomBgm();
+		yield return new WaitForSeconds(0.5f);
 
 		// fade out
 		yield return StartCoroutine(hud.FadeOut(0.5f));
@@ -164,8 +164,8 @@ public class Dungeon : MonoSingleton <Dungeon> {
 					// create doors
 					if (dtile.id == DungeonTileType.DOORH || dtile.id == DungeonTileType.DOORV) {
 						Door door = (Door)grid.CreateEntity(typeof(Door), x, y, 1, Game.assets.dungeon["door-closed"]) as Door;
-						//EntityStates[] states = EntityStates[] { EntityStates.Open, EntityStates.Closed, EntityStates.Locked };
-						door.SetState(EntityStates.Open); //states[Random.Range(0, states,Count)]; //Random.Range() == 0 ? EntityStates.Locked : EntityStates.Open;
+						EntityStates[] states = new EntityStates[] { EntityStates.Open, EntityStates.Closed, EntityStates.Locked };
+						door.SetState(states[Random.Range(0, states.Length)]); //Random.Range() == 0 ? EntityStates.Locked : EntityStates.Open;
 					}
 				}
 			}

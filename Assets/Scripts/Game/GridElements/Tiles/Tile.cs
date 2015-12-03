@@ -13,7 +13,7 @@ public class Tile : MonoBehaviour {
 
 	public bool walkable { get; set; }
 	public bool visible { get; set; }
-	public bool visited { get; set; }
+	public bool explored { get; set; }
 
 	public Sprite asset { get; private set; }
 
