@@ -69,14 +69,13 @@ public class Creature : Tile {
 		// if goal is the creature's tile, wait one turn instead
 		if (x == this.x && y == this.y) {
 			path = new List<Vector2>() { new Vector2(this.x, this.y) };
-			Hud.instance.CreateLabel(transform.position, "...", Color.yellow);
+			Speak("...", Color.yellow);
 		} else {
 			// search for new path
 			path = Astar.instance.SearchPath(grid.player.x, grid.player.y, x, y);
 			path = SetPathAfterEncounter(path);
 		}
 		
-
 		// escape if no path was found
 		if (path.Count == 0) {
 			StopMoving();
@@ -255,7 +254,7 @@ public class Creature : Tile {
 	private bool ResolveCreatureEncounters (int x, int y) {
 		Creature creature = grid.GetCreature(x, y);
 		if (creature != null && creature != this) {
-			Attack(creature);
+			Attack(creature, true);
 			return true;
 		}
 
@@ -298,13 +297,13 @@ public class Creature : Tile {
 	// Attack
 	// =====================================================
 
-	protected void Attack (Creature target) {
+	protected void Attack (Creature target, bool counterAttack = false) {
 		StopMoving();
 
 		state = CreatureStates.Attacking;
 		StartCoroutine(AttackAnimation(target));
 
-		target.Defend(this);
+		target.Defend(this, counterAttack);
 	}
 
 	protected IEnumerator AttackAnimation (Creature target) {
@@ -338,22 +337,22 @@ public class Creature : Tile {
 	// Defend
 	// =====================================================
 
-	protected void Defend (Creature attacker) {
+	protected void Defend (Creature attacker, bool counterAttack = false) {
 		StopMoving();
 
 		state = CreatureStates.Defending;
-		StartCoroutine(DefendAnimation(attacker));
+		StartCoroutine(DefendAnimation(attacker, counterAttack));
 	}
 
-	protected IEnumerator DefendAnimation (Creature attacker) {
+	protected IEnumerator DefendAnimation (Creature attacker, bool counterAttack = false) {
 		// wait for impact
 		float duration = speed * 0.75f;
 		yield return new WaitForSeconds(duration);
 
 		// apply damage
 		int damage = Random.Range(1, 7);
-		Hud.instance.CreateLabel(transform.position, "-" + damage, Color.red);
 		sfx.Play("Audio/Sfx/Combat/hitB", 1f, Random.Range(0.8f, 1.2f));
+		Speak("-" + damage, Color.red);
 
 		// move towards attacker
 		float t = 0;
@@ -376,6 +375,10 @@ public class Creature : Tile {
 		}
 
 		state = CreatureStates.Idle;
+
+		if (counterAttack) {
+			Attack(attacker, false);
+		}
 	}
 	
 }

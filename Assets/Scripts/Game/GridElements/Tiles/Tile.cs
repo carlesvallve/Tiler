@@ -56,6 +56,11 @@ public class Tile : MonoBehaviour {
 	// Set tile elements
 	// =====================================================
 
+	public virtual void Speak (string str, Color color) {
+		Hud.instance.CreateLabel(this, str, color);
+	}
+
+
 	public void SetInfo (string str, Color color) {
 		label.color = color;
 		label.text = str;

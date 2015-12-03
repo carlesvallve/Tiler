@@ -58,7 +58,10 @@ public class Monster : Creature {
 			
 			// up-down
 			if (dx == 0 && dy != 0) {
-				if (grid.GetTile(x + 1, y + dy).IsWalkable()) {
+				if (grid.GetTile(x + 1, y + dy).IsWalkable() && grid.GetTile(x - 1, y + dy).IsWalkable()) {
+					int[] arr = new int[] { -1, 1 };
+					dx = arr[Random.Range(0, arr.Length)];
+				} else if (grid.GetTile(x + 1, y + dy).IsWalkable()) {
 					dx = 1;
 				} else if (grid.GetTile(x - 1, y + dy).IsWalkable()) {
 					dx = -1;
@@ -67,7 +70,10 @@ public class Monster : Creature {
 			
 			// left-right
 			} else if (dy == 0 && dx != 0) {
-				if (grid.GetTile(x + dx, y + 1).IsWalkable()) {
+				if (grid.GetTile(x + dx, y + 1).IsWalkable() && grid.GetTile(x + dx, y - 1).IsWalkable()) {
+					int[] arr = new int[] { -1, 1 };
+					dy = arr[Random.Range(0, arr.Length)];
+				} else if (grid.GetTile(x + dx, y + 1).IsWalkable()) {
 					dy = 1;
 				} else if (grid.GetTile(x + dx, y - 1).IsWalkable()) {
 					dy = -1;
@@ -82,9 +88,8 @@ public class Monster : Creature {
 
 			// escape if cant find a solution
 			c++; 
-			if (c == 100) { 
-				print ("Where was I going?");
-				Hud.instance.CreateLabel(transform.position, "?", Color.yellow);
+			if (c == 100) {
+				Speak("?", Color.white);
 				return new Point(0, 0); 
 			}
 		}

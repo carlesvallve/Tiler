@@ -33,41 +33,39 @@ public class Hud : MonoSingleton <Hud> {
 	// UI labels
 	// ==============================================================
 
-	public void CreateLabel (Vector3 pos, string str, Color color, float distance = 0.75f, float duration = 1f) {
-		pos = Camera.main.WorldToScreenPoint(pos + Vector3.up * distance);
-
+	public void CreateLabel (Tile tile, string str, Color color, float duration = 1f, float startY = 24) {
 		GameObject obj = (GameObject)Instantiate(labelPrefab);
 		obj.transform.SetParent(world, false);
 		obj.name = "Label";
-
-		obj.transform.position = pos;
 
 		Text text = obj.transform.Find("Text").GetComponent<Text>();
 		text.color = color;
 		text.text = str;
 
-		StartCoroutine(AnimateLabel(obj, duration));
+		StartCoroutine(AnimateLabel(obj, tile, duration, startY));
 	} 
 
 	
-	private IEnumerator AnimateLabel(GameObject obj, float duration) {
-		StartCoroutine(FadeLabel(obj, duration));
+	private IEnumerator AnimateLabel(GameObject obj, Tile tile, float duration, float startY) {
+		StartCoroutine(FadeLabel(obj, tile, duration));
 
-		Vector3 startPos = obj.transform.localPosition;
-		Vector3 endPos = startPos + Vector3.up * 32;
-
+		Vector3 startPos = tile.transform.position;
+		float endY = startY + 32;
 		float t = 0;
+		
 		while (t <= 1) {
 			t += Time.deltaTime / duration;
 
-			obj.transform.localPosition = Vector3.Lerp(startPos, endPos, Mathf.SmoothStep(0f, 1f, t));
+			float y = Mathf.Lerp(startY, endY, Mathf.SmoothStep(0f, 1f, t));
+			Vector3 pos = Camera.main.WorldToScreenPoint(startPos) + Vector3.up * y;
+			obj.transform.position = pos;
 			
 			yield return null;
 		}
 	}
 
 
-	private IEnumerator FadeLabel(GameObject obj, float duration) {
+	private IEnumerator FadeLabel(GameObject obj, Tile tile, float duration) {
 		CanvasGroup group = obj.GetComponent<CanvasGroup>();
 
 		float t = 0;
