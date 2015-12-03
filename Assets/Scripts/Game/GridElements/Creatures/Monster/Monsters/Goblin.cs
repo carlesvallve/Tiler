@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Goblin : Creature {
+public class Goblin : Monster {
 
 	public override void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null) {
 		asset = Game.assets.monster["goblin"];

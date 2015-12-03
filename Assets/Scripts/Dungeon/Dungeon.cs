@@ -248,7 +248,7 @@ public class Dungeon : MonoSingleton <Dungeon> {
 				Tile tile = GetFreeTileOnRoom(room, 0);
 				if (tile == null) { continue; }
 				
-				grid.monsters.Add( grid.CreateCreature(creatureType, tile.x, tile.y, 0.8f)); // randomAsset, 
+				grid.monsters.Add( (Monster)grid.CreateCreature(creatureType, tile.x, tile.y, 0.8f) as Monster);
 			}
 
 			// tell the room that has been filled with monsters

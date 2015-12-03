@@ -20,7 +20,7 @@ public class Grid : MonoSingleton <Grid> {
 	public Stair stairDown;
 
 	public Player player;
-	public List<Creature> monsters;
+	public List<Monster> monsters;
 
 
 	public void InitializeGrid (int width, int height) {
