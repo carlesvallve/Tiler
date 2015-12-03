@@ -37,6 +37,13 @@ public class Controls : MonoBehaviour {
 		}
 
 		// try to move player to goal
-		grid.player.SetPath(x, y, true);
+		/*if (!grid.player.moving) {
+			grid.player.SetPath(x, y);
+		} else {
+			grid.player.StopMoving();
+		}*/
+
+		grid.player.SetPath(x, y);
+		
 	}
 }

@@ -47,8 +47,8 @@ public class Player : Creature {
 	// Path and Movement
 	// =====================================================
 
-	public override void SetPath (int x, int y, bool forceStop = false) {
-		base.SetPath(x, y, forceStop);
+	public override void SetPath (int x, int y) {
+		base.SetPath(x, y);
 		DisplayTileMessages(x, y);
 	}
 
