@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.EventSystems;
 
 public class Controls : MonoBehaviour {
 
@@ -11,6 +12,11 @@ public class Controls : MonoBehaviour {
 	}
 	
 	void Update () {
+		// escape if mouse is over hud
+		if (EventSystem.current.IsPointerOverGameObject()) {
+			return;
+		}
+
 		if (Input.GetMouseButtonDown(0)) {
 			TapAtPos(Input.mousePosition);
 		}
@@ -18,9 +24,6 @@ public class Controls : MonoBehaviour {
 
 
 	private void TapAtPos (Vector3 pos) {
-
-		
-
 		// get tap position in world/grid units
 		pos = Camera.main.ScreenToWorldPoint(new Vector3(pos.x, pos.y, Camera.main.nearClipPlane));
 

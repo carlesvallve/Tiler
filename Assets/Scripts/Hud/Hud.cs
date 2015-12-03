@@ -11,6 +11,9 @@ public class Hud : MonoSingleton <Hud> {
 
 	private CanvasGroup overlayGroup;
 
+	private Transform world;
+	public GameObject labelPrefab;
+
 
 	void Awake () {
 		Canvas canvas = GetComponent<Canvas>();
@@ -21,8 +24,47 @@ public class Hud : MonoSingleton <Hud> {
 
 		turnText = transform.Find("Header/Turn/Text").GetComponent<Text>();
 		logText = transform.Find("Footer/Log/Text").GetComponent<Text>();
+
+		world = transform.Find("World");
 	}
 
+	// ==============================================================
+	// UI labels
+	// ==============================================================
+
+	public void CreateLabel (Vector3 pos, string str, Color color) {
+		pos = Camera.main.WorldToScreenPoint(pos + Vector3.up * 0.75f);
+
+		GameObject obj = (GameObject)Instantiate(labelPrefab);
+		obj.transform.SetParent(world, false);
+		obj.name = "Label";
+
+		obj.transform.position = pos;
+
+		Text text = obj.transform.Find("Text").GetComponent<Text>();
+		text.color = color;
+		text.text = str;
+
+		CanvasGroup group = obj.GetComponent<CanvasGroup>();
+
+		StartCoroutine(AnimateLabel(obj, group, 1f));
+	} 
+
+
+	private IEnumerator AnimateLabel(GameObject obj, CanvasGroup group, float duration) {
+		float t = 0;
+		Vector3 startPos = obj.transform.localPosition;
+		Vector3 endPos = startPos + Vector3.up * 32f;
+		while (t <= 1) {
+			t += Time.deltaTime / duration;
+			obj.transform.localPosition = Vector3.Lerp(startPos, endPos, Mathf.SmoothStep(0f, 1f, t));
+
+			group.alpha = (1 - t);
+			yield return null;
+		}
+
+		Destroy(obj);
+	}
 	
 	// ==============================================================
 	// Logs
@@ -96,9 +138,6 @@ public class Hud : MonoSingleton <Hud> {
 
 		yield return new WaitForSeconds(delay);
 
-		//group.alpha = 1;
-		group.gameObject.SetActive(true);
-		
 		float elapsedTime = 0;
 		while (elapsedTime < duration) {
 			float t = elapsedTime / duration;
@@ -108,18 +147,17 @@ public class Hud : MonoSingleton <Hud> {
 		}
 		
 		group.alpha = 0;
-		group.gameObject.SetActive(false);
+		group.interactable = false;
+		group.blocksRaycasts = false;
 	}
 
 
 	public IEnumerator FadeOut(float duration, float delay = 0) {
 		CanvasGroup group = overlayGroup;
+		group.interactable = true;
+		group.blocksRaycasts = true;
 
 		yield return new WaitForSeconds(delay);
-
-		group.gameObject.SetActive(true);
-		//group.alpha = 0;
-		yield return null;
 		
 		float elapsedTime = 0;
 		while (elapsedTime < duration) {

@@ -11,6 +11,8 @@ public class Creature : Entity {
 	protected float speed = 0.15f;
 	protected bool moving = false;
 
+	protected bool useFovAlgorithm = false;
+
 
 	public override void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null) {
 		base.Init(grid, x, y, scale, asset);
@@ -33,6 +35,12 @@ public class Creature : Entity {
 	}
 
 
+	protected void Wait () {
+		Hud.instance.Log("You wait...");
+		Hud.instance.CreateLabel(transform.position, "Waiting", Color.yellow);
+	}
+
+
 	// =====================================================
 	// Path
 	// =====================================================
@@ -51,15 +59,14 @@ public class Creature : Entity {
 
 		// if goal is the creature's tile, wait one turn instead
 		if (x == this.x && y == this.y) {
-			Hud.instance.Log("You wait...");
+			Wait();
 			return;
 		}
 
 		// escape if goal is not visible
 		Tile tile = grid.GetTile(x, y);
-		if (!tile.gameObject.activeSelf) {
-			return;
-		}
+		if (tile == null) { return; }
+		if (!tile.gameObject.activeSelf) { return; }
 
 		// search for new path
 		path = Astar.instance.SearchPath(grid.player.x, grid.player.y, x, y);
@@ -136,12 +143,14 @@ public class Creature : Entity {
 						moving = false;
 						StartCoroutine(door.Open()); 
 						Hud.instance.Log("You open the door.");
+						CenterCamera();
 			
 					} else if (door.state == EntityStates.Locked) { 
 						// unlock door
 						moving = false;
 						StartCoroutine(door.Unlock(success => {}));
 						Hud.instance.Log("You unlock the door.");
+						CenterCamera();
 					}
 				}
 			}
@@ -159,7 +168,7 @@ public class Creature : Entity {
 			if (entity is Stair) {
 				StopMoving();
 
-				yield return new WaitForSeconds(0.25f);
+				//yield return new WaitForSeconds(0.25f);
 
 				Stair stair = (Stair)entity;
 				Dungeon.instance.ExitLevel (stair.direction);
@@ -214,6 +223,12 @@ public class Creature : Entity {
 			t += Time.deltaTime / speed;
 			transform.localPosition = Vector3.Lerp(startPos, endPos, Mathf.SmoothStep(0f, 1f, t));
 
+			// escape if we stopped moving for any reason
+			/*if (!moving) { 
+				StopMoving();
+				break;
+			}*/
+
 			CheckForTileChange ();
 			yield return null;
 		}
@@ -231,6 +246,8 @@ public class Creature : Entity {
 
 
 	protected void CheckForTileChange () {
+		if (!moving) { return; }
+
 		Tile newTile = grid.GetTile(transform.localPosition);
 		if (newTile.x == this.x && newTile.y == this.y) { return; }
 
@@ -258,16 +275,32 @@ public class Creature : Entity {
 	private void CheckCamera () {
 		Vector3 screenPos = Camera.main.WorldToScreenPoint(transform.position);
 
+		/*int margin = 16 + 32 * 3;
+		if (screenPos.x < margin || screenPos.x > Screen.width - margin || 
+			screenPos.y < margin || screenPos.y > Screen.height - margin) {*/
+
 		if (screenPos.x < Screen.width * 0.25f || screenPos.y < Screen.height * 0.25f || 
 			screenPos.x > Screen.width * 0.75f || screenPos.y > Screen.height * 0.75f) {
-
-			Camera2D.instance.StopAllCoroutines();
-			Camera2D.instance.StartCoroutine(Camera2D.instance.MoveToPos(new Vector2(this.x, this.y)));
+			CenterCamera();
 		}
 	}
 
 
+	private void CenterCamera () {
+		Camera2D.instance.StopAllCoroutines();
+		Camera2D.instance.StartCoroutine(Camera2D.instance.MoveToPos(new Vector2(this.x, this.y)));
+	}
+
+
 	protected void UpdateVision () {
+		if (!useFovAlgorithm) {
+			return;
+		}
+		
+
+		// TODO: We need to implement a Permissive Field of View algorithm instead, 
+		// to avoid dark corners and get a better roguelike feeling
+
 		// get lit array from shadowcaster class
 		bool[,] lit = new bool[grid.width, grid.height];
 		int radius = 6;
@@ -284,11 +317,14 @@ public class Creature : Entity {
 				Tile tile = grid.GetTile(x, y);
 				if (tile != null) {
 					float distance = Vector2.Distance(new Vector2(this.x, this.y), new Vector2(x, y));
-					float shadowValue = Mathf.Min((distance / radius) * 0.6f, 0.6f); 
+					float shadowValue = - 0.1f + Mathf.Min((distance / radius) * 0.6f, 0.6f);
+
 
 					tile.gameObject.SetActive(lit[x, y] || tile.visited);
 					tile.SetShadow(lit[x, y] ? shadowValue : 1);
 					if (!lit[x, y] && tile.visited) { tile.SetShadow(0.6f); }
+
+					//if (lit[x, y]) { print (shadowValue); }
 
 					// render entities
 					Entity entity = grid.GetEntity(x, y);
@@ -314,6 +350,37 @@ public class Creature : Entity {
 			}
 		}
 	}
+
+
+	/*
+		bool[,] lit = new bool[grid.width, grid.height];
+		int radius = 6;
+		
+		int[,] _map = new int[grid.height, grid.width];
+		for (int y = 0; y < grid.height; y++) {
+			for (int x = 0; x < grid.width; x++) {
+				_map[y, x] = 0;
+
+				// render tiles
+				Tile tile = grid.GetTile(x, y);
+				if (tile != null && tile.IsOpaque()) {
+					_map[y, x] = 1;
+				}
+			}
+		}
+
+
+		FOVRecurse fov = new FOVRecurse();
+		fov.GetVisibleCells(_map, this.x, this.y, radius);
+		List<Point> visiblePoints = fov.VisiblePoints;
+
+		
+		foreach(Point point in visiblePoints) {
+			lit[point.Y, point.X] = true;
+		}
+
+		//return;
+		*/
 }
 
 
