@@ -7,7 +7,7 @@ public class Game : MonoSingleton <Game> {
 
 	public static Assets assets;
 
-	public int turn = 0;
+	public int turn = 1;
 	
 	private AudioManager sfx;
 	private List<string> bgmList;
@@ -18,7 +18,7 @@ public class Game : MonoSingleton <Game> {
 	void Start () {
 		assets = new Assets();
 		SetBgm();
-		InitGame();
+		InitGame();	
 	}
 
 
@@ -26,10 +26,17 @@ public class Game : MonoSingleton <Game> {
 		// Generate dungeon level and render it in the game grid
 		Dungeon dungeon = Dungeon.instance; 
 		dungeon.GenerateDungeon();
+
+		Hud.instance.LogTurn("TURN " + turn);
+
+		Grid.instance.player.OnGameTurnUpdate += () => {
+			UpdateGameTurn();
+		};
 	}
 
 
-	public void UpdateTurn () {
+	public void UpdateGameTurn () {
+		// update turn
 		turn += 1;
 		Hud.instance.LogTurn("TURN " + turn);
 	}

@@ -103,18 +103,19 @@ public class Dungeon : MonoSingleton <Dungeon> {
 		// Generate ladders
 		GenerateStairs();
 
+		// Generate player 
+		//(note: player must be generated before monsters for these to be able to listen to player events)
+		Stair stair = direction == -1 ? grid.stairDown : grid.stairUp;
+		GeneratePlayer(stair.x, stair.y);
+
 		//Generate furniture
 		GenerateFurniture ();
 
 		//Generate monsters
 		GenerateMonsters();
 
-		// Generate player
-		Stair stair = direction == -1 ? grid.stairDown : grid.stairUp;
-		GeneratePlayer(stair.x, stair.y);
-
 		// Update game turn
-		game.UpdateTurn();
+		//game.UpdateTurn();
 
 		// Log welcome message
 		hud.Log("Welcome to dungeon level " + currentDungeonLevel);

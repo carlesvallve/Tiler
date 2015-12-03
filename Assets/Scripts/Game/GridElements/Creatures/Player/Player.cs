@@ -3,6 +3,9 @@ using System.Collections;
 
 public class Player : Creature {
 
+	public delegate void GameTurnUpdateHandler();
+	public event GameTurnUpdateHandler OnGameTurnUpdate;
+
 	protected bool useFovAlgorithm = true;
 
 
@@ -53,13 +56,14 @@ public class Player : Creature {
 
 
 	protected override IEnumerator FollowPathStep (int i) {
+		// emit update game turn event
+		OnGameTurnUpdate.Invoke();
+			
+
 		yield return StartCoroutine(base.FollowPathStep(i));
 		
 		// check if camera needs to track player
 		CheckCamera();
-
-		// update game turn
-		Game.instance.UpdateTurn();
 	}
 
 
