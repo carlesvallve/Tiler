@@ -12,6 +12,7 @@ public class Tile : MonoBehaviour {
 	public int roomId { get; set; }
 
 	public bool walkable { get; set; }
+	public bool visible { get; set; }
 	public bool visited { get; set; }
 
 	public Sprite asset { get; private set; }
@@ -28,6 +29,7 @@ public class Tile : MonoBehaviour {
 		outline = transform.Find("Outline").GetComponent<SpriteRenderer>();
 		img = transform.Find("Sprite").GetComponent<SpriteRenderer>();
 		shadow = transform.Find("Shadow").GetComponent<SpriteRenderer>();
+		shadow.gameObject.SetActive(false);
 		
 		label = transform.Find("Label").GetComponent<TextMesh>();
 		label.GetComponent<Renderer>().sortingLayerName = "Ui";
@@ -47,6 +49,10 @@ public class Tile : MonoBehaviour {
 		SetSortingOrder(0);
 	}
 
+
+	// =====================================================
+	// Set tile elements
+	// =====================================================
 
 	public void SetInfo (string str, Color color) {
 		label.color = color;
@@ -83,20 +89,26 @@ public class Tile : MonoBehaviour {
 		img.sortingOrder = zIndex + 1;
 		shadow.sortingOrder = zIndex + 2;
 		//label.offsetZ = -1; //zIndex + 2;
-		
 	}
 
 
 	public void SetColor (Color color) {
 		img.color = color; 
-		//outline.color = color;
 	}
 
 
 	public void SetShadow (float value) {
-		//Color bgColor = Camera.main.backgroundColor;
-		//shadow.color = new Color(bgColor.b, bgColor.g, bgColor.b, value);
 		shadow.color = new Color(0, 0, 0, value);
+		shadow.gameObject.SetActive(value > 0);
+	}
+
+
+	// =====================================================
+	// Get tile states
+	// =====================================================
+
+	public bool IsVisible () {
+		return visible;
 	}
 
 

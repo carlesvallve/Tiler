@@ -11,8 +11,6 @@ public class Creature : Entity {
 	protected float speed = 0.15f;
 	protected bool moving = false;
 
-	protected bool useFovAlgorithm = false;
-
 
 	public override void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null) {
 		base.Init(grid, x, y, scale, asset);
@@ -35,12 +33,6 @@ public class Creature : Entity {
 	}
 
 
-	protected void Wait () {
-		Hud.instance.Log("You wait...");
-		Hud.instance.CreateLabel(transform.position, "Waiting", Color.yellow);
-	}
-
-
 	// =====================================================
 	// Path
 	// =====================================================
@@ -57,24 +49,27 @@ public class Creature : Entity {
 			return;
 		}
 
-		// if goal is the creature's tile, wait one turn instead
-		if (x == this.x && y == this.y) {
-			Wait();
-			return;
-		}
+		
 
 		// escape if goal is not visible
 		Tile tile = grid.GetTile(x, y);
 		if (tile == null) { return; }
 		if (!tile.gameObject.activeSelf) { return; }
 
-		// search for new path
-		path = Astar.instance.SearchPath(grid.player.x, grid.player.y, x, y);
-		path = SetPathAfterEncounter(path);
+		// if goal is the creature's tile, wait one turn instead
+		if (x == this.x && y == this.y) {
+			path = new List<Vector2>() { new Vector2(this.x, this.y) };
+			Hud.instance.CreateLabel(transform.position, "...", Color.yellow);
+		} else {
+			// search for new path
+			path = Astar.instance.SearchPath(grid.player.x, grid.player.y, x, y);
+			path = SetPathAfterEncounter(path);
+		}
+		
 
 		// escape if no path was found
 		if (path.Count == 0) {
-			Hud.instance.Log("You cannot go there.");
+			//Hud.instance.Log("You cannot go there.");
 			StopMoving();
 			return;
 		}
@@ -85,6 +80,15 @@ public class Creature : Entity {
 		// follow new path
 		StartCoroutine(FollowPath());
 	}
+
+
+	/*protected void Wait () {
+		Hud.instance.Log("You wait...");
+		Hud.instance.CreateLabel(transform.position, "...", Color.yellow);
+
+		path = new List<Vector2>() { new Vector2(this.x, this.y) };
+		StartCoroutine(FollowPath());
+	}*/
 
 
 	protected void DrawPath (Color color) {
@@ -167,12 +171,14 @@ public class Creature : Entity {
 			// resolve stairs
 			if (entity is Stair) {
 				StopMoving();
-
 				//yield return new WaitForSeconds(0.25f);
 
 				Stair stair = (Stair)entity;
-				Dungeon.instance.ExitLevel (stair.direction);
-
+				if (stair.state == EntityStates.Open) { 
+					Dungeon.instance.ExitLevel (stair.direction);
+				} else {
+					Hud.instance.Log("The stair doors are locked.");
+				}
 			}
 		}
 
@@ -223,13 +229,8 @@ public class Creature : Entity {
 			t += Time.deltaTime / speed;
 			transform.localPosition = Vector3.Lerp(startPos, endPos, Mathf.SmoothStep(0f, 1f, t));
 
-			// escape if we stopped moving for any reason
-			/*if (!moving) { 
-				StopMoving();
-				break;
-			}*/
+			MoveToNextTile();
 
-			CheckForTileChange ();
 			yield return null;
 		}
 
@@ -239,13 +240,10 @@ public class Creature : Entity {
 
 		// clear path color at tile
 		grid.GetTile(x, y).SetColor(Color.white);
-
-		// check if camera needs to track player
-		CheckCamera();
 	}
 
 
-	protected void CheckForTileChange () {
+	protected void MoveToNextTile () {
 		if (!moving) { return; }
 
 		Tile newTile = grid.GetTile(transform.localPosition);
@@ -272,121 +270,13 @@ public class Creature : Entity {
 	}
 
 
-	private void CheckCamera () {
-		Vector3 screenPos = Camera.main.WorldToScreenPoint(transform.position);
+	// =====================================================
+	// Functions overriden by Player class
+	// =====================================================
 
-		/*int margin = 16 + 32 * 3;
-		if (screenPos.x < margin || screenPos.x > Screen.width - margin || 
-			screenPos.y < margin || screenPos.y > Screen.height - margin) {*/
-
-		if (screenPos.x < Screen.width * 0.25f || screenPos.y < Screen.height * 0.25f || 
-			screenPos.x > Screen.width * 0.75f || screenPos.y > Screen.height * 0.75f) {
-			CenterCamera();
-		}
-	}
-
-
-	private void CenterCamera () {
-		Camera2D.instance.StopAllCoroutines();
-		Camera2D.instance.StartCoroutine(Camera2D.instance.MoveToPos(new Vector2(this.x, this.y)));
-	}
-
-
-	protected void UpdateVision () {
-		if (!useFovAlgorithm) {
-			return;
-		}
-		
-
-		// TODO: We need to implement a Permissive Field of View algorithm instead, 
-		// to avoid dark corners and get a better roguelike feeling
-
-		// get lit array from shadowcaster class
-		bool[,] lit = new bool[grid.width, grid.height];
-		int radius = 6;
-
-		ShadowCaster.ComputeFieldOfViewWithShadowCasting(
-			this.x, this.y, radius,
-			(x1, y1) => grid.TileIsOpaque(x1, y1),
-			(x2, y2) => { lit[x2, y2] = true; });
-
-		// iterate grid tiles and render them
-		for (int y = 0; y < grid.height; y++) {
-			for (int x = 0; x < grid.width; x++) {
-				// render tiles
-				Tile tile = grid.GetTile(x, y);
-				if (tile != null) {
-					float distance = Vector2.Distance(new Vector2(this.x, this.y), new Vector2(x, y));
-					float shadowValue = - 0.1f + Mathf.Min((distance / radius) * 0.6f, 0.6f);
-
-
-					tile.gameObject.SetActive(lit[x, y] || tile.visited);
-					tile.SetShadow(lit[x, y] ? shadowValue : 1);
-					if (!lit[x, y] && tile.visited) { tile.SetShadow(0.6f); }
-
-					//if (lit[x, y]) { print (shadowValue); }
-
-					// render entities
-					Entity entity = grid.GetEntity(x, y);
-					if (entity != null) {
-						entity.gameObject.SetActive(lit[x, y] || tile.visited);
-						entity.SetShadow(lit[x, y] ? shadowValue : 1);
-						if (!lit[x, y] && tile.visited) { entity.SetShadow(0.6f); }
-					}
-
-					// render creatures
-					Creature creature = grid.GetCreature(x, y);
-					if (creature != null) {
-						creature.gameObject.SetActive(lit[x, y] || tile.visited);
-						creature.SetShadow(lit[x, y] ? shadowValue : 1);
-						if (!lit[x, y] && tile.visited) { creature.SetShadow(0.6f); }
-					}
-
-					// mark lit tiles as visited
-					if (lit[x, y]) { 
-						tile.visited = true; 
-					}
-				}
-			}
-		}
-	}
-
-
-	/*
-		bool[,] lit = new bool[grid.width, grid.height];
-		int radius = 6;
-		
-		int[,] _map = new int[grid.height, grid.width];
-		for (int y = 0; y < grid.height; y++) {
-			for (int x = 0; x < grid.width; x++) {
-				_map[y, x] = 0;
-
-				// render tiles
-				Tile tile = grid.GetTile(x, y);
-				if (tile != null && tile.IsOpaque()) {
-					_map[y, x] = 1;
-				}
-			}
-		}
-
-
-		FOVRecurse fov = new FOVRecurse();
-		fov.GetVisibleCells(_map, this.x, this.y, radius);
-		List<Point> visiblePoints = fov.VisiblePoints;
-
-		
-		foreach(Point point in visiblePoints) {
-			lit[point.Y, point.X] = true;
-		}
-
-		//return;
-		*/
+	protected virtual void MoveCameraTo (int x, int y) {}
+	protected virtual void CenterCamera () {}
+	protected virtual void UpdateVision () {}
+	
 }
-
-
-
-
-
-
-
 

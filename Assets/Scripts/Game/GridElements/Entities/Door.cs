@@ -4,8 +4,6 @@ using System.Collections;
 
 public class Door : Entity {
 
-	public EntityStates state { get; set; }
-
 
 	public override void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null) {
 		base.Init(grid, x, y, scale, asset);
@@ -14,6 +12,12 @@ public class Door : Entity {
 		SetImages(scale, Vector3.zero, 0.04f);
 
 		state = EntityStates.Closed;
+	}
+
+
+	public override void SetState (EntityStates state) {
+		this.state = state;
+		SetAsset(Game.assets.dungeon[state == EntityStates.Open ? "door-open" : "door-closed"]);
 	}
 
 

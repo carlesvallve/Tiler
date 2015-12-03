@@ -151,14 +151,16 @@ public class Dungeon : MonoSingleton <Dungeon> {
 					// create walls
 					if (dtile.id == DungeonTileType.WALL || dtile.id == DungeonTileType.WALLCORNER) {
 						grid.CreateTile(typeof(Tile), x, y, 1, Game.assets.dungeon["floor-sandstone"]);
-						Wall wall = (Wall)grid.CreateEntity(typeof(Wall), x, y, 1, Game.assets.dungeon["floor-sandstone"]) as Wall;
+						Wall wall = (Wall)grid.CreateEntity(typeof(Wall), x, y, 1, Game.assets.dungeon["wall-sandstone"]) as Wall;
 						wall.SetColor(new Color(0.8f, 0.8f, 0.6f));
 						//Generate3dWall(dtile, x, y);
 					}
 					
 					// create doors
 					if (dtile.id == DungeonTileType.DOORH || dtile.id == DungeonTileType.DOORV) {
-						grid.CreateEntity(typeof(Door), x, y, 1, Game.assets.dungeon["door-closed"]);
+						Door door = (Door)grid.CreateEntity(typeof(Door), x, y, 1, Game.assets.dungeon["door-closed"]) as Door;
+						//EntityStates[] states = EntityStates[] { EntityStates.Open, EntityStates.Closed, EntityStates.Locked };
+						door.SetState(EntityStates.Open); //states[Random.Range(0, states,Count)]; //Random.Range() == 0 ? EntityStates.Locked : EntityStates.Open;
 					}
 				}
 			}
@@ -184,6 +186,7 @@ public class Dungeon : MonoSingleton <Dungeon> {
 		if (tile != null) {
 			grid.stairUp = (Stair)grid.CreateEntity(typeof(Stair), tile.x, tile.y, 0.8f, Game.assets.dungeon["stairs-up"]) as Stair;
 			grid.stairUp.SetDirection(-1);
+			grid.stairUp.state = currentDungeonLevel == 0 ? EntityStates.Locked : EntityStates.Open;
 		}
 
 		// locate ladderDown so it has no entities on 1 tile radius

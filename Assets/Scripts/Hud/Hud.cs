@@ -8,6 +8,7 @@ public class Hud : MonoSingleton <Hud> {
 
 	private Text turnText;
 	private Text logText;
+	private string lastLog;
 
 	private CanvasGroup overlayGroup;
 
@@ -63,10 +64,6 @@ public class Hud : MonoSingleton <Hud> {
 			
 			yield return null;
 		}
-
-		yield return null;
-		Destroy(obj);
-		
 	}
 
 
@@ -88,6 +85,9 @@ public class Hud : MonoSingleton <Hud> {
 			group.alpha = (1 - t);
 			yield return null;
 		}
+
+		yield return null;
+		Destroy(obj);
 	}
 	
 	// ==============================================================
@@ -95,7 +95,16 @@ public class Hud : MonoSingleton <Hud> {
 	// ==============================================================
 
 	public void Log (string str) {
+		if (logText == null) { return; }
+		if (str == lastLog) { return; }
+		if (str == "") {
+			logText.text = str;
+			return;
+		}
+
 		WriteText(logText, str, textSpeed, false);
+
+		lastLog = str;
 	}
 
 
@@ -115,8 +124,6 @@ public class Hud : MonoSingleton <Hud> {
 
 	private IEnumerator AnimateText (Text dialogText, string str, float speed, bool preRender = false) {
 		//print ("Animating text " + dialogText + " " +  str + " " + speed);
-
-		if (dialogText == null) { yield break; }
 
 		if (preRender) { 
 			dialogText.text = Invisible(str); 
@@ -145,6 +152,7 @@ public class Hud : MonoSingleton <Hud> {
 		}
 
 		dialogText.text = str;
+		lastLog = null;
 	}
 
 

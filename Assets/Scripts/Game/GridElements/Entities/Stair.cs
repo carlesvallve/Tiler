@@ -4,8 +4,8 @@ using System.Collections;
 
 public class Stair : Entity {
 
-	public EntityStates state { get; set; }
 	public int direction = 1;
+	
 
 	public override void Init (Grid grid, int x, int y,float scale = 1, Sprite asset = null) {
 		base.Init(grid, x, y, scale, asset);
@@ -16,6 +16,9 @@ public class Stair : Entity {
 		state = EntityStates.Open;
 	}
 
+	public override void SetState (EntityStates state) {
+		this.state = state;
+	}
 
 	public void SetDirection (int direction) {
 		this.direction = direction;
