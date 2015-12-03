@@ -16,6 +16,17 @@ public class Monster : Creature {
 	}
 
 
+	protected override void ResolveCreatureEncounters (int x, int y) {
+		Creature creature = grid.GetCreature(x, y);
+		if (creature != null && creature != this) {
+			if (creature is Player) {
+				bool counterAttack = creature.state == CreatureStates.Idle;
+				Attack(creature, counterAttack);
+			}
+		}
+	}
+
+
 	protected virtual void Think () {
 		// only monsters that see the player will think for now
 		if (!IsVisible()) { return; }

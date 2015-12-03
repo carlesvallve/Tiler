@@ -185,7 +185,10 @@ public class Creature : Tile {
 		// clear path color at tile
 		grid.GetTile(x, y).SetColor(Color.white);
 
-		sfx.Play("Audio/Sfx/Step/step", 0.8f, Random.Range(0.8f, 1.2f));
+		if (this is Player) {
+			sfx.Play("Audio/Sfx/Step/step", 0.8f, Random.Range(0.8f, 1.2f));
+		}
+		
 
 		// stop moving if we manually aborted
 		if (state != CreatureStates.Moving) {
@@ -282,7 +285,7 @@ public class Creature : Tile {
 	}
 
 
-	private void ResolveCreatureEncounters (int x, int y) {
+	protected virtual void ResolveCreatureEncounters (int x, int y) {
 		Creature creature = grid.GetCreature(x, y);
 		if (creature != null && creature != this) {
 			bool counterAttack = creature.state == CreatureStates.Idle;
@@ -385,22 +388,29 @@ public class Creature : Tile {
 		yield return new WaitForSeconds(duration);
 
 		// apply damage
-		int dist;
+		int dist = 10;
 		int attack = Random.Range(1, 20);
 		int defense = Random.Range(1, 20);
 		if (attack > defense) {
-			dist = 4;
+			//dist = 8;
 			int damage = Random.Range(1, 7);
-			//string[] arr = new string[] { "painA", "painB", "painC", "painD" };
-			//sfx.Play("Audio/Sfx/Combat/" + arr[Random.Range(0, arr.Length)], 0.5f, Random.Range(0.8f, 1.5f));
+			string[] arr = new string[] { "painA", "painB", "painC", "painD" };
+			sfx.Play("Audio/Sfx/Combat/" + arr[Random.Range(0, arr.Length)], 0.1f, Random.Range(0.6f, 1.8f));
 			//string[] arr = new string[] { "hitA", "hitB", "hitC", "punch-flesh" };
 			//sfx.Play("Audio/Sfx/Combat/" + arr[Random.Range(0, arr.Length)], 0.6f, Random.Range(0.5f, 1.2f));
 			sfx.Play("Audio/Sfx/Combat/hitB", 0.5f, Random.Range(0.8f, 1.2f));
 			Speak("-" + damage, Color.red);
 		} else {
-			dist = 8;
-			string[] arr = new string[] { "swordB", "swordC" };
-			sfx.Play("Audio/Sfx/Combat/" + arr[Random.Range(0, arr.Length)], 0.4f, Random.Range(0.6f, 1.2f));
+			int r = Random.Range(0, 2);
+			if (r == 1) {
+				string[] arr = new string[] { "swordB", "swordC" };
+				sfx.Play("Audio/Sfx/Combat/" + arr[Random.Range(0, arr.Length)], 0.2f, Random.Range(0.6f, 1.8f));
+				Speak("Parry", Color.white);
+			} else {
+				sfx.Play("Audio/Sfx/Combat/swishA", 0.1f, Random.Range(0.5f, 1.2f));
+				Speak("Dodge", Color.white);
+			}
+			
 		}
 
 		// move towards attacker
@@ -409,7 +419,7 @@ public class Creature : Tile {
 		Vector3 vec = (attacker.transform.position - transform.position).normalized / dist;
 		Vector3 endPos = startPos - vec; // * dir;
 		while (t <= 1) {
-			t += Time.deltaTime / duration;
+			t += Time.deltaTime / duration * 0.5f;
 			transform.localPosition = Vector3.Lerp(startPos, endPos, Mathf.SmoothStep(0f, 1f, t));
 
 			yield return null;
@@ -418,7 +428,7 @@ public class Creature : Tile {
 		// move back to position
 		t = 0;
 		while (t <= 1) {
-			t += Time.deltaTime / duration;
+			t += Time.deltaTime / (duration * 0.5f);
 			transform.localPosition = Vector3.Lerp(endPos, startPos, Mathf.SmoothStep(0f, 1f, t));
 
 			yield return null;
