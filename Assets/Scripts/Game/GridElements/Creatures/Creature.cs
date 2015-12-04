@@ -19,6 +19,9 @@ public class Creature : Tile {
 	public delegate void GameTurnUpdateHandler();
 	public event GameTurnUpdateHandler OnGameTurnUpdate;
 
+	public delegate void GameOverHandler();
+	public event GameOverHandler OnGameOver;
+
 	public CreatureStates state { get; set; }
 
 	
@@ -155,7 +158,10 @@ public class Creature : Tile {
 
 
 	protected virtual IEnumerator FollowPathStep (int x, int y) {
-		if (state != CreatureStates.Moving) { yield break; }
+		if (state != CreatureStates.Moving) { 
+			yield break; 
+		}
+
 		Hud.instance.Log("");
 
 		// resolve encounters with next tile
@@ -191,6 +197,12 @@ public class Creature : Tile {
 				OnGameTurnUpdate.Invoke(); 
 			}
 		}
+
+		// resolve encounters with current tile after moving
+		Vector2 goal = path[path.Count -1];
+		if (this.x == (int)goal.x && this.y == (int)goal.y) {
+			ResolveEncountersAtGoal(this.x, this.y);
+		}
 	}
 
 
@@ -208,12 +220,9 @@ public class Creature : Tile {
 		if (state == CreatureStates.Moving) {
 			StopAllCoroutines();
 		}
-
+		
 		state = CreatureStates.Idle;
 		DrawPath(Color.white);
-
-		// always resolve encounters with current tile after moving
-		ResolveEncountersAtGoal(this.x, this.y);
 	}
 
 
@@ -355,7 +364,7 @@ public class Creature : Tile {
 	}
 
 
-	private bool ResolveCombatOutcome () {
+	private bool ResolveCombatOutcome (Creature attacker) {
 		// resolve combat outcome
 		int attack = Random.Range(1, 20);
 		int defense = Random.Range(1, 1);
@@ -363,15 +372,20 @@ public class Creature : Tile {
 		// hit
 		if (attack > defense) {
 			int damage = Random.Range(1, 7);
-
-			string[] arr = new string[] { "painA", "painB", "painC", "painD" };
-			sfx.Play("Audio/Sfx/Combat/" + arr[Random.Range(0, arr.Length)], 0.1f, Random.Range(0.6f, 1.8f));
-			sfx.Play("Audio/Sfx/Combat/hitB", 0.5f, Random.Range(0.8f, 1.2f));
-			Speak("-" + damage, Color.red);
-
-			UpdateHp(-damage);
-			if (hp == 0) {
-				return true;
+			if (damage > 0) {
+				// apply damage
+				UpdateHp(-damage);
+				// display damage info
+				string[] arr = new string[] { "painA", "painB", "painC", "painD" };
+				sfx.Play("Audio/Sfx/Combat/" + arr[Random.Range(0, arr.Length)], 0.1f, Random.Range(0.6f, 1.8f));
+				sfx.Play("Audio/Sfx/Combat/hitB", 0.5f, Random.Range(0.8f, 1.2f));
+				Speak("-" + damage, Color.red);
+				// create blood
+				grid.CreateBlood(transform.position, damage);
+				// set isDead to true
+				if (hp == 0) {
+					return true;
+				}
 			}
 
 		// parry or dodge
@@ -432,8 +446,14 @@ public class Creature : Tile {
 		float duration = speed * 0.5f;
 		yield return new WaitForSeconds(duration);
 
+		// get combat positions
+		Vector3 startPos = new Vector3(this.x, this.y, 0);
+		Vector3 vec = (new Vector3(attacker.x, attacker.y, 0) - startPos).normalized / 8;
+		Vector3 endPos = startPos - vec;
+
 		// resolve combat outcome and apply combat sounds and effects
-		bool isDead = ResolveCombatOutcome();
+
+		bool isDead = ResolveCombatOutcome(attacker);
 		if (isDead) {
 			Die(attacker);
 			yield break;
@@ -441,9 +461,6 @@ public class Creature : Tile {
 
 		// move towards attacker
 		float t = 0;
-		Vector3 startPos = new Vector3(this.x, this.y, 0);
-		Vector3 vec = (new Vector3(attacker.x, attacker.y, 0) - startPos).normalized / 8;
-		Vector3 endPos = startPos - vec;
 		while (t <= 1) {
 			t += Time.deltaTime / duration * 0.5f;
 			transform.localPosition = Vector3.Lerp(startPos, endPos, Mathf.SmoothStep(0f, 1f, t));
@@ -469,8 +486,17 @@ public class Creature : Tile {
 		sfx.Play("Audio/Sfx/Combat/" + arr[Random.Range(0, arr.Length)], 0.3f, Random.Range(0.6f, 1.8f));
 		sfx.Play("Audio/Sfx/Combat/hitB", 0.6f, Random.Range(0.5f, 2.0f));
 
+		grid.CreateBlood(transform.localPosition, 16);
+
+		if (this is Player) {
+			gameObject.SetActive(false);
+			if (OnGameOver != null) { 
+				OnGameOver.Invoke(); 
+			}
+			yield return new WaitForSeconds(1f);
+		}
+
 		Destroy(gameObject);
-		yield break;
 	}
 }
 

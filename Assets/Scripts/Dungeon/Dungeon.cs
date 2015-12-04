@@ -70,7 +70,7 @@ public class Dungeon : MonoSingleton <Dungeon> {
 	
 	private  IEnumerator ExitLevelCoroutine (int direction) {
 		game.CrossFadeRandomBgm();
-		yield return new WaitForSeconds(0.5f);
+		yield return new WaitForSeconds(0f);
 
 		// fade out
 		yield return StartCoroutine(hud.FadeOut(0.5f));

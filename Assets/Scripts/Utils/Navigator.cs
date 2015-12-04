@@ -58,7 +58,7 @@ public class Navigator : MonoSingleton<Navigator> {
 
 		Application.LoadLevel(sceneName);
 		
-		yield return null;
+		//yield return null;
 
 		transitioning = false;
 
@@ -92,7 +92,7 @@ public class Navigator : MonoSingleton<Navigator> {
 
 		group.gameObject.SetActive(true);
 		//group.alpha = 0;
-		yield return null;
+		//yield return null;
 		
 		float elapsedTime = 0;
 		while (elapsedTime < duration) {

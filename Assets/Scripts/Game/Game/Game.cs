@@ -32,6 +32,10 @@ public class Game : MonoSingleton <Game> {
 		Grid.instance.player.OnGameTurnUpdate += () => {
 			UpdateGameTurn();
 		};
+
+		Grid.instance.player.OnGameOver += () => {
+			Navigator.instance.Open("GameOver");
+		};
 	}
 
 

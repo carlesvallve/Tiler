@@ -9,6 +9,7 @@ public class Grid : MonoSingleton <Grid> {
 
 	public GameObject tilePrefab;
 	public GameObject barPrefab;
+	public GameObject bloodPrefab;
 
 	public int width = 16;
 	public int height = 16;
@@ -195,5 +196,19 @@ public class Grid : MonoSingleton <Grid> {
 
 	public Creature GetCreature (int x, int y) {
 		return layers.Get<Creature>(y, x);
+	}
+
+
+	public Blood CreateBlood (Vector3 pos, int maxParticles) {
+		Transform parent = container.Find("Fx");
+
+		GameObject obj = (GameObject)Instantiate(bloodPrefab);
+		obj.transform.SetParent(parent, false);
+		obj.name = "Blood";
+
+		Blood blood = obj.GetComponent<Blood>();
+		blood.Init(pos, maxParticles);
+
+		return blood;
 	}
 }
