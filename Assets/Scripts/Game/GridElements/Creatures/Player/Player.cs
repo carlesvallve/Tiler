@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+
 
 public class Player : Creature {
 
@@ -7,6 +9,10 @@ public class Player : Creature {
 	public event GameTurnUpdateHandler OnGameTurnUpdate;*/
 
 	protected bool useFovAlgorithm = false;
+
+	// list of monster that are currently attacking the player
+	// used for calculating the monster attack delay, so they dont attack all at once
+	public List<Monster> monsterQueue = new List<Monster>();
 
 
 	public override void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null) {
@@ -55,6 +61,8 @@ public class Player : Creature {
 
 
 	protected override IEnumerator FollowPathStep (int x, int y) {
+
+		monsterQueue.Clear();
 		
 		yield return StartCoroutine(base.FollowPathStep(x, y));
 

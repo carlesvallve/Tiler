@@ -20,7 +20,8 @@ public class Monster : Creature {
 		Creature creature = grid.GetCreature(x, y);
 		if (creature != null && creature != this) {
 			if (creature is Player) {
-				float delay = Random.Range(0f, 0.5f);
+				float delay = grid.player.monsterQueue.Count * 0.25f; //Random.Range(0f, 0.5f);
+				grid.player.monsterQueue.Add(this);
 				Attack(creature, delay);
 			}
 		}
