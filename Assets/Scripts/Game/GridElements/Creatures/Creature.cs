@@ -26,6 +26,8 @@ public class Creature : Tile {
 	//public bool moving = false;
 	//public bool stopAtNextTile = false;
 
+	protected Creature target;
+
 
 	public override void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null) {
 		base.Init(grid, x, y, scale, asset);
@@ -82,11 +84,22 @@ public class Creature : Tile {
 		if (tile == null) { return; }
 		if (!tile.visible && !tile.explored) { return; }
 
+
+
 		// if goal is the creature's tile, wait one turn instead
 		if (x == this.x && y == this.y) {
 			path = new List<Vector2>() { new Vector2(this.x, this.y) };
 			Speak("...", Color.yellow);
 		} else {
+			//
+			if (this is Player) {
+				Creature target = grid.GetCreature(x, y);
+				if (target != null) {
+					Astar.instance.walkability[target.x, target.y] = 0;
+				}
+			}
+			
+
 			// search for new path
 			path = Astar.instance.SearchPath(grid.player.x, grid.player.y, x, y);
 			path = SetPathAfterEncounter(path);
@@ -135,6 +148,7 @@ public class Creature : Tile {
 
 			yield return StartCoroutine (FollowPathStep(x, y));
 
+			// emmit event
 			if (this is Player) {
 				if (OnGameTurnUpdate != null) { OnGameTurnUpdate.Invoke(); }
 			}
@@ -159,9 +173,17 @@ public class Creature : Tile {
 	protected virtual IEnumerator FollowPathStep (int x, int y) {
 		if (state != CreatureStates.Moving) { yield break; }
 
+		/*Creature target = grid.player.target;
+		if (target != null) {
+			Astar.instance.walkability[target.x, target.y] = 0;
+		}*/
+		//Astar.instance.walkability[x, y] = 1;
+
 		// resolve encounters with next tile
 		StartCoroutine(ResolveEntityEncounters(x, y));
 		ResolveCreatureEncounters(x, y);
+
+
 
 		// if we stopped moving because of encounters, wait and escape
 		if (state != CreatureStates.Moving) { 
@@ -333,12 +355,19 @@ public class Creature : Tile {
 		StopMoving();
 		
 		state = CreatureStates.Attacking;
-		StartCoroutine(AttackAnimation(target));
 
-		target.Defend(this, counterAttack);
+
+		float delay = (this is Player) ? 0 : Random.Range(0, 0.5f);
+
+		StartCoroutine(AttackAnimation(target, delay));
+
+		target.Defend(this, delay, false); //counterAttack);
 	}
 
-	protected IEnumerator AttackAnimation (Creature target) {
+	protected IEnumerator AttackAnimation (Creature target, float delay = 0) {
+		
+		yield return new WaitForSeconds(delay);
+		
 		float duration = speed * 0.5f;
 
 		sfx.Play("Audio/Sfx/Combat/woosh", 0.6f, Random.Range(0.8f, 1.5f));
@@ -365,6 +394,11 @@ public class Creature : Tile {
 
 		yield return null;
 		state = CreatureStates.Idle;
+
+		// emmit event
+		if (this is Player) {
+			if (OnGameTurnUpdate != null) { OnGameTurnUpdate.Invoke(); }
+		}
 	}
 
 
@@ -372,17 +406,19 @@ public class Creature : Tile {
 	// Defend
 	// =====================================================
 
-	protected void Defend (Creature attacker, bool counterAttack = false) {
-		if  (state == CreatureStates.Defending) { return; }
+	protected void Defend (Creature attacker, float delay = 0, bool counterAttack = false) {
+		//if  (state == CreatureStates.Defending) { return; }
 
 		StopMoving();
 
 		state = CreatureStates.Defending;
-		StartCoroutine(DefendAnimation(attacker, counterAttack));
+		StartCoroutine(DefendAnimation(attacker, delay, counterAttack));
 	}
 
 
-	protected IEnumerator DefendAnimation (Creature attacker, bool counterAttack = false) {
+	protected IEnumerator DefendAnimation (Creature attacker, float delay = 0, bool counterAttack = false) {
+		yield return new WaitForSeconds(delay);
+
 		// wait for impact
 		float duration = speed * 0.5f;
 		yield return new WaitForSeconds(duration);
@@ -415,8 +451,8 @@ public class Creature : Tile {
 
 		// move towards attacker
 		float t = 0;
-		Vector3 startPos = transform.localPosition;
-		Vector3 vec = (attacker.transform.position - transform.position).normalized / dist;
+		Vector3 startPos = new Vector3(this.x, this.y, 0); //transform.localPosition;
+		Vector3 vec = (new Vector3(attacker.x, attacker.y, 0) - startPos).normalized / dist;
 		Vector3 endPos = startPos - vec; // * dir;
 		while (t <= 1) {
 			t += Time.deltaTime / duration * 0.5f;

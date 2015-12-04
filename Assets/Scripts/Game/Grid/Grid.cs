@@ -90,7 +90,7 @@ public class Grid : MonoSingleton <Grid> {
 
 		GameObject obj = (GameObject)Instantiate(tilePrefab);
 		obj.transform.SetParent(parent, false);
-		obj.name = TileType.ToString(); //typeof(T).ToString();
+		obj.name = TileType.ToString();
 
 		Tile tile = obj.AddComponent(TileType) as Tile;
 		tile.Init(this, x, y, scale, asset);
@@ -138,7 +138,7 @@ public class Grid : MonoSingleton <Grid> {
 
 		GameObject obj = (GameObject)Instantiate(tilePrefab);
 		obj.transform.SetParent(parent, false);
-		obj.name = EntityType.ToString(); //typeof(T).ToString();
+		obj.name = EntityType.ToString();
 
 		Entity entity = obj.AddComponent(EntityType) as Entity;
 		entity.Init(this, x, y, scale, asset);
@@ -169,7 +169,7 @@ public class Grid : MonoSingleton <Grid> {
 
 		GameObject obj = (GameObject)Instantiate(tilePrefab);
 		obj.transform.SetParent(parent, false);
-		obj.name = CreatureType.ToString(); //typeof(T).ToString();
+		obj.name = CreatureType.ToString();
 
 		Creature creature = obj.AddComponent(CreatureType) as Creature;
 		creature.Init(this, x, y, scale,  asset);
@@ -182,7 +182,7 @@ public class Grid : MonoSingleton <Grid> {
 
 	public void SetCreature (int x, int y, Creature creature) {
 		// refresh astar walkability
-		//Astar.instance.walkability[x, y] = (creature != null && !creature.IsWalkable()) ? 1 : 0;
+		Astar.instance.walkability[x, y] = (creature != null && !creature.IsWalkable()) ? 1 : 0;
 
 		layers.Set<Creature>(y, x, creature);
 	}
