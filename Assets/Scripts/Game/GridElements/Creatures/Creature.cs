@@ -90,7 +90,7 @@ public class Creature : Tile {
 		// escape if goal has not benn explored yet
 		Tile tile = grid.GetTile(x, y);
 		if (tile == null) { return; }
-		if (!!tile.explored) { return; }
+		if (!tile.explored) { return; }
 
 		// if goal is the creature's tile, wait one turn instead
 		if (x == this.x && y == this.y) {
@@ -220,6 +220,8 @@ public class Creature : Tile {
 		if (state == CreatureStates.Moving) {
 			StopAllCoroutines();
 		}
+
+		UpdateVision();
 		
 		state = CreatureStates.Idle;
 		DrawPath(Color.white);
@@ -368,7 +370,7 @@ public class Creature : Tile {
 	private bool ResolveCombatOutcome (Creature attacker) {
 		// resolve combat outcome
 		int attack = Random.Range(1, 20);
-		int defense = Random.Range(1, 1);
+		int defense = Random.Range(1, 20);
 
 		// hit
 		if (attack > defense) {

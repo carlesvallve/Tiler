@@ -8,7 +8,7 @@ public class Player : Creature {
 	/*public delegate void GameTurnUpdateHandler();
 	public event GameTurnUpdateHandler OnGameTurnUpdate;*/
 
-	protected bool useFovAlgorithm = false;
+	protected bool useFovAlgorithm = true;
 
 	// list of monster that are currently attacking the player
 	// used for calculating the monster attack delay, so they dont attack all at once

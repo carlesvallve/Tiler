@@ -5,7 +5,6 @@ public class GameOver : MonoBehaviour {
 
 	private AudioManager sfx;
 	private Navigator navigator;
-
 	private bool transitioning;
 
 
