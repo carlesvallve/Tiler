@@ -8,8 +8,9 @@ public enum CreatureStates  {
 	Moving = 1,
 	Attacking = 2,
 	Defending = 4,
-	Using = 5,
-	Descending = 6
+	Dying = 5,
+	Using = 6,
+	Descending = 7
 }
 
 
@@ -51,7 +52,7 @@ public class Creature : Tile {
 
 
 	protected virtual void UpdateHp (int ammount) {
-		hp += ammount;
+		hp += ammount; if (hp < 0) { hp = 0; }
 		bar.UpdateHp(hp);
 	}
 
@@ -346,6 +347,49 @@ public class Creature : Tile {
 		StartCoroutine(DefendAnimation(attacker, delay));
 	}
 
+	protected void Die (Creature attacker, float delay = 0) {
+		StopMoving();
+
+		state = CreatureStates.Dying;
+		StartCoroutine(DeathAnimation(attacker, delay));
+	}
+
+
+	private bool ResolveCombatOutcome () {
+		// resolve combat outcome
+		int attack = Random.Range(1, 20);
+		int defense = Random.Range(1, 1);
+
+		// hit
+		if (attack > defense) {
+			int damage = Random.Range(1, 7);
+
+			string[] arr = new string[] { "painA", "painB", "painC", "painD" };
+			sfx.Play("Audio/Sfx/Combat/" + arr[Random.Range(0, arr.Length)], 0.1f, Random.Range(0.6f, 1.8f));
+			sfx.Play("Audio/Sfx/Combat/hitB", 0.5f, Random.Range(0.8f, 1.2f));
+			Speak("-" + damage, Color.red);
+
+			UpdateHp(-damage);
+			if (hp == 0) {
+				return true;
+			}
+
+		// parry or dodge
+		} else {
+			int r = Random.Range(0, 2);
+			if (r == 1) {
+				string[] arr = new string[] { "swordB", "swordC" };
+				sfx.Play("Audio/Sfx/Combat/" + arr[Random.Range(0, arr.Length)], 0.2f, Random.Range(0.6f, 1.8f));
+				Speak("Parry", Color.white);
+			} else {
+				sfx.Play("Audio/Sfx/Combat/swishA", 0.1f, Random.Range(0.5f, 1.2f));
+				Speak("Dodge", Color.white);
+			}
+		}
+
+		return false;
+	}
+
 
 	protected IEnumerator AttackAnimation (Creature target, float delay = 0) {
 		yield return new WaitForSeconds(delay);
@@ -389,7 +433,11 @@ public class Creature : Tile {
 		yield return new WaitForSeconds(duration);
 
 		// resolve combat outcome and apply combat sounds and effects
-		ResolveCombatOutcome();
+		bool isDead = ResolveCombatOutcome();
+		if (isDead) {
+			Die(attacker);
+			yield break;
+		}
 
 		// move towards attacker
 		float t = 0;
@@ -416,35 +464,13 @@ public class Creature : Tile {
 	}
 
 
-	private void ResolveCombatOutcome () {
-		// resolve combat outcome
-		int attack = Random.Range(1, 20);
-		int defense = Random.Range(1, 1);
+	protected IEnumerator DeathAnimation (Creature attacker, float delay = 0) {
+		string[] arr = new string[] { "painA", "painB", "painC", "painD" };
+		sfx.Play("Audio/Sfx/Combat/" + arr[Random.Range(0, arr.Length)], 0.3f, Random.Range(0.6f, 1.8f));
+		sfx.Play("Audio/Sfx/Combat/hitB", 0.6f, Random.Range(0.5f, 2.0f));
 
-		// hit
-		if (attack > defense) {
-			int damage = Random.Range(1, 7);
-
-			string[] arr = new string[] { "painA", "painB", "painC", "painD" };
-			sfx.Play("Audio/Sfx/Combat/" + arr[Random.Range(0, arr.Length)], 0.1f, Random.Range(0.6f, 1.8f));
-			sfx.Play("Audio/Sfx/Combat/hitB", 0.5f, Random.Range(0.8f, 1.2f));
-			Speak("-" + damage, Color.red);
-
-			UpdateHp(-damage);
-
-		// parry or dodge
-		} else {
-			int r = Random.Range(0, 2);
-			if (r == 1) {
-				string[] arr = new string[] { "swordB", "swordC" };
-				sfx.Play("Audio/Sfx/Combat/" + arr[Random.Range(0, arr.Length)], 0.2f, Random.Range(0.6f, 1.8f));
-				Speak("Parry", Color.white);
-			} else {
-				sfx.Play("Audio/Sfx/Combat/swishA", 0.1f, Random.Range(0.5f, 1.2f));
-				Speak("Dodge", Color.white);
-			}
-		}
+		Destroy(gameObject);
+		yield break;
 	}
-	
 }
 

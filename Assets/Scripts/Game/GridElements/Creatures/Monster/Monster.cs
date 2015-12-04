@@ -31,6 +31,7 @@ public class Monster : Creature {
 	protected virtual void Think () {
 		// only monsters that see the player will think for now
 		if (!visible) { return; }
+		if (state == CreatureStates.Dying) { return; }
 
 		// move towards player
 		MoveTowardsTarget(grid.player);
