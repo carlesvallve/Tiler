@@ -20,7 +20,10 @@ public class Creature : Tile {
 
 	public CreatureStates state { get; set; }
 
+	
 	public int hp = 5;
+	public int maxHp = 5;
+	public HpBar bar;
 
 	protected List<Vector2> path;
 	protected float speed = 0.15f;
@@ -36,6 +39,20 @@ public class Creature : Tile {
 		LocateAtCoords(x, y);
 
 		state = CreatureStates.Idle;
+
+		InitStats();
+	}
+
+
+	protected virtual void InitStats () {
+		hp = maxHp;
+		bar.Init(this);
+	}
+
+
+	protected virtual void UpdateHp (int ammount) {
+		hp += ammount;
+		bar.UpdateHp(hp);
 	}
 
 
@@ -412,6 +429,8 @@ public class Creature : Tile {
 			sfx.Play("Audio/Sfx/Combat/" + arr[Random.Range(0, arr.Length)], 0.1f, Random.Range(0.6f, 1.8f));
 			sfx.Play("Audio/Sfx/Combat/hitB", 0.5f, Random.Range(0.8f, 1.2f));
 			Speak("-" + damage, Color.red);
+
+			UpdateHp(-damage);
 
 		// parry or dodge
 		} else {

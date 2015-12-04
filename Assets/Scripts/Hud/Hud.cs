@@ -33,7 +33,7 @@ public class Hud : MonoSingleton <Hud> {
 	// UI labels
 	// ==============================================================
 
-	public void CreateLabel (Tile tile, string str, Color color, float duration = 1f, float startY = 24) {
+	public void CreateLabel (Tile tile, string str, Color color, float duration = 1f, float startY = 32) {
 		GameObject obj = (GameObject)Instantiate(labelPrefab);
 		obj.transform.SetParent(world, false);
 		obj.name = "Label";

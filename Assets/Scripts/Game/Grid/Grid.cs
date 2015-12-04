@@ -8,8 +8,7 @@ public class Grid : MonoSingleton <Grid> {
 	public Transform container;
 
 	public GameObject tilePrefab;
-	public GameObject entityPrefab;
-	public GameObject creaturePrefab;
+	public GameObject barPrefab;
 
 	public int width = 16;
 	public int height = 16;
@@ -172,6 +171,12 @@ public class Grid : MonoSingleton <Grid> {
 		obj.name = CreatureType.ToString();
 
 		Creature creature = obj.AddComponent(CreatureType) as Creature;
+
+		obj = (GameObject)Instantiate(barPrefab);
+		obj.transform.SetParent(creature.transform, false);
+		obj.name = "Bar";
+		creature.bar = obj.GetComponent<HpBar>();
+
 		creature.Init(this, x, y, scale,  asset);
 
 		SetCreature(x, y, creature);

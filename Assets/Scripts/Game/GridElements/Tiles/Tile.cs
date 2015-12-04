@@ -21,6 +21,8 @@ public class Tile : MonoBehaviour {
 	protected SpriteRenderer outline;
 	protected SpriteRenderer img;
 	protected TextMesh label;
+
+	protected int zIndex;
 	
 
 	public virtual void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null) {
@@ -90,7 +92,9 @@ public class Tile : MonoBehaviour {
 	}
 
 
-	protected void SetSortingOrder (int zIndex) {
+	protected virtual void SetSortingOrder (int zIndex) {
+		this.zIndex = zIndex;
+
 		zIndex += grid.height - this.y;
 		outline.sortingOrder = zIndex;
 		img.sortingOrder = zIndex + 1;
