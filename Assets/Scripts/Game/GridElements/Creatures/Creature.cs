@@ -74,7 +74,7 @@ public class Creature : Tile {
 		// if goal is the creature's tile, wait one turn instead
 		if (x == this.x && y == this.y) {
 			path = new List<Vector2>() { new Vector2(this.x, this.y) };
-			Speak("...", Color.yellow);
+			//Speak("...", Color.yellow);
 		} else {
 			// if we are the player goal is a creature, set goal tile as walkable
 			if (this is Player) {
@@ -307,11 +307,11 @@ public class Creature : Tile {
 
 
 	// =====================================================
-	// Attack
+	// Combat
 	// =====================================================
 
 	protected void Attack (Creature target, float delay = 0) {
-		if (state == CreatureStates.Attacking) { return; }
+		if (state == CreatureStates.Using) { return; }
 		
 		StopMoving();
 		state = CreatureStates.Attacking;
@@ -319,6 +319,14 @@ public class Creature : Tile {
 		StartCoroutine(AttackAnimation(target, delay));
 
 		target.Defend(this, delay);
+	}
+
+
+	protected void Defend (Creature attacker, float delay = 0) {
+		StopMoving();
+
+		state = CreatureStates.Defending;
+		StartCoroutine(DefendAnimation(attacker, delay));
 	}
 
 
@@ -353,20 +361,6 @@ public class Creature : Tile {
 		if (this is Player) {
 			if (OnGameTurnUpdate != null) { OnGameTurnUpdate.Invoke(); }
 		}
-	}
-
-
-	// =====================================================
-	// Defend
-	// =====================================================
-
-	protected void Defend (Creature attacker, float delay = 0) {
-		if  (state == CreatureStates.Defending) { return; }
-
-		StopMoving();
-
-		state = CreatureStates.Defending;
-		StartCoroutine(DefendAnimation(attacker, delay));
 	}
 
 
@@ -408,7 +402,7 @@ public class Creature : Tile {
 	private void ResolveCombatOutcome () {
 		// resolve combat outcome
 		int attack = Random.Range(1, 20);
-		int defense = Random.Range(1, 20);
+		int defense = Random.Range(1, 1);
 
 		// hit
 		if (attack > defense) {
