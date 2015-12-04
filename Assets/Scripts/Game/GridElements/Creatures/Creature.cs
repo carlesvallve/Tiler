@@ -377,6 +377,35 @@ public class Creature : Tile {
 		float duration = speed * 0.5f;
 		yield return new WaitForSeconds(duration);
 
+		// resolve combat outcome and apply combat sounds and effects
+		ResolveCombatOutcome();
+
+		// move towards attacker
+		float t = 0;
+		Vector3 startPos = new Vector3(this.x, this.y, 0);
+		Vector3 vec = (new Vector3(attacker.x, attacker.y, 0) - startPos).normalized / 8;
+		Vector3 endPos = startPos - vec;
+		while (t <= 1) {
+			t += Time.deltaTime / duration * 0.5f;
+			transform.localPosition = Vector3.Lerp(startPos, endPos, Mathf.SmoothStep(0f, 1f, t));
+
+			yield return null;
+		}
+
+		// move back to position
+		t = 0;
+		while (t <= 1) {
+			t += Time.deltaTime / (duration * 0.5f);
+			transform.localPosition = Vector3.Lerp(endPos, startPos, Mathf.SmoothStep(0f, 1f, t));
+
+			yield return null;
+		}
+
+		state = CreatureStates.Idle;
+	}
+
+
+	private void ResolveCombatOutcome () {
 		// resolve combat outcome
 		int attack = Random.Range(1, 20);
 		int defense = Random.Range(1, 20);
@@ -402,29 +431,6 @@ public class Creature : Tile {
 				Speak("Dodge", Color.white);
 			}
 		}
-
-		// move towards attacker
-		float t = 0;
-		Vector3 startPos = new Vector3(this.x, this.y, 0);
-		Vector3 vec = (new Vector3(attacker.x, attacker.y, 0) - startPos).normalized / 8;
-		Vector3 endPos = startPos - vec;
-		while (t <= 1) {
-			t += Time.deltaTime / duration * 0.5f;
-			transform.localPosition = Vector3.Lerp(startPos, endPos, Mathf.SmoothStep(0f, 1f, t));
-
-			yield return null;
-		}
-
-		// move back to position
-		t = 0;
-		while (t <= 1) {
-			t += Time.deltaTime / (duration * 0.5f);
-			transform.localPosition = Vector3.Lerp(endPos, startPos, Mathf.SmoothStep(0f, 1f, t));
-
-			yield return null;
-		}
-
-		state = CreatureStates.Idle;
 	}
 	
 }
