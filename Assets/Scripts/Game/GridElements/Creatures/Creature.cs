@@ -84,14 +84,12 @@ public class Creature : Tile {
 		if (tile == null) { return; }
 		if (!tile.visible && !tile.explored) { return; }
 
-
-
 		// if goal is the creature's tile, wait one turn instead
 		if (x == this.x && y == this.y) {
 			path = new List<Vector2>() { new Vector2(this.x, this.y) };
 			Speak("...", Color.yellow);
 		} else {
-			//
+			// if we are the player goal is a creature, set goal tile as walkable
 			if (this is Player) {
 				Creature target = grid.GetCreature(x, y);
 				if (target != null) {
@@ -148,6 +146,12 @@ public class Creature : Tile {
 
 			yield return StartCoroutine (FollowPathStep(x, y));
 
+			// escape if creature is not in moving state anymore
+			if (state != CreatureStates.Moving) {
+				yield break;
+			}
+
+
 			// emmit event
 			if (this is Player) {
 				if (OnGameTurnUpdate != null) { OnGameTurnUpdate.Invoke(); }
@@ -173,22 +177,15 @@ public class Creature : Tile {
 	protected virtual IEnumerator FollowPathStep (int x, int y) {
 		if (state != CreatureStates.Moving) { yield break; }
 
-		/*Creature target = grid.player.target;
-		if (target != null) {
-			Astar.instance.walkability[target.x, target.y] = 0;
-		}*/
-		//Astar.instance.walkability[x, y] = 1;
-
 		// resolve encounters with next tile
-		StartCoroutine(ResolveEntityEncounters(x, y));
+		ResolveEntityEncounters(x, y);
 		ResolveCreatureEncounters(x, y);
-
-
 
 		// if we stopped moving because of encounters, wait and escape
 		if (state != CreatureStates.Moving) { 
-			yield return new WaitForSeconds(0.5f);
-			yield break; 
+			//yield return new WaitForSeconds(1f);
+			StopMoving();
+			yield break;
 		}
 		
 		// interpolate creature position
@@ -210,15 +207,6 @@ public class Creature : Tile {
 		if (this is Player) {
 			sfx.Play("Audio/Sfx/Step/step", 0.8f, Random.Range(0.8f, 1.2f));
 		}
-		
-
-		// stop moving if we manually aborted
-		if (state != CreatureStates.Moving) {
-			StopMoving();
-		}
-
-		// wait a bit until next move step
-		//yield return new WaitForSeconds(0.1f);
 	}
 
 
@@ -268,50 +256,47 @@ public class Creature : Tile {
 	}
 
 
-	private IEnumerator ResolveEntityEncounters (int x, int y) {
+	private void ResolveEntityEncounters (int x, int y) {
 		Entity entity = grid.GetEntity(x, y);
-		if (entity == null) { yield break; }
+		if (entity == null) { return; }
 
-		//bool encounter = false;
 		// resolve doors
 		if (entity is Door) {
 			Door door = (Door)entity;
 			if (door.state != EntityStates.Open) {
 				DrawPath(Color.white);
 
-				// closed door
+				// open the door
 				if (door.state == EntityStates.Closed) { 
-					// open door
-					state = CreatureStates.Using;
-					//StopMoving();
-					CenterCamera();
-					yield return StartCoroutine(door.Open()); 
-					if (this is Player) {
-						if (OnGameTurnUpdate != null) { OnGameTurnUpdate.Invoke(); }
-					}
-		
-				} else if (door.state == EntityStates.Locked) { 
-					// unlock door
-					state = CreatureStates.Using;
-					//StopMoving();
-					CenterCamera();
-					yield return StartCoroutine(door.Unlock(success => {}));
 					
+					state = CreatureStates.Using;
+					StopMoving();
+					CenterCamera();
+					StartCoroutine(door.Open()); 
+					if (this is Player) { 
+						Hud.instance.Log("You open the door."); 
+					}
+				
+				// unlock the door
+				} else if (door.state == EntityStates.Locked) { 
+					state = CreatureStates.Using;
+					StopMoving();
+					CenterCamera();
+					StartCoroutine(door.Unlock(success => {
+						if (this is Player) { 
+							Hud.instance.Log(success ? "You unlock the door." : "The door is locked."); 
+						}
+					}));
 				}
 			}
 		}
-
-		/*if (encounter) {
-			StopMoving();
-		}*/
 	}
 
 
 	protected virtual void ResolveCreatureEncounters (int x, int y) {
 		Creature creature = grid.GetCreature(x, y);
 		if (creature != null && creature != this) {
-			bool counterAttack = creature.state == CreatureStates.Idle;
-			Attack(creature, counterAttack);
+			Attack(creature, 0);
 		}
 	}
 
@@ -322,11 +307,12 @@ public class Creature : Tile {
 
 			// resolve stairs
 			if ((this is Player) && (entity is Stair)) {
-				StopMoving();
-				//yield return new WaitForSeconds(0.25f);
+				//StopMoving();
 
 				Stair stair = (Stair)entity;
-				if (stair.state == EntityStates.Open) { 
+				if (stair.state == EntityStates.Open) {
+					StopMoving(); 
+					state = CreatureStates.Using;
 					Dungeon.instance.ExitLevel (stair.direction);
 				} else {
 					Hud.instance.Log("The stair doors are locked.");
@@ -349,23 +335,20 @@ public class Creature : Tile {
 	// Attack
 	// =====================================================
 
-	protected void Attack (Creature target, bool counterAttack = false) {
+	protected void Attack (Creature target, float delay = 0) {
 		if (state == CreatureStates.Attacking) { return; }
 		
 		StopMoving();
-		
 		state = CreatureStates.Attacking;
 
-
-		float delay = (this is Player) ? 0 : Random.Range(0, 0.5f);
-
+		//float delay = 0; //(this is Player) ? 0 : Random.Range(0.2f, 0.8f);
 		StartCoroutine(AttackAnimation(target, delay));
 
-		target.Defend(this, delay, false); //counterAttack);
+		target.Defend(this, delay);
 	}
 
+
 	protected IEnumerator AttackAnimation (Creature target, float delay = 0) {
-		
 		yield return new WaitForSeconds(delay);
 		
 		float duration = speed * 0.5f;
@@ -379,7 +362,6 @@ public class Creature : Tile {
 		while (t <= 1) {
 			t += Time.deltaTime / duration;
 			transform.localPosition = Vector3.Lerp(startPos, endPos, Mathf.SmoothStep(0f, 1f, t));
-
 			yield return null;
 		}
 
@@ -388,7 +370,6 @@ public class Creature : Tile {
 		while (t <= 1) {
 			t += Time.deltaTime / duration;
 			transform.localPosition = Vector3.Lerp(endPos, startPos, Mathf.SmoothStep(0f, 1f, t));
-
 			yield return null;
 		}
 
@@ -406,36 +387,37 @@ public class Creature : Tile {
 	// Defend
 	// =====================================================
 
-	protected void Defend (Creature attacker, float delay = 0, bool counterAttack = false) {
-		//if  (state == CreatureStates.Defending) { return; }
+	protected void Defend (Creature attacker, float delay = 0) {
+		if  (state == CreatureStates.Defending) { return; }
 
 		StopMoving();
 
 		state = CreatureStates.Defending;
-		StartCoroutine(DefendAnimation(attacker, delay, counterAttack));
+		StartCoroutine(DefendAnimation(attacker, delay));
 	}
 
 
-	protected IEnumerator DefendAnimation (Creature attacker, float delay = 0, bool counterAttack = false) {
+	protected IEnumerator DefendAnimation (Creature attacker, float delay = 0) {
 		yield return new WaitForSeconds(delay);
 
 		// wait for impact
 		float duration = speed * 0.5f;
 		yield return new WaitForSeconds(duration);
 
-		// apply damage
-		int dist = 10;
+		// resolve combat outcome
 		int attack = Random.Range(1, 20);
 		int defense = Random.Range(1, 20);
+
+		// hit
 		if (attack > defense) {
-			//dist = 8;
 			int damage = Random.Range(1, 7);
+
 			string[] arr = new string[] { "painA", "painB", "painC", "painD" };
 			sfx.Play("Audio/Sfx/Combat/" + arr[Random.Range(0, arr.Length)], 0.1f, Random.Range(0.6f, 1.8f));
-			//string[] arr = new string[] { "hitA", "hitB", "hitC", "punch-flesh" };
-			//sfx.Play("Audio/Sfx/Combat/" + arr[Random.Range(0, arr.Length)], 0.6f, Random.Range(0.5f, 1.2f));
 			sfx.Play("Audio/Sfx/Combat/hitB", 0.5f, Random.Range(0.8f, 1.2f));
 			Speak("-" + damage, Color.red);
+
+		// parry/dodge
 		} else {
 			int r = Random.Range(0, 2);
 			if (r == 1) {
@@ -446,13 +428,12 @@ public class Creature : Tile {
 				sfx.Play("Audio/Sfx/Combat/swishA", 0.1f, Random.Range(0.5f, 1.2f));
 				Speak("Dodge", Color.white);
 			}
-			
 		}
 
 		// move towards attacker
 		float t = 0;
-		Vector3 startPos = new Vector3(this.x, this.y, 0); //transform.localPosition;
-		Vector3 vec = (new Vector3(attacker.x, attacker.y, 0) - startPos).normalized / dist;
+		Vector3 startPos = new Vector3(this.x, this.y, 0);
+		Vector3 vec = (new Vector3(attacker.x, attacker.y, 0) - startPos).normalized / 8;
 		Vector3 endPos = startPos - vec; // * dir;
 		while (t <= 1) {
 			t += Time.deltaTime / duration * 0.5f;
@@ -472,10 +453,6 @@ public class Creature : Tile {
 
 		yield return null;
 		state = CreatureStates.Idle;
-
-		if (counterAttack) {
-			Attack(attacker, false);
-		}
 	}
 	
 }

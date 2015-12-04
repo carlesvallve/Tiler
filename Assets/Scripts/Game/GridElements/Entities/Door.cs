@@ -24,7 +24,6 @@ public class Door : Entity {
 	public IEnumerator Open () {
 		state = EntityStates.Open;
 		sfx.Play("Audio/Sfx/Door/key", 1f, Random.Range(0.4f, 0.6f));
-		Hud.instance.Log("You open the door.");
 
 		SetAsset(Game.assets.dungeon["door-open"]);
 		
@@ -38,16 +37,13 @@ public class Door : Entity {
 		bool success = Random.Range(1, 100) < 50;
 		if (!success) {
 			Speak("Locked", Color.white);
-			Hud.instance.Log("The door is locked.");
 		}
 
 		yield return new WaitForSeconds(0.5f);
 
 		if (success) {
 			Speak("Success!", Color.white);
-			Hud.instance.Log("You unlock the door.");
 			sfx.Play("Audio/Sfx/Door/door-open2", 0.8f, Random.Range(0.8f, 1.2f));
-
 			state = EntityStates.Closed;
 		}
 

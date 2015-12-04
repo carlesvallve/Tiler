@@ -20,8 +20,8 @@ public class Monster : Creature {
 		Creature creature = grid.GetCreature(x, y);
 		if (creature != null && creature != this) {
 			if (creature is Player) {
-				bool counterAttack = creature.state == CreatureStates.Idle;
-				Attack(creature, counterAttack);
+				float delay = Random.Range(0f, 0.5f);
+				Attack(creature, delay);
 			}
 		}
 	}
