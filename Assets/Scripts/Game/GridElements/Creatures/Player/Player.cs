@@ -16,7 +16,7 @@ public class Player : Creature {
 
 
 	public override void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null) {
-		maxHp = 50;
+		maxHp = 20;
 
 		base.Init(grid, x, y, scale, asset);	
 		walkable = true;
@@ -84,13 +84,21 @@ public class Player : Creature {
 	}
 
 
-	protected override void CenterCamera () {
+	public override void CenterCamera (bool interpolate = true) {
 		if (state == CreatureStates.Descending) { 
 			return; 
 		}
 
 		Camera2D.instance.StopAllCoroutines();
-		Camera2D.instance.StartCoroutine(Camera2D.instance.MoveToPos(new Vector2(this.x, this.y)));
+
+		if (interpolate) {
+			Camera2D.instance.StartCoroutine(Camera2D.instance.MoveToPos(new Vector2(this.x, this.y)));
+		} else {
+			Camera2D.instance.LocateAtPos(new Vector2(this.x, this.y));
+		}
+
+		
+		
 	}
 
 

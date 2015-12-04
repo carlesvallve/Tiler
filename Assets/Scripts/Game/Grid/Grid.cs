@@ -57,16 +57,13 @@ public class Grid : MonoSingleton <Grid> {
 
 
 	public void ResetGrid () {
-		// destroy all previously generated gameobjects
+		// destroy all previously generated gameobjects except player
 
 		Tile[] tilesToDestroy = container.GetComponentsInChildren<Tile>();
 		foreach (Tile tile in tilesToDestroy) {
+			if (tile is Player) { continue; } // player must persist through all dungeon levels
+			tile.StopAllCoroutines();
 			Destroy(tile.gameObject);
-		}
-
-		Entity[] entitiesToDestroy = container.GetComponentsInChildren<Entity>();
-		foreach (Entity entity in entitiesToDestroy) {
-			Destroy(entity.gameObject);
 		}
 
 		this.width = 0;
@@ -165,7 +162,7 @@ public class Grid : MonoSingleton <Grid> {
 	// Creature
 
 	public Creature CreateCreature (System.Type CreatureType, int x, int y, float scale = 1, Sprite asset = null) {
-		Transform parent = container.Find("Creatures");
+		Transform parent = (CreatureType == typeof(Player)) ? container.Find("Player") : container.Find("Creatures");
 
 		GameObject obj = (GameObject)Instantiate(tilePrefab);
 		obj.transform.SetParent(parent, false);

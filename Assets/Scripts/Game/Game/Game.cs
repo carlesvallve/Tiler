@@ -9,13 +9,18 @@ public class Game : MonoSingleton <Game> {
 
 	public int turn = 1;
 	
+	private Navigator navigator;
 	private AudioManager sfx;
+	
 	private List<string> bgmList;
 	private string bgm1;
 	private string bgm2;
 
 
 	void Start () {
+		navigator = Navigator.instance; navigator.transform.Translate(Vector3.zero);
+		sfx = AudioManager.instance;
+
 		assets = new Assets();
 		SetBgm();
 		InitGame();	
@@ -34,7 +39,7 @@ public class Game : MonoSingleton <Game> {
 		};
 
 		Grid.instance.player.OnGameOver += () => {
-			Navigator.instance.Open("GameOver");
+			StartCoroutine(GameOver());
 		};
 	}
 
@@ -46,13 +51,26 @@ public class Game : MonoSingleton <Game> {
 	}
 
 
+	public IEnumerator GameOver () {
+		
+
+		//sfx.Play("Audio/Bgm/Dungeon/Ambient/Space", 0, 1f, true);
+		//sfx.Fade("Audio/Bgm/Dungeon/Ambient/Space", 0.5f, 0.5f);
+		
+		yield return new WaitForSeconds(0.5f);
+
+		if (bgm1 != null) { sfx.Fade(bgm1, 0, 0.5f); }
+		if (bgm2 != null) { sfx.Fade(bgm2, 0, 0.5f); }
+		
+		Navigator.instance.Open("GameOver");
+	}
+
+
 	// =====================================================
 	// Game Music
 	// =====================================================
 
 	private void SetBgm() {
-		sfx = AudioManager.instance;
-
 		bgmList = new List<string>() {
 			"Audio/Bgm/Dungeon/Music/Alone",
 			"Audio/Bgm/Dungeon/Music/GambooPiano",
@@ -61,11 +79,11 @@ public class Game : MonoSingleton <Game> {
 			"Audio/Bgm/Dungeon/Music/Lifeline",
 			"Audio/Bgm/Dungeon/Music/Suspense",
 
-			"Audio/Bgm/Dungeon/Ambient/forest",
-			"Audio/Bgm/Dungeon/Ambient/pulse",
-			"Audio/Bgm/Dungeon/Ambient/reaktor",
-			"Audio/Bgm/Dungeon/Ambient/space",
-			"Audio/Bgm/Dungeon/Ambient/waterstream"
+			"Audio/Bgm/Dungeon/Ambient/Forest",
+			"Audio/Bgm/Dungeon/Ambient/Pulse",
+			"Audio/Bgm/Dungeon/Ambient/Reaktor",
+			"Audio/Bgm/Dungeon/Ambient/Space",
+			"Audio/Bgm/Dungeon/Ambient/Waterstream"
 		};
 
 		CrossFadeRandomBgm();
@@ -86,7 +104,7 @@ public class Game : MonoSingleton <Game> {
 
 	public void CrossFadeRandomBgm () {
 		if (bgm1 != null) { sfx.Fade(bgm1, 0, 1f); }
-		if (bgm2 != null) { sfx.Fade(bgm2, 0, 0.5f); }
+		if (bgm2 != null) { sfx.Fade(bgm2, 0, 1f); }
 
 		bgm1 = GetRandomBgm();
 		sfx.Play(bgm1, 0, Random.Range(0.5f, 1.5f), true);

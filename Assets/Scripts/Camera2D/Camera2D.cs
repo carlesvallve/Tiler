@@ -92,4 +92,9 @@ public class Camera2D : MonoBehaviour {
 		}
 	}
 
+
+	public void LocateAtPos (Vector2 pos) {
+		transform.localPosition = new Vector3(pos.x, pos.y, -10);
+	}
+
 }

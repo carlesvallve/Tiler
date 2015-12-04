@@ -55,7 +55,7 @@ public class Dungeon : MonoSingleton <Dungeon> {
 		// Render dungeon on grid
 		RenderDungeon(direction);
 
-		sfx.Play("Audio/Sfx/Musical/gong", 0.6f, Random.Range(0.8f, 1.2f));
+		sfx.Play("Audio/Sfx/Musical/gong", 0.2f, Random.Range(0.8f, 1.6f));
 	}
 
 
@@ -267,8 +267,13 @@ public class Dungeon : MonoSingleton <Dungeon> {
 	// =====================================================
 
 	private void GeneratePlayer (int x, int y) {
-		grid.player = grid.CreateCreature(typeof(Player), x, y, 0.8f, Game.assets.monster["adventurer"]) as Player;
-		Camera.main.transform.position = new Vector3(grid.player.x, grid.player.y, -10);
+		if (grid.player == null) {
+			grid.player = grid.CreateCreature(typeof(Player), x, y, 0.8f, Game.assets.monster["adventurer"]) as Player;
+			Camera.main.transform.position = new Vector3(grid.player.x, grid.player.y, -10);
+		} else {
+			grid.player.LocateAtCoords(x, y);
+			grid.player.CenterCamera(false);
+		}
 	}
 
 

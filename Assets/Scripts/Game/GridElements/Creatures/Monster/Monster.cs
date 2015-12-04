@@ -39,6 +39,10 @@ public class Monster : Creature {
 
 
 	protected virtual void MoveTowardsTarget (Creature target) {
+		if (this == null) { return; }
+		if (target == null) { return; }
+		if (target.state == CreatureStates.Dying) { return; }
+
 		// get increments toward the target
 		Vector3 vec = (target.transform.position - transform.position).normalized;
 		Point incs = new Point(Mathf.RoundToInt(vec.x), Mathf.RoundToInt(vec.y));

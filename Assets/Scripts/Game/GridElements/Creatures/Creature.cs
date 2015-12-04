@@ -34,7 +34,7 @@ public class Creature : Tile {
 
 	protected Creature target;
 
-
+	
 	public override void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null) {
 		base.Init(grid, x, y, scale, asset);
 		walkable = false;
@@ -60,7 +60,7 @@ public class Creature : Tile {
 	}
 
 
-	protected virtual void LocateAtCoords (int x, int y) {
+	public virtual void LocateAtCoords (int x, int y) {
 		grid.SetCreature(this.x, this.y, null);
 		this.x = x;
 		this.y = y;
@@ -329,7 +329,7 @@ public class Creature : Tile {
 	// =====================================================
 
 	protected virtual void MoveCameraTo (int x, int y) {}
-	protected virtual void CenterCamera () {}
+	public virtual void CenterCamera (bool interpolate = true) {}
 	public virtual void UpdateVision () {}
 
 
@@ -339,6 +339,7 @@ public class Creature : Tile {
 
 	protected void Attack (Creature target, float delay = 0) {
 		if (state == CreatureStates.Using) { return; }
+		if (target.state == CreatureStates.Dying) { return; }
 		
 		StopMoving();
 		state = CreatureStates.Attacking;
@@ -407,6 +408,7 @@ public class Creature : Tile {
 
 	protected IEnumerator AttackAnimation (Creature target, float delay = 0) {
 		yield return new WaitForSeconds(delay);
+		if (target == null) { yield break; }
 		
 		float duration = speed * 0.5f;
 
@@ -488,15 +490,15 @@ public class Creature : Tile {
 
 		grid.CreateBlood(transform.localPosition, 16);
 
+		// if player died, emit gameover event
 		if (this is Player) {
-			gameObject.SetActive(false);
 			if (OnGameOver != null) { 
 				OnGameOver.Invoke(); 
 			}
-			yield return new WaitForSeconds(1f);
 		}
 
 		Destroy(gameObject);
+		yield break;
 	}
 }
 
