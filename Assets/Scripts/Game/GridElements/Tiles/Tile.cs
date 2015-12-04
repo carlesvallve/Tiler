@@ -114,11 +114,6 @@ public class Tile : MonoBehaviour {
 	// Get tile states
 	// =====================================================
 
-	public bool IsVisible () {
-		return visible;
-	}
-
-
 	public bool IsWalkable () {
 		Entity entity = grid.GetEntity(x, y);
 		if (entity != null && !entity.walkable) { return false; }

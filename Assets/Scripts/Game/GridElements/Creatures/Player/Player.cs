@@ -33,7 +33,7 @@ public class Player : Creature {
 
 		// you see something message
 		if (!entity.IsWalkable()) {
-			if (entity.IsVisible()) {
+			if (entity.visible) {
 				string[] arr = entity.asset.name.Split('-'); 
 				Hud.instance.Log("You see a " + arr[0]);
 				MoveCameraTo(x, y);
@@ -77,6 +77,10 @@ public class Player : Creature {
 
 
 	protected override void CenterCamera () {
+		if (state == CreatureStates.Descending) { 
+			return; 
+		}
+
 		Camera2D.instance.StopAllCoroutines();
 		Camera2D.instance.StartCoroutine(Camera2D.instance.MoveToPos(new Vector2(this.x, this.y)));
 	}

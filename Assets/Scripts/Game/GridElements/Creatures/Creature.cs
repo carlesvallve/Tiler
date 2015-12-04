@@ -8,7 +8,8 @@ public enum CreatureStates  {
 	Moving = 1,
 	Attacking = 2,
 	Defending = 4,
-	Using = 5
+	Using = 5,
+	Descending = 6
 }
 
 
@@ -23,8 +24,6 @@ public class Creature : Tile {
 
 	protected List<Vector2> path;
 	protected float speed = 0.15f;
-	//public bool moving = false;
-	//public bool stopAtNextTile = false;
 
 	protected Creature target;
 
@@ -52,18 +51,6 @@ public class Creature : Tile {
 	}
 
 
-	/*protected IEnumerator WaitForGameTurnUpdate (float delay = 0) {
-		if (this is Player) {
-			if (delay > 0) {
-				yield return new WaitForSeconds(delay);
-			}
-			if (OnGameTurnUpdate != null) { OnGameTurnUpdate.Invoke(); }
-		}
-
-		yield break;
-	}*/
-
-
 	// =====================================================
 	// Path
 	// =====================================================
@@ -79,10 +66,10 @@ public class Creature : Tile {
 			DrawPath(Color.white);
 		}
 
-		// escape if goal is not visible
+		// escape if goal has not benn explored yet
 		Tile tile = grid.GetTile(x, y);
 		if (tile == null) { return; }
-		if (!tile.visible && !tile.explored) { return; }
+		if (!!tile.explored) { return; }
 
 		// if goal is the creature's tile, wait one turn instead
 		if (x == this.x && y == this.y) {
@@ -97,7 +84,6 @@ public class Creature : Tile {
 				}
 			}
 			
-
 			// search for new path
 			path = Astar.instance.SearchPath(grid.player.x, grid.player.y, x, y);
 			path = SetPathAfterEncounter(path);
@@ -137,53 +123,29 @@ public class Creature : Tile {
 		state = CreatureStates.Moving;
 
 		for (int i = 0; i < path.Count; i++) {
-			Hud.instance.Log("");
-
 			// get next tile coords
 			Vector2 p = path[i];
 			int x = (int)p.x;
 			int y = (int)p.y;
 
 			yield return StartCoroutine (FollowPathStep(x, y));
-
-			// escape if creature is not in moving state anymore
-			if (state != CreatureStates.Moving) {
-				yield break;
-			}
-
-
-			// emmit event
-			if (this is Player) {
-				if (OnGameTurnUpdate != null) { OnGameTurnUpdate.Invoke(); }
-			}
 		}
 
 		// stop moving once we reach the goal
 		StopMoving();
-
-		// resolve encounters with current tile after moving
-		ResolveEncountersAtGoal(this.x, this.y);
-	}
-
-
-	protected virtual void UpdatePosInGrid (int x, int y) {
-		grid.SetCreature(this.x, this.y, null);
-		this.x = x;
-		this.y = y;
-		grid.SetCreature(x, y, this);
 	}
 
 
 	protected virtual IEnumerator FollowPathStep (int x, int y) {
 		if (state != CreatureStates.Moving) { yield break; }
+		Hud.instance.Log("");
 
 		// resolve encounters with next tile
 		ResolveEntityEncounters(x, y);
 		ResolveCreatureEncounters(x, y);
 
-		// if we stopped moving because of encounters, wait and escape
+		// escape if we are no longer moving because of encounters on next tile
 		if (state != CreatureStates.Moving) { 
-			//yield return new WaitForSeconds(1f);
 			StopMoving();
 			yield break;
 		}
@@ -196,7 +158,7 @@ public class Creature : Tile {
 			t += Time.deltaTime / speed;
 			transform.localPosition = Vector3.Lerp(startPos, endPos, Mathf.SmoothStep(0f, 1f, t));
 
-			MoveToNextTile(x, y);
+			UpdatePosInGrid(x, y);
 
 			yield return null;
 		}
@@ -204,15 +166,23 @@ public class Creature : Tile {
 		// clear path color at tile
 		grid.GetTile(x, y).SetColor(Color.white);
 
+		// emit event
 		if (this is Player) {
 			sfx.Play("Audio/Sfx/Step/step", 0.8f, Random.Range(0.8f, 1.2f));
+			if (OnGameTurnUpdate != null) { 
+				OnGameTurnUpdate.Invoke(); 
+			}
 		}
 	}
 
 
-	protected void MoveToNextTile (int x, int y) {
+	protected virtual void UpdatePosInGrid (int x, int y) {
 		UpdateVision();
-		UpdatePosInGrid(x, y);
+
+		grid.SetCreature(this.x, this.y, null);
+		this.x = x;
+		this.y = y;
+		grid.SetCreature(x, y, this);
 	}
 
 
@@ -223,6 +193,9 @@ public class Creature : Tile {
 
 		state = CreatureStates.Idle;
 		DrawPath(Color.white);
+
+		// always resolve encounters with current tile after moving
+		ResolveEncountersAtGoal(this.x, this.y);
 	}
 
 
@@ -268,9 +241,7 @@ public class Creature : Tile {
 
 				// open the door
 				if (door.state == EntityStates.Closed) { 
-					
 					state = CreatureStates.Using;
-					StopMoving();
 					CenterCamera();
 					StartCoroutine(door.Open()); 
 					if (this is Player) { 
@@ -280,7 +251,6 @@ public class Creature : Tile {
 				// unlock the door
 				} else if (door.state == EntityStates.Locked) { 
 					state = CreatureStates.Using;
-					StopMoving();
 					CenterCamera();
 					StartCoroutine(door.Unlock(success => {
 						if (this is Player) { 
@@ -288,6 +258,13 @@ public class Creature : Tile {
 						}
 					}));
 				}
+			}
+		}
+
+		// emmit event
+		if (state == CreatureStates.Using) {
+			if (this is Player) {
+				if (OnGameTurnUpdate != null) { OnGameTurnUpdate.Invoke(); }
 			}
 		}
 	}
@@ -307,12 +284,10 @@ public class Creature : Tile {
 
 			// resolve stairs
 			if ((this is Player) && (entity is Stair)) {
-				//StopMoving();
-
 				Stair stair = (Stair)entity;
+
 				if (stair.state == EntityStates.Open) {
-					StopMoving(); 
-					state = CreatureStates.Using;
+					state = CreatureStates.Descending;
 					Dungeon.instance.ExitLevel (stair.direction);
 				} else {
 					Hud.instance.Log("The stair doors are locked.");
@@ -341,7 +316,6 @@ public class Creature : Tile {
 		StopMoving();
 		state = CreatureStates.Attacking;
 
-		//float delay = 0; //(this is Player) ? 0 : Random.Range(0.2f, 0.8f);
 		StartCoroutine(AttackAnimation(target, delay));
 
 		target.Defend(this, delay);
@@ -373,7 +347,6 @@ public class Creature : Tile {
 			yield return null;
 		}
 
-		yield return null;
 		state = CreatureStates.Idle;
 
 		// emmit event
@@ -417,7 +390,7 @@ public class Creature : Tile {
 			sfx.Play("Audio/Sfx/Combat/hitB", 0.5f, Random.Range(0.8f, 1.2f));
 			Speak("-" + damage, Color.red);
 
-		// parry/dodge
+		// parry or dodge
 		} else {
 			int r = Random.Range(0, 2);
 			if (r == 1) {
@@ -434,7 +407,7 @@ public class Creature : Tile {
 		float t = 0;
 		Vector3 startPos = new Vector3(this.x, this.y, 0);
 		Vector3 vec = (new Vector3(attacker.x, attacker.y, 0) - startPos).normalized / 8;
-		Vector3 endPos = startPos - vec; // * dir;
+		Vector3 endPos = startPos - vec;
 		while (t <= 1) {
 			t += Time.deltaTime / duration * 0.5f;
 			transform.localPosition = Vector3.Lerp(startPos, endPos, Mathf.SmoothStep(0f, 1f, t));
@@ -451,7 +424,6 @@ public class Creature : Tile {
 			yield return null;
 		}
 
-		yield return null;
 		state = CreatureStates.Idle;
 	}
 	

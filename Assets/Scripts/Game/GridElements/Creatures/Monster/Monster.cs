@@ -29,7 +29,7 @@ public class Monster : Creature {
 
 	protected virtual void Think () {
 		// only monsters that see the player will think for now
-		if (!IsVisible()) { return; }
+		if (!visible) { return; }
 
 		// move towards player
 		MoveTowardsTarget(grid.player);
