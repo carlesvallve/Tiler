@@ -22,17 +22,16 @@ public class Creature : Tile {
 	public delegate void GameOverHandler();
 	public event GameOverHandler OnGameOver;
 
-	public CreatureStates state { get; set; }
-
-	
-	public int hp = 5;
-	public int maxHp = 5;
-	public HpBar bar;
-
 	protected List<Vector2> path;
 	protected float speed = 0.15f;
 
 	protected Creature target;
+
+	public CreatureStates state { get; set; }
+
+	public HpBar bar;
+	public int maxHp = 5;
+	public int hp = 5;
 
 	
 	public override void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null) {
@@ -44,13 +43,13 @@ public class Creature : Tile {
 
 		state = CreatureStates.Idle;
 
+		stats = new Stats();
 		InitStats();
+		bar.Init(this);
 	}
 
 
-	protected virtual void InitStats () {
-		hp = maxHp;
-		bar.Init(this);
+	protected virtual void InitStats () {	
 	}
 
 
@@ -163,10 +162,13 @@ public class Creature : Tile {
 		}
 
 		Hud.instance.Log("");
+		
 
 		// resolve encounters with next tile
 		ResolveEntityEncounters(x, y);
 		ResolveCreatureEncounters(x, y);
+
+
 
 		// escape if we are no longer moving because of encounters on next tile
 		if (state != CreatureStates.Moving) { 
@@ -207,8 +209,6 @@ public class Creature : Tile {
 
 
 	protected virtual void UpdatePosInGrid (int x, int y) {
-		UpdateVision();
-
 		grid.SetCreature(this.x, this.y, null);
 		this.x = x;
 		this.y = y;
@@ -220,8 +220,6 @@ public class Creature : Tile {
 		if (state == CreatureStates.Moving) {
 			StopAllCoroutines();
 		}
-
-		UpdateVision();
 		
 		state = CreatureStates.Idle;
 		DrawPath(Color.white);
@@ -332,7 +330,7 @@ public class Creature : Tile {
 
 	protected virtual void MoveCameraTo (int x, int y) {}
 	public virtual void CenterCamera (bool interpolate = true) {}
-	public virtual void UpdateVision () {}
+	public virtual void UpdateVision (int x, int y) {}
 
 
 	// =====================================================

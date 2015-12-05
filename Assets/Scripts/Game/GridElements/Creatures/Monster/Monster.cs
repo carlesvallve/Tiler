@@ -30,12 +30,77 @@ public class Monster : Creature {
 
 	protected virtual void Think () {
 		// only monsters that see the player will think for now
-		if (!visible) { return; }
+		//if (!visible) { return; }
+
+		if (this == null) { return; }
 		if (state == CreatureStates.Dying) { return; }
 
+		// move towards neighbour tile with best fov parameters
+		ChaseAndFollow();
+
 		// move towards player
-		MoveTowardsTarget(grid.player);
+		//MoveTowardsTarget(grid.player);
 	}
+
+	protected virtual void ChaseAndFollow () {
+		// get neighbour with bigger los
+		List<Tile> neighbours = GetNeighbours(x, y);
+		Tile tile = GetTileWithBestFov(neighbours);
+		if (tile == null) { return; }
+		//if (!tile.IsPassable()) { return; }
+		if (!tile.IsWalkable()) { 
+			print ("escaping because tile is not walkable...");
+			return; 
+		}
+
+		path = new List<Vector2>() { new Vector2(tile.x, tile.y) };
+		StartCoroutine(FollowPath());
+	}
+
+
+	private List<Tile> GetNeighbours (int x, int y) {
+		Tile[] tiles = new Tile[] {
+			grid.GetTile(x + 0, y - 1), 
+			grid.GetTile(x + 1, y - 1),
+			grid.GetTile(x + 1, y + 0),
+			grid.GetTile(x + 1, y + 1),
+			grid.GetTile(x + 0, y + 1),
+			grid.GetTile(x - 1, y + 1),
+			grid.GetTile(x - 1, y + 0),
+			grid.GetTile(x - 1, y - 1)
+		};
+
+		List<Tile> neighbours = new List<Tile>();
+		foreach (Tile tile in tiles) {
+			if (tile != null && tile.IsPassable()) {
+				neighbours.Add(tile);
+			}
+		}
+
+		return neighbours;
+	}
+
+
+	private Tile GetTileWithBestFov (List<Tile> neighbours) {
+		Tile selectedTile = null;
+
+		int turn = 0;
+		float distance = 1000;
+
+		foreach (Tile tile in neighbours) {
+			if (tile.fovTurn == 0) { continue; }
+			if (tile.fovTurn >= turn && tile.fovDistance <= distance) {
+				turn = tile.fovTurn;
+				distance = tile.fovDistance;
+
+				selectedTile = tile;
+			}
+		}
+
+		return selectedTile;
+	}
+
+	
 
 
 	protected virtual void MoveTowardsTarget (Creature target) {

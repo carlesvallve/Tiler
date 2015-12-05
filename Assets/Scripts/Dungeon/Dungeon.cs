@@ -119,7 +119,7 @@ public class Dungeon : MonoSingleton <Dungeon> {
 		//game.UpdateTurn();
 
 		// initialize vision
-		grid.player.UpdateVision();
+		grid.player.UpdateVision(grid.player.x, grid.player.y);
 		
 		// Log welcome message
 		hud.Log("Welcome to dungeon level " + currentDungeonLevel);

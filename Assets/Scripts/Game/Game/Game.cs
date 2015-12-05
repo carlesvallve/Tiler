@@ -7,7 +7,8 @@ public class Game : MonoSingleton <Game> {
 
 	public static Assets assets;
 
-	public int turn = 1;
+	private Grid grid;
+	public int turn = 0;
 	
 	private Navigator navigator;
 	private AudioManager sfx;
@@ -23,7 +24,7 @@ public class Game : MonoSingleton <Game> {
 
 		assets = new Assets();
 		SetBgm();
-		InitGame();	
+		InitGame();
 	}
 
 
@@ -32,8 +33,11 @@ public class Game : MonoSingleton <Game> {
 		Dungeon dungeon = Dungeon.instance; 
 		dungeon.GenerateDungeon();
 
-		Hud.instance.LogTurn("TURN " + turn);
+		// Start game on the first turn
+		grid = Grid.instance;
+		UpdateGameTurn();
 
+		// Game events
 		Grid.instance.player.OnGameTurnUpdate += () => {
 			UpdateGameTurn();
 		};
@@ -45,18 +49,16 @@ public class Game : MonoSingleton <Game> {
 
 
 	public void UpdateGameTurn () {
-		// update turn
+		// recalculate player's vision
+		grid.player.UpdateVision(grid.player.x, grid.player.y);
+
+		// update game turn
 		turn += 1;
 		Hud.instance.LogTurn("TURN " + turn);
 	}
 
 
 	public IEnumerator GameOver () {
-		
-
-		//sfx.Play("Audio/Bgm/Dungeon/Ambient/Space", 0, 1f, true);
-		//sfx.Fade("Audio/Bgm/Dungeon/Ambient/Space", 0.5f, 0.5f);
-		
 		yield return new WaitForSeconds(0.5f);
 
 		if (bgm1 != null) { sfx.Fade(bgm1, 0, 0.5f); }

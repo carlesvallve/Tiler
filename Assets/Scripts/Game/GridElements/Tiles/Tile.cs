@@ -4,6 +4,8 @@ using System.Collections;
 
 public class Tile : MonoBehaviour {
 
+	protected bool debugEnabled = true;
+
 	protected Grid grid;
 	protected AudioManager sfx;
 	
@@ -11,31 +13,36 @@ public class Tile : MonoBehaviour {
 	public int y { get; set; }
 	public int roomId { get; set; }
 
+	public int fovTurn;
+	public float fovDistance;
+
 	public bool walkable { get; set; }
 	public bool visible { get; set; }
 	public bool explored { get; set; }
 
 	public Sprite asset { get; private set; }
 
+	protected Transform container;
 	protected SpriteRenderer shadow;
 	protected SpriteRenderer outline;
 	protected SpriteRenderer img;
 	protected TextMesh label;
 
 	protected int zIndex;
-	
+
 
 	public virtual void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null) {
 		sfx = AudioManager.instance;
 
-		outline = transform.Find("Outline").GetComponent<SpriteRenderer>();
-		img = transform.Find("Sprite").GetComponent<SpriteRenderer>();
-		shadow = transform.Find("Shadow").GetComponent<SpriteRenderer>();
+		container = transform.Find("Sprites/Outline");
+		outline = transform.Find("Sprites/Outline").GetComponent<SpriteRenderer>();
+		img = transform.Find("Sprites/Sprite").GetComponent<SpriteRenderer>();
+		shadow = transform.Find("Sprites/Shadow").GetComponent<SpriteRenderer>();
 		shadow.gameObject.SetActive(false);
 		
 		label = transform.Find("Label").GetComponent<TextMesh>();
 		label.GetComponent<Renderer>().sortingLayerName = "Ui";
-		label.gameObject.SetActive(false);
+		label.gameObject.SetActive(debugEnabled);
 
 		this.grid = grid;
 		this.x = x;
@@ -114,10 +121,22 @@ public class Tile : MonoBehaviour {
 	}
 
 
+	public void SetVisible(bool value) {
+		container.gameObject.SetActive(value);
+	}
+
+
 	// =====================================================
 	// Get tile states
 	// =====================================================
 
+	public bool IsPassable () {
+		Entity entity = grid.GetEntity(x, y);
+		if (entity != null && !entity.walkable) { return false; }
+
+		return walkable;
+	}
+	
 	public bool IsWalkable () {
 		Entity entity = grid.GetEntity(x, y);
 		if (entity != null && !entity.walkable) { return false; }

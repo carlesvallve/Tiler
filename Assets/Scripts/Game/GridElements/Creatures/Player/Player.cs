@@ -17,8 +17,8 @@ public class Player : Creature {
 
 	public override void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null) {
 		maxHp = 20;
-
-		base.Init(grid, x, y, scale, asset);	
+		
+		base.Init(grid, x, y, scale, asset);
 		walkable = true;
 	}
 
@@ -122,7 +122,7 @@ public class Player : Creature {
 	// Vision
 	// =====================================================
 
-	public override void UpdateVision () {
+	public override void UpdateVision (int px, int py) {
 		if (!useFovAlgorithm) {
 			return;
 		}
@@ -137,7 +137,7 @@ public class Player : Creature {
 		int radius = 6;
 
 		ShadowCaster.ComputeFieldOfViewWithShadowCasting(
-			this.x, this.y, radius,
+			px, py, radius,
 			(x1, y1) => grid.TileIsOpaque(x1, y1),
 			(x2, y2) => { lit[x2, y2] = true; });
 
@@ -147,11 +147,11 @@ public class Player : Creature {
 				// render tiles
 				Tile tile = grid.GetTile(x, y);
 				if (tile != null) {
-					float distance = Vector2.Distance(new Vector2(this.x, this.y), new Vector2(x, y));
+					float distance = Vector2.Distance(new Vector2(px, py), new Vector2(x, y));
 					float shadowValue = - 0.1f + Mathf.Min((distance / radius) * 0.6f, 0.6f);
 
 					tile.visible = lit[x, y];
-					tile.gameObject.SetActive(lit[x, y] || tile.explored);
+					tile.SetVisible(lit[x, y] || tile.explored);
 					tile.SetShadow(lit[x, y] ? shadowValue : 1);
 					if (!lit[x, y] && tile.explored) { tile.SetShadow(0.6f); }
 
@@ -160,7 +160,7 @@ public class Player : Creature {
 					if (entity != null) {
 
 						entity.visible = lit[x, y];
-						entity.gameObject.SetActive(lit[x, y] || tile.explored);
+						entity.SetVisible(lit[x, y] || tile.explored);
 						entity.SetShadow(lit[x, y] ? shadowValue : 1);
 						if (!lit[x, y] && tile.explored) { entity.SetShadow(0.6f); }
 					}
@@ -170,7 +170,7 @@ public class Player : Creature {
 					if (creature != null) {
 
 						creature.visible = lit[x, y];
-						creature.gameObject.SetActive(lit[x, y] || tile.explored);
+						creature.SetVisible(lit[x, y] || tile.explored);
 						creature.SetShadow(lit[x, y] ? shadowValue : 1);
 						if (!lit[x, y] && tile.explored) { creature.SetShadow(0.6f); }
 					}
@@ -178,11 +178,41 @@ public class Player : Creature {
 					// mark lit tiles as explored
 					if (lit[x, y]) { 
 						tile.explored = true; 
+						if (tile.IsPassable()) {
+							tile.fovTurn = Game.instance.turn + 1;
+							tile.fovDistance = Vector3.Distance(
+								new Vector2(tile.x, tile.y), new Vector2(px, py)
+							);
+
+							tile.fovDistance = Mathf.Round(tile.fovDistance * 10) / 10;
+
+							tile.SetInfo(tile.fovTurn.ToString() + "\n" + tile.fovDistance.ToString(), Color.white);
+						} else {
+							tile.SetInfo("", Color.white);
+						}
 					}
+
+					//tile.SetInfo(tile.fovTurn.ToString(), Color.gray);
+					
+					//tile.SetInfo(tile.IsWalkable().ToString(), Color.gray);
 				}
 			}
 		}
 	}
+
+	/*
+	- for each lit tile
+		- store current turn
+		- store current distance to player
+
+	- for each monster
+		- determine if he wants to follow (always yes for now)
+		- look at all neighbour tiles
+		- choose the tile with biggest los
+		- if all are equal, choose the want with shortes distance
+		- move to that tile
+	
+	*/
 
 	
 }

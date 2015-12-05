@@ -107,6 +107,7 @@ public class Grid : MonoSingleton <Grid> {
 
 
 	public Tile GetTile (int x, int y) {
+		if (!IsInsideBounds(x, y)) { return null; }
 		return layers.Get<Tile>(y, x);
 	}
 
@@ -119,7 +120,7 @@ public class Grid : MonoSingleton <Grid> {
 
 
 	public bool TileIsOpaque (int x, int y) {
-		if (!IsInsideBounds(x, y)) { return true; }
+		//if (!IsInsideBounds(x, y)) { return true; }
 
 		Tile tile = GetTile(x, y);
 		if (tile == null) { return true; }
@@ -155,6 +156,7 @@ public class Grid : MonoSingleton <Grid> {
 
 
 	public Entity GetEntity (int x, int y) {
+		if (!IsInsideBounds(x, y)) { return null; }
 		return layers.Get<Entity>(y, x);
 	}
 
@@ -192,6 +194,7 @@ public class Grid : MonoSingleton <Grid> {
 
 
 	public Creature GetCreature (int x, int y) {
+		if (!IsInsideBounds(x, y)) { return null; }
 		return layers.Get<Creature>(y, x);
 	}
 
