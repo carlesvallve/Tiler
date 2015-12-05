@@ -183,7 +183,7 @@ public class Grid : MonoSingleton <Grid> {
 		Creature creature = obj.AddComponent(CreatureType) as Creature;
 
 		obj = (GameObject)Instantiate(barPrefab);
-		obj.transform.SetParent(creature.transform, false);
+		obj.transform.SetParent(creature.transform.Find("Sprites"), false);
 		obj.name = "Bar";
 		creature.bar = obj.GetComponent<HpBar>();
 

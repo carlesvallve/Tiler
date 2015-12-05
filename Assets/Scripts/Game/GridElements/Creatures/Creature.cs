@@ -31,8 +31,6 @@ public class Creature : Tile {
 
 	public CreatureStats stats;
 	public HpBar bar;
-	//public int maxHp = 5;
-	//public int hp = 5;
 
 	
 	public override void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null) {
@@ -43,19 +41,21 @@ public class Creature : Tile {
 		LocateAtCoords(x, y);
 
 		state = CreatureStates.Idle;
-
 		stats = new CreatureStats();
-		InitStats();
 		bar.Init(this);
 	}
 
 
-
-
-
-	protected virtual void InitStats () {	
+	public virtual void LocateAtCoords (int x, int y) {
+		UpdatePosInGrid(x, y);
+		transform.localPosition = new Vector3(x, y, 0);
+		SetSortingOrder(200);
 	}
 
+	
+	// =====================================================
+	// Stats
+	// =====================================================
 
 	protected virtual void UpdateHp (int ammount) {
 		stats.hp += ammount; 
@@ -75,15 +75,44 @@ public class Creature : Tile {
 	}
 
 
-	public virtual void LocateAtCoords (int x, int y) {
-		grid.SetCreature(this.x, this.y, null);
-		this.x = x;
-		this.y = y;
-		grid.SetCreature(x, y, this);
+	// =====================================================
+	// Visibility
+	// =====================================================
 
-		transform.localPosition = new Vector3(x, y, 0);
+	public override void SetVisibility (Tile tile, bool visible, float shadowValue) {
+		// speak if we just step in a visible tile from the shadows
+		/*if (!visible && tile.visible) {
+			Speak("Hey!", Color.white, true);
+		}*/
 
-		SetSortingOrder(200);
+		// seen by the player right now
+		this.visible = visible; 
+		container.gameObject.SetActive(visible); //  || tile.explored
+
+		// apply shadow
+		SetShadow(visible ? shadowValue : 1);
+		if (!visible && tile.explored) { SetShadow(0.6f); }
+
+		// apply hpBar shadow
+		bar.SetShadow(visible ? shadowValue : 1);
+		if (!visible && tile.explored) { bar.SetShadow(0.6f); }
+
+		// once we have seen the tile, mark the tile as explored
+		if (visible) {
+			tile.explored = true;
+		}
+	}
+
+
+	public virtual void UpdateVisibility () {
+		if (this is Player) { return; }
+
+		// creatures need to set their visibility also after they moved
+		Tile tile = grid.GetTile(x, y);
+
+		
+
+		SetVisibility(tile, tile.visible, tile.GetShadowValue());
 	}
 
 
@@ -179,12 +208,9 @@ public class Creature : Tile {
 
 		Hud.instance.Log("");
 		
-
 		// resolve encounters with next tile
 		ResolveEntityEncounters(x, y);
 		ResolveCreatureEncounters(x, y);
-
-
 
 		// escape if we are no longer moving because of encounters on next tile
 		if (state != CreatureStates.Moving) { 
@@ -233,13 +259,17 @@ public class Creature : Tile {
 	}
 
 
-	public void StopMoving () {
+	public virtual void StopMoving () {
 		if (state == CreatureStates.Moving) {
 			StopAllCoroutines();
 		}
 		
 		state = CreatureStates.Idle;
 		DrawPath(Color.white);
+
+		// creatures need to set their visibility 
+		// also after they moved
+		UpdateVisibility();
 	}
 
 

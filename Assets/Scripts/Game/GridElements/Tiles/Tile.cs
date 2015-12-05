@@ -17,8 +17,9 @@ public class Tile : MonoBehaviour {
 	public float fovDistance;
 
 	public bool walkable { get; set; }
-	public bool visible { get; set; }
-	public bool explored { get; set; }
+	public bool visible { get; set; } // seen by the player right now
+	//public bool shadowed { get; set; }
+	public bool explored { get; set; } // discovered by the player
 
 	public Sprite asset { get; private set; }
 
@@ -34,7 +35,7 @@ public class Tile : MonoBehaviour {
 	public virtual void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null) {
 		sfx = AudioManager.instance;
 
-		container = transform.Find("Sprites/Outline");
+		container = transform.Find("Sprites");
 		outline = transform.Find("Sprites/Outline").GetComponent<SpriteRenderer>();
 		img = transform.Find("Sprites/Sprite").GetComponent<SpriteRenderer>();
 		shadow = transform.Find("Sprites/Shadow").GetComponent<SpriteRenderer>();
@@ -57,7 +58,8 @@ public class Tile : MonoBehaviour {
 		SetImages(scale, Vector3.zero, 0);
 		SetSortingOrder(0);
 
-		visible = true;
+		visible = false;
+		explored = false;
 	}
 
 
@@ -65,8 +67,8 @@ public class Tile : MonoBehaviour {
 	// Set tile elements
 	// =====================================================
 
-	public virtual void Speak (string str, Color color) {
-		Hud.instance.CreateLabel(this, str, color);
+	public virtual void Speak (string str, Color color, bool stick = false) {
+		Hud.instance.CreateLabel(this, str, color, stick);
 	}
 
 
@@ -119,17 +121,52 @@ public class Tile : MonoBehaviour {
 	}
 
 
+	// =====================================================
+	// Visibility
+	// =====================================================
+
+	public virtual void SetVisibility (Tile tile, bool visible, float shadowValue) {
+		// note: we need to pass the tile because we want 
+		// to use the original tile's 'explored' flag for entities and creatures
+
+		// seen by the player right now
+		this.visible = visible; 
+		container.gameObject.SetActive(visible || tile.explored);
+
+		// apply shadow
+		SetShadow(visible ? shadowValue : 1);
+		if (!visible && tile.explored) { SetShadow(0.6f); }
+
+		// once we have seen the tile, mark the tile as explored
+		if (visible) {
+			tile.explored = true;
+		}
+	}
+
+
+	public virtual void SetFovInfo (int turn, float distance) {
+		// generate tile fov info, used by monster ai for chase and follow behaviour
+		if (IsPassable()) {
+			fovTurn = turn;
+			fovDistance = distance;
+
+			// debug fov info
+			SetInfo(fovTurn.ToString() + "\n" + fovDistance.ToString(), Color.white);
+		} 
+	}
+
+
 	public void SetShadow (float value) {
 		shadow.color = new Color(0, 0, 0, value);
 		shadow.gameObject.SetActive(value > 0);
 	}
 
 
-	public void SetVisible(bool value) {
-		container.gameObject.SetActive(value);
+	public float GetShadowValue () {
+		return shadow.color.a;
 	}
 
-
+		
 	// =====================================================
 	// Get tile states
 	// =====================================================

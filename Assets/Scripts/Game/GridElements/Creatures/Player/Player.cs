@@ -5,10 +5,8 @@ using System.Collections.Generic;
 
 public class Player : Creature {
 
-	/*public delegate void GameTurnUpdateHandler();
-	public event GameTurnUpdateHandler OnGameTurnUpdate;*/
-
 	protected bool useFovAlgorithm = true;
+	protected int cameraMargin = 4;
 
 	// list of monster that are currently attacking the player
 	// used for calculating the monster attack delay, so they dont attack all at once
@@ -65,16 +63,13 @@ public class Player : Creature {
 
 
 	protected override IEnumerator FollowPathStep (int x, int y) {
-
+		// clear monster queue
 		monsterQueue.Clear();
 		
 		yield return StartCoroutine(base.FollowPathStep(x, y));
 
 		// check if camera needs to track player
 		CheckCamera();
-
-		/*// emit update game turn event
-		OnGameTurnUpdate.Invoke();*/
 	}
 
 
@@ -100,25 +95,17 @@ public class Player : Creature {
 		} else {
 			Camera2D.instance.LocateAtPos(new Vector2(this.x, this.y));
 		}
-
-		
-		
 	}
 
 
 	protected void CheckCamera () {
 		Vector3 screenPos = Camera.main.WorldToScreenPoint(transform.position);
 
-		int margin = 16 + 32 * 3;
+		int margin = 16 + 32 * cameraMargin;
 		if (screenPos.x < margin || screenPos.x > Screen.width - margin || 
 			screenPos.y < margin || screenPos.y > Screen.height - margin) {
 			CenterCamera();
 		}
-
-		/*if (screenPos.x < Screen.width * 0.25f || screenPos.y < Screen.height * 0.25f || 
-			screenPos.x > Screen.width * 0.75f || screenPos.y > Screen.height * 0.75f) {
-			CenterCamera();
-		}*/
 	}
 
 
@@ -131,9 +118,7 @@ public class Player : Creature {
 			return;
 		}
 
-		//return;
-		
-		// TODO: We need to implement a Permissive Field of View algorithm instead, 
+		// TODO: We need to implement a 'Permissive Field of View' algorithm instead, 
 		// to avoid dark corners and get a better roguelike feeling
 
 		// get lit array from shadowcaster class
@@ -151,69 +136,27 @@ public class Player : Creature {
 				// render tiles
 				Tile tile = grid.GetTile(x, y);
 				if (tile != null) {
-					float distance = Vector2.Distance(new Vector2(px, py), new Vector2(x, y));
+					
+					// render tiles (and record fov info)
+					float distance = Mathf.Round(Vector2.Distance(new Vector2(px, py), new Vector2(x, y)) * 10) / 10;
 					float shadowValue = - 0.1f + Mathf.Min((distance / radius) * 0.6f, 0.6f);
 
-					tile.visible = lit[x, y];
-					tile.SetVisible(lit[x, y] || tile.explored);
-					tile.SetShadow(lit[x, y] ? shadowValue : 1);
-					if (!lit[x, y] && tile.explored) { tile.SetShadow(0.6f); }
+					tile.SetVisibility(tile, lit[x, y], shadowValue);
+					tile.SetFovInfo(Game.instance.turn, distance);
 
 					// render entities
 					Entity entity = grid.GetEntity(x, y);
-					if (entity != null) {
-
-						entity.visible = lit[x, y];
-						entity.SetVisible(lit[x, y] || tile.explored);
-						entity.SetShadow(lit[x, y] ? shadowValue : 1);
-						if (!lit[x, y] && tile.explored) { entity.SetShadow(0.6f); }
+					if (entity != null) { 
+						entity.SetVisibility(tile, lit[x, y], shadowValue); 
 					}
 
 					// render creatures
 					Creature creature = grid.GetCreature(x, y);
 					if (creature != null) {
-
-						// creatures make and exclamation when they first see the player
-						if (!creature.visible && lit[x, y]) {
-							creature.Speak("!", Color.white);
+						if (!creature.visible && tile.visible) {
+							creature.Speak("Hey!", Color.white, true);
 						}
-						
-						creature.visible = lit[x, y];
-						creature.SetVisible(lit[x, y] || tile.explored);
-						creature.SetShadow(lit[x, y] ? shadowValue : 1);
-						if (!lit[x, y] && tile.explored) { creature.SetShadow(0.6f); }
-
-						// render hp bar
-						creature.bar.SetShadow(lit[x, y] ? shadowValue : 1);
-						if (!lit[x, y] && tile.explored) { creature.bar.SetShadow(0.6f); }
-
-
-					}
-
-					// mark lit tiles as explored
-					if (lit[x, y]) { 
-						tile.explored = true; 
-
-						// generate tile fov info, used by monster ai
-						if (tile.IsPassable()) {
-							// record fovTile and fovDistance in this tile
-							tile.fovTurn = Game.instance.turn;
-							float fovDistance = Vector3.Distance(new Vector2(tile.x, tile.y), new Vector2(px, py));
-							tile.fovDistance = Mathf.Round(fovDistance * 10) / 10;
-
-							// debug fov info
-							string debug = tile.fovTurn.ToString() + "\n" + tile.fovDistance.ToString();
-							tile.SetInfo(debug, Color.white);
-						} 
-					} else {
-						// decrease tile fov info until it gets to 0
-						// (tiles lose their scent over time)
-						/*if (tile.IsPassable()) {
-							tile.fovTurn -= 1;
-							if (tile.fovTurn < 0) { tile.fovTurn = 0; }
-							string debug = tile.fovTurn.ToString() + "\n" + tile.fovDistance.ToString();
-							tile.SetInfo(debug, Color.white);
-						}*/
+						creature.SetVisibility(tile, lit[x, y], shadowValue);
 					}
 				}
 			}
