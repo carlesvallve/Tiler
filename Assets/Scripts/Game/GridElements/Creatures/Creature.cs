@@ -197,9 +197,10 @@ public class Creature : Tile {
 		// clear path color at tile
 		grid.GetTile(x, y).SetColor(Color.white);
 
+		sfx.Play("Audio/Sfx/Step/step", 0.8f, Random.Range(0.8f, 1.2f));
+
 		// emit event
 		if (this is Player) {
-			sfx.Play("Audio/Sfx/Step/step", 0.8f, Random.Range(0.8f, 1.2f));
 			if (OnGameTurnUpdate != null) { 
 				OnGameTurnUpdate.Invoke(); 
 			}
@@ -296,7 +297,9 @@ public class Creature : Tile {
 		// emmit event
 		if (state == CreatureStates.Using) {
 			if (this is Player) {
-				if (OnGameTurnUpdate != null) { OnGameTurnUpdate.Invoke(); }
+				if (OnGameTurnUpdate != null) { 
+					OnGameTurnUpdate.Invoke(); 
+				}
 			}
 		}
 	}
@@ -444,7 +447,9 @@ public class Creature : Tile {
 
 		// emmit event
 		if (this is Player) {
-			if (OnGameTurnUpdate != null) { OnGameTurnUpdate.Invoke(); }
+			if (OnGameTurnUpdate != null) { 
+				OnGameTurnUpdate.Invoke(); 
+			}
 		}
 	}
 

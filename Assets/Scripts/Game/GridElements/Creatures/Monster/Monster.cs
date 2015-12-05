@@ -68,7 +68,9 @@ public class Monster : Creature {
 
 	protected virtual void ChaseAndFollow () {
 		// get best available tile for moving to while chasing the player
-		Tile tile = GetTileWithBestFov(this.x, this.y);
+		// monsters can't follow LOS marks more than some number of (say 10?) rounds old.
+		// (if we set it to 0, monster will only chase the player if they see him)
+		Tile tile = GetTileWithBestFov(this.x, this.y, 5); // x, y, maxTurnsOld
 		if (tile == null) { return; }
 
 		// move to selected neighbour tile
@@ -100,18 +102,18 @@ public class Monster : Creature {
 	}
 
 
-	private Tile GetTileWithBestFov (int x, int y) {
+	private Tile GetTileWithBestFov (int x, int y, int maxTurnsOld) {
 		// get neighbour tile with bigger fovTurn and smallest fovDistance
 		// neighbour must have some fov scent and be walkable
 		List<Tile> neighbours = GetNeighbours(x, y);
-		List<Tile> fovTiles = GetTilesWithBestFovTurn(neighbours);
+		List<Tile> fovTiles = GetTilesWithBestFovTurn(neighbours, maxTurnsOld);
 		Tile tile = GetTileWithBestFovDistance(fovTiles);
 
 		return tile;
 	}
 
 
-	private List<Tile> GetTilesWithBestFovTurn (List<Tile> neighbours) {
+	private List<Tile> GetTilesWithBestFovTurn (List<Tile> neighbours, int maxTurnsOld) {
 		// generate an array with fov values
 		int[] values = new int[neighbours.Count];
 		for(int i = 0; i < neighbours.Count; i ++) {
@@ -127,6 +129,10 @@ public class Monster : Creature {
 
 			// exclude tiles with no fov turn value
 			if (tile.fovTurn == 0) { continue; }
+
+			// exclude tiles with scent older than maxTurnsOld
+			// if maxTurnsOld is 0, means that monster will only chase if they see the player
+			if (tile.fovTurn < Game.instance.turn - maxTurnsOld) { continue; }
 
 			// exclude tiles with other monsters in it
 			if (!tile.IsWalkable()) { continue; }

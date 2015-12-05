@@ -198,6 +198,15 @@ public class Player : Creature {
 							string debug = tile.fovTurn.ToString() + "\n" + tile.fovDistance.ToString();
 							tile.SetInfo(debug, Color.white);
 						} 
+					} else {
+						// decrease tile fov info until it gets to 0
+						// (tiles lose their scent over time)
+						/*if (tile.IsPassable()) {
+							tile.fovTurn -= 1;
+							if (tile.fovTurn < 0) { tile.fovTurn = 0; }
+							string debug = tile.fovTurn.ToString() + "\n" + tile.fovDistance.ToString();
+							tile.SetInfo(debug, Color.white);
+						}*/
 					}
 				}
 			}
