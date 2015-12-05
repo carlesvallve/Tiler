@@ -8,6 +8,7 @@ public class Assets {
 
 	public Dictionary<string, Sprite> dungeon = new Dictionary<string, Sprite>();
 	public Dictionary<string, Sprite> monster = new Dictionary<string, Sprite>();
+	public Dictionary<string, Sprite> item = new Dictionary<string, Sprite>();
 
 
 	public Assets () {
@@ -19,6 +20,11 @@ public class Assets {
 		// Load monster assets
 		Sprite[] monsterAssets = Resources.LoadAll<Sprite>("Tilesets/Monster/Images");
 		foreach (Sprite sprite in monsterAssets) { monster.Add(sprite.name, sprite); }
+		LogAssets(monster);
+
+		// Load item assets
+		Sprite[] itemAssets = Resources.LoadAll<Sprite>("Tilesets/Item/Images/Food");
+		foreach (Sprite sprite in itemAssets) { item.Add(sprite.name, sprite); }
 		LogAssets(monster);
 	}
 

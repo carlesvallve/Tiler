@@ -221,7 +221,7 @@ public class Creature : Tile {
 			if (state == CreatureStates.Using) {
 				if (this is Player) {
 					if (OnGameTurnUpdate != null) { 
-						OnGameTurnUpdate.Invoke(); 
+						OnGameTurnUpdate.Invoke();
 					}
 				}
 			}
