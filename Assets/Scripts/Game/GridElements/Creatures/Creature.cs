@@ -29,9 +29,10 @@ public class Creature : Tile {
 
 	public CreatureStates state { get; set; }
 
+	public CreatureStats stats;
 	public HpBar bar;
-	public int maxHp = 5;
-	public int hp = 5;
+	//public int maxHp = 5;
+	//public int hp = 5;
 
 	
 	public override void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null) {
@@ -43,7 +44,7 @@ public class Creature : Tile {
 
 		state = CreatureStates.Idle;
 
-		stats = new Stats();
+		stats = new CreatureStats();
 		InitStats();
 		bar.Init(this);
 	}
@@ -54,8 +55,12 @@ public class Creature : Tile {
 
 
 	protected virtual void UpdateHp (int ammount) {
-		hp += ammount; if (hp < 0) { hp = 0; }
-		bar.UpdateHp(hp);
+		stats.hp += ammount; 
+
+		if (stats.hp > stats.hpMax) { stats.hp = stats.hpMax; }
+		if (stats.hp < 0) { stats.hp = 0; }
+
+		bar.UpdateHp();
 	}
 
 
@@ -367,12 +372,12 @@ public class Creature : Tile {
 
 	private bool ResolveCombatOutcome (Creature attacker) {
 		// resolve combat outcome
-		int attack = Random.Range(1, 20);
-		int defense = Random.Range(1, 20);
+		int attack = attacker.stats.attack + Dice.Roll(1, 6);
+		int defense = stats.defense + Dice.Roll(1, 6);
 
 		// hit
 		if (attack > defense) {
-			int damage = Random.Range(1, 7);
+			int damage = attacker.stats.str + Dice.Roll(1, 4);
 			if (damage > 0) {
 				// apply damage
 				UpdateHp(-damage);
@@ -384,7 +389,7 @@ public class Creature : Tile {
 				// create blood
 				grid.CreateBlood(transform.position, damage);
 				// set isDead to true
-				if (hp == 0) {
+				if (stats.hp == 0) {
 					return true;
 				}
 			}
@@ -405,6 +410,9 @@ public class Creature : Tile {
 		return false;
 	}
 
+	// =====================================================
+	// Combat Animations
+	// =====================================================
 
 	protected IEnumerator AttackAnimation (Creature target, float delay = 0) {
 		yield return new WaitForSeconds(delay);

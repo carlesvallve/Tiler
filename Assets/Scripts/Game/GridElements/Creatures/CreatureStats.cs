@@ -5,10 +5,10 @@ public class CreatureStats {
 	public int level = 1;
 	public int xp = 0;
 
-	public int maxHp = 10;
+	public int hpMax = 10;
 	public int hp = 10;
 
-	public int maxHunger = 100;
+	public int hungerMax = 100;
 	public int hunger = 100;
 
 	public int attack = 1;

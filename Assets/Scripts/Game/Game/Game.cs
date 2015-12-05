@@ -24,6 +24,8 @@ public class Game : MonoSingleton <Game> {
 
 		assets = new Assets();
 		SetBgm();
+
+		grid = Grid.instance;
 		InitGame();
 	}
 
@@ -32,10 +34,6 @@ public class Game : MonoSingleton <Game> {
 		// Generate dungeon level and render it in the game grid
 		Dungeon dungeon = Dungeon.instance; 
 		dungeon.GenerateDungeon();
-
-		// Start game on the first turn
-		grid = Grid.instance;
-		UpdateGameTurn();
 
 		// Game events
 		Grid.instance.player.OnGameTurnUpdate += () => {
@@ -49,12 +47,12 @@ public class Game : MonoSingleton <Game> {
 
 
 	public void UpdateGameTurn () {
-		// recalculate player's vision
-		grid.player.UpdateVision(grid.player.x, grid.player.y);
-
 		// update game turn
 		turn += 1;
 		Hud.instance.LogTurn("TURN " + turn);
+
+		// recalculate player's vision
+		grid.player.UpdateVision(grid.player.x, grid.player.y);
 	}
 
 

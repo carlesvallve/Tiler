@@ -2,6 +2,21 @@
 using System.Collections;
 using System.Collections.Generic;
 
+/*
+// CHASE&FOLLOW BEHAVIOUR IMPLEMENTED SUCCESSFULLY! :)
+
+- for each lit tile in UpdateVision
+	- store current turn
+	- store current distance to player
+
+- for each monster
+	- determine if he wants to follow (always yes for now)
+	- look at all neighbour tiles
+	- choose the tile with biggest los
+	- if all are equal, choose the want with shortest distance
+	- move to that tile
+*/
+
 
 public class Monster : Creature {
 
@@ -9,7 +24,7 @@ public class Monster : Creature {
 	public override void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null) {
 		base.Init(grid, x, y, scale, asset);
 
-		// Listen to game turn updates
+		// Each monster will evaluate what to do on each game turn update
 		grid.player.OnGameTurnUpdate += () => {
 			Think();
 		};
@@ -20,39 +35,43 @@ public class Monster : Creature {
 		Creature creature = grid.GetCreature(x, y);
 		if (creature != null && creature != this) {
 			if (creature is Player) {
-				float delay = grid.player.monsterQueue.Count * 0.25f; //Random.Range(0f, 0.5f);
+				// set attack delay so all monsters dont attack at once
+				float delay = grid.player.monsterQueue.Count * 0.25f;
 				grid.player.monsterQueue.Add(this);
+
+				// execute attack
 				Attack(creature, delay);
 			}
 		}
 	}
 
 
-	protected virtual void Think () {
-		// only monsters that see the player will think for now
-		//if (!visible) { return; }
+	// =====================================================
+	// Monster AI
+	// =====================================================
 
+	protected virtual void Think () {
+		// escape if we are dying or already dead
 		if (this == null) { return; }
 		if (state == CreatureStates.Dying) { return; }
+		if (grid.player.state == CreatureStates.Descending) { return; }
 
-		// move towards neighbour tile with best fov parameters
+		// move towards neighbour tile 
+		//with best fov parameters
 		ChaseAndFollow();
-
-		// move towards player
-		//MoveTowardsTarget(grid.player);
 	}
 
-	protected virtual void ChaseAndFollow () {
-		// get neighbour with bigger los
-		List<Tile> neighbours = GetNeighbours(x, y);
-		Tile tile = GetTileWithBestFov(neighbours);
-		if (tile == null) { return; }
-		//if (!tile.IsPassable()) { return; }
-		if (!tile.IsWalkable()) { 
-			print ("escaping because tile is not walkable...");
-			return; 
-		}
 
+	// =====================================================
+	// Chase And Follow
+	// =====================================================
+
+	protected virtual void ChaseAndFollow () {
+		// get best available tile for moving to while chasing the player
+		Tile tile = GetTileWithBestFov(this.x, this.y);
+		if (tile == null) { return; }
+
+		// move to selected neighbour tile
 		path = new List<Vector2>() { new Vector2(tile.x, tile.y) };
 		StartCoroutine(FollowPath());
 	}
@@ -81,29 +100,69 @@ public class Monster : Creature {
 	}
 
 
-	private Tile GetTileWithBestFov (List<Tile> neighbours) {
+	private Tile GetTileWithBestFov (int x, int y) {
+		// get neighbour tile with bigger fovTurn and smallest fovDistance
+		// neighbour must have some fov scent and be walkable
+		List<Tile> neighbours = GetNeighbours(x, y);
+		List<Tile> fovTiles = GetTilesWithBestFovTurn(neighbours);
+		Tile tile = GetTileWithBestFovDistance(fovTiles);
+
+		return tile;
+	}
+
+
+	private List<Tile> GetTilesWithBestFovTurn (List<Tile> neighbours) {
+		// generate an array with fov values
+		int[] values = new int[neighbours.Count];
+		for(int i = 0; i < neighbours.Count; i ++) {
+			values[i] = neighbours[i].fovTurn;
+		}
+
+		// get the maximum value in the array
+		int max = Mathf.Max(values);
+
+		// generate a list with all tiles with maximum value
+		List<Tile> tiles = new List<Tile>();
+		foreach(Tile tile in neighbours) {
+
+			// exclude tiles with no fov turn value
+			if (tile.fovTurn == 0) { continue; }
+
+			// exclude tiles with other monsters in it
+			if (!tile.IsWalkable()) { continue; }
+
+			if (tile.fovTurn == max) {
+				tiles.Add(tile);
+			}
+		}
+
+		return tiles;
+	}
+
+
+	private Tile GetTileWithBestFovDistance (List<Tile> tiles) {
 		Tile selectedTile = null;
 
-		int turn = 0;
-		float distance = 1000;
+		float minDistance = Mathf.Infinity;
+ 
+		for(int i = 0; i < tiles.Count; i ++) {
+			Tile tile = tiles[i];
 
-		foreach (Tile tile in neighbours) {
-			if (tile.fovTurn == 0) { continue; }
-			if (tile.fovTurn >= turn && tile.fovDistance <= distance) {
-				turn = tile.fovTurn;
-				distance = tile.fovDistance;
-
+			if (tile.fovDistance < minDistance ) {
 				selectedTile = tile;
+				minDistance = tile.fovDistance;
 			}
 		}
 
 		return selectedTile;
 	}
 
-	
 
+	// =====================================================
+	// MoveTowardsTarget + AvoidObstaclesInDirection
+	// =====================================================
 
-	protected virtual void MoveTowardsTarget (Creature target) {
+	/*protected virtual void MoveTowardsTarget (Creature target) {
 		if (this == null) { return; }
 		if (target == null) { return; }
 		if (target.state == CreatureStates.Dying) { return; }
@@ -177,6 +236,6 @@ public class Monster : Creature {
 		}
 
 		return new Point(dx, dy);
-	}
+	}*/
 
 }

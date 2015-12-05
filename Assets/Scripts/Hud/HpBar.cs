@@ -11,18 +11,24 @@ public class HpBar : MonoBehaviour {
 	public void Init (Creature creature) {
 		this.creature = creature;
 
-		transform.localPosition = Vector3.zero + Vector3.up * 0.75f;
-
 		percent = transform.Find("Percent").GetComponent<SpriteRenderer>();
 		shadow = transform.Find("Shadow").GetComponent<SpriteRenderer>();
 		shadow.gameObject.SetActive(false);
+
+		transform.localPosition = Vector3.zero + Vector3.up * 0.75f;
 	}
 
 
-	public void UpdateHp (int hp) {
-		float value = (float)hp / creature.maxHp;
+	public void SetShadow (float value) {
+		shadow.color = new Color(0, 0, 0, value);
+		shadow.gameObject.SetActive(value > 0);
+	}
 
+
+	public void UpdateHp () {
+		float value = (float)creature.stats.hp / creature.stats.hpMax;
 		float x = -0.5f + (value / 2) + (1 - value) / 4;
+
 		percent.transform.localPosition = new Vector3(x, percent.transform.localPosition.y, 0);
 		percent.transform.localScale = new Vector3(value, percent.transform.localScale.y, 1);
 	}

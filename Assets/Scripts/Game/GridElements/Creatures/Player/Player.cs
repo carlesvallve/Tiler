@@ -16,10 +16,14 @@ public class Player : Creature {
 
 
 	public override void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null) {
-		maxHp = 20;
-		
 		base.Init(grid, x, y, scale, asset);
 		walkable = true;
+
+		stats.hp = 20;
+		stats.hpMax = 20;
+		stats.attack = 2;
+		stats.defense = 2;
+		stats.str = 2;
 	}
 
 
@@ -173,46 +177,30 @@ public class Player : Creature {
 						creature.SetVisible(lit[x, y] || tile.explored);
 						creature.SetShadow(lit[x, y] ? shadowValue : 1);
 						if (!lit[x, y] && tile.explored) { creature.SetShadow(0.6f); }
+
+						// render hp bar
+						creature.bar.SetShadow(lit[x, y] ? shadowValue : 1);
+						if (!lit[x, y] && tile.explored) { creature.bar.SetShadow(0.6f); }
 					}
 
 					// mark lit tiles as explored
 					if (lit[x, y]) { 
 						tile.explored = true; 
+
+						// generate tile fov info, used by monster ai
 						if (tile.IsPassable()) {
-							tile.fovTurn = Game.instance.turn + 1;
-							tile.fovDistance = Vector3.Distance(
-								new Vector2(tile.x, tile.y), new Vector2(px, py)
-							);
+							// record fovTile and fovDistance in this tile
+							tile.fovTurn = Game.instance.turn;
+							float fovDistance = Vector3.Distance(new Vector2(tile.x, tile.y), new Vector2(px, py));
+							tile.fovDistance = Mathf.Round(fovDistance * 10) / 10;
 
-							tile.fovDistance = Mathf.Round(tile.fovDistance * 10) / 10;
-
-							tile.SetInfo(tile.fovTurn.ToString() + "\n" + tile.fovDistance.ToString(), Color.white);
-						} else {
-							tile.SetInfo("", Color.white);
-						}
+							// debug fov info
+							string debug = tile.fovTurn.ToString() + "\n" + tile.fovDistance.ToString();
+							tile.SetInfo(debug, Color.white);
+						} 
 					}
-
-					//tile.SetInfo(tile.fovTurn.ToString(), Color.gray);
-					
-					//tile.SetInfo(tile.IsWalkable().ToString(), Color.gray);
 				}
 			}
 		}
 	}
-
-	/*
-	- for each lit tile
-		- store current turn
-		- store current distance to player
-
-	- for each monster
-		- determine if he wants to follow (always yes for now)
-		- look at all neighbour tiles
-		- choose the tile with biggest los
-		- if all are equal, choose the want with shortes distance
-		- move to that tile
-	
-	*/
-
-	
 }

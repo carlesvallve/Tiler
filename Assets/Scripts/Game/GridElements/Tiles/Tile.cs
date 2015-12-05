@@ -4,7 +4,7 @@ using System.Collections;
 
 public class Tile : MonoBehaviour {
 
-	protected bool debugEnabled = true;
+	protected bool debugEnabled = false;
 
 	protected Grid grid;
 	protected AudioManager sfx;
@@ -71,6 +71,10 @@ public class Tile : MonoBehaviour {
 
 
 	public void SetInfo (string str, Color color) {
+		if (!debugEnabled) { 
+			return; 
+		}
+
 		label.color = color;
 		label.text = str;
 		label.gameObject.SetActive(str != null && str != "");
@@ -130,13 +134,15 @@ public class Tile : MonoBehaviour {
 	// Get tile states
 	// =====================================================
 
+	// only computes walkable entities
 	public bool IsPassable () {
 		Entity entity = grid.GetEntity(x, y);
 		if (entity != null && !entity.walkable) { return false; }
 
 		return walkable;
 	}
-	
+
+	// computes walkable entities and creatures
 	public bool IsWalkable () {
 		Entity entity = grid.GetEntity(x, y);
 		if (entity != null && !entity.walkable) { return false; }
@@ -147,7 +153,7 @@ public class Tile : MonoBehaviour {
 		return walkable;
 	}
 
-
+	// computes all entities that block the light
 	public bool IsOpaque () {
 		Entity entity = grid.GetEntity(x, y);
 		if (entity != null) {
@@ -158,7 +164,7 @@ public class Tile : MonoBehaviour {
 		return false;
 	}
 
-
+	// computes all entities and creatures, even if they are walkable
 	public bool IsOccupied () {
 		Entity entity = grid.GetEntity(x, y);
 		if (entity != null) { return true; }

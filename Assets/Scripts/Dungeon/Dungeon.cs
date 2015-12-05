@@ -104,7 +104,7 @@ public class Dungeon : MonoSingleton <Dungeon> {
 		GenerateStairs();
 
 		// Generate player 
-		//(note: player must be generated before monsters for these to be able to listen to player events)
+		//(note: player must be generated before monsters for them to be able to listen to player events)
 		Stair stair = direction == -1 ? grid.stairDown : grid.stairUp;
 		GeneratePlayer(stair.x, stair.y);
 
@@ -112,17 +112,15 @@ public class Dungeon : MonoSingleton <Dungeon> {
 		GenerateFurniture ();
 
 		//Generate monsters
-		GenerateMonsters();
-		//GenerateSingleMonster();
+		GenerateMonsters(); //GenerateSingleMonster();
 
 		// Update game turn
-		//game.UpdateTurn();
+		game.UpdateGameTurn();
 
-		// initialize vision
-		grid.player.UpdateVision(grid.player.x, grid.player.y);
-		
-		// Log welcome message
-		hud.Log("Welcome to dungeon level " + currentDungeonLevel);
+		// Log dungeon level
+		int dlevel = currentDungeonLevel + 1;
+		hud.Log("Welcome to dungeon level " + dlevel);
+		hud.LogDungeon("DUNGEON " + dlevel);
 	}
 
 
@@ -149,7 +147,7 @@ public class Dungeon : MonoSingleton <Dungeon> {
 						// set room info in floor tile
 						if (dtile.room != null) {
 							tile.roomId = dtile.room.id;
-							//ile.SetInfo(tile.roomId.ToString(), dtile.room.color);
+							//tile.SetInfo(tile.roomId.ToString(), dtile.room.color);
 						}
 					}
 
@@ -245,15 +243,15 @@ public class Dungeon : MonoSingleton <Dungeon> {
 
 			// Pick a random creature type
 			List<System.Type> types = new List<System.Type>() { typeof(Goblin), typeof(Demon) };
-			System.Type creatureType = types[0];
-
-			//Sprite randomAsset = Game.assets.monster.ElementAt(Random.Range(0, Game.assets.monster.Count)).Value;
+			System.Type monsterType = types[0];
 
 			for (int i = 1; i <= maxMonsters; i ++) {
 				Tile tile = GetFreeTileOnRoom(room, 0);
 				if (tile == null) { continue; }
 				
-				grid.monsters.Add( (Monster)grid.CreateCreature(creatureType, tile.x, tile.y, 0.8f) as Monster);
+				//Monster monster = (Monster)grid.CreateCreature(monsterType, tile.x, tile.y, 0.8f) as Monster;
+				grid.CreateCreature(monsterType, tile.x, tile.y, 0.8f);
+
 			}
 
 			// tell the room that has been filled with monsters

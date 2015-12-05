@@ -20,8 +20,12 @@ public class Grid : MonoSingleton <Grid> {
 	public Stair stairDown;
 
 	public Player player;
-	public List<Monster> monsters;
+	//public List<Monster> monsters;
 
+
+	// =====================================================
+	// Initialization
+	// =====================================================
 
 	public void InitializeGrid (int width, int height) {
 		// reset grid
@@ -43,6 +47,23 @@ public class Grid : MonoSingleton <Grid> {
 	}
 
 
+	public void ResetGrid () {
+		// destroy all previously generated gameobjects except player
+
+		Tile[] tilesToDestroy = container.GetComponentsInChildren<Tile>();
+		foreach (Tile tile in tilesToDestroy) {
+			// player must persist through all dungeon levels
+			if (tile is Player) { continue; } 
+
+			tile.StopAllCoroutines();
+			Destroy(tile.gameObject);
+		}
+
+		this.width = 0;
+		this.height = 0;
+	}
+
+
 	public void InitializeAstar () {
 		Cell [,] arr = new Cell[width, height];
 		for (int y = 0; y < height; y++) {
@@ -56,23 +77,8 @@ public class Grid : MonoSingleton <Grid> {
 	}
 
 
-	public void ResetGrid () {
-		// destroy all previously generated gameobjects except player
-
-		Tile[] tilesToDestroy = container.GetComponentsInChildren<Tile>();
-		foreach (Tile tile in tilesToDestroy) {
-			if (tile is Player) { continue; } // player must persist through all dungeon levels
-			tile.StopAllCoroutines();
-			Destroy(tile.gameObject);
-		}
-
-		this.width = 0;
-		this.height = 0;
-	}
-
-
 	public bool IsInsideBounds (int x, int y) {
-		if (x < 1 || y < 1 || x > width - 2 || y > height - 2) {
+		if (x < 0 || y < 0 || x > width - 1 || y > height - 1) {
 			return false;
 		}
 
@@ -80,7 +86,9 @@ public class Grid : MonoSingleton <Grid> {
 	}
 
 
-	// Tile
+	// =====================================================
+	// Tiles
+	// =====================================================
 
 	public Tile CreateTile (System.Type TileType, int x, int y, float scale = 1, Sprite asset = null) {
 		Transform parent = container.Find("Tiles");
@@ -120,8 +128,6 @@ public class Grid : MonoSingleton <Grid> {
 
 
 	public bool TileIsOpaque (int x, int y) {
-		//if (!IsInsideBounds(x, y)) { return true; }
-
 		Tile tile = GetTile(x, y);
 		if (tile == null) { return true; }
 
@@ -129,7 +135,9 @@ public class Grid : MonoSingleton <Grid> {
 	}
 
 
-	// Entity
+	// =====================================================
+	// Entities
+	// =====================================================
 
 	public Entity CreateEntity (System.Type EntityType, int x, int y, float scale = 1, Sprite asset = null) {
 		Transform parent = container.Find("Entities");
@@ -161,7 +169,9 @@ public class Grid : MonoSingleton <Grid> {
 	}
 
 
-	// Creature
+	// =====================================================
+	// Creatures
+	// =====================================================
 
 	public Creature CreateCreature (System.Type CreatureType, int x, int y, float scale = 1, Sprite asset = null) {
 		Transform parent = (CreatureType == typeof(Player)) ? container.Find("Player") : container.Find("Creatures");
@@ -198,6 +208,10 @@ public class Grid : MonoSingleton <Grid> {
 		return layers.Get<Creature>(y, x);
 	}
 
+
+	// =====================================================
+	// Fx
+	// =====================================================
 
 	public Blood CreateBlood (Vector3 pos, int maxParticles) {
 		Transform parent = container.Find("Fx");
