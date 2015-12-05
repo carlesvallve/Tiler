@@ -35,17 +35,21 @@ public class Door : Entity {
 		sfx.Play("Audio/Sfx/Door/unlock", 0.8f, Random.Range(0.8f, 1.2f));
 
 		bool success = Random.Range(1, 100) < 50;
-		if (!success) {
+		if (success) {
+			Speak("Success!", Color.white);
+			sfx.Play("Audio/Sfx/Door/door-open2", 0.8f, Random.Range(0.8f, 1.2f));
+			state = EntityStates.Closed;
+		} else {
 			Speak("Locked", Color.white);
 		}
 
 		yield return new WaitForSeconds(0.5f);
 
-		if (success) {
+		/*if (success) {
 			Speak("Success!", Color.white);
 			sfx.Play("Audio/Sfx/Door/door-open2", 0.8f, Random.Range(0.8f, 1.2f));
 			state = EntityStates.Closed;
-		}
+		}*/
 
 		cb(success);
 		yield break;

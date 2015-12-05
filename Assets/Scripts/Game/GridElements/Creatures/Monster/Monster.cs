@@ -26,6 +26,8 @@ public class Monster : Creature {
 
 		// Each monster will evaluate what to do on each game turn update
 		grid.player.OnGameTurnUpdate += () => {
+			if (this == null) { return; }
+			RegenerateHp();
 			Think();
 		};
 	}
@@ -52,7 +54,7 @@ public class Monster : Creature {
 
 	protected virtual void Think () {
 		// escape if we are dying or already dead
-		if (this == null) { return; }
+		//if (this == null) { return; }
 		if (state == CreatureStates.Dying) { return; }
 		if (grid.player.state == CreatureStates.Descending) { return; }
 

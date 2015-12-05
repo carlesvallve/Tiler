@@ -50,6 +50,9 @@ public class Creature : Tile {
 	}
 
 
+
+
+
 	protected virtual void InitStats () {	
 	}
 
@@ -61,6 +64,14 @@ public class Creature : Tile {
 		if (stats.hp < 0) { stats.hp = 0; }
 
 		bar.UpdateHp();
+	}
+
+	public virtual void RegenerateHp() {
+		stats.regeneration += stats.regenerationRate;
+		if (stats.regeneration == 1) {
+			UpdateHp(1);
+			stats.regeneration = 0;
+		}
 	}
 
 

@@ -21,9 +21,9 @@ public class Player : Creature {
 
 		stats.hp = 20;
 		stats.hpMax = 20;
-		stats.attack = 2;
+		stats.attack = 3;
 		stats.defense = 2;
-		stats.str = 2;
+		stats.str = 3;
 	}
 
 
@@ -173,6 +173,11 @@ public class Player : Creature {
 					Creature creature = grid.GetCreature(x, y);
 					if (creature != null) {
 
+						// creatures make and exclamation when they first see the player
+						if (!creature.visible && lit[x, y]) {
+							creature.Speak("!", Color.white);
+						}
+						
 						creature.visible = lit[x, y];
 						creature.SetVisible(lit[x, y] || tile.explored);
 						creature.SetShadow(lit[x, y] ? shadowValue : 1);
@@ -181,6 +186,8 @@ public class Player : Creature {
 						// render hp bar
 						creature.bar.SetShadow(lit[x, y] ? shadowValue : 1);
 						if (!lit[x, y] && tile.explored) { creature.bar.SetShadow(0.6f); }
+
+
 					}
 
 					// mark lit tiles as explored

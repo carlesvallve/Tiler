@@ -36,11 +36,12 @@ public class Game : MonoSingleton <Game> {
 		dungeon.GenerateDungeon();
 
 		// Game events
-		Grid.instance.player.OnGameTurnUpdate += () => {
+		grid.player.OnGameTurnUpdate += () => {
+			grid.player.RegenerateHp();
 			UpdateGameTurn();
 		};
 
-		Grid.instance.player.OnGameOver += () => {
+		grid.player.OnGameOver += () => {
 			StartCoroutine(GameOver());
 		};
 	}
@@ -54,7 +55,7 @@ public class Game : MonoSingleton <Game> {
 		// recalculate player's vision
 		grid.player.UpdateVision(grid.player.x, grid.player.y);
 
-		
+
 	}
 
 

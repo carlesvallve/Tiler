@@ -8,6 +8,9 @@ public class CreatureStats {
 	public int hpMax = 10;
 	public int hp = 10;
 
+	public float regeneration = 0;
+	public float regenerationRate = 0.5f;
+
 	public int hungerMax = 100;
 	public int hunger = 100;
 
