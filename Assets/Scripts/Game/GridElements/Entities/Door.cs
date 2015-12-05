@@ -21,35 +21,47 @@ public class Door : Entity {
 	}
 
 
-	public IEnumerator Open () {
-		state = EntityStates.Open;
+	public IEnumerator Open (Creature creature, bool hasBeenUnlocked = false) {
 		sfx.Play("Audio/Sfx/Door/key", 1f, Random.Range(0.4f, 0.6f));
+		state = EntityStates.Open;
 
 		SetAsset(Game.assets.dungeon["door-open"]);
+
+		if (creature is Player) { 
+			if (!hasBeenUnlocked) { 
+				Hud.instance.Log("You open the door."); 
+			}
+			creature.MoveCameraTo(this.x, this.y);
+		}
 		
-		yield return new WaitForSeconds(0.5f);
+		yield break; //return new WaitForSeconds(0.5f);
 	}
 
 
-	public IEnumerator Unlock (System.Action<bool> cb) {
-		sfx.Play("Audio/Sfx/Door/unlock", 0.8f, Random.Range(0.8f, 1.2f));
-
+	public IEnumerator Unlock (Creature creature, System.Action<bool> cb) {
 		bool success = Random.Range(1, 100) < 50;
+
 		if (success) {
-			Speak("Success!", Color.white);
-			sfx.Play("Audio/Sfx/Door/door-open2", 0.8f, Random.Range(0.8f, 1.2f));
 			state = EntityStates.Closed;
+			sfx.Play("Audio/Sfx/Door/door-open2", 0.8f, Random.Range(0.8f, 1.2f));
+			if (creature is Player) { 
+				Speak("Success!", Color.white);
+				Hud.instance.Log("You unlock the door."); 
+			}
+
 		} else {
-			Speak("Locked", Color.white);
+			sfx.Play("Audio/Sfx/Door/unlock", 0.8f, Random.Range(0.8f, 1.2f));
+			if (creature is Player) { 
+				Speak("Locked", Color.white);
+				Hud.instance.Log("The door is locked.");
+			}
 		}
 
-		yield return new WaitForSeconds(0.5f);
+		yield return new WaitForSeconds(0.25f);
 
-		/*if (success) {
-			Speak("Success!", Color.white);
-			sfx.Play("Audio/Sfx/Door/door-open2", 0.8f, Random.Range(0.8f, 1.2f));
-			state = EntityStates.Closed;
-		}*/
+		if (success) {
+			StartCoroutine(Open(creature, true));
+		}
 
 		cb(success);
 		yield break;

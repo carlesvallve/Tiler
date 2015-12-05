@@ -151,7 +151,7 @@ public class Creature : Tile {
 			
 			// search for new path
 			path = Astar.instance.SearchPath(grid.player.x, grid.player.y, x, y);
-			path = SetPathAfterEncounter(path);
+			path = CapPathToFirstEncounter(path);
 		}
 		
 		// escape if no path was found
@@ -214,6 +214,19 @@ public class Creature : Tile {
 
 		// escape if we are no longer moving because of encounters on next tile
 		if (state != CreatureStates.Moving) { 
+			// wait enough time for monsters to complete their movement
+			yield return new WaitForSeconds(speed);
+
+			// emmit event if we used something
+			if (state == CreatureStates.Using) {
+				if (this is Player) {
+					if (OnGameTurnUpdate != null) { 
+						OnGameTurnUpdate.Invoke(); 
+					}
+				}
+			}
+			
+			// and stop moving
 			StopMoving();
 			yield break;
 		}
@@ -260,10 +273,10 @@ public class Creature : Tile {
 
 
 	public virtual void StopMoving () {
-		if (state == CreatureStates.Moving) {
+		if (state == CreatureStates.Moving || state == CreatureStates.Using) {
 			StopAllCoroutines();
 		}
-		
+
 		state = CreatureStates.Idle;
 		DrawPath(Color.white);
 
@@ -277,7 +290,7 @@ public class Creature : Tile {
 	// Encounters
 	// =====================================================
 
-	private List<Vector2> SetPathAfterEncounter (List<Vector2> path) {
+	private List<Vector2> CapPathToFirstEncounter (List<Vector2> path) {
 		int i;
 		for (i = 0; i < path.Count; i ++) {
 			Vector2 p = path[i];
@@ -316,33 +329,29 @@ public class Creature : Tile {
 				// open the door
 				if (door.state == EntityStates.Closed) { 
 					state = CreatureStates.Using;
-					CenterCamera();
-					StartCoroutine(door.Open()); 
-					if (this is Player) { 
-						Hud.instance.Log("You open the door."); 
-					}
+					//CenterCamera();
+					StartCoroutine(door.Open(this)); 
+					
 				
 				// unlock the door
 				} else if (door.state == EntityStates.Locked) { 
 					state = CreatureStates.Using;
-					CenterCamera();
-					StartCoroutine(door.Unlock(success => {
-						if (this is Player) { 
-							Hud.instance.Log(success ? "You unlock the door." : "The door is locked."); 
-						}
+					//CenterCamera();
+					StartCoroutine(door.Unlock(this, success => {
 					}));
 				}
 			}
 		}
 
-		// emmit event
+		/*// emmit event
 		if (state == CreatureStates.Using) {
 			if (this is Player) {
+
 				if (OnGameTurnUpdate != null) { 
 					OnGameTurnUpdate.Invoke(); 
 				}
 			}
-		}
+		}*/
 	}
 
 
@@ -377,7 +386,7 @@ public class Creature : Tile {
 	// Functions overriden by Player class
 	// =====================================================
 
-	protected virtual void MoveCameraTo (int x, int y) {}
+	public virtual void MoveCameraTo (int x, int y) {}
 	public virtual void CenterCamera (bool interpolate = true) {}
 	public virtual void UpdateVision (int x, int y) {}
 

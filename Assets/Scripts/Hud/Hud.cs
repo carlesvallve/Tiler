@@ -35,6 +35,8 @@ public class Hud : MonoSingleton <Hud> {
 	// UI labels
 	// ==============================================================
 
+	// TODO:  We probably want to create a 'Label' class to handle all these
+	
 	public void CreateLabel (Tile tile, string str, Color color, bool stick = false, float duration = 1f, float startY = 32) {
 		GameObject obj = (GameObject)Instantiate(labelPrefab);
 		obj.transform.SetParent(world, false);
@@ -50,8 +52,6 @@ public class Hud : MonoSingleton <Hud> {
 
 	
 	private IEnumerator AnimateLabel(Tile tile, GameObject obj, bool stick, float duration, float startY) {
-		
-
 		Vector3 startPos = tile.transform.position;
 		float endY = startY + 32;
 		float t = 0;
@@ -60,11 +60,12 @@ public class Hud : MonoSingleton <Hud> {
 			t += Time.deltaTime / duration;
 
 			float y = Mathf.Lerp(startY, endY, Mathf.SmoothStep(0f, 1f, t));
-			Vector3 pos = Camera.main.WorldToScreenPoint(stick ? tile.transform.position : startPos) + Vector3.up * y;
-			
-			if (obj != null) { 
-				obj.transform.position = pos; 
-			}
+
+			Vector3 pos = Camera.main.WorldToScreenPoint(
+				tile != null && stick ? tile.transform.position : startPos
+			) + Vector3.up * y;
+
+			if (obj != null) { obj.transform.position = pos; } 
 			
 			yield return null;
 		}

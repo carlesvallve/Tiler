@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 /*
-// CHASE&FOLLOW BEHAVIOUR IMPLEMENTED SUCCESSFULLY! :)
+// CHASE & FOLLOW BEHAVIOUR IMPLEMENTED SUCCESSFULLY! :)
 
 - for each lit tile in UpdateVision
 	- store current turn

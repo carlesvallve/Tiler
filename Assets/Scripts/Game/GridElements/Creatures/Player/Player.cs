@@ -5,8 +5,7 @@ using System.Collections.Generic;
 
 public class Player : Creature {
 
-	protected bool useFovAlgorithm = true;
-	protected int cameraMargin = 4;
+	protected int cameraMargin = 3;
 
 	// list of monster that are currently attacking the player
 	// used for calculating the monster attack delay, so they dont attack all at once
@@ -77,7 +76,7 @@ public class Player : Creature {
 	// Camera
 	// =====================================================
 
-	protected override void MoveCameraTo (int x, int y) {
+	public override void MoveCameraTo (int x, int y) {
 		Camera2D.instance.StopAllCoroutines();
 		Camera2D.instance.StartCoroutine(Camera2D.instance.MoveToPos(new Vector2(x, y)));
 	}
@@ -114,10 +113,6 @@ public class Player : Creature {
 	// =====================================================
 
 	public override void UpdateVision (int px, int py) {
-		if (!useFovAlgorithm) {
-			return;
-		}
-
 		// TODO: We need to implement a 'Permissive Field of View' algorithm instead, 
 		// to avoid dark corners and get a better roguelike feeling
 
