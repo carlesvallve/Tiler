@@ -7,20 +7,42 @@ public class Player : Creature {
 
 	protected int cameraMargin = 3;
 
+	protected string playerRace;
+	protected string playerClass;
+
 	// list of monster that are currently attacking the player
 	// used for calculating the monster attack delay, so they dont attack all at once
 	public List<Monster> monsterQueue = new List<Monster>();
 
 
 	public override void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null) {
+		SetPlayerRace();
+		SetPlayerClass();
+
+		string path = "Tilesets/Monster/Hero/" + playerRace + "-" + playerClass;
+		asset = Resources.Load<Sprite>(path);
+		if (asset == null) { Debug.LogError(path); }
+
 		base.Init(grid, x, y, scale, asset);
 		walkable = true;
 
 		stats.hp = 20;
 		stats.hpMax = 20;
-		stats.attack = 3;
-		stats.defense = 2;
-		stats.str = 3;
+		stats.attack = 6;
+		stats.defense = 3;
+		stats.str = 6;
+	}
+
+
+	protected void SetPlayerRace () {
+		string[] races = new string[] { "human", "dwarf", "elf", "hobbit" };
+		playerRace = races[Random.Range(0, races.Length)];
+	}
+
+
+	protected void SetPlayerClass () {
+		string[] classes = new string[] { "guard", "warrior", "ranger", "mage", "monk", "priest" }; // "normal", 
+		playerClass = classes[Random.Range(0, classes.Length)];
 	}
 
 

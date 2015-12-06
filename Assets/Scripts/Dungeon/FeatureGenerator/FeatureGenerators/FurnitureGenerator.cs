@@ -26,12 +26,27 @@ public class FurnitureGenerator : DungeonFeatureGenerator {
 				if (tile == null) { continue; }
 				
 				string[] arr = new string[] { 
-					"barrel-closed", "barrel-open", "bed-h", "bed-v", "chair-h", "chair-v", 
-					"chest-closed", "chest-open","fountain-fire", "fountain-water", 
-					"grave-1", "grave-2", "grave-3", "lever-left", "lever-right", 
-					"table-1", "vase" };
+					"barrel-closed", "barrel-open", "barrel-water-1", "barrel-water-2", "vase",
+					"bed-h", "bed-v", "chair-h", "chair-v", "throne-h", "throne-v", "stool",
+					"chest-closed", "chest-open", "lever-left", "lever-right", 
+					"fountain-fire", "fountain-water", 
+					"fountain-water-gold-1", "fountain-water-gold-2", "fountain-fire-gold-1", "fountain-fire-gold-2", 
+					"grave-1", "grave-2", "grave-3", 
+					"alarm-bell", "alarm-gong", "alarm-horn",
+					"bench-h-1", "bench-h-2", "bench-v-1", "bench-v-2",
+					"book-atril-h", "book-atril-v",
+					"crates-1", "crates-2", "crates-3", "crates-4", "crates-5", "crates-6", "crates-7", "crates-8",
+					"shelf-1","shelf-2","shelf-3","shelf-4","shelf-5","shelf-6","shelf-7","shelf-8","shelf-vertical",
+					"rack-1", "rack-2", "rack-3", "rack-4",
+					"table-1","table-2","table-3","table-4","table-5","table-6","table-7", "table-round-1", "table-round-2",
+					"fire-1", "fire-2", "fireplace-1", "fireplace-2",
+					"book-atril-h", "book-atril-v",
+				};
 
-				Sprite asset = Resources.Load<Sprite>("Tilesets/Furniture/" + arr[Random.Range(0, arr.Length)]);
+				string path = "Tilesets/Furniture/" + arr[Random.Range(0, arr.Length)];
+				Sprite asset = Resources.Load<Sprite>(path);
+				if (asset == null) { Debug.LogError(path); }
+
 				grid.CreateEntity(typeof(Furniture), tile.x, tile.y, 0.8f, asset);
 			}
 		}

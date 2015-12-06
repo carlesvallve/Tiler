@@ -26,7 +26,7 @@ public class Door : Entity {
 
 
 	public IEnumerator Open (Creature creature, bool hasBeenUnlocked = false) {
-		sfx.Play("Audio/Sfx/Door/key", 1f, Random.Range(0.4f, 0.6f));
+		sfx.Play("Audio/Sfx/Door/key", 0.5f, Random.Range(0.4f, 0.6f));
 		state = EntityStates.Open;
 
 		SetAsset(Resources.Load<Sprite>("Tilesets/Dungeon/Door/door-open"));
@@ -47,14 +47,14 @@ public class Door : Entity {
 
 		if (success) {
 			state = EntityStates.Closed;
-			sfx.Play("Audio/Sfx/Door/door-open2", 0.8f, Random.Range(0.8f, 1.2f));
+			sfx.Play("Audio/Sfx/Door/door-open2", 0.7f, Random.Range(0.8f, 1.2f));
 			if (creature is Player) { 
 				Speak("Success!", Color.white);
 				Hud.instance.Log("You unlock the door."); 
 			}
 
 		} else {
-			sfx.Play("Audio/Sfx/Door/unlock", 0.8f, Random.Range(0.8f, 1.2f));
+			sfx.Play("Audio/Sfx/Door/unlock", 0.7f, Random.Range(0.8f, 1.2f));
 			if (creature is Player) { 
 				Speak("Locked", Color.white);
 				Hud.instance.Log("The door is locked.");

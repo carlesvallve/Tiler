@@ -60,7 +60,7 @@ public class Creature : Tile {
 		base.Init(grid, x, y, scale, asset);
 		walkable = false;
 
-		SetImages(scale, new Vector3(0, 0.1f, 0), 0.04f);
+		SetImages(scale, new Vector3(0, 0.1f, 0), 0.035f);
 		LocateAtCoords(x, y);
 
 		state = CreatureStates.Idle;
@@ -487,10 +487,12 @@ public class Creature : Tile {
 	protected IEnumerator AttackAnimation (Creature target, float delay = 0) {
 		yield return new WaitForSeconds(delay);
 		if (target == null) { yield break; }
+
+		//if (this is Player) { print (target); }
 		
 		float duration = speed * 0.5f;
 
-		sfx.Play("Audio/Sfx/Combat/woosh", 0.6f, Random.Range(0.8f, 1.5f));
+		sfx.Play("Audio/Sfx/Combat/woosh", 0.4f, Random.Range(0.5f, 1.5f));
 
 		// move towards target
 		float t = 0;

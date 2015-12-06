@@ -18,8 +18,7 @@ public class PlayerGenerator : DungeonFeatureGenerator {
 
 	public override void GenerateAtPos (int x, int y) {
 		if (grid.player == null) {
-			Sprite asset = Resources.Load<Sprite>("Tilesets/Monster/adventurer");
-			grid.player = grid.CreateCreature(typeof(Player), x, y, 0.8f, asset) as Player;
+			grid.player = grid.CreateCreature(typeof(Player), x, y, 0.7f, null) as Player;
 			Camera.main.transform.position = new Vector3(grid.player.x, grid.player.y, -10);
 		} else {
 			grid.player.LocateAtCoords(x, y);
