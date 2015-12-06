@@ -41,7 +41,7 @@ public class Weapon : Item {
 
 	public override void Pickup(Creature creature) {
 		if (creature.visible) {
-			sfx.Play("Audio/Sfx/Item/weapon", 0.5f, Random.Range(0.8f, 1.2f));
+			sfx.Play("Audio/Sfx/Item/weapon", 0.6f, Random.Range(0.8f, 1.2f));
 		}
 		
 		base.Pickup(creature);
