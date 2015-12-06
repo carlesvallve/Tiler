@@ -6,7 +6,7 @@ public class Door : Entity {
 
 
 	public override void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null) {
-		asset = Resources.Load<Sprite>("Tilesets/Architecture/door-closed");
+		asset = Resources.Load<Sprite>("Tilesets/Dungeon/door-closed");
 
 		base.Init(grid, x, y, scale, asset);
 		walkable = true;
@@ -21,7 +21,7 @@ public class Door : Entity {
 		this.state = state;
 
 		string id = state == EntityStates.Open ? "door-open" : "door-closed";
-		SetAsset(Resources.Load<Sprite>("Tilesets/Architecture/" + id));
+		SetAsset(Resources.Load<Sprite>("Tilesets/Dungeon/Door/" + id));
 	}
 
 
@@ -29,7 +29,7 @@ public class Door : Entity {
 		sfx.Play("Audio/Sfx/Door/key", 1f, Random.Range(0.4f, 0.6f));
 		state = EntityStates.Open;
 
-		SetAsset(Resources.Load<Sprite>("Tilesets/Architecture/door-open"));
+		SetAsset(Resources.Load<Sprite>("Tilesets/Dungeon/Door/door-open"));
 
 		if (creature is Player) { 
 			if (!hasBeenUnlocked) { 

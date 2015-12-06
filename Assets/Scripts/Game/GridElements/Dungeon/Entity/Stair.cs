@@ -8,7 +8,7 @@ public class Stair : Entity {
 	
 
 	public override void Init (Grid grid, int x, int y,float scale = 1, Sprite asset = null) {
-		asset = Resources.Load<Sprite>("Tilesets/Architecture/stairs-down");
+		asset = Resources.Load<Sprite>("Tilesets/Dungeon/Stair/stairs-down");
 
 		base.Init(grid, x, y, scale, asset);
 		walkable = true;
@@ -26,9 +26,9 @@ public class Stair : Entity {
 		this.direction = direction;
 
 		if (direction == 1) {
-			SetAsset(Resources.Load<Sprite>("Tilesets/Architecture/stairs-down"));
+			SetAsset(Resources.Load<Sprite>("Tilesets/Dungeon/Stair/stairs-down"));
 		} else if (direction == -1) {
-			SetAsset(Resources.Load<Sprite>("Tilesets/Architecture/stairs-up"));
+			SetAsset(Resources.Load<Sprite>("Tilesets/Dungeon/Stair/stairs-up"));
 		}
 	}
 
