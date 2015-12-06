@@ -34,11 +34,11 @@ public class Door : Entity {
 			creature.MoveCameraTo(this.x, this.y);
 		}
 		
-		yield break; //return new WaitForSeconds(0.5f);
+		yield break;
 	}
 
 
-	public IEnumerator Unlock (Creature creature, System.Action<bool> cb) {
+	public IEnumerator Unlock (Creature creature) { // , System.Action<bool> cb // cb(success);
 		bool success = Random.Range(1, 100) < 50;
 
 		if (success) {
@@ -62,9 +62,6 @@ public class Door : Entity {
 		if (success) {
 			StartCoroutine(Open(creature, true));
 		}
-
-		cb(success);
-		yield break;
 	}
 	
 }

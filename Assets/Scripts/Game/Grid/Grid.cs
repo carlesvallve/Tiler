@@ -10,6 +10,7 @@ public class Grid : MonoSingleton <Grid> {
 	public GameObject tilePrefab;
 	public GameObject barPrefab;
 	public GameObject bloodPrefab;
+	public GameObject glowPrefab;
 
 	public int width = 16;
 	public int height = 16;
@@ -20,7 +21,6 @@ public class Grid : MonoSingleton <Grid> {
 	public Stair stairDown;
 
 	public Player player;
-	//public List<Monster> monsters;
 
 
 	// =====================================================
@@ -224,5 +224,19 @@ public class Grid : MonoSingleton <Grid> {
 		blood.Init(pos, maxParticles);
 
 		return blood;
+	}
+	
+
+	public Glow CreateGlow (Vector3 pos, int maxParticles) {
+		Transform parent = container.Find("Fx");
+
+		GameObject obj = (GameObject)Instantiate(glowPrefab);
+		obj.transform.SetParent(parent, false);
+		obj.name = "Glow";
+
+		Glow glow = obj.GetComponent<Glow>();
+		glow.Init(pos, maxParticles);
+
+		return glow;
 	}
 }

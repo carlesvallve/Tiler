@@ -20,17 +20,20 @@ public class ItemGenerator : DungeonFeatureGenerator {
 			DungeonRoom room = dungeonGenerator.rooms[n];
 			int maxItems = Random.Range(0, 100) <= 50 ? Random.Range(1, (int)(room.tiles.Count * 0.3f)) : 0;
 
-			// place items in room
 			for (int i = 1; i <= maxItems; i ++) {
 				Tile tile = GetFreeTileOnRoom(room, 0);
 				if (tile == null) { continue; }
-				
-				string[] arr = new string[] { 
-					"apricot", "banana", "bread", "meat", "strawberry" 
+
+				// Define item type classes
+				List<System.Type> types = new List<System.Type>() { 
+					typeof(Food), typeof(Treasure), typeof(Potion), typeof(Book), typeof(Weapon), typeof(Armour)
 				};
 
-				Sprite asset = Game.assets.item[arr[Random.Range(0, arr.Length)]];
-				grid.CreateEntity(typeof(Item), tile.x, tile.y, 0.8f, asset);
+				// Pick a random creature type
+				System.Type itemType = types[Random.Range(0, types.Count)];
+				
+				grid.CreateEntity(itemType, tile.x, tile.y, 0.8f);
+
 			}
 		}
 	}

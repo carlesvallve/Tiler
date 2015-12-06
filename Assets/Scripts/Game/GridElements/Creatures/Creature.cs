@@ -34,12 +34,12 @@ public class Creature : Tile {
 
 
 	public Dictionary<string, List<Item>> items = new Dictionary<string, List<Item>>() {
-		{ "food",     null },
-		{ "treasure", null },
-		{ "potion",   null },
-		{ "book", 	  null },
-		{ "weapon",   null },
-		{ "armour",   null }
+		{ "food",     new List<Item>() },
+		{ "treasure", new List<Item>() },
+		{ "potion",   new List<Item>() },
+		{ "book", 	  new List<Item>() },
+		{ "weapon",   new List<Item>() },
+		{ "armour",   new List<Item>() }
 	};
 
 	public Dictionary<string, Item> equipment = new Dictionary<string, Item>() {
@@ -343,7 +343,7 @@ public class Creature : Tile {
 		Entity entity = grid.GetEntity(x, y);
 		if (entity == null) { return; }
 
-		// resolve doors
+		// resolve closed/locked doors
 		if (entity is Door) {
 			Door door = (Door)entity;
 			if (door.state != EntityStates.Open) {
@@ -352,29 +352,17 @@ public class Creature : Tile {
 				// open the door
 				if (door.state == EntityStates.Closed) { 
 					state = CreatureStates.Using;
-					//CenterCamera();
-					StartCoroutine(door.Open(this)); 
+					StartCoroutine(door.Open(this));
+					return; 
 					
-				
 				// unlock the door
 				} else if (door.state == EntityStates.Locked) { 
 					state = CreatureStates.Using;
-					//CenterCamera();
-					StartCoroutine(door.Unlock(this, success => {
-					}));
+					StartCoroutine(door.Unlock(this));
+					return;
 				}
 			}
 		}
-
-		/*// emmit event
-		if (state == CreatureStates.Using) {
-			if (this is Player) {
-
-				if (OnGameTurnUpdate != null) { 
-					OnGameTurnUpdate.Invoke(); 
-				}
-			}
-		}*/
 	}
 
 
@@ -401,7 +389,26 @@ public class Creature : Tile {
 					Hud.instance.Log("The stair doors are locked.");
 				}
 			}
+
+			// resolve items
+			if (entity is Item) {
+				PickItem((Item)entity);
+			}
 		}
+	}
+
+
+	protected void PickItem (Item item) {
+		// add to items dictionary
+		string id = item.typeId;
+		items[id].Add(item);
+
+		// pick item
+		item.Pickup();
+		
+
+		// destroy the item
+		//Destroy(item.gameObject);
 	}
 
 
