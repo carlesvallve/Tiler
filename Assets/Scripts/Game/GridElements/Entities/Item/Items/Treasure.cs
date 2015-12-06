@@ -23,8 +23,11 @@ public class Treasure : Item {
 		return arr[Random.Range(0, arr.Length)];
 	}
 
-	public override void Pickup() {
-		sfx.Play("Audio/Sfx/Item/treasure", 0.1f, Random.Range(0.5f, 1.0f));
-		base.Pickup();
+	public override void Pickup(Creature creature) {
+		if (creature.visible) {
+			sfx.Play("Audio/Sfx/Item/treasure", 0.1f, Random.Range(0.5f, 1.0f));
+		}
+		
+		base.Pickup(creature);
 	}
 }

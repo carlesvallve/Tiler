@@ -30,8 +30,11 @@ public class Book : Item {
 	}
 
 
-	public override void Pickup() {
-		sfx.Play("Audio/Sfx/Item/book", 0.2f, Random.Range(0.8f, 1.2f));
-		base.Pickup();
+	public override void Pickup(Creature creature) {
+		if (creature.visible) {
+			sfx.Play("Audio/Sfx/Item/book", 0.15f, Random.Range(0.8f, 1.2f));
+		}
+		
+		base.Pickup(creature);
 	}
 }

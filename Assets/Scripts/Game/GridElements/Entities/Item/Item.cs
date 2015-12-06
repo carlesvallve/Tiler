@@ -23,8 +23,16 @@ public class Item : Entity {
 	}
 
 
-	public virtual void Pickup () {
-		Grid.instance.CreateGlow(transform.position, 5);
+	public virtual void Pickup (Creature creature) {
+		// spawn glow particles
+		if (creature.visible) {
+			Grid.instance.CreateGlow(transform.position, 8);
+		}
+
+		// add to creature's items dictionary
+		creature.items[typeId].Add(this);
+
+		// destroy item in grid
 		Destroy(gameObject);
 	}
 }

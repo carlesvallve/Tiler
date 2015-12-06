@@ -99,8 +99,8 @@ public class Dungeon : MonoSingleton <Dungeon> {
 		furniture.Generate();
 
 		// Generate monsters
-		//MonsterGenerator monsters = new MonsterGenerator();
-		//monsters.Generate();
+		MonsterGenerator monsters = new MonsterGenerator();
+		monsters.Generate();
 		
 		// Generate items
 		ItemGenerator items = new ItemGenerator();

@@ -26,8 +26,11 @@ public class Food : Item {
 	}
 
 
-	public override void Pickup() {
-		sfx.Play("Audio/Sfx/Item/food", 0.5f, Random.Range(0.8f, 1.2f));
-		base.Pickup();
+	public override void Pickup(Creature creature) {
+		if (creature.visible) {
+			sfx.Play("Audio/Sfx/Item/food", 0.5f, Random.Range(0.8f, 1.2f));
+		}
+		
+		base.Pickup(creature);
 	}
 }

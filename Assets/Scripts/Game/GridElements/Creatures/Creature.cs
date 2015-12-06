@@ -378,7 +378,7 @@ public class Creature : Tile {
 		Entity entity = grid.GetEntity(x, y);
 		if (entity != null) {
 
-			// resolve stairs
+			// use stairs
 			if ((this is Player) && (entity is Stair)) {
 				Stair stair = (Stair)entity;
 
@@ -390,25 +390,11 @@ public class Creature : Tile {
 				}
 			}
 
-			// resolve items
+			// pickup items
 			if (entity is Item) {
-				PickItem((Item)entity);
+				((Item)entity).Pickup(this);
 			}
 		}
-	}
-
-
-	protected void PickItem (Item item) {
-		// add to items dictionary
-		string id = item.typeId;
-		items[id].Add(item);
-
-		// pick item
-		item.Pickup();
-		
-
-		// destroy the item
-		//Destroy(item.gameObject);
 	}
 
 
