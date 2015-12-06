@@ -18,7 +18,7 @@ public class MonsterGenerator : DungeonFeatureGenerator {
 		for (int n = 0; n < dungeonGenerator.rooms.Count; n++) {
 
 			DungeonRoom room = dungeonGenerator.rooms[n];
-			int maxMonsters = Random.Range(0, 100) <= 75 ? Random.Range(1, (int)(room.tiles.Count * 0.1f)) : 0;
+			int maxMonsters = Random.Range(0, 100) <= 40 ? Random.Range(1, (int)(room.tiles.Count * 0.1f)) : 0;
 
 			//Color color = new Color (Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f));
 			//PaintRoom(room, color);

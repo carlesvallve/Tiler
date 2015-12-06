@@ -70,7 +70,10 @@ public class DungeonGenerator : MonoSingleton <DungeonGenerator> {
 	
 	
 	// Clean everything
-	public void ResetDungeon() {
+	public void ResetDungeon(int width, int height) {
+		MAP_WIDTH = width;
+		MAP_HEIGHT = height;
+
 		// Reset tilemap
 		for (int i = 0; i < MAP_HEIGHT; i++) 
 			for (int j = 0; j < MAP_WIDTH; j++) 
@@ -85,9 +88,9 @@ public class DungeonGenerator : MonoSingleton <DungeonGenerator> {
 
 	
 	// Generate a new dungeon with the given seed
-	public void GenerateDungeon(int seed) {
+	public void GenerateDungeon(int seed, int width, int height) {
 		// Clean
-		ResetDungeon ();
+		ResetDungeon (width, height);
 			
 		// Generate QuadTree
 		if (verbose) { Debug.Log ("Generating QuadTree"); }

@@ -50,7 +50,8 @@ public class Dungeon : MonoSingleton <Dungeon> {
 		Random.seed = seed;
 		
 		// Generate dungeon data
-		dungeonGenerator.GenerateDungeon(dungeonGenerator.seed);
+		int size = Random.Range(16, 33);
+		dungeonGenerator.GenerateDungeon(dungeonGenerator.seed, size, size);
 
 		// Render dungeon on grid
 		RenderDungeon(direction);
