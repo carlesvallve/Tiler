@@ -9,6 +9,11 @@ public class FurnitureGenerator : DungeonFeatureGenerator {
 	// Furniture generation
 	// =====================================================
 
+	// TODO: 
+	// Organize furniture into theme categories, and use one theme per dungeon room
+	// We may want to relate this theme to the dungeon Room or TreeQuad theme
+
+
 	public override void Generate () {
 		for (int n = 0; n < dungeonGenerator.rooms.Count; n++) {
 

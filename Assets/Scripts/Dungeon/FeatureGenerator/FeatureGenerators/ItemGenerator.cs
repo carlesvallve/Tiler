@@ -9,6 +9,11 @@ public class ItemGenerator : DungeonFeatureGenerator {
 	// Item generation
 	// =====================================================
 
+	// TODO: 
+	// Organize items into sub-categories: Food, Treasure, Potion, Book, Weapon, Armour...
+	// Items should be spawned depending on the overall level difficulty and balance
+
+
 	public override void Generate () {
 		for (int n = 0; n < dungeonGenerator.rooms.Count; n++) {
 

@@ -9,6 +9,11 @@ public class MonsterGenerator : DungeonFeatureGenerator {
 	// Monster generation
 	// =====================================================
 
+	// TODO: 
+	// Implement a balanced level spawning algorithm
+	// Monsters should be spawned by affinity groups, relative to the dungeon level 
+	
+
 	public override void Generate () {
 		for (int n = 0; n < dungeonGenerator.rooms.Count; n++) {
 

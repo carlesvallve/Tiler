@@ -12,6 +12,10 @@ public class ArchitectureGenerator : DungeonFeatureGenerator {
 	// Generate dungeon architecture (floor, wall and door tiles) 
 	// for each dungeonGenerator's tree quad recursively
 
+	// TODO:
+	// Each room or treeQuad should have a distincting aspect by theme
+	
+
 	public void GenerateTreeQuad (QuadTree _quadtree) {
 		if (_quadtree.HasChildren() == false) {
 
