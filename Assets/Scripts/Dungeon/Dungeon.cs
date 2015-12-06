@@ -83,7 +83,7 @@ public class Dungeon : MonoSingleton <Dungeon> {
 	private void GenerateDungeonFeatures (int direction) {
 		// Generate architecture for each tree quad recursively
 		ArchitectureGenerator architecture = new ArchitectureGenerator();
-		architecture.GenerateTreeQuad(dungeonGenerator.quadTree);
+		architecture.GenerateArchitecture(dungeonGenerator.quadTree);
 
 		// Generate stairs
 		StairGenerator stairs = new StairGenerator();

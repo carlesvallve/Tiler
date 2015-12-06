@@ -15,7 +15,7 @@ public class StairGenerator : DungeonFeatureGenerator {
 		// locate ladderUp so it has no entities on 1 tile radius
 		tile = GetFreeTileOnGrid(1);
 		if (tile != null) {
-			grid.stairUp = (Stair)grid.CreateEntity(typeof(Stair), tile.x, tile.y, 0.8f, Game.assets.dungeon["stairs-up"]) as Stair;
+			grid.stairUp = (Stair)grid.CreateEntity(typeof(Stair), tile.x, tile.y, 0.8f, null) as Stair;
 			grid.stairUp.SetDirection(-1);
 			grid.stairUp.state = dungeon.currentDungeonLevel == 0 ? EntityStates.Locked : EntityStates.Open;
 		}
@@ -23,7 +23,7 @@ public class StairGenerator : DungeonFeatureGenerator {
 		// locate ladderDown so it has no entities on 1 tile radius
 		tile = GetFreeTileOnGrid(1);
 		if (tile != null) {
-			grid.stairDown = (Stair)grid.CreateEntity(typeof(Stair), tile.x, tile.y, 0.8f, Game.assets.dungeon["stairs-down"]) as Stair;
+			grid.stairDown = (Stair)grid.CreateEntity(typeof(Stair), tile.x, tile.y, 0.8f, null) as Stair;
 			grid.stairDown.SetDirection(1);
 		}
 	}

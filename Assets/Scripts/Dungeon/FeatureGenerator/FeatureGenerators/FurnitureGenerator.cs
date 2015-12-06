@@ -31,7 +31,7 @@ public class FurnitureGenerator : DungeonFeatureGenerator {
 					"grave-1", "grave-2", "grave-3", "lever-left", "lever-right", 
 					"table-1", "vase" };
 
-				Sprite asset = Game.assets.dungeon[arr[Random.Range(0, arr.Length)]];
+				Sprite asset = Resources.Load<Sprite>("Tilesets/Furniture/" + arr[Random.Range(0, arr.Length)]);
 				grid.CreateEntity(typeof(Furniture), tile.x, tile.y, 0.8f, asset);
 			}
 		}

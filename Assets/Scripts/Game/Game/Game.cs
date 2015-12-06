@@ -5,8 +5,6 @@ using System.Collections.Generic;
 
 public class Game : MonoSingleton <Game> {
 
-	public static Assets assets;
-
 	private Grid grid;
 	public int turn = 0;
 	
@@ -22,7 +20,6 @@ public class Game : MonoSingleton <Game> {
 		navigator = Navigator.instance; navigator.transform.Translate(Vector3.zero);
 		sfx = AudioManager.instance;
 
-		assets = new Assets();
 		SetBgm();
 
 		grid = Grid.instance;

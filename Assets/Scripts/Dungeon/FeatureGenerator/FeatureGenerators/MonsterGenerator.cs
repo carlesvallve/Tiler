@@ -31,8 +31,7 @@ public class MonsterGenerator : DungeonFeatureGenerator {
 				Tile tile = GetFreeTileOnRoom(room, 0);
 				if (tile == null) { continue; }
 				
-				//Monster monster = (Monster)grid.CreateCreature(monsterType, tile.x, tile.y, 0.8f) as Monster;
-				grid.CreateCreature(monsterType, tile.x, tile.y, 0.8f);
+				grid.CreateCreature(monsterType, tile.x, tile.y, 0.8f, null);
 
 			}
 		}
