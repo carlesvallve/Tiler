@@ -32,7 +32,30 @@ public class Creature : Tile {
 	public CreatureStats stats;
 	public HpBar bar;
 
+
+	public Dictionary<string, List<Item>> items = new Dictionary<string, List<Item>>() {
+		{ "food",     null },
+		{ "treasure", null },
+		{ "potion",   null },
+		{ "book", 	  null },
+		{ "weapon",   null },
+		{ "armour",   null }
+	};
+
+	public Dictionary<string, Item> equipment = new Dictionary<string, Item>() {
+		{ "helmet",  null },
+		{ "armour",  null },
+		{ "shoes",   null },
+		{ "weaponR", null },
+		{ "weaponL", null },
+		{ "ammo", 	 null }
+	};
+
 	
+	// =====================================================
+	// Initialization
+	// =====================================================
+
 	public override void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null) {
 		base.Init(grid, x, y, scale, asset);
 		walkable = false;
