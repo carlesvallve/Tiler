@@ -107,11 +107,11 @@ public class Game : MonoSingleton <Game> {
 		if (bgm2 != null) { sfx.Fade(bgm2, 0, 1f); }
 
 		bgm1 = GetRandomBgm();
-		sfx.Play(bgm1, 0, Random.Range(0.5f, 1.5f), true);
+		sfx.Play(bgm1, 0, 1f, true); // Random.Range(0.5f, 1.5f)
 		sfx.Fade(bgm1, 0.5f, 1f);
 
 		bgm2 = GetRandomBgm();
-		sfx.Play(bgm2, 0, Random.Range(0.5f, 1.5f), true);
+		sfx.Play(bgm2, 0, 1f, true); // Random.Range(0.5f, 1.5f)
 		sfx.Fade(bgm2, 0.4f, 1f);
 	}
 
