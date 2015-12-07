@@ -121,7 +121,7 @@ public class Creature : Tile {
 	public override void SetVisibility (Tile tile, bool visible, float shadowValue) {
 		// manage monster alert mode
 		if (!(this is Player)) {
-			// only monsters near enough the player will be able to see him
+			// Monsters only see the player if he is inside the monster visionRadius
 			float distanceToPlayer = Mathf.Round(Vector2.Distance(new Vector2(x, y), new Vector2(grid.player.x, grid.player.y)) * 10) / 10;
 			//SetInfo(distanceToPlayer.ToString(), Color.yellow);
 			if (distanceToPlayer < stats.visionRadius) {
