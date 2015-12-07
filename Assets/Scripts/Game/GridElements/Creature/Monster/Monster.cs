@@ -25,12 +25,19 @@ using System.Collections.Generic;
 
 public class Monster : Creature {
 
-	//protected bool wasVisible = false;
+	// roam behaviour
+	protected Point lastDirection;
+	protected Tile lastTile;
+	protected Tile originTile;
+	protected float originMaxDistance = 6;
+
+
 
 	public override void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null) {
 		base.Init(grid, x, y, scale, asset);
 
 		debugEnabled = true;
+		originTile = grid.GetTile(x, y);
 
 		// Each monster will evaluate what to do on each game turn update
 		grid.player.OnGameTurnUpdate += () => {
@@ -67,15 +74,33 @@ public class Monster : Creature {
 	// =====================================================
 
 	protected virtual void Think () {
-		// if has been surprised by the player, dont act this turn
-		if (!IsAware()) {
+
+		// agressive creatures will chase the player when they see him
+
+		if (isAgressive) {
+			// if has been surprised by the player, dont act this turn
+			if (!IsAware()) {
+				return;
+			}
+
+			// move towards neighbour tile with best fov parameters
+			if (stats.alert > 0) {
+				ChaseAndFollow();
+			}
+
 			return;
+		} else {
+
+			// non-agressive creatures will roam randomly
+			Roam();
+
 		}
 
-		// move towards neighbour tile with best fov parameters
-		if (stats.alert > 0) {
-			ChaseAndFollow();
-		}
+
+		
+
+		
+		
 	}
 
 
@@ -86,6 +111,117 @@ public class Monster : Creature {
 		}
 
 		return false;
+	}
+
+
+	// =====================================================
+	// Random Roaming
+	// =====================================================
+
+	protected bool followingPath = false;
+
+	protected virtual void Roam () {
+		// move in a random direction until we are too far away from original point
+		// if we are, tend to return to it
+		if (state == CreatureStates.Attacking || state == CreatureStates.Defending) {
+			path = null;
+			return;
+		}
+
+		// escape if we are following a previous path
+		if (path != null && path.Count > 1) {
+
+			if (state != CreatureStates.Moving) { 
+				path = null;
+				return;
+			}
+			StartCoroutine(FollowPathStep((int)path[0].x, (int)path[0].y));
+			if (path.Count > 1) { path.RemoveAt(0); }
+			return;
+		}
+
+		int radius = 8;
+		Tile tile = null;
+		while (true) {
+			int xx = x + Random.Range(-radius, radius);
+			int yy = x + Random.Range(-radius, radius);
+			tile = grid.GetTile(xx, yy);
+			if (tile && tile.IsWalkable()) {
+				break;
+			}
+		}	
+
+		SetPath(tile.x, tile.y);
+	}
+
+
+	public override void SetPath (int x, int y) {
+		// search for new path
+		path = Astar.instance.SearchPath(this.x, this.y, x, y);
+		path = CapPathToFirstEncounter(path);
+
+		if (path != null && path.Count > 0) {
+			state = CreatureStates.Moving;
+			StartCoroutine(FollowPathStep((int)path[0].x, (int)path[0].y));
+			if (path.Count > 1) { path.RemoveAt(0); }
+		}
+	}
+
+
+	protected override IEnumerator FollowPathStep (int x, int y) {
+		if (state != CreatureStates.Moving) { 
+			yield break; 
+		}
+
+		// resolve encounters with next tile
+		ResolveEntityEncounters(x, y);
+		ResolveCreatureEncounters(x, y);
+
+		// escape if we are no longer moving because of encounters on next tile
+		if (state != CreatureStates.Moving) { 
+			// wait enough time for monsters to complete their movement
+			//yield return new WaitForSeconds(speed);
+
+			// and stop moving
+			StopMoving();
+			yield break;
+		}
+		
+		// interpolate creature position
+		float t = 0;
+		Vector3 startPos = transform.localPosition;
+		Vector3 endPos = new Vector3(x, y, 0);
+		while (t <= 1) {
+			t += Time.deltaTime / speed;
+			transform.localPosition = Vector3.Lerp(startPos, endPos, Mathf.SmoothStep(0f, 1f, t));
+
+			UpdatePosInGrid(x, y);
+
+			yield return null;
+		}
+
+		//sfx.Play("Audio/Sfx/Step/step", 0.8f, Random.Range(0.8f, 1.2f));
+
+		// resolve encounters with current tile after moving
+		ResolveEncountersAtGoal(this.x, this.y);
+
+		// update visibility
+		UpdateVisibility();
+	}
+
+
+	// =====================================================
+	// Random Roaming
+	// =====================================================
+
+	protected virtual void MoveToItem () {
+		// update vision without render
+
+		// get most interesting item
+
+		// set path to item
+
+		// follow path
 	}
 
 
@@ -192,20 +328,14 @@ public class Monster : Creature {
 
 
 	// =====================================================
-	// MoveTowardsTarget + AvoidObstaclesInDirection
+	// MoveTowardsTarget
 	// =====================================================
 
-	/*protected virtual void MoveTowardsTarget (Creature target) {
-		if (this == null) { return; }
-		if (target == null) { return; }
-		if (target.state == CreatureStates.Dying) { return; }
-
+	protected virtual void MoveTowardsTarget (Tile target) {
 		// get increments toward the target
 		Vector3 vec = (target.transform.position - transform.position).normalized;
 		Point incs = new Point(Mathf.RoundToInt(vec.x), Mathf.RoundToInt(vec.y));
 		
-		//print ("I see you! " + incs.x + "," + incs.y);
-
 		// get increments after avoiding any obstacles
 		incs = AvoidObstaclesInDirection(incs);
 
@@ -218,6 +348,10 @@ public class Monster : Creature {
 		StartCoroutine(FollowPath());
 	}
 
+	
+	// =====================================================
+	// Avoid Obstacles In Direction
+	// =====================================================
 
 	private Point AvoidObstaclesInDirection (Point incs) {
 		int c = 0;
@@ -269,6 +403,6 @@ public class Monster : Creature {
 		}
 
 		return new Point(dx, dy);
-	}*/
+	}
 
 }

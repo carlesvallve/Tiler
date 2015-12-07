@@ -9,5 +9,7 @@ public class Pig : Monster {
 		if (asset == null) { Debug.LogError(path); }
 		
 		base.Init(grid, x, y, scale, asset);
+
+		isAgressive = false;
 	}
 }

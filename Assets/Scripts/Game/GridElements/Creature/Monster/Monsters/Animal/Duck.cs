@@ -9,5 +9,7 @@ public class Duck : Monster {
 		if (asset == null) { Debug.LogError(path); }
 		
 		base.Init(grid, x, y, scale, asset);
+
+		isAgressive = false;
 	}
 }

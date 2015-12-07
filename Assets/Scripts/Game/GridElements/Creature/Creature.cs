@@ -32,6 +32,8 @@ public class Creature : Tile {
 	public CreatureStats stats;
 	public HpBar bar;
 
+	public bool isAgressive = false;
+
 
 	public Dictionary<string, List<Item>> items = new Dictionary<string, List<Item>>() {
 		{ "food",     new List<Item>() },
@@ -176,7 +178,7 @@ public class Creature : Tile {
 			DrawPath(Color.white);
 		}
 
-		// escape if goal has not benn explored yet
+		// escape if goal has not been explored yet
 		Tile tile = grid.GetTile(x, y);
 		if (tile == null) { return; }
 		if (!tile.explored) { return; }
@@ -303,7 +305,7 @@ public class Creature : Tile {
 		}
 
 		// resolve encounters with current tile after moving
-		Vector2 goal = path[path.Count -1];
+		Vector2 goal = path[path.Count - 1];
 		if (this.x == (int)goal.x && this.y == (int)goal.y) {
 			ResolveEncountersAtGoal(this.x, this.y);
 		}
@@ -336,7 +338,7 @@ public class Creature : Tile {
 	// Encounters
 	// =====================================================
 
-	private List<Vector2> CapPathToFirstEncounter (List<Vector2> path) {
+	protected List<Vector2> CapPathToFirstEncounter (List<Vector2> path) {
 		int i;
 		for (i = 0; i < path.Count; i ++) {
 			Vector2 p = path[i];
@@ -362,7 +364,7 @@ public class Creature : Tile {
 	}
 
 
-	private void ResolveEntityEncounters (int x, int y) {
+	protected void ResolveEntityEncounters (int x, int y) {
 		Entity entity = grid.GetEntity(x, y);
 		if (entity == null) { return; }
 
@@ -397,7 +399,7 @@ public class Creature : Tile {
 	}
 
 
-	private void ResolveEncountersAtGoal (int x, int y) {
+	protected void ResolveEncountersAtGoal (int x, int y) {
 		Entity entity = grid.GetEntity(x, y);
 		if (entity != null) {
 
