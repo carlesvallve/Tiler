@@ -59,7 +59,7 @@ Yours sincerely, Carles Vallve";
 		MarkovChainGenerator mc = new MarkovChainGenerator();
 		mc.Load(str);
 
-		List<string> items = new List<string>();
+		//List<string> items = new List<string>();
 
 		// This was added to a button in form1 file...
 		/*Markov.Structs.RootWord w = new Markov.Structs.RootWord();
