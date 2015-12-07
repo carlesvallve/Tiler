@@ -26,11 +26,11 @@ public class Player : Creature {
 		base.Init(grid, x, y, scale, asset);
 		walkable = true;
 
-		stats.hp = 20;
-		stats.hpMax = 20;
-		stats.attack = 6;
-		stats.defense = 3;
-		stats.str = 6;
+		stats.hp = 16;
+		stats.hpMax = 16;
+		stats.attack = 5;
+		stats.defense = 1;
+		stats.str = 4;
 	}
 
 

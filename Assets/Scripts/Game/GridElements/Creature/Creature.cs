@@ -80,7 +80,7 @@ public class Creature : Tile {
 	// Stats
 	// =====================================================
 
-	protected virtual void UpdateHp (int ammount) {
+	public virtual void UpdateHp (int ammount) {
 		stats.hp += ammount; 
 
 		if (stats.hp > stats.hpMax) { stats.hp = stats.hpMax; }
@@ -91,7 +91,7 @@ public class Creature : Tile {
 
 	public virtual void RegenerateHp() {
 		stats.regeneration += stats.regenerationRate;
-		if (stats.regeneration == 1) {
+		if (stats.regeneration >= 1) {
 			UpdateHp(1);
 			stats.regeneration = 0;
 		}

@@ -70,10 +70,7 @@ public class DungeonGenerator : MonoSingleton <DungeonGenerator> {
 	
 	
 	// Clean everything
-	public void ResetDungeon(int width, int height) {
-		MAP_WIDTH = width;
-		MAP_HEIGHT = height;
-
+	public void ResetDungeon() {
 		// Reset tilemap
 		for (int i = 0; i < MAP_HEIGHT; i++) 
 			for (int j = 0; j < MAP_WIDTH; j++) 
@@ -88,9 +85,19 @@ public class DungeonGenerator : MonoSingleton <DungeonGenerator> {
 
 	
 	// Generate a new dungeon with the given seed
-	public void GenerateDungeon(int seed, int width, int height) {
+	public void GenerateDungeon(int seed) {
+		// set and store random seed
+		this.seed = seed;
+		Random.seed = seed;
+
+		// set random dungeon size
+		// TODO: For some reason setting astar walkability fails with random sizes
+		//int size = Random.Range(16, 33); // TODO: vision doesnt like non-square maps (?)
+		//MAP_WIDTH = size; // Random.Range(16, 33); 
+		//MAP_HEIGHT = size; //Random.Range(16, 33);
+
 		// Clean
-		ResetDungeon (width, height);
+		ResetDungeon ();
 			
 		// Generate QuadTree
 		if (verbose) { Debug.Log ("Generating QuadTree"); }

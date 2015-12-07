@@ -17,6 +17,11 @@ using System.Collections.Generic;
 	- move to that tile
 */
 
+// TODO: 
+// - We need to implement some limitations on general monster awareness
+// - we need to implement basic ai thinking behaviours
+//		- chase, flee, shoot, pick item...
+
 
 public class Monster : Creature {
 

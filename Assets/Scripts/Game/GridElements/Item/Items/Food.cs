@@ -27,10 +27,24 @@ public class Food : Item {
 
 
 	public override void Pickup(Creature creature) {
-		if (creature.visible) {
-			sfx.Play("Audio/Sfx/Item/food", 0.5f, Random.Range(0.8f, 1.2f));
+		// food heals hp for now
+		int hp = Random.Range(1, 5);
+		if (creature.stats.hp < creature.stats.hpMax) {
+			creature.UpdateHp(hp);
+		} else {
+			hp = 0;
 		}
-		
+
+		if (creature.visible) {
+			if (hp > 0) {
+				sfx.Play("Audio/Sfx/Item/food", 0.5f, Random.Range(0.8f, 1.2f));
+				Speak("+" + hp, Color.cyan);
+			} else {
+				Speak("Full", Color.cyan);
+				return;
+			}
+		}
+
 		base.Pickup(creature);
 	}
 }

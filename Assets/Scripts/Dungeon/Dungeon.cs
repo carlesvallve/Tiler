@@ -46,12 +46,11 @@ public class Dungeon : MonoSingleton <Dungeon> {
 		}
 
 		// Apply random seed
-		dungeonGenerator.seed = seed;
-		Random.seed = seed;
+		/*dungeonGenerator.seed = seed;
+		Random.seed = seed;*/
 		
 		// Generate dungeon data
-		int size = Random.Range(16, 33);
-		dungeonGenerator.GenerateDungeon(dungeonGenerator.seed, size, size);
+		dungeonGenerator.GenerateDungeon(seed);
 
 		// Render dungeon on grid
 		RenderDungeon(direction);

@@ -9,7 +9,7 @@ public class CreatureStats {
 	public int hp = 10;
 
 	public float regeneration = 0;
-	public float regenerationRate = 0.5f;
+	public float regenerationRate = 0.1f; // 1 point each 10 turns
 
 	public int hungerMax = 100;
 	public int hunger = 100;
@@ -23,4 +23,6 @@ public class CreatureStats {
 	public int intel = 1;
 	public int wis = 1;
 	public int cha = 1;
+
+	public int gold = 0;
 }

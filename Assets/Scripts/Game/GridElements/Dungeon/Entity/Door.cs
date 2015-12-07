@@ -43,7 +43,7 @@ public class Door : Entity {
 
 
 	public IEnumerator Unlock (Creature creature) {
-		bool success = Random.Range(1, 100) < 50;
+		bool success = Random.Range(1, 100) < 75;
 
 		if (success) {
 			state = EntityStates.Closed;
