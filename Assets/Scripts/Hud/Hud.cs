@@ -6,6 +6,7 @@ public class Hud : MonoSingleton <Hud> {
 
 	public float textSpeed = 0.025f;
 
+	private Text playerText;
 	private Text dungeonText;
 	private Text turnText;
 	private Text logText;
@@ -24,6 +25,7 @@ public class Hud : MonoSingleton <Hud> {
 
 		overlayGroup = transform.Find("Overlay").GetComponent<CanvasGroup>();
 
+		playerText = transform.Find("Header/PlayerName/Text").GetComponent<Text>();
 		dungeonText = transform.Find("Header/DungeonLevel/Text").GetComponent<Text>();
 		turnText = transform.Find("Header/Turn/Text").GetComponent<Text>();
 		logText = transform.Find("Footer/Log/Text").GetComponent<Text>();
@@ -96,9 +98,28 @@ public class Hud : MonoSingleton <Hud> {
 
 		Destroy(obj);
 	}
-	
+
+
 	// ==============================================================
-	// Logs
+	// Header
+	// ==============================================================
+
+	public void LogPlayer (string str) {
+		playerText.text = str;
+	}
+
+	public void LogTurn (string str) {
+		turnText.text = str;
+	}
+
+
+	public void LogDungeon (string str) {
+		dungeonText.text = str;
+	}
+
+
+	// ==============================================================
+	// footer
 	// ==============================================================
 
 	public void Log (string str) {
@@ -112,15 +133,6 @@ public class Hud : MonoSingleton <Hud> {
 		WriteText(logText, str, textSpeed, false);
 
 		lastLog = str;
-	}
-
-
-	public void LogTurn (string str) {
-		turnText.text = str;
-	}
-
-	public void LogDungeon (string str) {
-		dungeonText.text = str;
 	}
 
 

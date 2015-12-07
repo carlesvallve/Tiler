@@ -7,6 +7,7 @@ public class Player : Creature {
 
 	protected int cameraMargin = 3;
 
+	protected string playerName;
 	protected string playerRace;
 	protected string playerClass;
 
@@ -16,6 +17,7 @@ public class Player : Creature {
 
 
 	public override void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null) {
+		SetPlayerName();
 		SetPlayerRace();
 		SetPlayerClass();
 
@@ -31,8 +33,18 @@ public class Player : Creature {
 		stats.attack = 5;
 		stats.defense = 1;
 		stats.str = 4;
+
+		Hud.instance.LogPlayer(
+			Utils.UppercaseFirst(playerName) + ", the " +
+			Utils.UppercaseFirst(playerRace) + " " +
+			Utils.UppercaseFirst(playerClass)
+		);
 	}
 
+
+	protected void SetPlayerName () {
+		playerName ="Bob";
+	}
 
 	protected void SetPlayerRace () {
 		string[] races = new string[] { "human", "dwarf", "elf", "hobbit" };
