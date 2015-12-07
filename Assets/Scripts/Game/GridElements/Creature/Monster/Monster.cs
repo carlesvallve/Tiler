@@ -25,7 +25,7 @@ using System.Collections.Generic;
 
 public class Monster : Creature {
 
-	protected bool wasVisible = false;
+	//protected bool wasVisible = false;
 
 	public override void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null) {
 		base.Init(grid, x, y, scale, asset);
@@ -38,6 +38,7 @@ public class Monster : Creature {
 			if (this == null) { return; }
 			if (state == CreatureStates.Dying) { return; }
 			if (grid.player.state == CreatureStates.Descending) { return; }
+
 
 			// set monster actions
 			RegenerateHp();
@@ -66,8 +67,25 @@ public class Monster : Creature {
 	// =====================================================
 
 	protected virtual void Think () {
+		// if has been surprised by the player, dont act this turn
+		if (!IsAware()) {
+			return;
+		}
+
 		// move towards neighbour tile with best fov parameters
-		ChaseAndFollow();
+		if (stats.alert > 0) {
+			ChaseAndFollow();
+		}
+	}
+
+
+	protected bool IsAware () {
+		if (stats.alert > 0) { 
+			if (!this.visible) { UpdateAlert(-1); }
+			return true;
+		}
+
+		return false;
 	}
 
 

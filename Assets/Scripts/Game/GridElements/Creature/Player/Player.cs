@@ -34,6 +34,8 @@ public class Player : Creature {
 		stats.defense = 1;
 		stats.str = 4;
 
+		stats.visionRadius = 6;
+
 		Hud.instance.LogPlayer(
 			Utils.UppercaseFirst(playerName) + ", the " +
 			Utils.UppercaseFirst(playerRace) + " " +
@@ -152,7 +154,7 @@ public class Player : Creature {
 
 		// get lit array from shadowcaster class
 		bool[,] lit = new bool[grid.width, grid.height];
-		int radius = 6;
+		int radius = stats.visionRadius;
 
 		ShadowCaster.ComputeFieldOfViewWithShadowCasting(
 			px, py, radius,
@@ -182,9 +184,6 @@ public class Player : Creature {
 					// render creatures
 					Creature creature = grid.GetCreature(x, y);
 					if (creature != null) {
-						if (!creature.visible && tile.visible) {
-							creature.Speak("Hey!", Color.white, true);
-						}
 						creature.SetVisibility(tile, lit[x, y], shadowValue);
 					}
 				}

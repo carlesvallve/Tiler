@@ -75,6 +75,11 @@ public class Creature : Tile {
 		SetSortingOrder(200);
 	}
 
+
+	/*void Update () {
+		SetInfo(stats.alert.ToString(), Color.yellow);
+	}*/
+
 	
 	// =====================================================
 	// Stats
@@ -98,19 +103,39 @@ public class Creature : Tile {
 	}
 
 
+	public virtual void UpdateAlert (int ammount) {
+		// only alerted monsters are able to chase the player
+		// alert decreases each turn, when it reaches 0, 
+		// monsters will be surprised by the player and wont move the turn they see him
+		stats.alert += ammount; 
+
+		if (stats.alert > stats.alertMax) { stats.alert = stats.alertMax; }
+		if (stats.alert < 0) { stats.alert = 0; }
+	}
+
+
 	// =====================================================
 	// Visibility
 	// =====================================================
 
 	public override void SetVisibility (Tile tile, bool visible, float shadowValue) {
-		// speak if we just step in a visible tile from the shadows
-		/*if (!visible && tile.visible) {
-			Speak("Hey!", Color.white, true);
-		}*/
-
+		// manage monster alert mode
+		if (!(this is Player)) {
+			// only monsters near enough the player will be able to see him
+			float distanceToPlayer = Mathf.Round(Vector2.Distance(new Vector2(x, y), new Vector2(grid.player.x, grid.player.y)) * 10) / 10;
+			//SetInfo(distanceToPlayer.ToString(), Color.yellow);
+			if (distanceToPlayer < stats.visionRadius) {
+				// if monster wasnt in alert mode, start alert mode
+				if (visible && stats.alert == 0) {
+					Speak("Hey!", Color.yellow, true);
+					stats.alert = stats.alertMax;
+				}
+			}
+		}
+		
 		// seen by the player right now
 		this.visible = visible; 
-		container.gameObject.SetActive(visible); //  || tile.explored
+		container.gameObject.SetActive(visible); // || tile.explored
 
 		// apply shadow
 		SetShadow(visible ? shadowValue : 1);
@@ -132,9 +157,6 @@ public class Creature : Tile {
 
 		// creatures need to set their visibility also after they moved
 		Tile tile = grid.GetTile(x, y);
-
-		
-
 		SetVisibility(tile, tile.visible, tile.GetShadowValue());
 	}
 

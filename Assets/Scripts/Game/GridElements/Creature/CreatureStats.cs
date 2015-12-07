@@ -9,6 +9,10 @@ public class CreatureStats {
 	public int hpMax = 10;
 	public int hp = 10;
 
+	// alert
+	public int alert = 0;
+	public int alertMax = 2;
+
 	// basic stats
 	public int str = 1;
 	public int dex = 1;
@@ -30,10 +34,9 @@ public class CreatureStats {
 	public float hungerRate = 0.1f; // 1 point each 10 turns
 
 	// vision
-	public int visionRadius = 5;
+	public int visionRadius = 4;
 	public int awareness = 1;
 	public int stealth = 1;
-	public int alert = 0;
 
 	// gold
 	public int gold = 0;
