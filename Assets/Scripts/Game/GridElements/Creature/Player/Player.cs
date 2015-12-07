@@ -45,7 +45,9 @@ public class Player : Creature {
 
 
 	protected void SetPlayerName () {
-		playerName ="Bob";
+		//playerName ="Bob";
+		print (Game.instance.gameNames);
+		playerName = Game.instance.gameNames["male"].GenerateRandomWord(Random.Range(3, 8));
 	}
 
 	protected void SetPlayerRace () {

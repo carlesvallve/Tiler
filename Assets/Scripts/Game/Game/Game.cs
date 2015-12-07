@@ -15,6 +15,8 @@ public class Game : MonoSingleton <Game> {
 	private string bgm1;
 	private string bgm2;
 
+	public Dictionary<string, ProceduralNameGenerator> gameNames;
+
 
 	void Start () {
 		navigator = Navigator.instance; navigator.transform.Translate(Vector3.zero);
@@ -28,6 +30,9 @@ public class Game : MonoSingleton <Game> {
 
 
 	private void InitGame () {
+		// initialize game name lists of each category
+		InitializeGameNames();
+
 		// Generate dungeon level and render it in the game grid
 		Dungeon dungeon = Dungeon.instance; 
 		dungeon.GenerateDungeon();
@@ -113,6 +118,18 @@ public class Game : MonoSingleton <Game> {
 		bgm2 = GetRandomBgm();
 		sfx.Play(bgm2, 0, 1f, true); // Random.Range(0.5f, 1.5f)
 		sfx.Fade(bgm2, 0.4f, 1f);
+	}
+
+
+
+	private void InitializeGameNames () {
+		string path = "Assets/Scripts/Utils/ProceduralNames/NameFiles/";
+
+		gameNames = new Dictionary<string, ProceduralNameGenerator>() {
+			{ "male", 	  new ProceduralNameGenerator(path + "Male.txt") },
+			{ "female",   new ProceduralNameGenerator(path + "Female.txt") },
+			{ "ukranian", new ProceduralNameGenerator(path + "Ukranian.txt") }
+		};
 	}
 
 }
