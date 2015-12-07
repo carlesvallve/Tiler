@@ -114,7 +114,7 @@ namespace Markov
 			Structs.RootWord w = (Structs.RootWord)Words[((string)startindex[r.Next(startindex.Count)]).ToLower()];
 			output=w.Word+" ";
 			Structs.Child	 c = new Structs.Child();
-			ArrayList a = new ArrayList();
+			//ArrayList a = new ArrayList();
 			int pos=0;
 			int rnd=0;int min=0;int max=0;
 			do

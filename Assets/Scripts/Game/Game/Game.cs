@@ -4,18 +4,17 @@ using System.Collections.Generic;
 
 
 public class Game : MonoSingleton <Game> {
-
-	private Grid grid;
-	public int turn = 0;
-	
 	private Navigator navigator;
 	private AudioManager sfx;
+	private Grid grid;
+
+	public int turn = 0;
 	
+	public Dictionary<string, ProceduralNameGenerator> gameNames;
+
 	private List<string> bgmList;
 	private string bgm1;
 	private string bgm2;
-
-	public Dictionary<string, ProceduralNameGenerator> gameNames;
 
 
 	void Start () {
@@ -72,6 +71,21 @@ public class Game : MonoSingleton <Game> {
 
 
 	// =====================================================
+	// Game Names
+	// =====================================================
+
+	private void InitializeGameNames () {
+		string path = "Assets/Scripts/Utils/ProceduralNames/NameFiles/";
+
+		gameNames = new Dictionary<string, ProceduralNameGenerator>() {
+			{ "male", 	  new ProceduralNameGenerator(path + "Male.txt") },
+			{ "female",   new ProceduralNameGenerator(path + "Female.txt") },
+			{ "ukranian", new ProceduralNameGenerator(path + "Ukranian.txt") }
+		};
+	}
+
+
+	// =====================================================
 	// Game Music
 	// =====================================================
 
@@ -122,15 +136,7 @@ public class Game : MonoSingleton <Game> {
 
 
 
-	private void InitializeGameNames () {
-		string path = "Assets/Scripts/Utils/ProceduralNames/NameFiles/";
-
-		gameNames = new Dictionary<string, ProceduralNameGenerator>() {
-			{ "male", 	  new ProceduralNameGenerator(path + "Male.txt") },
-			{ "female",   new ProceduralNameGenerator(path + "Female.txt") },
-			{ "ukranian", new ProceduralNameGenerator(path + "Ukranian.txt") }
-		};
-	}
+	
 
 }
 

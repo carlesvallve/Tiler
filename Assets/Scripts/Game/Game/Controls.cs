@@ -20,6 +20,10 @@ public class Controls : MonoBehaviour {
 		if (Input.GetMouseButtonDown(0)) {
 			TapAtPos(Input.mousePosition);
 		}
+
+		if (Input.GetMouseButtonDown(1)) {
+			InfoAtPos(Input.mousePosition);
+		}
 	}
 
 
@@ -45,5 +49,20 @@ public class Controls : MonoBehaviour {
 
 		grid.player.SetPath(x, y);
 		
+	}
+
+
+	private void InfoAtPos (Vector3 pos) {
+		// get tap position in world/grid units
+		pos = Camera.main.ScreenToWorldPoint(new Vector3(pos.x, pos.y, Camera.main.nearClipPlane));
+
+		// get goal coordinates
+		int x = Mathf.RoundToInt(pos.x);
+		int y = Mathf.RoundToInt(pos.y);
+
+		Creature creature = grid.GetCreature(x, y);
+		if (creature != null) {
+			Hud.instance.Log("You see a " + creature.name);
+		}
 	}
 }

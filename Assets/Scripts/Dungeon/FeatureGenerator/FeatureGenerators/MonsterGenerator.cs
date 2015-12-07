@@ -19,13 +19,36 @@ public class MonsterGenerator : DungeonFeatureGenerator {
 
 			DungeonRoom room = dungeonGenerator.rooms[n];
 			//int maxMonsters = Random.Range(0, 100) <= 40 ? Random.Range(1, (int)(room.tiles.Count * 0.1f)) : 0;
-			int maxMonsters = Random.Range(0, 100) <= 50 ? Random.Range(1, (int)(room.tiles.Count * 0.1f)) : 0;
+			int maxMonsters = Random.Range(0, 100) <= 60 ? Random.Range(1, (int)(room.tiles.Count * 0.15f)) : 0;
 
 			//Color color = new Color (Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f));
 			//PaintRoom(room, color);
 
 			// Pick a random creature type
 			List<System.Type> types = new List<System.Type>() { 
+				// animals
+				typeof(Bat), 
+				typeof(Bear), 
+				typeof(Cat), 
+				typeof(Chicken), 
+				typeof(Cow), 
+				typeof(Crab), 
+				typeof(Dog),
+				typeof(Duck),
+				typeof(Fly),   
+				typeof(Goat),
+				typeof(Goose),  
+				typeof(Horse), 
+				typeof(Lion), 
+				typeof(Mouse),
+				typeof(Pig), 
+				typeof(Pigeon),  
+				typeof(Sheep),
+				typeof(Scorpion),
+				typeof(Turkey), 
+				typeof(Wolf),
+				 
+				// humanoids
 				typeof(Caveman), 
 				typeof(Centaur), 
 				typeof(Circus), 

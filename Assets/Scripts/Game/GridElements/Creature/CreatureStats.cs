@@ -9,7 +9,8 @@ public class CreatureStats {
 	public int hpMax = 10;
 	public int hp = 10;
 
-	// alert
+	// vision
+	public int visionRadius = 5;
 	public int alert = 0;
 	public int alertMax = 2;
 
@@ -29,12 +30,11 @@ public class CreatureStats {
 	public float regeneration = 0;
 	public float regenerationRate = 0.1f; // 1 point each 10 turns
 
-	// hunger
+	// hunger (todo)
 	public float hunger = 0;
 	public float hungerRate = 0.1f; // 1 point each 10 turns
 
-	// vision
-	public int visionRadius = 4;
+	// stealth (todo)
 	public int awareness = 1;
 	public int stealth = 1;
 

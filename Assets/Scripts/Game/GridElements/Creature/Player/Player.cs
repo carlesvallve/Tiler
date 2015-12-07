@@ -17,37 +17,42 @@ public class Player : Creature {
 
 
 	public override void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null) {
+		// set random name, race, class
 		SetPlayerName();
 		SetPlayerRace();
 		SetPlayerClass();
-
-		string path = "Tilesets/Monster/Hero/" + playerRace + "-" + playerClass;
-		asset = Resources.Load<Sprite>(path);
-		if (asset == null) { Debug.LogError(path); }
-
-		base.Init(grid, x, y, scale, asset);
-		walkable = true;
-
-		stats.hp = 16;
-		stats.hpMax = 16;
-		stats.attack = 5;
-		stats.defense = 1;
-		stats.str = 4;
-
-		stats.visionRadius = 6;
-
 		Hud.instance.LogPlayer(
 			Utils.UppercaseFirst(playerName) + ", the " +
 			Utils.UppercaseFirst(playerRace) + " " +
 			Utils.UppercaseFirst(playerClass)
 		);
+
+		// set asset
+		string path = "Tilesets/Monster/Humanoid/Hero/" + playerRace + "-" + playerClass;
+		asset = Resources.Load<Sprite>(path);
+		if (asset == null) { Debug.LogError(path); }
+
+		// initialize
+		base.Init(grid, x, y, scale, asset);
+		walkable = true;
+
+		// init stats
+		stats.hpMax = 16; 
+		stats.hp = stats.hpMax;
+		stats.visionRadius = 6;
+		stats.attack = 5;
+		stats.defense = 1;
+		stats.str = 4;
 	}
 
 
 	protected void SetPlayerName () {
-		//playerName ="Bob";
-		print (Game.instance.gameNames);
-		playerName = Game.instance.gameNames["male"].GenerateRandomWord(Random.Range(3, 8));
+		if (Game.instance.gameNames != null) {
+			playerName = Game.instance.gameNames["male"].GenerateRandomWord(Random.Range(3, 8));
+		} else {
+			Debug.Log("Game names have not been generated.");
+		}
+		
 	}
 
 	protected void SetPlayerRace () {
