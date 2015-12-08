@@ -55,8 +55,6 @@ public class Game : MonoSingleton <Game> {
 
 		// recalculate player's vision
 		grid.player.UpdateVision(grid.player.x, grid.player.y);
-
-
 	}
 
 
