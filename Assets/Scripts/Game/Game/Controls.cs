@@ -60,8 +60,6 @@ public class Controls : MonoBehaviour {
 		int x = Mathf.RoundToInt(pos.x);
 		int y = Mathf.RoundToInt(pos.y);
 
-		
-
 		Creature creature = grid.GetCreature(x, y);
 		if (creature != null) {
 			Hud.instance.Log("You see " + GetTileName(creature));
@@ -70,8 +68,7 @@ public class Controls : MonoBehaviour {
 
 		Entity entity = grid.GetEntity(x, y);
 		if (entity != null) {
-			//string adj = entity.state != EntityStates.None ? entity.state.ToString() : "";
-			Hud.instance.Log("You see " + GetTileName(entity)); // adj + " " + 
+			Hud.instance.Log("You see " + GetTileName(entity));
 			return;
 		}
 

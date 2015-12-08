@@ -24,7 +24,6 @@ public class Chest : Entity {
 		SetAsset(asset);
 
 		breakable = assetType == "chest" ? false : true;
-		
 	}
 
 

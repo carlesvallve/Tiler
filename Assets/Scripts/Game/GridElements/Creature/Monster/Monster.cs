@@ -11,6 +11,9 @@ using System.Collections.Generic;
 public class Monster : Creature {
 
 
+	protected Tile targetTile;
+
+
 	public override void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null) {
 		base.Init(grid, x, y, scale, asset);
 
@@ -82,24 +85,29 @@ public class Monster : Creature {
 	// =====================================================
 
 	protected virtual void Think () {
-
-		// if has been surprised by the player, dont act this turn
-		if (!IsAware()) {
+		if (state != CreatureStates.Idle) {
 			return;
 		}
 
+		// if has been surprised by the player, dont act this turn
+		/*if (!IsAware()) {
+			return;
+		}*/
+
 		// move towards/away from the player
-		if (stats.alert > 0) {
+		/*if (stats.alert > 0) {
 			if (isAgressive) {
 				ChaseAndFollow();
 			} else {
 				Flee();
 			}
 			return;
-		}
+		}*/
+
+
 
 		// roam randomly
-		//Roam();
+		Roam();
 	}
 
 
@@ -110,6 +118,54 @@ public class Monster : Creature {
 		}
 
 		return false;
+	}
+
+
+	protected void Roam () {
+
+		if (this.targetTile == null) {
+			int radius = 8;
+			Tile tile = null;
+
+			int c = 0;
+			while (true) {
+				int xx = x + Random.Range(-radius, radius);
+				int yy = x + Random.Range(-radius, radius);
+				tile = grid.GetTile(xx, yy);
+				if (tile && tile.IsWalkable()) {
+					break;
+				}
+
+				c++;
+				if (c == 100) { return; }
+			}
+
+			this.targetTile = tile;
+		//} else {
+			/*if (x == this.targetTile.x && y == this.targetTile.y) {
+				this.targetTile = null;
+				Roam();
+				return;
+			}*/
+		}
+
+		// search for new path to the target
+		path = Astar.instance.SearchPath(x, y, this.targetTile.x, this.targetTile.y);
+		//path = CapPathToFirstEncounter(path);
+		if (path.Count == 0) {
+			this.targetTile = null;
+			//Roam();
+			return;
+		}
+		path = new List<Vector2>() { path[0] };
+		StartCoroutine(FollowPath());
+
+		/*bool success = MoveTowardsTarget(this.targetTile);
+		if (!success) {
+			this.targetTile = null;
+			Roam();
+			return;
+		}*/
 	}
 
 
@@ -133,33 +189,6 @@ public class Monster : Creature {
 		path = new List<Vector2>() { new Vector2(tile.x, tile.y) };
 		StartCoroutine(FollowPath());
 	}
-
-
-	/*protected override List<Tile> GetNeighbours (int x, int y, bool addCenterTile = false) {
-		Tile[] tiles = new Tile[] {
-			grid.GetTile(x + 0, y - 1), 
-			grid.GetTile(x + 1, y - 1),
-			grid.GetTile(x + 1, y + 0),
-			grid.GetTile(x + 1, y + 1),
-			grid.GetTile(x + 0, y + 1),
-			grid.GetTile(x - 1, y + 1),
-			grid.GetTile(x - 1, y + 0),
-			grid.GetTile(x - 1, y - 1)
-		};
-
-		List<Tile> neighbours = new List<Tile>();
-		foreach (Tile tile in tiles) {
-			if (tile != null && tile.IsPassable()) {
-				neighbours.Add(tile);
-			}
-		}
-
-		if (addCenterTile) {
-			neighbours.Add(grid.GetTile(x, y));
-		}
-
-		return neighbours;
-	}*/
 
 
 	private Tile GetTileWithBestFov (int x, int y, int maxTurnsOld, int order = 1) {
@@ -231,7 +260,7 @@ public class Monster : Creature {
 	// MoveTowardsTarget
 	// =====================================================
 
-	/*protected virtual void MoveTowardsTarget (Tile target) {
+	protected virtual bool MoveTowardsTarget (Tile target) {
 		// get increments toward the target
 		Vector3 vec = (target.transform.position - transform.position).normalized;
 		Point incs = new Point(Mathf.RoundToInt(vec.x), Mathf.RoundToInt(vec.y));
@@ -239,13 +268,23 @@ public class Monster : Creature {
 		// get increments after avoiding any obstacles
 		incs = AvoidObstaclesInDirection(incs);
 
+
+
 		// generate path with next position
 		int x = this.x + incs.x;
 		int y = this.y + incs.y;
+
+		// if we still have an obstacle, return false to the function call
+		if (!grid.GetTile(x, y).IsWalkable()) {
+			return false;
+		}
+
 		path = new List<Vector2>() { new Vector2(x, y) };
 
 		// move towards target
 		StartCoroutine(FollowPath());
+
+		return true;
 	}
 
 	
@@ -297,7 +336,7 @@ public class Monster : Creature {
 			// escape if cant find a solution
 			c++; 
 			if (c == 100) {
-				Speak("?", Color.white);
+				Speak("?", Color.white, true);
 				return new Point(0, 0); 
 			}
 		}
@@ -310,7 +349,7 @@ public class Monster : Creature {
 	// Random Roaming
 	// =====================================================
 
-	protected bool followingPath = false;
+	/*protected bool followingPath = false;
 
 	protected virtual void Roam () {
 		// move in a random direction until we are too far away from original point

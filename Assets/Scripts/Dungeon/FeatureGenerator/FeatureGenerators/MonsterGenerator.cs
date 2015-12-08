@@ -34,7 +34,7 @@ public class MonsterGenerator : DungeonFeatureGenerator {
 			int maxMonsters = 0;
 			int r = Random.Range(1, 100);
 			if (r <= 60) {
-				int maxTiles = Mathf.RoundToInt(room.tiles.Count * 0.1f);
+				int maxTiles = Mathf.RoundToInt(room.tiles.Count * 0.3f);
 				maxMonsters = Random.Range(1, maxTiles);
 			}
 

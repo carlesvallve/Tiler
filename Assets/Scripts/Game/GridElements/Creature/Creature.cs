@@ -287,10 +287,12 @@ public class Creature : Tile {
 		Tile tile = grid.GetTile(x, y);
 		tile.SetColor(tile.color);
 
-		sfx.Play("Audio/Sfx/Step/step", 0.8f, Random.Range(0.8f, 1.2f));
+		
 
 		// emit event
 		if (this is Player) {
+			sfx.Play("Audio/Sfx/Step/step", 0.8f, Random.Range(0.8f, 1.2f));
+			
 			if (OnGameTurnUpdate != null) { 
 				OnGameTurnUpdate.Invoke(); 
 			}
