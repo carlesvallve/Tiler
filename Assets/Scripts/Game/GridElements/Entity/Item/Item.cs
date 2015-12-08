@@ -42,7 +42,7 @@ public class Item : Entity {
 	}
 
 
-	public virtual void Drop (Creature creature, int x, int y) {
+	public virtual void Drop (Tile tile, int x, int y) {
 		transform.SetParent(grid.container.Find("Entities"), false);
 		LocateAtCoords(x, y);
 		gameObject.SetActive(true);

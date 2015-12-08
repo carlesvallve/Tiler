@@ -90,7 +90,7 @@ public class Grid : MonoSingleton <Grid> {
 	// Tiles
 	// =====================================================
 
-	public Tile CreateTile (System.Type TileType, int x, int y, float scale = 1, Sprite asset = null) {
+	public Tile CreateTile (System.Type TileType, int x, int y, float scale = 1, Sprite asset = null, bool setInGrid = true) {
 		Transform parent = container.Find("Tiles");
 
 		GameObject obj = (GameObject)Instantiate(tilePrefab);
@@ -100,7 +100,7 @@ public class Grid : MonoSingleton <Grid> {
 		Tile tile = obj.AddComponent(TileType) as Tile;
 		tile.Init(this, x, y, scale, asset);
 
-		SetTile(x, y, tile);
+		if (setInGrid) { SetTile(x, y, tile); }
 
 		return tile;
 	}
@@ -139,7 +139,7 @@ public class Grid : MonoSingleton <Grid> {
 	// Entities
 	// =====================================================
 
-	public Entity CreateEntity (System.Type EntityType, int x, int y, float scale = 1, Sprite asset = null) {
+	public Entity CreateEntity (System.Type EntityType, int x, int y, float scale = 1, Sprite asset = null, bool setInGrid = true) {
 		Transform parent = container.Find("Entities");
 
 		GameObject obj = (GameObject)Instantiate(tilePrefab);
@@ -149,7 +149,7 @@ public class Grid : MonoSingleton <Grid> {
 		Entity entity = obj.AddComponent(EntityType) as Entity;
 		entity.Init(this, x, y, scale, asset);
 
-		SetEntity(x, y, entity);
+		if (setInGrid) { SetEntity(x, y, entity); }
 
 		return entity;
 	}
@@ -173,7 +173,7 @@ public class Grid : MonoSingleton <Grid> {
 	// Creatures
 	// =====================================================
 
-	public Creature CreateCreature (System.Type CreatureType, int x, int y, float scale = 1, Sprite asset = null) {
+	public Creature CreateCreature (System.Type CreatureType, int x, int y, float scale = 1, Sprite asset = null, bool setInGrid = true) {
 		Transform parent = (CreatureType == typeof(Player)) ? container.Find("Player") : container.Find("Creatures");
 
 		GameObject obj = (GameObject)Instantiate(tilePrefab);
@@ -189,7 +189,7 @@ public class Grid : MonoSingleton <Grid> {
 
 		creature.Init(this, x, y, scale,  asset);
 
-		SetCreature(x, y, creature);
+		if (setInGrid) { SetCreature(x, y, creature); }
 
 		return creature;
 	}

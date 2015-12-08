@@ -180,6 +180,11 @@ public class Creature : Tile {
 				if (target != null) {
 					Astar.instance.walkability[target.x, target.y] = 0;
 				}
+
+				Entity targetEntity = grid.GetEntity(x, y);
+				if (targetEntity != null && (targetEntity is Chest) && targetEntity.state != EntityStates.Open) {
+					Astar.instance.walkability[targetEntity.x, targetEntity.y] = 0;
+				}
 			}
 
 			// search for new path
@@ -194,7 +199,7 @@ public class Creature : Tile {
 		}
 
 		// render new path
-		//DrawPath(new Color(1, 1, 1));
+		//DrawPath(Color.magenta); //new Color(1, 1, 1));
 
 		// follow new path
 		StartCoroutine(FollowPath());
@@ -377,6 +382,29 @@ public class Creature : Tile {
 				}
 			}
 		}
+
+		// resolve closed/locked chests
+		if (entity is Chest) {
+			Chest chest = (Chest)entity;
+			if (chest.state != EntityStates.Open) {
+				DrawPath(Color.white);
+
+				// open the door
+				if (chest.state == EntityStates.Closed) { 
+					state = CreatureStates.Using;
+					StartCoroutine(chest.Open(this));
+					return; 
+					
+				// unlock the door
+				} else if (chest.state == EntityStates.Locked) { 
+					state = CreatureStates.Using;
+					StartCoroutine(chest.Unlock(this));
+					return;
+				}
+			}
+		}
+
+
 	}
 
 
@@ -594,31 +622,6 @@ public class Creature : Tile {
 	}
 
 
-	protected void SpawnItemsFromInventory (List<Item> allItems) {
-		if (allItems.Count == 0) { return; }
-
-		// get neighbours, including the creature's tile
-		List<Tile> neighbours = grid.GetNonOccupiedNeighbours(this.x, this.y, false);
-
-		//randomize item list
-		Utils.Shuffle(allItems);
-
-		// spawn first items always on creature tile
-		Item item = allItems[0];
-		item.Drop(this, this.x, this.y);
-		allItems.RemoveAt(0);
-
-		// spawn one item for each available neighbour
-		foreach (Tile tile in neighbours) {
-			if (allItems.Count == 0) { return; }
-
-			item = allItems[0];
-			item.Drop(this, tile.x, tile.y);
-			allItems.RemoveAt(0);
-		}
-	}
-
-
 	protected IEnumerator DeathAnimation (Creature attacker, float delay = 0) {
 		string[] arr = new string[] { "painA", "painB", "painC", "painD" };
 		sfx.Play("Audio/Sfx/Combat/" + arr[Random.Range(0, arr.Length)], 0.3f, Random.Range(0.6f, 1.8f));
@@ -640,9 +643,6 @@ public class Creature : Tile {
 
 		yield break;
 	}
-
-
-
 
 }
 

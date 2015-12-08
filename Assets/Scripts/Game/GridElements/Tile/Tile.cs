@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 
 public class Tile : MonoBehaviour {
@@ -226,6 +227,39 @@ public class Tile : MonoBehaviour {
 		if (creature != null) { return true; }
 
 		return false;
+	}
+
+
+	// =====================================================
+	// Methods shared by both entities and creatures
+	// =====================================================
+
+	protected virtual void SpawnItemsFromInventory (List<Item> allItems, bool useCenterTile = true) {
+		if (allItems.Count == 0) { return; }
+
+		// get neighbours, including the creature's tile
+		List<Tile> neighbours = grid.GetNonOccupiedNeighbours(this.x, this.y, false);
+
+		//randomize item list
+		Utils.Shuffle(allItems);
+
+		Item item = null;
+
+		// spawn first items always on creature tile
+		if (useCenterTile) {
+			item = allItems[0];
+			item.Drop(this, this.x, this.y);
+			allItems.RemoveAt(0);
+		}
+		
+		// spawn one item for each available neighbour
+		foreach (Tile tile in neighbours) {
+			if (allItems.Count == 0) { return; }
+
+			item = allItems[0];
+			item.Drop(this, tile.x, tile.y);
+			allItems.RemoveAt(0);
+		}
 	}
 	
 }

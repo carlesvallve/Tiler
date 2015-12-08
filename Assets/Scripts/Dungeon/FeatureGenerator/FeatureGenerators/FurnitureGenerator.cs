@@ -28,7 +28,7 @@ public class FurnitureGenerator : DungeonFeatureGenerator {
 				string[] arr = new string[] { 
 					"barrel-closed", "barrel-open", "barrel-water-1", "barrel-water-2", "vase",
 					"bed-h", "bed-v", "chair-h", "chair-v", "throne-h", "throne-v", "stool",
-					"chest-closed", "chest-open", "lever-left", "lever-right", 
+					"lever-left", "lever-right", // "chest-closed", "chest-open", 
 					"fountain-fire", "fountain-water", 
 					"fountain-water-gold-1", "fountain-water-gold-2", "fountain-fire-gold-1", "fountain-fire-gold-2", 
 					"grave-1", "grave-2", "grave-3", 

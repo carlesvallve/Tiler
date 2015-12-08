@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+
 
 public enum EntityStates {
 	None = 0,
@@ -33,4 +35,5 @@ public class Entity: Tile {
 		this.y = y;
 		grid.SetEntity(x, y, this);
 	}
+
 }

@@ -29,7 +29,7 @@ public class ItemGenerator : DungeonFeatureGenerator {
 					typeof(Food), typeof(Treasure), typeof(Potion), typeof(Book), typeof(Weapon), typeof(Armour)
 				};
 
-				// Pick a random creature type
+				// Pick a random item type
 				System.Type itemType = types[Random.Range(0, types.Count)];
 				
 				grid.CreateEntity(itemType, tile.x, tile.y, 0.8f);
