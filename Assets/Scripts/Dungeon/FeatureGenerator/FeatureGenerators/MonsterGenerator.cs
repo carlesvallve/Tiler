@@ -29,8 +29,17 @@ public class MonsterGenerator : DungeonFeatureGenerator {
 		for (int n = 0; n < dungeonGenerator.rooms.Count; n++) {
 			// decide how many monsters of a type are in the room
 			DungeonRoom room = dungeonGenerator.rooms[n];
-			int maxMonsters = Random.Range(0, 100) <= 60 ? Random.Range(1, (int)(room.tiles.Count * 0.15f)) : 0;
-			if (maxMonsters == 0) { return; }
+
+			// get max monsters, relative to max number of tiles in the room
+			int maxMonsters = 0;
+			int r = Random.Range(1, 100);
+			if (r <= 60) {
+				int maxTiles = Mathf.RoundToInt(room.tiles.Count * 0.15f);
+				maxMonsters = Random.Range(1, maxTiles);
+			}
+
+			// continue if this room has no monsters
+			if (maxMonsters == 0) { continue; }
 
 			// decide the type of monsters
 			List<System.Type> types = GetMonsterTypes();
@@ -41,6 +50,7 @@ public class MonsterGenerator : DungeonFeatureGenerator {
 				Tile tile = GetFreeTileOnRoom(room, 0);
 				if (tile == null) { continue; }
 				
+				//Debug.Log (">>> " + monsterType);
 				grid.CreateCreature(monsterType, tile.x, tile.y, 0.7f, null);
 			}
 		}

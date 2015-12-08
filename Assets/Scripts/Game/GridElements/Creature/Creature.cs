@@ -32,7 +32,7 @@ public class Creature : Tile {
 	public CreatureStats stats;
 	public HpBar bar;
 
-	public bool isAgressive = false;
+	public bool isAgressive = true;
 
 
 	public Dictionary<string, List<Item>> items = new Dictionary<string, List<Item>>() {
@@ -63,11 +63,13 @@ public class Creature : Tile {
 		walkable = false;
 
 		SetImages(scale, new Vector3(0, 0.1f, 0), 0.035f);
-		LocateAtCoords(x, y);
+		
 
 		state = CreatureStates.Idle;
 		stats = new CreatureStats();
 		bar.Init(this);
+
+		LocateAtCoords(x, y);
 	}
 
 
@@ -121,23 +123,9 @@ public class Creature : Tile {
 	// =====================================================
 
 	public override void SetVisibility (Tile tile, bool visible, float shadowValue) {
-		// manage monster alert mode
-		if (!(this is Player)) {
-			// Monsters only see the player if he is inside the monster visionRadius
-			float distanceToPlayer = Mathf.Round(Vector2.Distance(new Vector2(x, y), new Vector2(grid.player.x, grid.player.y)) * 10) / 10;
-			//SetInfo(distanceToPlayer.ToString(), Color.yellow);
-			if (distanceToPlayer < stats.visionRadius) {
-				// if monster wasnt in alert mode, start alert mode
-				if (visible && stats.alert == 0) {
-					Speak("Hey!", Color.yellow, true);
-					stats.alert = stats.alertMax;
-				}
-			}
-		}
-		
-		// seen by the player right now
+		// creature is being seen by the player right now
 		this.visible = visible; 
-		container.gameObject.SetActive(visible); // || tile.explored
+		container.gameObject.SetActive(visible);
 
 		// apply shadow
 		SetShadow(visible ? shadowValue : 1);
@@ -155,8 +143,6 @@ public class Creature : Tile {
 
 
 	public virtual void UpdateVisibility () {
-		if (this is Player) { return; }
-
 		// creatures need to set their visibility also after they moved
 		Tile tile = grid.GetTile(x, y);
 		SetVisibility(tile, tile.visible, tile.GetShadowValue());
@@ -317,6 +303,9 @@ public class Creature : Tile {
 		this.x = x;
 		this.y = y;
 		grid.SetCreature(x, y, this);
+
+		// update visibility
+		UpdateVisibility();
 	}
 
 
@@ -328,9 +317,8 @@ public class Creature : Tile {
 		state = CreatureStates.Idle;
 		DrawPath(Color.white);
 
-		// creatures need to set their visibility 
-		// also after they moved
-		UpdateVisibility();
+		// creatures need to set their visibility also after they moved
+		//UpdateVisibility();
 	}
 
 

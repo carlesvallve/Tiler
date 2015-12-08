@@ -12,7 +12,7 @@ public class CreatureStats {
 	// vision
 	public int visionRadius = 5;
 	public int alert = 0;
-	public int alertMax = 2;
+	public int alertMax = 3;
 
 	// basic stats
 	public int str = 1;
