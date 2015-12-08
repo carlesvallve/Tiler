@@ -73,7 +73,7 @@ public class Creature : Tile {
 	}
 
 
-	public virtual void LocateAtCoords (int x, int y) {
+	public override void LocateAtCoords (int x, int y) {
 		UpdatePosInGrid(x, y);
 		transform.localPosition = new Vector3(x, y, 0);
 		SetSortingOrder(200);
@@ -291,14 +291,15 @@ public class Creature : Tile {
 		}
 
 		// resolve encounters with current tile after moving
-		Vector2 goal = path[path.Count - 1];
+		Vector2 goal = (this is Player) ? path[path.Count - 1] : new Vector2(this.x, this.y);
+		//Vector2 goal = path[path.Count - 1];
 		if (this.x == (int)goal.x && this.y == (int)goal.y) {
 			ResolveEncountersAtGoal(this.x, this.y);
 		}
 	}
 
 
-	protected virtual void UpdatePosInGrid (int x, int y) {
+	protected override void UpdatePosInGrid (int x, int y) {
 		grid.SetCreature(this.x, this.y, null);
 		this.x = x;
 		this.y = y;
@@ -444,14 +445,7 @@ public class Creature : Tile {
 		StartCoroutine(DefendAnimation(attacker, delay));
 	}
 
-	protected void Die (Creature attacker, float delay = 0) {
-		StopMoving();
-
-		state = CreatureStates.Dying;
-		StartCoroutine(DeathAnimation(attacker, delay));
-	}
-
-
+	
 	private bool ResolveCombatOutcome (Creature attacker) {
 		// resolve combat outcome
 		int attack = attacker.stats.attack + Dice.Roll(1, 6);
@@ -577,12 +571,65 @@ public class Creature : Tile {
 	}
 
 
+	// =====================================================
+	// Death
+	// =====================================================
+
+	protected void Die (Creature attacker, float delay = 0) {
+		StopMoving();
+
+		state = CreatureStates.Dying;
+		StartCoroutine(DeathAnimation(attacker, delay));
+
+		// get a list of all items carried by the creature
+		List<Item> allItems = new List<Item>();
+		foreach (List<Item> itemCategory in items.Values) {
+			foreach(Item item in itemCategory) {
+				allItems.Add(item);
+			}
+		}
+
+		print(Utils.ListToString(allItems));
+		SpawnItemsFromInventory(allItems);
+	}
+
+
+	protected void SpawnItemsFromInventory (List<Item> allItems) {
+		if (allItems.Count == 0) { return; }
+
+		// get neighbours, including the creature's tile
+		List<Tile> neighbours = grid.GetNonOccupiedNeighbours(this.x, this.y, false);
+
+		//randomize item list
+		Utils.Shuffle(allItems);
+
+		// spawn first items always on creature tile
+		Item item = allItems[0];
+		item.Drop(this, this.x, this.y);
+		allItems.RemoveAt(0);
+
+		// spawn one item for each available neighbour
+		foreach (Tile tile in neighbours) {
+			if (allItems.Count == 0) { return; }
+
+			item = allItems[0];
+			item.Drop(this, tile.x, tile.y);
+			allItems.RemoveAt(0);
+		}
+	}
+
+
 	protected IEnumerator DeathAnimation (Creature attacker, float delay = 0) {
 		string[] arr = new string[] { "painA", "painB", "painC", "painD" };
 		sfx.Play("Audio/Sfx/Combat/" + arr[Random.Range(0, arr.Length)], 0.3f, Random.Range(0.6f, 1.8f));
 		sfx.Play("Audio/Sfx/Combat/hitB", 0.6f, Random.Range(0.5f, 2.0f));
 
 		grid.CreateBlood(transform.localPosition, 16);
+
+		
+
+		grid.SetCreature(this.x, this.y, null);
+		Destroy(gameObject);
 
 		// if player died, emit gameover event
 		if (this is Player) {
@@ -591,8 +638,11 @@ public class Creature : Tile {
 			}
 		}
 
-		Destroy(gameObject);
 		yield break;
 	}
+
+
+
+
 }
 

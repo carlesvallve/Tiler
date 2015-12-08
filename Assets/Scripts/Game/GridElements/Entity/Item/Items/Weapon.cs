@@ -46,4 +46,13 @@ public class Weapon : Item {
 		
 		base.Pickup(creature);
 	}
+
+
+	/*public override void Drop(Creature creature, int x, int y) {
+		if (creature.visible) {
+			sfx.Play("Audio/Sfx/Item/weapon", 0.6f, Random.Range(0.8f, 1.2f));
+		}
+		
+		base.Drop(creature, x, y);
+	}*/
 }

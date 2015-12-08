@@ -135,7 +135,7 @@ public class Monster : Creature {
 	}
 
 
-	private List<Tile> GetNeighbours (int x, int y, bool addCenterTile = false) {
+	/*protected override List<Tile> GetNeighbours (int x, int y, bool addCenterTile = false) {
 		Tile[] tiles = new Tile[] {
 			grid.GetTile(x + 0, y - 1), 
 			grid.GetTile(x + 1, y - 1),
@@ -159,13 +159,13 @@ public class Monster : Creature {
 		}
 
 		return neighbours;
-	}
+	}*/
 
 
 	private Tile GetTileWithBestFov (int x, int y, int maxTurnsOld, int order = 1) {
 		// get neighbour tile with bigger fovTargetTurn and smallest fovDistance
 		// neighbour must have some fov scent and be walkable
-		List<Tile> neighbours = GetNeighbours(x, y, true);
+		List<Tile> neighbours = grid.GetPassableNeighbours(x, y, true);
 		List<Tile> fovTiles = GetTilesWithBestFovTurn(neighbours, maxTurnsOld, order);
 		Tile tile = GetTileWithBestFovDistance(fovTiles, order);
 

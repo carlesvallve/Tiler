@@ -25,4 +25,12 @@ public class Entity: Tile {
 	public virtual void SetState (EntityStates state) {
 		this.state = state;
 	}
+
+
+	protected override void UpdatePosInGrid (int x, int y) {
+		grid.SetEntity(this.x, this.y, null);
+		this.x = x;
+		this.y = y;
+		grid.SetEntity(x, y, this);
+	}
 }

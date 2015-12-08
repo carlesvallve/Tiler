@@ -65,6 +65,19 @@ public class Tile : MonoBehaviour {
 	}
 
 
+	public virtual void LocateAtCoords (int x, int y) {
+		UpdatePosInGrid(x, y);
+		transform.localPosition = new Vector3(x, y, 0);
+	}
+
+	protected virtual void UpdatePosInGrid (int x, int y) {
+		grid.SetTile(this.x, this.y, null);
+		this.x = x;
+		this.y = y;
+		grid.SetTile(x, y, this);
+	}
+
+
 	// =====================================================
 	// Set tile elements
 	// =====================================================

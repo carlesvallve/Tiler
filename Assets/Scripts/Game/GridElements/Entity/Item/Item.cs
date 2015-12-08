@@ -5,7 +5,6 @@ using System.Collections;
 public class Item : Entity {
 
 	public string typeId;
-	public string soundId;
 	public int ammount;
 
 	public override void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null) {
@@ -33,6 +32,23 @@ public class Item : Entity {
 		creature.items[typeId].Add(this);
 
 		// destroy item in grid
-		Destroy(gameObject);
+		//Destroy(gameObject); // -> The item in the dictionary will be destroyed too!
+
+		transform.SetParent(creature.transform, false);
+		transform.localPosition = Vector3.zero;
+		gameObject.SetActive(false);
+
+		grid.SetEntity(x, y, null);
+	}
+
+
+	public virtual void Drop (Creature creature, int x, int y) {
+		transform.SetParent(grid.container.Find("Entities"), false);
+		LocateAtCoords(x, y);
+		gameObject.SetActive(true);
+
+		sfx.Play("Audio/Sfx/Item/armour", 0.6f, Random.Range(0.8f, 1.2f));
+
+		// TODO: Animate items interpolating them form creature pos to x,y
 	}
 }

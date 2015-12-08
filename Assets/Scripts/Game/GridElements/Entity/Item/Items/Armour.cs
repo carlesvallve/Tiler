@@ -38,11 +38,20 @@ public class Armour : Item {
 	}
 
 
-	public override void Pickup(Creature creature) {
+	public override void Pickup (Creature creature) {
 		if (creature.visible) {
 			sfx.Play("Audio/Sfx/Item/armour", 0.9f, Random.Range(0.8f, 1.2f));
 		}
 		
 		base.Pickup(creature);
 	}
+
+
+	/*public override void Drop (Creature creature, int x, int y) {
+		if (creature.visible) {
+			sfx.Play("Audio/Sfx/Item/armour", 0.9f, Random.Range(0.8f, 1.2f));
+		}
+		
+		base.Drop(creature, x, y);
+	}*/
 }

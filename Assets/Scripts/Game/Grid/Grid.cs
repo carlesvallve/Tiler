@@ -239,4 +239,58 @@ public class Grid : MonoSingleton <Grid> {
 
 		return glow;
 	}
+
+
+	// =====================================================
+	// Neighbour methods
+	// =====================================================
+
+	public List<Tile> GetNeighbours (int x, int y, bool addCenterTile = false) {
+		List<Tile> neighbours = new List<Tile>() {
+			GetTile(x + 0, y - 1),
+			GetTile(x + 1, y - 1),
+			GetTile(x + 1, y + 0),
+			GetTile(x + 1, y + 1),
+			GetTile(x + 0, y + 1),
+			GetTile(x - 1, y + 1),
+			GetTile(x - 1, y + 0),
+			GetTile(x - 1, y - 1),
+		};
+
+		if (addCenterTile) {
+			neighbours.Add(GetTile(x, y));
+		}
+
+		return neighbours;
+	}
+
+
+	public List<Tile> GetPassableNeighbours (int x, int y, bool addCenterTile = false) {
+		List<Tile> tiles = GetNeighbours(x, y, addCenterTile);
+		
+		List<Tile> neighbours = new List<Tile>();
+		foreach (Tile tile in tiles) {
+			if (tile != null && tile.IsPassable()) {
+				neighbours.Add(tile);
+			}
+		}
+
+		return neighbours;
+	}
+
+
+	public List<Tile> GetNonOccupiedNeighbours (int x, int y, bool addCenterTile = false) {
+		List<Tile> tiles = GetNeighbours(x, y, addCenterTile);
+
+		List<Tile> neighbours = new List<Tile>();
+		foreach (Tile tile in tiles) {
+			if (tile != null && !tile.IsOccupied()) {
+				neighbours.Add(tile);
+			}
+		}
+
+		return neighbours;
+	}
+
 }
+
