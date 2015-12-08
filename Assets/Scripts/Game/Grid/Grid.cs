@@ -78,7 +78,7 @@ public class Grid : MonoSingleton <Grid> {
 
 
 	public bool IsInsideBounds (int x, int y) {
-		if (x < 1 || y < 1 || x > width - 2 || y > height - 2) {
+		if (x < 0 || y < 0 || x > width - 1 || y > height - 1) {
 			return false;
 		}
 
@@ -107,6 +107,8 @@ public class Grid : MonoSingleton <Grid> {
 
 
 	public void SetTile (int x, int y, Tile tile) {
+		if (!IsInsideBounds(x, y)) { return; }
+
 		// refresh astar walkability
 		Astar.instance.walkability[x, y] = (tile != null && !tile.IsWalkable()) ? 1 : 0;
 
@@ -122,12 +124,18 @@ public class Grid : MonoSingleton <Grid> {
 	public Tile GetTile (Vector3 pos) {
 		int x = Mathf.RoundToInt(pos.x);
 		int y = Mathf.RoundToInt(pos.y);
+		if (!IsInsideBounds(x, y)) { return null; }
 
 		return layers.Get<Tile>(y, x);
 	}
 
 
 	public bool TileIsOpaque (int x, int y) {
+		if (!IsInsideBounds(x, y)) { 
+			print ("!!! " + x + "," +y);
+			return false; 
+		}
+
 		Tile tile = GetTile(x, y);
 		if (tile == null) { return true; }
 
@@ -156,6 +164,8 @@ public class Grid : MonoSingleton <Grid> {
 
 
 	public void SetEntity (int x, int y, Entity entity) {
+		if (!IsInsideBounds(x, y)) { return; }
+
 		// refresh astar walkability
 		Astar.instance.walkability[x, y] = (entity != null && !entity.IsWalkable()) ? 1 : 0;
 
@@ -196,6 +206,8 @@ public class Grid : MonoSingleton <Grid> {
 
 
 	public void SetCreature (int x, int y, Creature creature) {
+		if (!IsInsideBounds(x, y)) { return; }
+
 		// refresh astar walkability
 		Astar.instance.walkability[x, y] = (creature != null && !creature.IsWalkable()) ? 1 : 0;
 

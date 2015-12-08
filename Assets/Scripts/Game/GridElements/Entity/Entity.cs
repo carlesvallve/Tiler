@@ -42,12 +42,18 @@ public class Entity: Tile {
 	}
 
 
-	protected void Break (Color color) {
+	public IEnumerator Break (Color color, float delay = 0) {
+		yield return new WaitForSeconds(delay);
+
 		sfx.Play("Audio/Sfx/Combat/hitB", 0.6f, Random.Range(0.5f, 2.0f));
 
 		grid.CreateBlood(transform.localPosition, 16, color);
 
-		grid.SetEntity(this.x, this.y, null);
+		Entity entity = grid.GetEntity(x, y);
+		if (entity == null || entity == this) {
+			grid.SetEntity(this.x, this.y, null);
+		}
+		
 		Destroy(gameObject);
 	}
 

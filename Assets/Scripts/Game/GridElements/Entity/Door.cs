@@ -26,6 +26,8 @@ public class Door : Entity {
 
 
 	public IEnumerator Open (Creature creature, bool hasBeenUnlocked = false) {
+		yield return new WaitForSeconds(creature.speed);
+		
 		sfx.Play("Audio/Sfx/Door/key", 0.5f, Random.Range(0.4f, 0.6f));
 		state = EntityStates.Open;
 

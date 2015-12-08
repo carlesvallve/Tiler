@@ -86,7 +86,7 @@ public class Player : Creature {
 			if (entity.visible) {
 				string[] arr = entity.asset.name.Split('-'); 
 				Hud.instance.Log("You see a " + arr[0]);
-				MoveCameraTo(x, y);
+				//MoveCameraTo(x, y);
 			} else {
 				Hud.instance.Log("Your eyes stair into the darkness...");
 			}

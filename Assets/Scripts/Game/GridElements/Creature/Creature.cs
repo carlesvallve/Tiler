@@ -23,7 +23,7 @@ public class Creature : Tile {
 	public event GameOverHandler OnGameOver;
 
 	protected List<Vector2> path;
-	protected float speed = 0.15f;
+	public float speed = 0.15f;
 
 	protected Creature target;
 
@@ -453,6 +453,11 @@ public class Creature : Tile {
 	// Combat
 	// =====================================================
 
+	public void AttackToBreak (Entity target, float delay = 0) {
+		StartCoroutine(AttackAnimation(target, delay, 4));
+	}
+	
+
 	protected void Attack (Creature target, float delay = 0) {
 		if (state == CreatureStates.Using) { return; }
 		if (target.state == CreatureStates.Dying) { return; }
@@ -460,7 +465,7 @@ public class Creature : Tile {
 		StopMoving();
 		state = CreatureStates.Attacking;
 
-		StartCoroutine(AttackAnimation(target, delay));
+		StartCoroutine(AttackAnimation(target, delay, 2));
 
 		target.Defend(this, delay);
 	}
@@ -470,7 +475,7 @@ public class Creature : Tile {
 		StopMoving();
 
 		state = CreatureStates.Defending;
-		StartCoroutine(DefendAnimation(attacker, delay));
+		StartCoroutine(DefendAnimation(attacker, delay, 8));
 	}
 
 	
@@ -518,11 +523,9 @@ public class Creature : Tile {
 	// Combat Animations
 	// =====================================================
 
-	protected IEnumerator AttackAnimation (Creature target, float delay = 0) {
+	protected IEnumerator AttackAnimation (Tile target, float delay = 0, float advanceDiv = 2) {
 		yield return new WaitForSeconds(delay);
 		if (target == null) { yield break; }
-
-		//if (this is Player) { print (target); }
 		
 		float duration = speed * 0.5f;
 
@@ -531,7 +534,7 @@ public class Creature : Tile {
 		// move towards target
 		float t = 0;
 		Vector3 startPos = transform.localPosition;
-		Vector3 endPos = startPos + (target.transform.position - transform.position).normalized / 2;
+		Vector3 endPos = startPos + (target.transform.position - transform.position).normalized / advanceDiv;
 		while (t <= 1) {
 			t += Time.deltaTime / duration;
 			transform.localPosition = Vector3.Lerp(startPos, endPos, Mathf.SmoothStep(0f, 1f, t));
@@ -557,7 +560,7 @@ public class Creature : Tile {
 	}
 
 
-	protected IEnumerator DefendAnimation (Creature attacker, float delay = 0) {
+	protected IEnumerator DefendAnimation (Creature attacker, float delay = 0, float advanceDiv = 8) {
 		yield return new WaitForSeconds(delay);
 
 		// wait for impact
@@ -566,7 +569,7 @@ public class Creature : Tile {
 
 		// get combat positions
 		Vector3 startPos = new Vector3(this.x, this.y, 0);
-		Vector3 vec = (new Vector3(attacker.x, attacker.y, 0) - startPos).normalized / 8;
+		Vector3 vec = (new Vector3(attacker.x, attacker.y, 0) - startPos).normalized / advanceDiv;
 		Vector3 endPos = startPos - vec;
 
 		// resolve combat outcome and apply combat sounds and effects

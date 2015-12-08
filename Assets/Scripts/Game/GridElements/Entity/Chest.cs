@@ -41,33 +41,40 @@ public class Chest : Entity {
 
 
 	public IEnumerator Open (Creature creature, bool hasBeenUnlocked = false) {
+		if (breakable) {
+			creature.AttackToBreak(this);
+		}
+
+		yield return new WaitForSeconds(creature.speed / 2);
+
 		sfx.Play("Audio/Sfx/Door/key", 0.5f, Random.Range(0.4f, 0.6f));
 		state = EntityStates.Open;
 
 		SetAsset(Resources.Load<Sprite>("Tilesets/Chest/"+ assetType + "-open"));
 
-		if (creature is Player) {
-			if (!hasBeenUnlocked) { 
-				Hud.instance.Log("You open the chest."); 
-			}
-			creature.MoveCameraTo(this.x, this.y);
-		}
-
 		// spawn all the items contained by the chest
+		grid.SetEntity(this.x, this.y, null);
 		SpawnItemsFromInventory(this.items, breakable);
 
-		// once the chest is open, set the tile to unwalkable
-		grid.SetEntity(this.x, this.y, this);
-
 		if (breakable) {
-			Break(Color.gray);
+			StartCoroutine(Break(Color.gray));
+		} else {
+			// once the chest is open, set the tile to unwalkable
+			grid.SetEntity(this.x, this.y, this);
+
+			// and log 'opened' message
+			if (creature is Player) {
+				if (!hasBeenUnlocked) { 
+					Hud.instance.Log("You open the chest."); 
+				}
+			}
 		}
-		
-		yield break;
 	}
 
 
 	public IEnumerator Unlock (Creature creature) {
+		yield return new WaitForSeconds(creature.speed / 2);
+
 		bool success = Random.Range(1, 100) < 75;
 
 		if (success) {
