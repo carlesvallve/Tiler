@@ -131,9 +131,8 @@ public class Grid : MonoSingleton <Grid> {
 
 
 	public bool TileIsOpaque (int x, int y) {
-		if (!IsInsideBounds(x, y)) { 
-			print ("!!! " + x + "," +y);
-			return false; 
+		if (!IsInsideBounds(x, y)) {
+			return true; 
 		}
 
 		Tile tile = GetTile(x, y);
@@ -142,7 +141,7 @@ public class Grid : MonoSingleton <Grid> {
 		return tile.IsOpaque();
 	}
 
-
+	
 	// =====================================================
 	// Entities
 	// =====================================================

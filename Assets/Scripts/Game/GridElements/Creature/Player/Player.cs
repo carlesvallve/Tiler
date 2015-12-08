@@ -68,41 +68,8 @@ public class Player : Creature {
 
 
 	// =====================================================
-	// Player messages
-	// =====================================================
-
-	protected void DisplayFooterMessages (int x, int y) {
-		Entity entity = grid.GetEntity(x, y);
-		if (entity == null) { return; }
-
-		// wait message
-		if (x == this.x && y == this.y) {
-			if ((entity is Stair)) { return; }
-			Hud.instance.Log("You wait...");
-		}
-
-		// you see something message
-		if (!entity.IsWalkable()) {
-			if (entity.visible) {
-				string[] arr = entity.asset.name.Split('-'); 
-				Hud.instance.Log("You see a " + arr[0]);
-				//MoveCameraTo(x, y);
-			} else {
-				Hud.instance.Log("Your eyes stair into the darkness...");
-			}
-		}
-	}
-	
-
-	// =====================================================
 	// Path and Movement
 	// =====================================================
-
-	public override void SetPath (int x, int y) {
-		base.SetPath(x, y);
-		DisplayFooterMessages(x, y);
-	}
-
 
 	protected override IEnumerator FollowPathStep (int x, int y) {
 		// clear monster queue
@@ -166,7 +133,13 @@ public class Player : Creature {
 		ShadowCaster.ComputeFieldOfViewWithShadowCasting(
 			px, py, radius,
 			(x1, y1) => grid.TileIsOpaque(x1, y1),
-			(x2, y2) => { lit[x2, y2] = true; });
+			(x2, y2) => { 
+				if (grid.IsInsideBounds(x2, y2)) {
+					lit[x2, y2] = true; 
+				} else {
+					//Debug.LogError ("ShadowCaster is out of bounds -> " + x2 + "," + y2);
+				}
+			});
 
 		// iterate grid tiles and render them
 		for (int y = 0; y < grid.height; y++) {

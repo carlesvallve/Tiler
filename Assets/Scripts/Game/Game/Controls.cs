@@ -60,9 +60,52 @@ public class Controls : MonoBehaviour {
 		int x = Mathf.RoundToInt(pos.x);
 		int y = Mathf.RoundToInt(pos.y);
 
+		
+
 		Creature creature = grid.GetCreature(x, y);
 		if (creature != null) {
-			Hud.instance.Log("You see a " + creature.name);
+			Hud.instance.Log("You see " + GetTileName(creature));
+			return;
 		}
+
+		Entity entity = grid.GetEntity(x, y);
+		if (entity != null) {
+			//string adj = entity.state != EntityStates.None ? entity.state.ToString() : "";
+			Hud.instance.Log("You see " + GetTileName(entity)); // adj + " " + 
+			return;
+		}
+
+		Tile tile = grid.GetTile(x, y);
+		if (tile != null) {
+			Hud.instance.Log("You see " + GetTileName(tile));
+			return;
+		}
+	}
+
+
+	private string GetTileName (Tile tile) {
+		string[] arr = tile.asset.name.Split('-');
+		string desc = arr[0];
+
+		if (arr.Length > 1) {
+			int n = 0;
+			if (arr[1].Length > 1 && !System.Int32.TryParse(arr[1], out n)) { 
+				desc = arr[1] + " " + arr[0]; 
+			}
+		}
+
+		string last = desc.Substring(desc.Length -1, 1);
+		if (last == "s" || last == "gold") {
+			desc = "some " + desc;
+		} else {
+			string first = desc.Substring(0, 1);
+			if (first == "a" || first == "e" || first == "i" || first == "o" || first == "u") {
+				desc = "an " + desc;
+			} else {
+				desc = "a " + desc;
+			}
+		}
+
+		return desc;
 	}
 }

@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Scorpion : Monster {
+public class Scorpion: Animal {
 
 	public override void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null) {
 		string path = "Tilesets/Monster/Animal/scorpion-" + Random.Range(1, 3);

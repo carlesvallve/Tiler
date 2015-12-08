@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Gorilla : Monster {
+public class Gorilla : Humanoid {
 
 	public override void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null) {
 		asset = Resources.Load<Sprite>("Tilesets/Monster/Humanoid/Monkey/Gorilla/gorilla-" + Random.Range(1, 5));

@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Merchant : Monster {
+public class Merchant : Humanoid {
 
 	public override void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null) {
 		asset = Resources.Load<Sprite>("Tilesets/Monster/Humanoid/Merchant/merchant-red-" + Random.Range(1, 5));

@@ -5,7 +5,7 @@ using System.Collections;
 public class Potion : Item {
 
 	public override void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null) {
-		asset = Resources.Load<Sprite>("Tilesets/Item/Potion/" + GetRandomAssetName());
+		asset = Resources.Load<Sprite>("Tilesets/Item/Potion/potion-" + GetRandomAssetName());
 
 		base.Init(grid, x, y, scale, asset);
 		walkable = true;

@@ -172,6 +172,7 @@ public class Creature : Tile {
 		// if goal is the creature's tile, wait one turn instead
 		if (x == this.x && y == this.y) {
 			path = new List<Vector2>() { new Vector2(this.x, this.y) };
+			if (this is Player) { Hud.instance.Log("You wait..."); }
 			//Speak("...", Color.yellow);
 		} else {
 			// if we are the player goal is a creature, set goal tile as walkable
@@ -244,7 +245,7 @@ public class Creature : Tile {
 			yield break; 
 		}
 
-		Hud.instance.Log("");
+		if (this is Player) { Hud.instance.Log(""); }
 		
 		// resolve encounters with next tile
 		ResolveEntityEncounters(x, y);
@@ -465,7 +466,7 @@ public class Creature : Tile {
 		StopMoving();
 		state = CreatureStates.Attacking;
 
-		StartCoroutine(AttackAnimation(target, delay, 2));
+		StartCoroutine(AttackAnimation(target, delay, 3));
 
 		target.Defend(this, delay);
 	}
@@ -549,6 +550,8 @@ public class Creature : Tile {
 			yield return null;
 		}
 
+		yield return new WaitForSeconds(0.05f);
+
 		state = CreatureStates.Idle;
 
 		// emmit event
@@ -597,6 +600,8 @@ public class Creature : Tile {
 
 			yield return null;
 		}
+
+		yield return new WaitForSeconds(0.05f);
 
 		state = CreatureStates.Idle;
 	}
