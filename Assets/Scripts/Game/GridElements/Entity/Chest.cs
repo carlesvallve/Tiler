@@ -101,7 +101,6 @@ public class Chest : Entity {
 		item.transform.SetParent(transform, false);
 		item.transform.localPosition = Vector3.zero;
 		item.gameObject.SetActive(false);
-		//grid.SetEntity(x, y, null);
 
 		return item;
 	}

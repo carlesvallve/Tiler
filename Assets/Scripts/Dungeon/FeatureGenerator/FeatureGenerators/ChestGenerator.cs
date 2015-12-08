@@ -13,7 +13,7 @@ public class ChestGenerator : DungeonFeatureGenerator {
 		for (int n = 0; n < dungeonGenerator.rooms.Count; n++) {
 
 			DungeonRoom room = dungeonGenerator.rooms[n];
-			int maxChests = 2; //Random.Range(0, 100) <= 85 ? Random.Range(1, (int)(room.tiles.Count * 0.3f)) : 0;
+			int maxChests = Random.Range(0, 100) <= 60 ? Random.Range(1, (int)(room.tiles.Count * 0.1f)) : 0;
 
 			// place furniture in room
 			for (int i = 1; i <= maxChests; i ++) {

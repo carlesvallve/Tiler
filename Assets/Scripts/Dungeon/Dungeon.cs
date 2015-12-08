@@ -95,12 +95,12 @@ public class Dungeon : MonoSingleton <Dungeon> {
 		player.GenerateAtPos(stair.x, stair.y);
 
 		// Generate furniture
-		//FurnitureGenerator furniture = new FurnitureGenerator();
-		//furniture.Generate();
+		FurnitureGenerator furniture = new FurnitureGenerator();
+		furniture.Generate();
 
 		// Generate monsters
-		//MonsterGenerator monsters = new MonsterGenerator();
-		//monsters.Generate();
+		MonsterGenerator monsters = new MonsterGenerator();
+		monsters.Generate();
 		//monsters.GenerateSingle();
 
 		// Generate chests
@@ -108,8 +108,8 @@ public class Dungeon : MonoSingleton <Dungeon> {
 		chests.Generate();
 
 		// Generate items
-		//ItemGenerator items = new ItemGenerator();
-		//items.Generate();
+		ItemGenerator items = new ItemGenerator();
+		items.Generate();
 	}
 
 
