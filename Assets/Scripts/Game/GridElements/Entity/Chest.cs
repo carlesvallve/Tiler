@@ -5,11 +5,10 @@ using System.Collections.Generic;
 
 public class Chest : Entity {
 
-	List<Item> items = new List<Item>();
+	private string assetType;
+	
 
 	public override void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null) {
-		asset = Resources.Load<Sprite>("Tilesets/Chest/chest-closed");
-
 		base.Init(grid, x, y, scale, asset);
 		walkable = false;
 
@@ -19,11 +18,25 @@ public class Chest : Entity {
 	}
 
 
-	public override void SetState (EntityStates state) {
-		this.state = state;
+	public void SetChestAssetType (string assetType) {
+		this.assetType = assetType;
+		asset = Resources.Load<Sprite>("Tilesets/Chest/" + assetType + "-closed");
+		SetAsset(asset);
 
-		string id = state == EntityStates.Open ? "chest-open" : "chest-closed";
+		breakable = assetType == "chest" ? false : true;
+		
+	}
+
+
+	public override void SetState (EntityStates state) {
+		if (breakable) { 
+			state = EntityStates.Closed;
+		} 
+
+		string id = state == EntityStates.Open ? assetType + "-open" : assetType + "-closed";
 		SetAsset(Resources.Load<Sprite>("Tilesets/Chest/" + id));
+		
+		this.state = state;
 	}
 
 
@@ -31,7 +44,7 @@ public class Chest : Entity {
 		sfx.Play("Audio/Sfx/Door/key", 0.5f, Random.Range(0.4f, 0.6f));
 		state = EntityStates.Open;
 
-		SetAsset(Resources.Load<Sprite>("Tilesets/Chest/chest-open"));
+		SetAsset(Resources.Load<Sprite>("Tilesets/Chest/"+ assetType + "-open"));
 
 		if (creature is Player) {
 			if (!hasBeenUnlocked) { 
@@ -41,12 +54,14 @@ public class Chest : Entity {
 		}
 
 		// spawn all the items contained by the chest
-		SpawnItemsFromInventory(this.items, false);
+		SpawnItemsFromInventory(this.items, breakable);
 
 		// once the chest is open, set the tile to unwalkable
-		//Astar.instance.walkability[this.x, this.y] = 1;
-		//walkable = false;
 		grid.SetEntity(this.x, this.y, this);
+
+		if (breakable) {
+			Break(Color.gray);
+		}
 		
 		yield break;
 	}
@@ -79,8 +94,8 @@ public class Chest : Entity {
 	}
 
 
-	public void SetRandomItems () {
-		int maxItems = Random.Range(1, 5);
+	public void SetRandomItems (int maxItems) {
+		//int maxItems = Random.Range(1, 5);
 		for (int i = 0; i < maxItems; i++) {
 			items.Add(CreateRandomItem());
 		}

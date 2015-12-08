@@ -24,7 +24,7 @@ public class Tile : MonoBehaviour {
 
 	public Color color;
 
-	public Sprite asset { get; private set; }
+	public Sprite asset { get; set; }
 
 	protected Transform container;
 	protected SpriteRenderer shadow;

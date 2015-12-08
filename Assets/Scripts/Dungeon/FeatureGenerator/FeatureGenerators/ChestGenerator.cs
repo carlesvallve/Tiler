@@ -21,11 +21,13 @@ public class ChestGenerator : DungeonFeatureGenerator {
 				if (tile == null) { continue; }
 
 				Chest chest = (Chest)grid.CreateEntity(typeof(Chest), tile.x, tile.y, 0.7f, null) as Chest;
-				EntityStates[] states = new EntityStates[] { 
-					EntityStates.Closed, EntityStates.Locked  // EntityStates.Open, 
-				};
+				EntityStates[] states = new EntityStates[] { EntityStates.Closed, EntityStates.Locked };
+
+				string[] arr = new string[] { "chest", "barrel", "barrel-water", "vase"};
+				chest.SetChestAssetType(arr[Random.Range(0, arr.Length)]);
+				
 				chest.SetState(states[Random.Range(0, states.Length)]);
-				chest.SetRandomItems();
+				chest.SetRandomItems(Random.Range(1, 4));
 			}
 		}
 	}

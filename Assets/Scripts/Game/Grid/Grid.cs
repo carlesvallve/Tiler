@@ -213,7 +213,7 @@ public class Grid : MonoSingleton <Grid> {
 	// Fx
 	// =====================================================
 
-	public Blood CreateBlood (Vector3 pos, int maxParticles) {
+	public Blood CreateBlood (Vector3 pos, int maxParticles, Color color) {
 		Transform parent = container.Find("Fx");
 
 		GameObject obj = (GameObject)Instantiate(bloodPrefab);
@@ -221,13 +221,13 @@ public class Grid : MonoSingleton <Grid> {
 		obj.name = "Blood";
 
 		Blood blood = obj.GetComponent<Blood>();
-		blood.Init(pos, maxParticles);
+		blood.Init(pos, maxParticles, color);
 
 		return blood;
 	}
 	
 
-	public Glow CreateGlow (Vector3 pos, int maxParticles) {
+	public Glow CreateGlow (Vector3 pos, int maxParticles, Color color) {
 		Transform parent = container.Find("Fx");
 
 		GameObject obj = (GameObject)Instantiate(glowPrefab);
@@ -235,7 +235,7 @@ public class Grid : MonoSingleton <Grid> {
 		obj.name = "Glow";
 
 		Glow glow = obj.GetComponent<Glow>();
-		glow.Init(pos, maxParticles);
+		glow.Init(pos, maxParticles, color);
 
 		return glow;
 	}

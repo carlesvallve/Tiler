@@ -11,6 +11,7 @@ public class Item : Entity {
 		base.Init(grid, x, y, scale, asset);
 		walkable = true;
 
+		SetSortingOrder(110);
 		SetImages(scale, Vector3.zero, 0.04f);
 
 		//print (typeId + " " + asset);
@@ -25,7 +26,7 @@ public class Item : Entity {
 	public virtual void Pickup (Creature creature) {
 		// spawn glow particles
 		if (creature.visible) {
-			Grid.instance.CreateGlow(transform.position, 8);
+			Grid.instance.CreateGlow(transform.position, 8, Color.white);
 		}
 
 		// add to creature's items dictionary
