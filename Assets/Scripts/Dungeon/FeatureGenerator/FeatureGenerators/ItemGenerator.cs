@@ -29,7 +29,9 @@ public class ItemGenerator : DungeonFeatureGenerator {
 					typeof(Food), typeof(Treasure), typeof(Potion), typeof(Book), typeof(Weapon), typeof(Armour)
 				};
 
-				Dictionary<System.Type, int> types = new Dictionary<System.Type, int>() {
+				System.Type itemType = types[Random.Range(0, types.Count)];
+
+				/*Dictionary<System.Type, int> types = new Dictionary<System.Type, int>() {
 					{ typeof(Food), 	0  },
 					{ typeof(Treasure), 80 },
 					{ typeof(Potion), 	20 },
@@ -39,7 +41,7 @@ public class ItemGenerator : DungeonFeatureGenerator {
 				};
 
 				// Pick a random item type
-				System.Type itemType = Utils.RandomWeight(types); //types[Random.Range(0, types.Count)];
+				System.Type itemType = Utils.RandomWeight(types);*/
 				
 				grid.CreateEntity(itemType, tile.x, tile.y, 0.8f);
 
