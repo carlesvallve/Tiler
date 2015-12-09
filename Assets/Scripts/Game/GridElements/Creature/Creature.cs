@@ -484,12 +484,12 @@ public class Creature : Tile {
 	
 	private bool ResolveCombatOutcome (Creature attacker) {
 		// resolve combat outcome
-		int attack = attacker.stats.attack + Dice.Roll(1, 6);
-		int defense = stats.defense + Dice.Roll(1, 6);
+		int attack = attacker.stats.attack + Dice.Roll("1d10-2");
+		int defense = stats.defense + Dice.Roll("1d6+1");
 
 		// hit
 		if (attack > defense) {
-			int damage = attacker.stats.str + Dice.Roll(1, 4);
+			int damage = attacker.stats.str + Dice.Roll("1d4");
 			if (damage > 0) {
 				// apply damage
 				UpdateHp(-damage);

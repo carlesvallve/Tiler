@@ -188,7 +188,7 @@ public class Monster : Creature {
 
 		// if no path, escape
 		if (path.Count == 0) {
-			print ("Monser has no path. Escaping...");
+			//print ("Monser has no path. Escaping...");
 			this.targetTile = null;
 			return;
 		}
@@ -211,18 +211,18 @@ public class Monster : Creature {
 	// =====================================================
 
 	protected Tile GetTarget () {
-		print ("Getting a new target: ");
+		//print ("Getting a new target: ");
 		// 1. choose a random item in vision
 		Item item = GetRandomItemInRadius(stats.visionRadius);
 		if (item != null) {
-			print ("    going for " + item + " at " + x + "," + y);
+			//print ("    going for " + item + " at " + x + "," + y);
 			return item;
 		}
 
 		// 2. choose a random tile in vision
 		Tile tile = GetRandomTileInRadius(stats.visionRadius);
 		if (tile != null) {
-			print ("    roaming towards " + tile + " at " + x + "," + y);
+			//print ("    roaming towards " + tile + " at " + x + "," + y);
 			return tile;
 		}
 
@@ -250,7 +250,7 @@ public class Monster : Creature {
 
 			c++;
 			if (c == 100) {
-				print ("No target tile was found. Escaping..."); 
+				//print ("No target tile was found. Escaping..."); 
 				return null; 
 			}
 		}
@@ -282,16 +282,16 @@ public class Monster : Creature {
 		}
 
 		if (itemList.Count == 0) {
-			print ("No item was found. Escaping...");
+			//print ("No item was found. Escaping...");
 			return null;
 		}
 
 
-		Item selectedItem = Utils.RandomWeight(itemList);
-		return selectedItem;
+		//Item selectedItem = Utils.RandomWeight(itemList);
+		//return selectedItem;
 
-		//Utils.Shuffle(itemList);
-		//return itemList[0];
+		Utils.Shuffle(itemList);
+		return itemList[0];
 	}
 
 
