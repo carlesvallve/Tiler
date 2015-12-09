@@ -10,8 +10,7 @@ using System.Collections.Generic;
 
 public class Monster : Creature {
 
-
-	protected Tile targetTile;
+	Tile targetTile;
 
 
 	public override void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null) {
@@ -85,9 +84,9 @@ public class Monster : Creature {
 	// =====================================================
 
 	protected virtual void Think () {
-		if (state != CreatureStates.Idle) {
+		/*if (state != CreatureStates.Idle) {
 			return;
-		}
+		}*/
 
 		// if has been surprised by the player, dont act this turn
 		/*if (!IsAware()) {
@@ -104,11 +103,32 @@ public class Monster : Creature {
 			return;
 		}*/
 
+		// if we dont have a target tile, get a new one
+		if (this.targetTile == null) {
+			this.targetTile = GetTarget();
+		}
 
+		// if we never got a valid target, do nothing this turn
+		if (this.targetTile == null) {
+			Debug.Log("Something went wrong with this monster decision...");
+			return;
+		}
+
+		// goto target tile
+		GotoTargetTile(this.targetTile);
+
+		// chase item
+		/*Item item = GetItemInRadius(stats.visionRadius);
+		if (item != null) {
+			GotoTarget(item);
+		}*/
 
 		// roam randomly
-		Roam();
+		//Roam();
 	}
+
+
+	
 
 
 	protected bool IsAware () {
@@ -121,51 +141,108 @@ public class Monster : Creature {
 	}
 
 
-	protected void Roam () {
+	protected void GotoTargetTile (Tile tile) {
+		// search for new path to the target tile
+		path = Astar.instance.SearchPath(this.x, this.y, tile.x, tile.y);
 
-		if (this.targetTile == null) {
-			int radius = 8;
-			Tile tile = null;
-
-			int c = 0;
-			while (true) {
-				int xx = x + Random.Range(-radius, radius);
-				int yy = x + Random.Range(-radius, radius);
-				tile = grid.GetTile(xx, yy);
-				if (tile && tile.IsWalkable()) {
-					break;
-				}
-
-				c++;
-				if (c == 100) { return; }
-			}
-
-			this.targetTile = tile;
-		//} else {
-			/*if (x == this.targetTile.x && y == this.targetTile.y) {
-				this.targetTile = null;
-				Roam();
-				return;
-			}*/
-		}
-
-		// search for new path to the target
-		path = Astar.instance.SearchPath(x, y, this.targetTile.x, this.targetTile.y);
-		//path = CapPathToFirstEncounter(path);
+		// if no path, escape
 		if (path.Count == 0) {
+			print ("Monser has no path. Escaping...");
 			this.targetTile = null;
-			//Roam();
 			return;
 		}
+
+		// cap path to next tile only
 		path = new List<Vector2>() { path[0] };
+
+		// follow the path
 		StartCoroutine(FollowPath());
 
-		/*bool success = MoveTowardsTarget(this.targetTile);
-		if (!success) {
+		// clear ai target if we arrived to it
+		if ((int)path[0].x == tile.x && (int)path[0].y == tile.y) {
 			this.targetTile = null;
-			Roam();
-			return;
-		}*/
+		}
+	}
+
+
+	// =====================================================
+	// Get AI Target
+	// =====================================================
+
+	protected Tile GetTarget () {
+		print ("Getting a new target: ");
+		// 1. choose a random item in vision
+		Item item = GetRandomItemInRadius(stats.visionRadius);
+		if (item != null) {
+			print ("    going for " + item + " at " + x + "," + y);
+			return item;
+		}
+
+		// 2. choose a random tile in vision
+		Tile tile = GetRandomTileInRadius(stats.visionRadius);
+		if (tile != null) {
+			print ("    roaming towards " + tile + " at " + x + "," + y);
+			return tile;
+		}
+
+		// no available target was found
+		return null;
+	}
+
+
+	protected Tile GetRandomTileInRadius (int radius) {
+		Tile tile = null;
+
+		int c = 0;
+		while (true) {
+			int x = this.x + Random.Range(-radius, radius);
+			int y = this.y + Random.Range(-radius, radius);
+
+			if (x == this.x && y == this.y) {
+				continue;
+			}
+
+			tile = grid.GetTile(x, y);
+			if (tile && tile.IsWalkable()) {
+				break;
+			}
+
+			c++;
+			if (c == 100) {
+				print ("No target tile was found. Escaping..."); 
+				return null; 
+			}
+		}
+
+		return tile;
+	}
+
+
+	protected Item GetRandomItemInRadius (int radius) {
+		List<Item> itemList = new List<Item>();
+
+		for (int y = this.y + - radius; y <= this.y + radius; y++) {
+			for (int x =  this.x - radius; x <= this.x + radius; x++) {
+				if (x == this.x && y == this.y) {
+					continue;
+				}
+
+				Entity entity = grid.GetEntity(x, y);
+				if (entity != null && (entity is Item)) {
+					Item item = (Item)entity;
+
+					itemList.Add(item);
+				}
+			}
+		}
+
+		if (itemList.Count == 0) {
+			print ("No item was found. Escaping...");
+			return null;
+		}
+
+		Utils.Shuffle(itemList);
+		return itemList[0];
 	}
 
 

@@ -10,7 +10,7 @@ public class CreatureStats {
 	public int hp = 10;
 
 	// vision
-	public int visionRadius = 5;
+	public int visionRadius = 3;
 	public int alert = 0;
 	public int alertMax = 3;
 

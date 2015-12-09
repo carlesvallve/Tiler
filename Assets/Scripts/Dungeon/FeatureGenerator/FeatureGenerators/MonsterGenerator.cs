@@ -14,12 +14,18 @@ public class MonsterGenerator : DungeonFeatureGenerator {
 	// Monsters should be spawned by affinity groups, relative to the dungeon level 
 	
 	public void GenerateSingle () {
-		DungeonRoom room = dungeonGenerator.rooms[Grid.instance.player.roomId];
+		int roomId = Grid.instance.GetTile(Grid.instance.player.x, Grid.instance.player.y).roomId;
+		DungeonRoom room = dungeonGenerator.rooms[roomId];
+
 		Tile tile = GetFreeTileOnRoom(room, 0);
+		if (tile == null) { 
+			Debug.LogError ("Monster could not be placed anywhere!"); 
+		}
 
 		List<System.Type> types = GetMonsterTypes();
 		System.Type monsterType = types[Random.Range(0, types.Count)];
 
+		Debug.Log (monsterType);
 		grid.CreateCreature(monsterType, tile.x, tile.y, 0.7f, null);
 	}
 
@@ -34,7 +40,7 @@ public class MonsterGenerator : DungeonFeatureGenerator {
 			int maxMonsters = 0;
 			int r = Random.Range(1, 100);
 			if (r <= 60) {
-				int maxTiles = Mathf.RoundToInt(room.tiles.Count * 0.3f);
+				int maxTiles = Mathf.RoundToInt(room.tiles.Count * 0.1f);
 				maxMonsters = Random.Range(1, maxTiles);
 			}
 
