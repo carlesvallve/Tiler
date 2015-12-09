@@ -8,13 +8,40 @@ using System.Collections.Generic;
 //	- chase, flee, roam, chase item
 
 
+public class MonsterAi {
+	public Dictionary<System.Type, int> greed = new Dictionary<System.Type, int>() {
+		{ typeof(Armour), 0 },
+		{ typeof(Weapon), 0 },
+		{ typeof(Book), 0 },
+		{ typeof(Food), 0 },
+		{ typeof(Potion), 0 },
+		{ typeof(Treasure), 100 }
+	};
+
+	public Dictionary<System.Type, int> hate = new Dictionary<System.Type, int>() {
+		{ typeof(Player), 0 },
+		{ typeof(Monster), 0 },
+	};
+
+	public Dictionary<System.Type, int> fear = new Dictionary<System.Type, int>() {
+		{ typeof(Player), 0 },
+		{ typeof(Monster), 0 },
+	};
+}
+
+
 public class Monster : Creature {
 
-	Tile targetTile;
+	
+
+	public MonsterAi ai;
+	protected Tile targetTile;
 
 
 	public override void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null) {
 		base.Init(grid, x, y, scale, asset);
+		
+		InitializeAi();
 
 		debugEnabled = true;
 
@@ -83,6 +110,12 @@ public class Monster : Creature {
 	// Monster AI
 	// =====================================================
 
+	protected void InitializeAi () {
+		// set each ai parameter here
+		ai = new MonsterAi();
+	}
+	
+
 	protected virtual void Think () {
 		/*if (state != CreatureStates.Idle) {
 			return;
@@ -128,7 +161,15 @@ public class Monster : Creature {
 	}
 
 
-	
+	protected Item GetBestItem () {
+		Item item = null;
+		// best item will be, from items in vision
+		// list of item types with higher weight in ai greed dictionary
+		// sort list by distance to the item
+		// sort list by value of the item
+
+		return item;
+	}
 
 
 	protected bool IsAware () {
@@ -230,6 +271,10 @@ public class Monster : Creature {
 				Entity entity = grid.GetEntity(x, y);
 				if (entity != null && (entity is Item)) {
 					Item item = (Item)entity;
+					
+					//print (item.GetType());
+					item.weight = ai.greed[item.GetType()];
+					//print (item + " " + item.weight);
 
 					itemList.Add(item);
 				}
@@ -241,8 +286,12 @@ public class Monster : Creature {
 			return null;
 		}
 
-		Utils.Shuffle(itemList);
-		return itemList[0];
+
+		Item selectedItem = Utils.RandomWeight(itemList);
+		return selectedItem;
+
+		//Utils.Shuffle(itemList);
+		//return itemList[0];
 	}
 
 
