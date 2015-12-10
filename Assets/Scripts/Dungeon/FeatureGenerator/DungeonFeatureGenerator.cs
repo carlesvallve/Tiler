@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class DungeonFeatureGenerator {
 
@@ -85,41 +86,69 @@ public class DungeonFeatureGenerator {
 	protected bool TileIsFree (Tile tile, int radius) {
 		// make sure that given tile, and all tiles around in given radius are not occupied
 
-		if (tile != null && !tile.IsOccupied()) {
-			Tile tile2 = null;
+		// if there is not tile, tile is not free
+		if (tile == null) { return false; }
 
-			// iterate on all surounding tiles
-			for (int i = 1; i <= radius; i++) {
-				tile2 = grid.GetTile(tile.x - i, tile.y);
+		// if tile is occupied, tile is not free
+		if (tile.IsOccupied()) { return false; }
 
-				// horizontal
-				if (tile2 == null || (tile2 != null  && tile2.IsOccupied())) { return false; }
-
-				tile2 = grid.GetTile(tile.x + i, tile.y);
-				if (tile2 == null || (tile2 != null  && tile2.IsOccupied())) { return false; }
-
-				tile2 = grid.GetTile(tile.x, tile.y - i);
-				if (tile2 == null || (tile2 != null  && tile2.IsOccupied())) { return false; }
-
-				tile2 = grid.GetTile(tile.x, tile.y + i);
-				if (tile2 == null || (tile2 != null  && tile2.IsOccupied())) { return false; }
-
-				// diagonal
-				tile2 = grid.GetTile(tile.x - i, tile.y - i);
-				if (tile2 == null || (tile2 != null  && tile2.IsOccupied())) { return false; }
-
-				tile2 = grid.GetTile(tile.x + i, tile.y - i);
-				if (tile2 == null || (tile2 != null  && tile2.IsOccupied())) { return false; }
-
-				tile2 = grid.GetTile(tile.x - i, tile.y + i);
-				if (tile2 == null || (tile2 != null  && tile2.IsOccupied())) { return false; }
-
-				tile2 = grid.GetTile(tile.x + i, tile.y + i);
-				if (tile2 == null || (tile2 != null  && tile2.IsOccupied())) { return false; }
-			}
-
-			return true;
+		// if any tile inside given radius is occupied, tile is not free
+		List<Tile> tiles = grid.GetNeighboursInsideRadius(tile.x, tile.y, radius);
+		foreach (Tile neighbour in tiles) {
+			if (neighbour.IsOccupied()) { return false; }
 		}
+
+		// there is a door adjacent to the tile in 4 directions, tile is not free
+		if (IsAdjacentToDoor(tile.x, tile.y)) { return false; }
+
+		// otherwise, tile is free
+		return true;
+	}
+
+
+	public bool IsAdjacentToDoor (int x, int y) {
+		List<Entity> neighbours = new List<Entity>() {
+			grid.GetEntity(x + 0, y - 1),
+			grid.GetEntity(x + 1, y + 0),
+			grid.GetEntity(x + 0, y + 1),
+			grid.GetEntity(x - 1, y + 0),	
+		};
+
+		foreach (Entity neighbour in neighbours) {
+			if (neighbour != null) {
+				if (neighbour is Door) { return true; }
+			} 
+		}
+		
+		List<Tile> tiles = new List<Tile>() {
+			grid.GetTile(x + 0, y - 1),
+			grid.GetTile(x + 1, y + 0),
+			grid.GetTile(x + 0, y + 1),
+			grid.GetTile(x - 1, y + 0),	
+		};
+
+		foreach (Tile tile in tiles) {
+			if (tile != null) {
+				if (IsCorridor(tile)) { return true; }
+			} 
+		}
+				
+		return false;
+	}
+
+
+	public bool IsCorridor (Tile tile) {
+		int x = tile.x;
+		int y = tile.y;
+
+		if (tile == null) { return false; }
+		Entity up = grid.GetEntity(x, y - 1);
+		Entity down = grid.GetEntity(x, y + 1);
+		if (up != null && down != null && (up is Wall) && (down is Wall)) { return true; }
+
+		Entity left = grid.GetEntity(x - 1, y);
+		Entity right = grid.GetEntity(x + 1, y);
+		if (left != null && right != null && (left is Wall) && (right is Wall)) { return true; }
 
 		return false;
 	}

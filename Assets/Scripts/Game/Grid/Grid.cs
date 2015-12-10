@@ -303,5 +303,29 @@ public class Grid : MonoSingleton <Grid> {
 		return neighbours;
 	}
 
+	// used by feature generator
+	public List<Tile> GetNeighboursInsideRadius (int x, int y, int radius, bool addCenterTile = false) {
+		List<Tile> neighbours = new List<Tile>();
+
+		for (int i = 1; i <= radius; i++) {
+			List<Tile> tiles = new List<Tile>() {
+				GetTile(x + 0, y - radius),
+				GetTile(x + radius, y - radius),
+				GetTile(x + radius, y + 0),
+				GetTile(x + radius, y + radius),
+				GetTile(x + 0, y + radius),
+				GetTile(x - radius, y + radius),
+				GetTile(x - radius, y + 0),
+				GetTile(x - radius, y - radius),
+			};
+
+			foreach (Tile tile in tiles) {
+				neighbours.Add(tile);
+			}
+		}
+
+		return neighbours;
+	}
+
 }
 
