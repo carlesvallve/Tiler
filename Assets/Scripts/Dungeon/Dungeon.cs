@@ -66,17 +66,7 @@ public class Dungeon : MonoSingleton <Dungeon> {
 		// Generate dungeon features
 		GenerateDungeonFeatures(direction);
 
-		// get an astar path from stair to stair. 
-		List<Vector2> path = Astar.instance.SearchPath(
-			grid.stairUp.x, grid.stairUp.y, grid.stairDown.x, grid.stairDown.y
-		);
-
-		// If there is no path, we need to generate a different dungeon level
-		if (path.Count == 0) {
-			Debug.LogError("Dungeon level cannot be solved. Genrating again...");
-			GenerateDungeon(direction);
-			return;
-		}
+		
 
 		// Update game turn
 		game.UpdateGameTurn();
@@ -96,6 +86,13 @@ public class Dungeon : MonoSingleton <Dungeon> {
 		// Generate stairs
 		StairGenerator stairs = new StairGenerator();
 		stairs.Generate();
+
+		// If we cannot solve the level, we need to generate a different one
+		if (!LevelIsSolvable()) {
+			Debug.LogError("Dungeon level cannot be solved. Genrating again...");
+			GenerateDungeon(direction);
+			return;
+		}
 
 		// Generate player 
 		PlayerGenerator player = new PlayerGenerator();
@@ -118,6 +115,25 @@ public class Dungeon : MonoSingleton <Dungeon> {
 		// Generate items
 		ItemGenerator items = new ItemGenerator();
 		items.Generate();
+	}
+
+
+	private bool LevelIsSolvable () {
+		// if we could not place one of the stairs, level is not solvable
+		if (grid.stairUp == null || grid.stairDown == null) {
+			return false;
+		}
+
+		// if no available path from stair to stair, level is not solvable
+		List<Vector2> path = Astar.instance.SearchPath(
+			grid.stairUp.x, grid.stairUp.y, grid.stairDown.x, grid.stairDown.y
+		);
+		if (path.Count == 0) {
+			return false;
+		}
+
+		// otherwise, we can solve the level
+		return true;
 	}
 
 

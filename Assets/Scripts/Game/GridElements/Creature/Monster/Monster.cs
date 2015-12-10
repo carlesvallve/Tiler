@@ -75,13 +75,10 @@ public class Monster : Creature {
 	// =====================================================
 
 	protected virtual void Think () {
-
 		// escape if we are doing something already
 		if (state != CreatureStates.Idle) {
 			return;
 		}
-
-		print ("Thinking...");
 
 		// modify interest depending on current situation
 		if (!IsAware()) {
@@ -96,6 +93,7 @@ public class Monster : Creature {
 			return;
 		}
 
+		// if we are not agresive, we are not interested on the player
 		if (!IsAgressive()) {
 			stats.interest[typeof(Player)] = 0;
 		}

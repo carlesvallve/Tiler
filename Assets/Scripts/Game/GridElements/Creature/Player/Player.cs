@@ -41,7 +41,7 @@ public class Player : Creature {
 
 		// initialize
 		base.Init(grid, x, y, scale, asset);
-		walkable = true;
+		walkable = false;
 
 		// init stats
 		stats.hpMax = 16; 

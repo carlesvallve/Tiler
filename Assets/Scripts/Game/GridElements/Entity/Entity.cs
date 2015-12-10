@@ -3,14 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 
 
-public enum EntityStates {
-	None = 0,
-	Open = 1,
-	Closed = 2,
-	Locked = 3
-}
-
-
 public class Entity: Tile {
 
 	public EntityStates state { get; set; }
