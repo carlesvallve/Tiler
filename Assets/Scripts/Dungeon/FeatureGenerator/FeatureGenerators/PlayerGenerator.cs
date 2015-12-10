@@ -11,11 +11,6 @@ public class PlayerGenerator : DungeonFeatureGenerator {
 
 	// note: player must be generated before monsters for them to be able to listen to player events
 
-	// TODO: 
-	// player must be created by the parameters user chose when making his unique starting player
-	// player should be rendered according to whatever equipment he is currently wearing
-	
-
 	public override void GenerateAtPos (int x, int y) {
 		if (grid.player == null) {
 			grid.player = grid.CreateCreature(typeof(Player), x, y, 0.7f, null) as Player;

@@ -5,8 +5,6 @@ using System.Collections.Generic;
 
 public class Tile : MonoBehaviour {
 
-	protected bool debugEnabled = false;
-
 	protected Grid grid;
 	protected AudioManager sfx;
 	
@@ -14,28 +12,24 @@ public class Tile : MonoBehaviour {
 	public int y { get; set; }
 	public int roomId { get; set; }
 
-	public int fovTurn;
-	public float fovDistance;
-
 	public bool walkable { get; set; }
-	public bool visible { get; set; } // seen by the player right now
-	//public bool shadowed { get; set; }
-	public bool explored { get; set; } // discovered by the player
-
-	public Color color;
+	public bool visible { get; set; }
+	public bool explored { get; set; }
 
 	public Sprite asset { get; set; }
+	public Color color;
+	protected int zIndex;
 
 	protected Transform container;
 	protected SpriteRenderer shadow;
 	protected SpriteRenderer outline;
 	protected SpriteRenderer img;
 	protected TextMesh label;
-
-	protected int zIndex;
-
-	// used by ai to pick this tile as a target
+	
+	// used by ai
 	public int interestWeight = 0;
+	public int fovTurn;
+	public float fovDistance;
 
 
 	public virtual void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null) {
@@ -49,7 +43,7 @@ public class Tile : MonoBehaviour {
 		
 		label = transform.Find("Label").GetComponent<TextMesh>();
 		label.GetComponent<Renderer>().sortingLayerName = "Ui";
-		label.gameObject.SetActive(debugEnabled);
+		label.gameObject.SetActive(Debug.isDebugBuild);
 
 		this.grid = grid;
 		this.x = x;
@@ -92,10 +86,6 @@ public class Tile : MonoBehaviour {
 
 
 	public void SetInfo (string str, Color color) {
-		if (!debugEnabled) { 
-			return; 
-		}
-
 		label.color = color;
 		label.text = str;
 		label.gameObject.SetActive(str != null && str != "");
@@ -164,14 +154,16 @@ public class Tile : MonoBehaviour {
 	}
 
 
-	public virtual void SetFovInfo (int turn, float distance) {
+	public virtual void SetFovInfo (int turn, float distance, bool debug = false) {
 		// generate tile fov info, used by monster ai for chase and follow behaviour
 		if (IsPassable()) {
 			fovTurn = turn;
 			fovDistance = distance;
 
 			// debug fov info
-			SetInfo(fovTurn.ToString() + "\n" + fovDistance.ToString(), Color.white);
+			if (debug) {
+				SetInfo(fovTurn.ToString() + "\n" + fovDistance.ToString(), Color.white);
+			}
 		} 
 	}
 

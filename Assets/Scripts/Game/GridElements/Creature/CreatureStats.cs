@@ -33,7 +33,7 @@ public class CreatureStats {
 
 	// hunger (todo)
 	public float hunger = 0;
-	public float hungerRate = 0.1f; // 1 point each 10 turns
+	public float hungerRate = 0.2f; // 1 point each 5 turns
 
 	// stealth (todo)
 	public int awareness = 1;
@@ -58,6 +58,7 @@ public class CreatureStats {
 		{ typeof(Monster), 0 },
 	};
 
+
 	public Dictionary<System.Type, int> interest = new Dictionary<System.Type, int>() {
 		// greed for items
 		{ typeof(Armour), 0 },
@@ -74,6 +75,7 @@ public class CreatureStats {
 
 
 	public CreatureStats () {
+		// set interest with baseInterest values
 		interest = baseInterest;
 	}
 }

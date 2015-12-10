@@ -7,71 +7,100 @@ public class Camera2D : MonoBehaviour {
 
 	public static Camera2D instance;
 
-	public static Transform target;
-	public float zoomSpeed = 1f;
-	public float dragSpeed = 1f;
-	public bool autoZoom = false;
+	// resolution
+	int resHeight = 1024;
+	int pixelsPerUnit = 32;
+	
+	// zoom
+	private float zoomSpeed = 0.5f;
+	private float minZoom = 0;
+	private float maxZoom = 1024 / 2;
 
+	// panning
+	public float panSpeed = 0.01f;
 	private Vector3 lastMousePos;
 
-	void Awake() {
+
+	void Start () {
 		instance = this;
 
-		Camera.main.orthographicSize = Screen.height / 64;
+		maxZoom = ((Screen.height / 2) / pixelsPerUnit) * 2;
+		Camera.main.orthographicSize = maxZoom / 2;
 	}
 
-	void LateUpdate () {
-		// set fixed zoom
-		if (autoZoom) {
-			Camera.main.orthographicSize = Screen.height / 64;
-		}
-		
-		// escape if mouse is over hud
-		if (EventSystem.current.IsPointerOverGameObject()) {
-			return;
+
+	void Update () {
+		// apply scroll forward
+		if (Input.GetAxis("Mouse ScrollWheel") > 0) {
+			ZoomOrthoCamera(Camera.main.ScreenToWorldPoint(Input.mousePosition), 1 * zoomSpeed);
 		}
 
-		// set zoom
-		ZoomIntoPosition(Input.GetAxis("Mouse ScrollWheel") * zoomSpeed, Input.mousePosition);
+		// apply scoll back
+		if (Input.GetAxis("Mouse ScrollWheel") < 0) {
+			ZoomOrthoCamera(Camera.main.ScreenToWorldPoint(Input.mousePosition), -1 * zoomSpeed);
+		}
 
-		// set drag
-		if (Input.GetMouseButtonDown(2)) {
+		// apply panning
+		if (Input.GetMouseButtonDown(1)) {
 			lastMousePos = Input.mousePosition;
-		} else if (Input.GetMouseButton(2)) {
-			Vector2 delta = (Input.mousePosition - lastMousePos) * dragSpeed;
-			Drag(delta);
+		} else if (Input.GetMouseButton(1)) {
+			Vector2 delta = (Input.mousePosition - lastMousePos) * panSpeed;
+			PanOrthoCamera(delta);
 			lastMousePos = Input.mousePosition;
 		}	
+
+		// constrain camera to bg bounds
+		//ConstrainToBounds();
 	}
 
 
-	private void ZoomIntoPosition (float delta, Vector2 position) {
-		//Vector3 preZoomWorldPosition = Camera.main.ScreenToWorldPoint(position);
-		PureZoom(delta);
-		//Vector2 postZoomScreenPosition = Camera.main.WorldToScreenPoint(preZoomWorldPosition);
-		//Drag(position- postZoomScreenPosition);
-		Drag(Vector2.zero);
+	private void ZoomOrthoCamera (Vector3 zoomTowards, float amount) {
+		zoomTowards = Camera.main.transform.position;
+
+		// Calculate how much we will have to move towards the zoomTowards position
+		float multiplier = (1.0f / Camera.main.orthographicSize * amount);
+
+		// Move camera
+		transform.position += (zoomTowards - transform.position) * multiplier; 
+
+		// Zoom camera
+		Camera.main.orthographicSize -= amount;
+
+		// Limit zoom
+		Camera.main.orthographicSize = Mathf.Clamp(Camera.main.orthographicSize, minZoom, maxZoom);
 	}
 
 
-	void PureZoom (float delta) {
-		float min = 1;
-		float max = 1000;
-		float newSize = Mathf.Clamp (Camera.main.orthographicSize - delta, min, max);
-		Camera.main.orthographicSize = newSize;
-		//Camera.main.transform.localScale = new Vector3 (newSize, newSize, 1);
-
-		// then constrain to bounds if needed
-	}
- 
-	void Drag (Vector2 delta) {
-		float pixelSizeAdjustment = 1f;
+	private void PanOrthoCamera (Vector2 delta) {
+		// get final delta
+		float pixelSizeAdjustment = 1f / pixelsPerUnit;
 		delta *= pixelSizeAdjustment;
-		Vector2 offset = Vector2.Scale(delta, Camera.main.transform.localScale);
-		Camera.main.transform.localPosition -= (Vector3)offset;
 
-		// then constrain to bounds if needed
+		// get final offset
+		Vector2 offset = Vector2.Scale(delta, Camera.main.transform.localScale);
+
+		// translate camera by offset
+		Camera.main.transform.position -= (Vector3)offset;
 	}
+
+
+	/*private void ConstrainToBounds () {
+		// calculate bg sprite bounds
+		float vertExtent = Camera.main.orthographicSize;  
+		float horzExtent = vertExtent * Screen.width / Screen.height;
+		spriteBounds = bg.GetComponentInChildren<SpriteRenderer>();
+		leftBound = (float)(horzExtent - spriteBounds.sprite.bounds.size.x / 2.0f);
+		rightBound = (float)(spriteBounds.sprite.bounds.size.x / 2.0f - horzExtent);
+		bottomBound = (float)(vertExtent - spriteBounds.sprite.bounds.size.y / 2.0f);
+		topBound = (float)(spriteBounds.sprite.bounds.size.y  / 2.0f - vertExtent);
+
+		Vector3 pos = Camera.main.transform.position; //new Vector3(target.position.x, target.position.y, transform.position.z);
+		//print ("left: " + leftBound + " right: " + rightBound + " top: " + topBound + " bottom: " + bottomBound + " pos: " + pos);
+
+		pos.x = Mathf.Clamp(pos.x, leftBound, rightBound);
+		pos.y = Mathf.Clamp(pos.y, bottomBound, topBound);
+		Camera.main.transform.position = pos;
+	}*/
 
 
 	public IEnumerator MoveToPos (Vector2 pos) {

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 
 public class Player : Creature {
 
+	protected bool cameraFollow = true;
 	protected int cameraMargin = 3;
 
 	protected string playerName;
@@ -83,6 +84,22 @@ public class Player : Creature {
 
 
 	// =====================================================
+	// Encounters
+	// =====================================================
+
+	protected override void ResolveEntityEncounters (int x, int y) {
+		base.ResolveEntityEncounters(x, y);
+
+		// if stairs and is our last movement, disable camera follow
+		Entity entity = grid.GetEntity(x, y);
+		if (entity != null && (entity is Stair)) {
+			if (x == (int)(path[path.Count -1].x) && y == (int)(path[path.Count -1].y)) {
+				cameraFollow = false;
+			}
+		}
+	}
+
+	// =====================================================
 	// Camera
 	// =====================================================
 
@@ -104,10 +121,16 @@ public class Player : Creature {
 		} else {
 			Camera2D.instance.LocateAtPos(new Vector2(this.x, this.y));
 		}
+
+		cameraFollow = true;
 	}
 
 
 	protected void CheckCamera () {
+		if (!cameraFollow) {
+			return;
+		}
+
 		Vector3 screenPos = Camera.main.WorldToScreenPoint(transform.position);
 
 		int margin = 16 + 32 * cameraMargin;

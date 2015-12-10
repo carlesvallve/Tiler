@@ -2,31 +2,14 @@
 using System.Collections;
 using System.Collections.Generic;
 
-// TODO: 
-
-// - we need to implement basic ai thinking behaviours
-//	- chase, flee, roam, chase item
-
-
-/*public class MonsterAi {
-
-}*/
-
 
 public class Monster : Creature {
 
-	
-
-	//public MonsterAi ai;
 	protected Tile targetTile;
 
 
 	public override void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null) {
 		base.Init(grid, x, y, scale, asset);
-		
-		//InitializeAi();
-
-		debugEnabled = true;
 
 		// Each monster will evaluate what to do on each game turn update
 		grid.player.OnGameTurnUpdate += () => {
@@ -65,8 +48,6 @@ public class Monster : Creature {
 				stats.alert = stats.alertMax;
 			}
 		}
-
-		//SetInfo(distanceToPlayer.ToString(), Color.yellow);
 	}
 
 
@@ -93,32 +74,11 @@ public class Monster : Creature {
 	// Monster AI
 	// =====================================================
 
-	/*protected void InitializeAi () {
-		// set each ai parameter here
-		ai = new MonsterAi();
-	}*/
-	
-
 	protected virtual void Think () {
-		/*if (state != CreatureStates.Idle) {
+		// escape if we are doing something already
+		if (state != CreatureStates.Idle) {
 			return;
-		}*/
-
-		// if has been surprised by the player, dont act this turn
-		/*if (!IsAware()) {
-			return;
-		}*/
-
-		// move towards/away from the player
-		/*if (stats.alert > 0) {
-			if (isAgressive) {
-				ChaseAndFollow();
-			} else {
-				Flee();
-			}
-			return;
-		}*/
-
+		}
 
 		// modify interest depending on current situation
 		if (!IsAware()) {
@@ -154,11 +114,6 @@ public class Monster : Creature {
 			// use chase and follow algorithm
 			SetInfo("Kill", Color.yellow);
 			ChaseAndFollow();
-			/*if (IsAfraid()) {
-				Flee();
-			} else {
-				ChaseAndFollow();
-			}*/
 		} else {
 			// use astar pathfinding
 			SetInfo(this.targetTile.name, Color.yellow);
@@ -378,12 +333,18 @@ public class Monster : Creature {
 	}
 
 
+	// =====================================================
+	// Old Ai Methods
+	// =====================================================
+
+	// This are old ai methods not used anymore, but who knows, we can re-apply it in the future
+	// if pathfinding proves to be too expensive
 
 	// =====================================================
 	// MoveTowardsTarget
 	// =====================================================
 
-	protected virtual bool MoveTowardsTarget (Tile target) {
+	/*protected virtual bool MoveTowardsTarget (Tile target) {
 		// get increments toward the target
 		Vector3 vec = (target.transform.position - transform.position).normalized;
 		Point incs = new Point(Mathf.RoundToInt(vec.x), Mathf.RoundToInt(vec.y));
@@ -465,75 +426,6 @@ public class Monster : Creature {
 		}
 
 		return new Point(dx, dy);
-	}
-
-
-	// =====================================================
-	// Random Roaming
-	// =====================================================
-
-	/*protected bool followingPath = false;
-
-	protected virtual void Roam () {
-		// move in a random direction until we are too far away from original point
-		// if we are, tend to return to it
-		if (state == CreatureStates.Attacking || state == CreatureStates.Defending) {
-			path = null;
-			return;
-		}
-
-		// escape if we are following a previous path
-		if (path != null && path.Count > 1) {
-
-			if (state != CreatureStates.Moving) { 
-				path = null;
-				return;
-			}
-			StartCoroutine(FollowPathStep((int)path[0].x, (int)path[0].y));
-			if (path.Count > 1) { path.RemoveAt(0); }
-			return;
-		}
-
-		int radius = 8;
-		Tile tile = null;
-		while (true) {
-			int xx = x + Random.Range(-radius, radius);
-			int yy = x + Random.Range(-radius, radius);
-			tile = grid.GetTile(xx, yy);
-			if (tile && tile.IsWalkable()) {
-				break;
-			}
-		}	
-
-		SetPath(tile.x, tile.y);
-	}
-
-
-	public override void SetPath (int x, int y) {
-		// search for new path
-		path = Astar.instance.SearchPath(this.x, this.y, x, y);
-		path = CapPathToFirstEncounter(path);
-
-		if (path != null && path.Count > 0) {
-			state = CreatureStates.Moving;
-			StartCoroutine(FollowPathStep((int)path[0].x, (int)path[0].y));
-			if (path.Count > 1) { path.RemoveAt(0); }
-		}
-	}
-
-
-	// =====================================================
-	// Random Roaming
-	// =====================================================
-
-	protected virtual void MoveToItem () {
-		// update vision without render
-
-		// get most interesting item
-
-		// set path to item
-
-		// follow path
 	}*/
 
 }

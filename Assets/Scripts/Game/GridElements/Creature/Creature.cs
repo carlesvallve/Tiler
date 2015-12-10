@@ -164,7 +164,7 @@ public class Creature : Tile {
 
 
 	protected bool IsAgressive () {
-		return isAgressive; // TODO: We may want to implement a stats.agressivity integer here
+		return isAgressive;
 	}
 
 
@@ -175,7 +175,6 @@ public class Creature : Tile {
 
 		return false;
 	}
-
 
 
 	// =====================================================
@@ -189,9 +188,9 @@ public class Creature : Tile {
 		}
 
 		// clear previous path
-		if (path != null) {
+		/*if (path != null) {
 			DrawPath(Color.white);
-		}
+		}*/
 
 		// escape if goal has not been explored yet
 		Tile tile = grid.GetTile(x, y);
@@ -228,8 +227,8 @@ public class Creature : Tile {
 			return;
 		}
 
-		// render new path
-		//DrawPath(Color.magenta); //new Color(1, 1, 1));
+		// draw new path
+		//DrawPath(Color.magenta);
 
 		// follow new path
 		StartCoroutine(FollowPath());
@@ -282,7 +281,8 @@ public class Creature : Tile {
 
 		// escape if we are no longer moving because of encounters on next tile
 		if (state != CreatureStates.Moving) { 
-			// wait enough time for monsters to complete their movement
+
+			// wait enough time for monsters to complete their actions
 			yield return new WaitForSeconds(speed);
 
 			// emmit event if we used something
@@ -316,8 +316,6 @@ public class Creature : Tile {
 		Tile tile = grid.GetTile(x, y);
 		tile.SetColor(tile.color);
 
-		
-
 		// emit event
 		if (this is Player) {
 			sfx.Play("Audio/Sfx/Step/step", 0.8f, Random.Range(0.8f, 1.2f));
@@ -328,11 +326,10 @@ public class Creature : Tile {
 		}
 
 		// resolve encounters with current tile after moving
-		Vector2 goal = (this is Player) ? path[path.Count - 1] : new Vector2(this.x, this.y);
-		//Vector2 goal = path[path.Count - 1];
-		if (this.x == (int)goal.x && this.y == (int)goal.y) {
-			ResolveEncountersAtGoal(this.x, this.y);
-		}
+		//Vector2 goal = (this is Player) ? path[path.Count - 1] : new Vector2(this.x, this.y);
+		//if (this.x == (int)goal.x && this.y == (int)goal.y) {
+		ResolveEncountersAtGoal(this.x, this.y);
+		//}
 	}
 
 
@@ -353,10 +350,12 @@ public class Creature : Tile {
 		}
 
 		state = CreatureStates.Idle;
-		DrawPath(Color.white);
+
+		// clear path
+		//DrawPath(Color.white);
 
 		// creatures need to set their visibility also after they moved
-		//UpdateVisibility();
+		UpdateVisibility();
 	}
 
 
@@ -390,7 +389,7 @@ public class Creature : Tile {
 	}
 
 
-	protected void ResolveEntityEncounters (int x, int y) {
+	protected virtual void ResolveEntityEncounters (int x, int y) {
 		Entity entity = grid.GetEntity(x, y);
 		if (entity == null) { return; }
 
@@ -398,8 +397,6 @@ public class Creature : Tile {
 		if (entity is Door) {
 			Door door = (Door)entity;
 			if (door.state != EntityStates.Open) {
-				DrawPath(Color.white);
-
 				// open the door
 				if (door.state == EntityStates.Closed) { 
 					state = CreatureStates.Using;
@@ -419,8 +416,6 @@ public class Creature : Tile {
 		if (entity is Chest) {
 			Chest chest = (Chest)entity;
 			if (chest.state != EntityStates.Open) {
-				DrawPath(Color.white);
-
 				// open the door
 				if (chest.state == EntityStates.Closed) { 
 					state = CreatureStates.Using;
@@ -435,8 +430,6 @@ public class Creature : Tile {
 				}
 			}
 		}
-
-
 	}
 
 
@@ -656,7 +649,7 @@ public class Creature : Tile {
 			}
 		}
 
-		//print(Utils.ListToString(allItems));
+		// spawn all the items carried by the creature
 		SpawnItemsFromInventory(allItems);
 	}
 
@@ -667,8 +660,6 @@ public class Creature : Tile {
 		sfx.Play("Audio/Sfx/Combat/hitB", 0.6f, Random.Range(0.5f, 2.0f));
 
 		grid.CreateBlood(transform.localPosition, 16, Color.red);
-
-		
 
 		grid.SetCreature(this.x, this.y, null);
 		Destroy(gameObject);

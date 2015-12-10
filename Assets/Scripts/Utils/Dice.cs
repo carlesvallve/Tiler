@@ -41,7 +41,6 @@ public class Dice {
 	}
 
 
-	//IntParseFast("400")    2.87 ns
 	public static int IntParseFast(string value) {
 		int result = 0;
 		for (int i = 0; i < value.Length; i++) {
