@@ -5,6 +5,12 @@ using System.Collections.Generic;
 
 public class Player : Creature {
 
+	public delegate void GameTurnUpdateHandler();
+	public event GameTurnUpdateHandler OnGameTurnUpdate;
+
+	public delegate void GameOverHandler();
+	public event GameOverHandler OnGameOver;
+
 	protected bool cameraFollow = true;
 	protected int cameraMargin = 3;
 
@@ -65,6 +71,23 @@ public class Player : Creature {
 	protected void SetPlayerClass () {
 		string[] classes = new string[] { "guard", "warrior", "ranger", "mage", "monk", "priest" }; // "normal", 
 		playerClass = classes[Random.Range(0, classes.Length)];
+	}
+
+	// =====================================================
+	// Event emission
+	// =====================================================
+
+	public override void UpdateGameTurn () {
+		if (OnGameTurnUpdate != null) { 
+			OnGameTurnUpdate.Invoke(); 
+		}
+	}
+
+
+	public override void GameOver () {
+		if (OnGameOver != null) { 
+			OnGameOver.Invoke(); 
+		}
 	}
 
 

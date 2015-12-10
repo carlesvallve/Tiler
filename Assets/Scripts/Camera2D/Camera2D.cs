@@ -11,9 +11,9 @@ public class Camera2D : MonoBehaviour {
 	int pixelsPerUnit = 32;
 	
 	// zoom
-	private float zoomSpeed = 0.5f;
-	private float minZoom = 0;
-	private float maxZoom = 1024 / 2;
+	//private float zoomSpeed = 0.5f;
+	//private float minZoom = 0;
+	//private float maxZoom = 1024 / 2;
 
 	// panning
 	public float panSpeed = 0.01f;
@@ -23,21 +23,26 @@ public class Camera2D : MonoBehaviour {
 	void Start () {
 		instance = this;
 
-		maxZoom = ((Screen.height / 2) / pixelsPerUnit) * 2;
-		Camera.main.orthographicSize = maxZoom / 2;
+		//maxZoom = ((Screen.height / 2) / pixelsPerUnit) * 2;
+		//Camera.main.orthographicSize = maxZoom / 2;
+
+		Camera.main.orthographicSize = (Screen.height / 2) / pixelsPerUnit;
 	}
 
 
 	void Update () {
+
+		Camera.main.orthographicSize = (Screen.height / 2) / pixelsPerUnit;
+
 		// apply scroll forward
-		if (Input.GetAxis("Mouse ScrollWheel") > 0) {
+		/*if (Input.GetAxis("Mouse ScrollWheel") > 0) {
 			ZoomOrthoCamera(Camera.main.ScreenToWorldPoint(Input.mousePosition), 1 * zoomSpeed);
 		}
 
 		// apply scoll back
 		if (Input.GetAxis("Mouse ScrollWheel") < 0) {
 			ZoomOrthoCamera(Camera.main.ScreenToWorldPoint(Input.mousePosition), -1 * zoomSpeed);
-		}
+		}*/
 
 		// apply panning
 		if (Input.GetMouseButtonDown(1)) {
@@ -53,7 +58,7 @@ public class Camera2D : MonoBehaviour {
 	}
 
 
-	private void ZoomOrthoCamera (Vector3 zoomTowards, float amount) {
+	/*private void ZoomOrthoCamera (Vector3 zoomTowards, float amount) {
 		zoomTowards = Camera.main.transform.position;
 
 		// Calculate how much we will have to move towards the zoomTowards position
@@ -67,7 +72,7 @@ public class Camera2D : MonoBehaviour {
 
 		// Limit zoom
 		Camera.main.orthographicSize = Mathf.Clamp(Camera.main.orthographicSize, minZoom, maxZoom);
-	}
+	}*/
 
 
 	private void PanOrthoCamera (Vector2 delta) {

@@ -16,11 +16,7 @@ public enum CreatureStates  {
 
 public class Creature : Tile {
 
-	public delegate void GameTurnUpdateHandler();
-	public event GameTurnUpdateHandler OnGameTurnUpdate;
-
-	public delegate void GameOverHandler();
-	public event GameOverHandler OnGameOver;
+	
 
 	protected List<Vector2> path;
 	public float speed = 0.15f;
@@ -290,11 +286,7 @@ public class Creature : Tile {
 
 			// emmit event if we used something
 			if (state == CreatureStates.Using) {
-				if (this is Player) {
-					if (OnGameTurnUpdate != null) { 
-						OnGameTurnUpdate.Invoke();
-					}
-				}
+				this.UpdateGameTurn();
 			}
 			
 			// and stop moving
@@ -319,17 +311,16 @@ public class Creature : Tile {
 		Tile tile = grid.GetTile(x, y);
 		tile.SetColor(tile.color);
 
-		// emit event
+		// play step sound (player only)
 		if (this is Player) {
 			sfx.Play("Audio/Sfx/Step/step", 0.8f, Random.Range(0.8f, 1.2f));
-			
-			if (OnGameTurnUpdate != null) { 
-				OnGameTurnUpdate.Invoke(); 
-			}
 		}
 
 		// resolve encounters with current tile after moving
 		ResolveEncountersAtCurrentTile(this.x, this.y);
+
+		// emit event
+		this.UpdateGameTurn();
 	}
 
 
@@ -483,21 +474,29 @@ public class Creature : Tile {
 	public virtual void CenterCamera (bool interpolate = true) {}
 	public virtual void UpdateVision (int x, int y) {}
 
+	// event emission
+	public virtual void UpdateGameTurn () {}
+	public virtual void GameOver () {}
+
 
 	// =====================================================
 	// Combat
 	// =====================================================
 
-	public void AttackToBreak (Entity target, float delay = 0) {
+	public void AttackToBreak (Entity target) { // , float delay = 0) {
+		float delay = state == CreatureStates.Moving ? speed : 0;
 		StartCoroutine(AttackAnimation(target, delay, 4));
 	}
 	
 
 	protected void Attack (Creature target, float delay = 0) {
+
 		if (state == CreatureStates.Using) { return; }
 		if (target.state == CreatureStates.Dying) { return; }
 		
-		StopMoving();
+		//delay += state == CreatureStates.Moving ? speed : 0;
+
+		//StopMoving();
 		state = CreatureStates.Attacking;
 
 		StartCoroutine(AttackAnimation(target, delay, 3));
@@ -584,16 +583,7 @@ public class Creature : Tile {
 			yield return null;
 		}
 
-		yield return new WaitForSeconds(0.05f);
-
 		state = CreatureStates.Idle;
-
-		// emmit event
-		if (this is Player) {
-			if (OnGameTurnUpdate != null) { 
-				OnGameTurnUpdate.Invoke(); 
-			}
-		}
 	}
 
 
@@ -635,9 +625,10 @@ public class Creature : Tile {
 			yield return null;
 		}
 
-		yield return new WaitForSeconds(0.05f);
-
 		state = CreatureStates.Idle;
+
+		// emmit event once the defender has finished this action
+		attacker.UpdateGameTurn();
 	}
 
 
@@ -661,6 +652,12 @@ public class Creature : Tile {
 
 		// spawn all the items carried by the creature
 		SpawnItemsFromInventory(allItems);
+
+		// update vision to refresh spawned items rendering
+		if (this.visible) {
+			grid.player.UpdateVision(grid.player.x, grid.player.y);
+		}
+		
 	}
 
 
@@ -675,11 +672,7 @@ public class Creature : Tile {
 		Destroy(gameObject);
 
 		// if player died, emit gameover event
-		if (this is Player) {
-			if (OnGameOver != null) { 
-				OnGameOver.Invoke(); 
-			}
-		}
+		this.GameOver();
 
 		yield break;
 	}

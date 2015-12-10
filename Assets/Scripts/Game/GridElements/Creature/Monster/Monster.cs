@@ -75,10 +75,13 @@ public class Monster : Creature {
 	// =====================================================
 
 	protected virtual void Think () {
+
 		// escape if we are doing something already
 		if (state != CreatureStates.Idle) {
 			return;
 		}
+
+		print ("Thinking...");
 
 		// modify interest depending on current situation
 		if (!IsAware()) {
