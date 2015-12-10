@@ -192,15 +192,26 @@ public class Tile : MonoBehaviour {
 	}
 
 	// computes walkable entities and creatures
-	public bool IsWalkable () {
+	public bool IsWalkable () { // Creature who = null
 		Entity entity = grid.GetEntity(x, y);
 		if (entity != null && !entity.walkable) { return false; }
 
 		Creature creature = grid.GetCreature(x, y);
 		if (creature != null && !creature.walkable) { return false; }
 
+		/*Creature creature = grid.GetCreature(x, y);
+		if (creature != null) {
+			if (who == null) {
+				if (!creature.walkable) { return false; }
+			} else {
+				if (who.IsAgressive()) { return true; }
+			}
+			
+		}*/
+
 		return walkable;
 	}
+
 
 	// computes all entities that block the light
 	public bool IsOpaque () {

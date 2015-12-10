@@ -193,7 +193,7 @@ public class Creature : Tile {
 			if (this is Player) { Hud.instance.Log("You wait..."); }
 			//Speak("...", Color.yellow);
 		} else {
-			// if we are the player goal is a creature, set goal tile as walkable
+			// if we are the player and goal is a creature, set goal tile as walkable
 			if (this is Player) {
 				Creature target = grid.GetCreature(x, y);
 				if (target != null) {
@@ -207,7 +207,7 @@ public class Creature : Tile {
 			}
 
 			// search for new path
-			path = Astar.instance.SearchPath(grid.player.x, grid.player.y, x, y);
+			path = Astar.instance.SearchPath(this.x, this.y, x, y);
 			path = CapPathToFirstEncounter(path);
 		}
 		

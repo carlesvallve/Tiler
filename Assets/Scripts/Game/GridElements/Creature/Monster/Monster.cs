@@ -259,6 +259,9 @@ public class Monster : Creature {
 
 
 	protected virtual void ChaseAndFollow (int direction = 1) { 
+		// if we are a monster in attacking mood, set goal tile as walkable
+		if (IsAgressive()) { grid.player.walkable = true; }
+
 		// get best available tile for moving to while chasing/fleeing at/from the player
 		// monsters can't follow LOS marks more than some number of (say 5?) rounds old.
 		// (if we set it to 0, monster will only chase the player if they see him)
@@ -267,7 +270,11 @@ public class Monster : Creature {
 
 		// move to selected neighbour tile
 		path = new List<Vector2>() { new Vector2(tile.x, tile.y) };
+
 		StartCoroutine(FollowPath());
+
+		// restore player to unwalkable
+		grid.player.walkable = false;
 	}
 
 
