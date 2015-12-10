@@ -199,6 +199,9 @@ public class Creature : Tile {
 			if (this is Player) { Hud.instance.Log("You wait..."); }
 			//Speak("...", Color.yellow);
 		} else {
+
+			// TODO: Separate ranged attack ckecks and apply them too after followPathStep
+			
 			// if we are the player and goal is a creature, set goal tile as walkable
 			if (this is Player) {
 				Creature target = grid.GetCreature(x, y);
@@ -215,14 +218,16 @@ public class Creature : Tile {
 				}
 
 				Entity targetEntity = grid.GetEntity(x, y);
-				if (targetEntity != null && (targetEntity is Chest) && targetEntity.state != EntityStates.Open && targetEntity.breakable) {
+				if (targetEntity != null && (targetEntity is Chest) && targetEntity.state != EntityStates.Open) {
 					// if we have a ranged attack and we are in range, shoot the target
-					float distance = Vector2.Distance(new Vector2(this.x, this.y), new Vector2(targetEntity.x, targetEntity.y));
-					if (IsRangedAttack() && distance  >= 2 && distance <= stats.attackRange) {
-						ShootToBreak(targetEntity);
-						return;
+					if (targetEntity.breakable) {
+						float distance = Vector2.Distance(new Vector2(this.x, this.y), new Vector2(targetEntity.x, targetEntity.y));
+						if (IsRangedAttack() && distance  >= 2 && distance <= stats.attackRange) {
+							ShootToBreak(targetEntity);
+							return;
+						}
 					}
-
+					
 					// otherwise, set target as walkable in astar walkability
 					Astar.instance.walkability[targetEntity.x, targetEntity.y] = 0;
 				}
@@ -692,10 +697,7 @@ public class Creature : Tile {
 		SpawnItemsFromInventory(allItems);
 
 		// update vision to refresh spawned items rendering
-		if (this.visible) {
-			grid.player.UpdateVision(grid.player.x, grid.player.y);
-		}
-		
+		grid.player.UpdateVision(grid.player.x, grid.player.y);
 	}
 
 

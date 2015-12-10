@@ -47,6 +47,9 @@ public class Entity: Tile {
 		}
 		
 		Destroy(gameObject);
+
+		// update vision to render the spawned items propperly
+		grid.player.UpdateVision(grid.player.x, grid.player.y);
 	}
 
 }
