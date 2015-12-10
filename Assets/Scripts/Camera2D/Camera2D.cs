@@ -8,7 +8,6 @@ public class Camera2D : MonoBehaviour {
 	public static Camera2D instance;
 
 	// resolution
-	int resHeight = 1024;
 	int pixelsPerUnit = 32;
 	
 	// zoom

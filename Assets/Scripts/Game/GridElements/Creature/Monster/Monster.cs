@@ -86,6 +86,7 @@ public class Monster : Creature {
 			//stats.interest[typeof(Player)] = 0;
 		}
 
+		// TODO: this should not be a boolean state, but rather a degree of agressivity
 		if (IsAfraid()) {
 			SetInfo("Flee", Color.yellow);
 			Flee();

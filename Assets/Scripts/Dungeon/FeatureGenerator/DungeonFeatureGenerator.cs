@@ -59,7 +59,7 @@ public class DungeonFeatureGenerator {
 			c++; if (c == 1000) { break; }
 		}
 
-		Debug.LogError("No free tile available in room " + room.id + ". Escaping...");
+		Debug.LogWarning ("No free tile available in room " + room.id + ". Escaping...");
 		return null;
 	}
 
@@ -78,7 +78,7 @@ public class DungeonFeatureGenerator {
 			c++; if (c == 1000) { break; }
 		}
 
-		Debug.LogError("No free tile available in grid. Escaping...");
+		Debug.LogWarning("No free tile available in grid. Escaping...");
 		return null;
 	}
 

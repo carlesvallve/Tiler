@@ -169,7 +169,7 @@ public class Creature : Tile {
 
 
 	protected bool IsAfraid () {
-		if (stats.hp < stats.hpMax * 0.25f) {
+		if (stats.hp < stats.hpMax * 0.5f) {
 			return true;
 		}
 
@@ -263,6 +263,9 @@ public class Creature : Tile {
 			yield return StartCoroutine (FollowPathStep(x, y));
 		}
 
+		// resolve encounters once we arrived to the goal
+		ResolveEncountersAtGoal(this.x, this.y);
+
 		// stop moving once we reach the goal
 		StopMoving();
 	}
@@ -326,10 +329,7 @@ public class Creature : Tile {
 		}
 
 		// resolve encounters with current tile after moving
-		//Vector2 goal = (this is Player) ? path[path.Count - 1] : new Vector2(this.x, this.y);
-		//if (this.x == (int)goal.x && this.y == (int)goal.y) {
-		ResolveEncountersAtGoal(this.x, this.y);
-		//}
+		ResolveEncountersAtCurrentTile(this.x, this.y);
 	}
 
 
@@ -441,21 +441,9 @@ public class Creature : Tile {
 	}
 
 
-	protected void ResolveEncountersAtGoal (int x, int y) {
+	protected void ResolveEncountersAtCurrentTile (int x, int y) {
 		Entity entity = grid.GetEntity(x, y);
 		if (entity != null) {
-
-			// use stairs
-			if ((this is Player) && (entity is Stair)) {
-				Stair stair = (Stair)entity;
-
-				if (stair.state == EntityStates.Open) {
-					state = CreatureStates.Descending;
-					Dungeon.instance.ExitLevel (stair.direction);
-				} else {
-					Hud.instance.Log("The stair doors are locked.");
-				}
-			}
 
 			// pickup items
 			if (entity is Item) {
@@ -464,6 +452,28 @@ public class Creature : Tile {
 		}
 	}
 
+	protected void ResolveEncountersAtGoal (int x, int y) {
+		Vector2 goal = path[path.Count - 1];
+		if (x == (int)goal.x && y == (int)goal.y) {
+
+			Entity entity = grid.GetEntity(x, y);
+			if (entity != null) {
+
+				// stairs (player only)
+				if ((this is Player) && (entity is Stair)) {
+					Stair stair = (Stair)entity;
+
+					if (stair.state == EntityStates.Open) {
+						state = CreatureStates.Descending;
+						Dungeon.instance.ExitLevel (stair.direction);
+					} else {
+						Hud.instance.Log("The stair doors are locked.");
+					}
+				}
+
+			}
+		}
+	}
 
 	// =====================================================
 	// Functions overriden by Player class

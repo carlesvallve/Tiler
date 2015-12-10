@@ -73,12 +73,12 @@ public class Game : MonoSingleton <Game> {
 	// =====================================================
 
 	private void InitializeGameNames () {
-		string path = "Assets/Scripts/Utils/ProceduralNames/Data/Names/";
+		string path = "Data/Names/";
 
 		gameNames = new Dictionary<string, ProceduralNameGenerator>() {
-			{ "male", 	  new ProceduralNameGenerator(path + "Male.txt") },
-			{ "female",   new ProceduralNameGenerator(path + "Female.txt") },
-			{ "ukranian", new ProceduralNameGenerator(path + "Ukranian.txt") }
+			{ "male", 	  new ProceduralNameGenerator(path + "Male") },
+			{ "female",   new ProceduralNameGenerator(path + "Female") },
+			{ "ukranian", new ProceduralNameGenerator(path + "Ukranian") }
 		};
 	}
 

@@ -33,7 +33,7 @@ public class CreatureStats {
 
 	// hunger (todo)
 	public float hunger = 0;
-	public float hungerRate = 0.2f; // 1 point each 5 turns
+	public float hungerRate = 0.1f; // 10 point each 5 turns
 
 	// stealth (todo)
 	public int awareness = 1;

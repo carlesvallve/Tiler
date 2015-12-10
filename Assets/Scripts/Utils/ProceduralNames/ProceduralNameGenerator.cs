@@ -27,7 +27,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.IO;
 
 
 class Character
@@ -54,9 +53,10 @@ public class ProceduralNameGenerator
 
     public ProceduralNameGenerator(string filename, int order = 2, System.Random random = null)
     {
-        string inputfile = filename;
-        string[] words = File.ReadAllLines(inputfile);
 
+        TextAsset textAsset = Resources.Load(filename) as TextAsset;
+        string[] words = textAsset.text.Split('\n');
+        
         Initialize(words, order, random);
     }
 

@@ -1,6 +1,7 @@
-using System;
+using UnityEngine;
 using System.Collections;
-using System.IO;
+using System;
+
 
 
 namespace Markov
@@ -30,11 +31,9 @@ namespace Markov
 		public Hashtable Words=new Hashtable(1024,.1f);
 		public void Load(string filename)
 		{
-			//string inputfile = filename;
-        	//string[] words = File.ReadAllLines(inputfile);
-        	string Input = File.ReadAllText(filename);
-        	
-
+			
+        	TextAsset textAsset = Resources.Load(filename) as TextAsset;
+        	string Input = textAsset.text;
 
 			startindex = new ArrayList();
 			Words=new Hashtable(1024,.1f);
@@ -118,7 +117,7 @@ namespace Markov
 		public string Output()
 		{
 			string output="";
-			Random r = new Random(Environment.TickCount+startindex.Count);
+			System.Random r = new System.Random(Environment.TickCount+startindex.Count);
 			Structs.RootWord w = (Structs.RootWord)Words[((string)startindex[r.Next(startindex.Count)]).ToLower()];
 			output=w.Word+" ";
 			Structs.Child	 c = new Structs.Child();
