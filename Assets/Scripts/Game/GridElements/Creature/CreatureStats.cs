@@ -27,6 +27,8 @@ public class CreatureStats {
 	public int attack = 1;
 	public int defense = 1;
 
+	public int attackRange = 1;
+
 	// regeneration
 	public float regeneration = 0;
 	public float regenerationRate = 0.2f; // 1 point each 5 turns

@@ -266,6 +266,9 @@ public class Tile : MonoBehaviour {
 			item.Drop(this, tile.x, tile.y);
 			allItems.RemoveAt(0);
 		}
+
+		// update vision to render the spawned items propperly
+		grid.player.UpdateVision(grid.player.x, grid.player.y);
 	}
 	
 }

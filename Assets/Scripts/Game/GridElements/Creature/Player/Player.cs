@@ -50,6 +50,8 @@ public class Player : Creature {
 		stats.attack = 5;
 		stats.defense = 2;
 		stats.str = 2;
+
+		stats.attackRange = 5;
 	}
 
 

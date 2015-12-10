@@ -9,7 +9,7 @@ public class Entity: Tile {
 
 	protected List<Item> items = new List<Item>();
 
-	protected bool breakable = false;
+	public bool breakable = false;
 
 
 	public override void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null) {

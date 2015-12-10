@@ -11,6 +11,7 @@ public class Grid : MonoSingleton <Grid> {
 	public GameObject barPrefab;
 	public GameObject bloodPrefab;
 	public GameObject glowPrefab;
+	public GameObject bulletPrefab;
 
 	public int width = 16;
 	public int height = 16;
@@ -249,6 +250,20 @@ public class Grid : MonoSingleton <Grid> {
 		glow.Init(pos, maxParticles, color);
 
 		return glow;
+	}
+
+
+	public Bullet CreateBullet (Vector3 startPos, Vector3 endPPos, float duration, int maxParticles, Color color) {
+		Transform parent = container.Find("Fx");
+
+		GameObject obj = (GameObject)Instantiate(bulletPrefab);
+		obj.transform.SetParent(parent, false);
+		obj.name = "Bullet";
+
+		Bullet bullet = obj.GetComponent<Bullet>();
+		bullet.Init(startPos, endPPos, duration, maxParticles, color);
+
+		return bullet;
 	}
 
 

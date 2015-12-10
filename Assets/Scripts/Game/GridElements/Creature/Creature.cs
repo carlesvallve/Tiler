@@ -167,6 +167,11 @@ public class Creature : Tile {
 	}
 
 
+	protected bool IsRangedAttack () {
+		return stats.attackRange > 1;
+	}
+
+
 	// =====================================================
 	// Path
 	// =====================================================
@@ -187,8 +192,9 @@ public class Creature : Tile {
 		if (tile == null) { return; }
 		if (!tile.explored) { return; }
 
-		// if goal is the creature's tile, wait one turn instead
+		// check the goal tile
 		if (x == this.x && y == this.y) {
+			// if goal is ourselves, wait one turn instead
 			path = new List<Vector2>() { new Vector2(this.x, this.y) };
 			if (this is Player) { Hud.instance.Log("You wait..."); }
 			//Speak("...", Color.yellow);
@@ -197,11 +203,27 @@ public class Creature : Tile {
 			if (this is Player) {
 				Creature target = grid.GetCreature(x, y);
 				if (target != null) {
+					// if we have a ranged attack and we are in range, shoot the target
+					float distance = Vector2.Distance(new Vector2(this.x, this.y), new Vector2(target.x, target.y));
+					if (IsRangedAttack() && distance  >= 2 && distance <= stats.attackRange) {
+						Shoot(target);
+						return;
+					}
+
+					// otherwise, set target as walkable in astar walkability
 					Astar.instance.walkability[target.x, target.y] = 0;
 				}
 
 				Entity targetEntity = grid.GetEntity(x, y);
-				if (targetEntity != null && (targetEntity is Chest) && targetEntity.state != EntityStates.Open) {
+				if (targetEntity != null && (targetEntity is Chest) && targetEntity.state != EntityStates.Open && targetEntity.breakable) {
+					// if we have a ranged attack and we are in range, shoot the target
+					float distance = Vector2.Distance(new Vector2(this.x, this.y), new Vector2(targetEntity.x, targetEntity.y));
+					if (IsRangedAttack() && distance  >= 2 && distance <= stats.attackRange) {
+						ShootToBreak(targetEntity);
+						return;
+					}
+
+					// otherwise, set target as walkable in astar walkability
 					Astar.instance.walkability[targetEntity.x, targetEntity.y] = 0;
 				}
 			}
@@ -419,6 +441,7 @@ public class Creature : Tile {
 
 
 	protected virtual void ResolveCreatureEncounters (int x, int y) {
+		// if next tile is a creature, attack it
 		Creature creature = grid.GetCreature(x, y);
 		if (creature != null && creature != this) {
 			Attack(creature, 0);
@@ -477,7 +500,28 @@ public class Creature : Tile {
 	// Combat
 	// =====================================================
 
-	public void AttackToBreak (Entity target) { // , float delay = 0) {
+	protected void Shoot (Creature target, float delay = 0) {
+		StopMoving();
+
+		Attack(target, delay);
+
+		// create bullet
+		grid.CreateBullet(transform.localPosition, target.transform.localPosition, speed, 8, Color.yellow);
+	}
+
+	public void ShootToBreak (Entity target) {
+		StopMoving();
+
+		// create bullet
+		grid.CreateBullet(transform.localPosition, target.transform.localPosition, speed, 8, Color.yellow);
+
+		// break barrel
+		Chest chest = (Chest)target;
+		chest.StartCoroutine(chest.Open(this));
+	}
+
+
+	public void AttackToBreak (Entity target) {
 		float delay = state == CreatureStates.Moving ? speed : 0;
 		StartCoroutine(AttackAnimation(target, delay, 4));
 	}
