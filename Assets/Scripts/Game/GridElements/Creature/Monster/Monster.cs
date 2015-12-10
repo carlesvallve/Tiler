@@ -127,6 +127,7 @@ public class Monster : Creature {
 		}
 
 		if (IsAfraid()) {
+			SetInfo("Flee", Color.yellow);
 			Flee();
 			return;
 		}
@@ -151,6 +152,7 @@ public class Monster : Creature {
 		// chase target tile
 		if (targetTile is Player) {
 			// use chase and follow algorithm
+			SetInfo("Kill", Color.yellow);
 			ChaseAndFollow();
 			/*if (IsAfraid()) {
 				Flee();
@@ -159,6 +161,7 @@ public class Monster : Creature {
 			}*/
 		} else {
 			// use astar pathfinding
+			SetInfo(this.targetTile.name, Color.yellow);
 			GotoTargetTile(this.targetTile); 
 		}
 	}

@@ -42,7 +42,7 @@ public class Player : Creature {
 		stats.visionRadius = 6;
 		stats.attack = 5;
 		stats.defense = 2;
-		stats.str = 4;
+		stats.str = 2;
 	}
 
 
