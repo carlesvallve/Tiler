@@ -1,5 +1,7 @@
 using System;
 using System.Collections;
+using System.IO;
+
 
 namespace Markov
 {
@@ -26,8 +28,14 @@ namespace Markov
 	{
 		ArrayList startindex = new ArrayList();
 		public Hashtable Words=new Hashtable(1024,.1f);
-		public void Load(string Input)
+		public void Load(string filename)
 		{
+			//string inputfile = filename;
+        	//string[] words = File.ReadAllLines(inputfile);
+        	string Input = File.ReadAllText(filename);
+        	
+
+
 			startindex = new ArrayList();
 			Words=new Hashtable(1024,.1f);
 			Structs.RootWord w = new Structs.RootWord();
