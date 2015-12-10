@@ -45,10 +45,6 @@ public class Dungeon : MonoSingleton <Dungeon> {
 			seed = dungeonSeeds[currentDungeonLevel];
 		}
 
-		// Apply random seed
-		/*dungeonGenerator.seed = seed;
-		Random.seed = seed;*/
-		
 		// Generate dungeon data
 		dungeonGenerator.GenerateDungeon(seed);
 

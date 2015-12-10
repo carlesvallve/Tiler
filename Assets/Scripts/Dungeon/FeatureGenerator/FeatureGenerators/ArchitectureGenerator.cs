@@ -51,6 +51,7 @@ public class ArchitectureGenerator : DungeonFeatureGenerator {
 						
 						Floor floor = (Floor)grid.CreateTile(typeof(Floor), x, y, 1, asset) as Floor;
 						floor.SetColor(floorColor, true);
+						//floor.SetColor(quadtree.color, true);
 
 						// set room info in floor tile
 						if (dtile.room != null) {
