@@ -70,6 +70,18 @@ public class Dungeon : MonoSingleton <Dungeon> {
 		// Generate dungeon features
 		GenerateDungeonFeatures(direction);
 
+		// get an astar path from stair to stair. 
+		List<Vector2> path = Astar.instance.SearchPath(
+			grid.stairUp.x, grid.stairUp.y, grid.stairDown.x, grid.stairDown.y
+		);
+
+		// If there is no path, we need to generate a different dungeon level
+		if (path.Count == 0) {
+			Debug.LogError("Dungeon level cannot be solved. Genrating again...");
+			GenerateDungeon(direction);
+			return;
+		}
+
 		// Update game turn
 		game.UpdateGameTurn();
 
