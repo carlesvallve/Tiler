@@ -150,6 +150,35 @@ public class Creature : Tile {
 
 
 	// =====================================================
+	// Ai
+	// =====================================================
+
+	protected bool IsAware () {
+		if (stats.alert > 0) { 
+			if (!this.visible) { UpdateAlert(-1); }
+			return true;
+		}
+
+		return false;
+	}
+
+
+	protected bool IsAgressive () {
+		return isAgressive; // TODO: We may want to implement a stats.agressivity integer here
+	}
+
+
+	protected bool IsAfraid () {
+		if (stats.hp < stats.hpMax * 0.25f) {
+			return true;
+		}
+
+		return false;
+	}
+
+
+
+	// =====================================================
 	// Path
 	// =====================================================
 
@@ -484,7 +513,7 @@ public class Creature : Tile {
 	
 	private bool ResolveCombatOutcome (Creature attacker) {
 		// resolve combat outcome
-		int attack = attacker.stats.attack + Dice.Roll("1d10-2");
+		int attack = attacker.stats.attack + Dice.Roll("1d8+2");
 		int defense = stats.defense + Dice.Roll("1d6+1");
 
 		// hit

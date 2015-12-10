@@ -34,7 +34,8 @@ public class Tile : MonoBehaviour {
 
 	protected int zIndex;
 
-	public int weight = 0;
+	// used by ai to pick this tile as a target
+	public int interestWeight = 0;
 
 
 	public virtual void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null) {

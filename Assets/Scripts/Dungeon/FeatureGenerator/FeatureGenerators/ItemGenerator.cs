@@ -18,7 +18,7 @@ public class ItemGenerator : DungeonFeatureGenerator {
 		for (int n = 0; n < dungeonGenerator.rooms.Count; n++) {
 
 			DungeonRoom room = dungeonGenerator.rooms[n];
-			int maxItems = Random.Range(0, 100) <= 60 ? Random.Range(1, Mathf.RoundToInt((room.tiles.Count * 0.2f))) : 0;
+			int maxItems = Random.Range(0, 100) <= 80 ? Random.Range(1, Mathf.RoundToInt((room.tiles.Count * 0.2f))) : 0;
 
 			for (int i = 1; i <= maxItems; i ++) {
 				Tile tile = GetFreeTileOnRoom(room, 0);

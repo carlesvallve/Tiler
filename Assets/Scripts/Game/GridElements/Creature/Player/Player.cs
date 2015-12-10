@@ -41,7 +41,7 @@ public class Player : Creature {
 		stats.hp = stats.hpMax;
 		stats.visionRadius = 6;
 		stats.attack = 5;
-		stats.defense = 1;
+		stats.defense = 2;
 		stats.str = 4;
 	}
 

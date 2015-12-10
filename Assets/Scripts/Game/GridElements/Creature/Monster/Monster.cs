@@ -8,40 +8,23 @@ using System.Collections.Generic;
 //	- chase, flee, roam, chase item
 
 
-public class MonsterAi {
-	public Dictionary<System.Type, int> greed = new Dictionary<System.Type, int>() {
-		{ typeof(Armour), 0 },
-		{ typeof(Weapon), 0 },
-		{ typeof(Book), 0 },
-		{ typeof(Food), 0 },
-		{ typeof(Potion), 0 },
-		{ typeof(Treasure), 100 }
-	};
+/*public class MonsterAi {
 
-	public Dictionary<System.Type, int> hate = new Dictionary<System.Type, int>() {
-		{ typeof(Player), 0 },
-		{ typeof(Monster), 0 },
-	};
-
-	public Dictionary<System.Type, int> fear = new Dictionary<System.Type, int>() {
-		{ typeof(Player), 0 },
-		{ typeof(Monster), 0 },
-	};
-}
+}*/
 
 
 public class Monster : Creature {
 
 	
 
-	public MonsterAi ai;
+	//public MonsterAi ai;
 	protected Tile targetTile;
 
 
 	public override void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null) {
 		base.Init(grid, x, y, scale, asset);
 		
-		InitializeAi();
+		//InitializeAi();
 
 		debugEnabled = true;
 
@@ -110,10 +93,10 @@ public class Monster : Creature {
 	// Monster AI
 	// =====================================================
 
-	protected void InitializeAi () {
+	/*protected void InitializeAi () {
 		// set each ai parameter here
 		ai = new MonsterAi();
-	}
+	}*/
 	
 
 	protected virtual void Think () {
@@ -136,49 +119,48 @@ public class Monster : Creature {
 			return;
 		}*/
 
+
+		// modify interest depending on current situation
+		if (!IsAware()) {
+			return;
+			//stats.interest[typeof(Player)] = 0;
+		}
+
+		if (IsAfraid()) {
+			Flee();
+			return;
+		}
+
+		if (!IsAgressive()) {
+			stats.interest[typeof(Player)] = 0;
+		}
+
+
 		// if we dont have a target tile, get a new one
+		// if no interesting stuff was found, target will be a random tile to roam to
 		if (this.targetTile == null) {
 			this.targetTile = GetTarget();
 		}
 
 		// if we never got a valid target, do nothing this turn
 		if (this.targetTile == null) {
-			Debug.Log("Something went wrong with this monster decision...");
+			Debug.Log("Something went wrong with this monster decision. Will do nothing this turn...");
 			return;
 		}
 
-		// goto target tile
-		GotoTargetTile(this.targetTile);
-
-		// chase item
-		/*Item item = GetItemInRadius(stats.visionRadius);
-		if (item != null) {
-			GotoTarget(item);
-		}*/
-
-		// roam randomly
-		//Roam();
-	}
-
-
-	protected Item GetBestItem () {
-		Item item = null;
-		// best item will be, from items in vision
-		// list of item types with higher weight in ai greed dictionary
-		// sort list by distance to the item
-		// sort list by value of the item
-
-		return item;
-	}
-
-
-	protected bool IsAware () {
-		if (stats.alert > 0) { 
-			if (!this.visible) { UpdateAlert(-1); }
-			return true;
+		// chase target tile
+		if (targetTile is Player) {
+			// use chase and follow algorithm
+			ChaseAndFollow();
+			/*if (IsAfraid()) {
+				Flee();
+			} else {
+				ChaseAndFollow();
+			}*/
+		} else {
+			// use astar pathfinding
+			GotoTargetTile(this.targetTile); 
 		}
-
-		return false;
 	}
 
 
@@ -211,23 +193,71 @@ public class Monster : Creature {
 	// =====================================================
 
 	protected Tile GetTarget () {
-		//print ("Getting a new target: ");
-		// 1. choose a random item in vision
-		Item item = GetRandomItemInRadius(stats.visionRadius);
-		if (item != null) {
-			//print ("    going for " + item + " at " + x + "," + y);
-			return item;
+		Tile tile = null;
+
+		// 1. choose a target in vision range
+		tile = ChooseTargetByInterest(stats.visionRadius);
+		if (tile != null) {
+			return tile;
 		}
 
-		// 2. choose a random tile in vision
-		Tile tile = GetRandomTileInRadius(stats.visionRadius);
+		// 2. if nothig interesting, choose a random tile to roam to
+		tile = GetRandomTileInRadius(stats.visionRadius);
 		if (tile != null) {
-			//print ("    roaming towards " + tile + " at " + x + "," + y);
 			return tile;
 		}
 
 		// no available target was found
 		return null;
+	}
+
+
+	protected Tile ChooseTargetByInterest (int radius) {
+		// generate a list of all possible interesting tiles in radius, entities or creatures 
+		// whose type is also defined in our interest dictionary
+		List<Tile> list = new List<Tile>();
+
+		// iterate on all tiles in radius
+		for (int y = this.y + - radius; y <= this.y + radius; y++) {
+			for (int x =  this.x - radius; x <= this.x + radius; x++) {
+				if (x == this.x && y == this.y) {
+					continue;
+				}
+
+				// check entities
+				Entity entity = grid.GetEntity(x, y);
+				if (entity != null) {
+					System.Type type = entity.GetType();
+					if (stats.interest.ContainsKey(type) && stats.interest[type] > 0) {
+						list.Add(entity);
+						entity.interestWeight = stats.interest[type];
+					}
+				}
+
+				// check creatures
+				Creature creature = grid.GetCreature(x, y);
+				if (creature != null) {
+					System.Type type = creature.GetType();
+					if (stats.interest.ContainsKey(type) && stats.interest[type] > 0) {
+						list.Add(creature);
+						creature.interestWeight = stats.interest[type];
+					}
+				}
+			}
+		}
+
+		// if we dont see anything interesting, escape
+		if (list.Count == 0) {
+			//print ("Nothing interesting in sight...");
+			return null;
+		}
+
+		// now we have a list of items and creatures around with an interest weight that match out intereset dictionary
+		// we want to pick a random tile from this list depending on the weight of the items in it
+		Tile tile = Dice.GetRandomTileFromList(list);
+
+		// now we have a target to act upon to
+		return tile;
 	}
 
 
@@ -256,42 +286,6 @@ public class Monster : Creature {
 		}
 
 		return tile;
-	}
-
-
-	protected Item GetRandomItemInRadius (int radius) {
-		List<Item> itemList = new List<Item>();
-
-		for (int y = this.y + - radius; y <= this.y + radius; y++) {
-			for (int x =  this.x - radius; x <= this.x + radius; x++) {
-				if (x == this.x && y == this.y) {
-					continue;
-				}
-
-				Entity entity = grid.GetEntity(x, y);
-				if (entity != null && (entity is Item)) {
-					Item item = (Item)entity;
-					
-					//print (item.GetType());
-					item.weight = ai.greed[item.GetType()];
-					//print (item + " " + item.weight);
-
-					itemList.Add(item);
-				}
-			}
-		}
-
-		if (itemList.Count == 0) {
-			//print ("No item was found. Escaping...");
-			return null;
-		}
-
-
-		//Item selectedItem = Utils.RandomWeight(itemList);
-		//return selectedItem;
-
-		Utils.Shuffle(itemList);
-		return itemList[0];
 	}
 
 

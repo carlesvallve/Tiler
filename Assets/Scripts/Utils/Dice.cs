@@ -45,8 +45,8 @@ public class Dice {
 	public static int IntParseFast(string value) {
 		int result = 0;
 		for (int i = 0; i < value.Length; i++) {
-	 		char letter = value[i];
-	 		result = 10 * result + (letter - 48);
+			char letter = value[i];
+			result = 10 * result + (letter - 48);
 		}
 		return result;
 	}
@@ -81,7 +81,7 @@ public class Dice {
 		// generate a list of weights from our weight prop in our list of objects
 		List<double> values = new List<double>();
 		foreach (Tile item in list) {
-    		values.Add(item.weight);
+			values.Add(item.interestWeight);
 		}  
 
 		// spin the roulette, passing an array of double values
@@ -99,34 +99,34 @@ public class Dice {
 
 	public static int SpinRoulette (double[] n) {
 
-        System.Random random = new System.Random();
-        double total = 0;
-        double[] c = new double[n.Length + 1];
-        
-        // Create cumulative values
-        c[0] = 0;
-        for (int i = 0; i < n.Length; i++) {
-            c[i + 1] = c[i] + n[i];
-            total += n[i];
-        }
+		System.Random random = new System.Random();
+		double total = 0;
+		double[] c = new double[n.Length + 1];
+		
+		// Create cumulative values
+		c[0] = 0;
+		for (int i = 0; i < n.Length; i++) {
+			c[i + 1] = c[i] + n[i];
+			total += n[i];
+		}
 
-        // Create a random number between 0 and 1 and times by the total we calculated earlier.
-        double r = random.NextDouble() * total;   
+		// Create a random number between 0 and 1 and times by the total we calculated earlier.
+		double r = random.NextDouble() * total;   
 
-        // Don't use this - it's slower than the binary search below.  
-        //int j; for (j = 0; j < c.Length; j++) if (c[j] > r) break; return j-1; 
+		// Don't use this - it's slower than the binary search below.  
+		//int j; for (j = 0; j < c.Length; j++) if (c[j] > r) break; return j-1; 
 
-        // Binary search for efficiency. 
-        // Objective is to find index of the number just above r.
-        int a = 0;
-        int b = c.Length - 1;
-        while (b - a > 1) {
-            int mid = (a + b) / 2;
-            if (c[mid] > r) b = mid;
-            else a = mid;
-        }
+		// Binary search for efficiency. 
+		// Objective is to find index of the number just above r.
+		int a = 0;
+		int b = c.Length - 1;
+		while (b - a > 1) {
+			int mid = (a + b) / 2;
+			if (c[mid] > r) b = mid;
+			else a = mid;
+		}
 
-        return a;
+		return a;
 	}
 
 }
