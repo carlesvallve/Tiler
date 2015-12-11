@@ -172,6 +172,16 @@ public class Creature : Tile {
 	}
 
 
+	protected bool IsAtShootRange (Tile target) {
+		float distance = Vector2.Distance(new Vector2(this.x, this.y), new Vector2(target.x, target.y));
+		if (IsRangedAttack() && distance  >= 2 && distance <= stats.attackRange) {
+			return true;
+		}
+
+		return false;
+	}
+
+
 	// =====================================================
 	// Path
 	// =====================================================
@@ -355,8 +365,7 @@ public class Creature : Tile {
 			if (target != null ) {
 				// if we have a ranged attack and we are in range, shoot the target
 				if (target.visible) {
-					float distance = Vector2.Distance(new Vector2(this.x, this.y), new Vector2(target.x, target.y));
-					if (IsRangedAttack() && distance  >= 2 && distance <= stats.attackRange) {
+					if (IsAtShootRange(target)) {
 						Shoot(target);
 						return true;
 					}
@@ -370,8 +379,7 @@ public class Creature : Tile {
 			if (targetEntity != null && (targetEntity is Chest) && targetEntity.state != EntityStates.Open) {
 				// if we have a ranged attack and we are in range, shoot the target
 				if (targetEntity.breakable && targetEntity.visible) {
-					float distance = Vector2.Distance(new Vector2(this.x, this.y), new Vector2(targetEntity.x, targetEntity.y));
-					if (IsRangedAttack() && distance  >= 2 && distance <= stats.attackRange) {
+					if (IsAtShootRange(targetEntity)) {
 						ShootToBreak(targetEntity);
 						return true;
 					}

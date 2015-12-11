@@ -121,9 +121,16 @@ public class Monster : Creature {
 
 		// chase target tile
 		if (targetTile is Player) {
-			// use chase and follow algorithm
-			SetInfo("Kill", Color.yellow);
-			ChaseAndFollow();
+			if (IsAtShootRange(targetTile)) {
+				// shoot the player if in range
+				SetInfo("Shoot", Color.yellow);
+				Shoot((Player)targetTile);
+			} else {
+				// use chase and follow algorithm
+				SetInfo("Kill", Color.yellow);
+				ChaseAndFollow();
+			}
+			
 		} else {
 			// use astar pathfinding
 			SetInfo(this.targetTile.name, Color.yellow);
