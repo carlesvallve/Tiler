@@ -200,41 +200,12 @@ public class Creature : Tile {
 			//Speak("...", Color.yellow);
 		} else {
 
-			// TODO: Separate ranged attack ckecks and apply them too after followPathStep
-			
-			// if we are the player and goal is a creature, set goal tile as walkable
-			if (this is Player) {
-				Creature target = grid.GetCreature(x, y);
-				if (target != null ) {
-					// if we have a ranged attack and we are in range, shoot the target
-					if (target.visible) {
-						float distance = Vector2.Distance(new Vector2(this.x, this.y), new Vector2(target.x, target.y));
-						if (IsRangedAttack() && distance  >= 2 && distance <= stats.attackRange) {
-							Shoot(target);
-							return;
-						}
-					}
-
-					// otherwise, set target as walkable in astar walkability
-					Astar.instance.walkability[target.x, target.y] = 0;
-				}
-
-				Entity targetEntity = grid.GetEntity(x, y);
-				if (targetEntity != null && (targetEntity is Chest) && targetEntity.state != EntityStates.Open) {
-					// if we have a ranged attack and we are in range, shoot the target
-					if (targetEntity.breakable && targetEntity.visible) {
-						float distance = Vector2.Distance(new Vector2(this.x, this.y), new Vector2(targetEntity.x, targetEntity.y));
-						if (IsRangedAttack() && distance  >= 2 && distance <= stats.attackRange) {
-							ShootToBreak(targetEntity);
-							return;
-						}
-					}
-					
-					// otherwise, set target as walkable in astar walkability
-					Astar.instance.walkability[targetEntity.x, targetEntity.y] = 0;
-				}
+			// check for targets on the goal tile (for both chasing/melee and ranged attacks)
+			bool escape = CheckForTargets(x, y);
+			if (escape) {
+				return;
 			}
-
+			
 			// search for new path
 			path = Astar.instance.SearchPath(this.x, this.y, x, y);
 			path = CapPathToFirstEncounter(path);
@@ -376,6 +347,43 @@ public class Creature : Tile {
 	// =====================================================
 	// Encounters
 	// =====================================================
+
+	protected bool CheckForTargets (int x, int y) {
+		// if we are the player and goal is a creature, set goal tile as walkable
+		if (this is Player) {
+			Creature target = grid.GetCreature(x, y);
+			if (target != null ) {
+				// if we have a ranged attack and we are in range, shoot the target
+				if (target.visible) {
+					float distance = Vector2.Distance(new Vector2(this.x, this.y), new Vector2(target.x, target.y));
+					if (IsRangedAttack() && distance  >= 2 && distance <= stats.attackRange) {
+						Shoot(target);
+						return true;
+					}
+				}
+
+				// otherwise, set target as walkable in astar walkability
+				Astar.instance.walkability[target.x, target.y] = 0;
+			}
+
+			Entity targetEntity = grid.GetEntity(x, y);
+			if (targetEntity != null && (targetEntity is Chest) && targetEntity.state != EntityStates.Open) {
+				// if we have a ranged attack and we are in range, shoot the target
+				if (targetEntity.breakable && targetEntity.visible) {
+					float distance = Vector2.Distance(new Vector2(this.x, this.y), new Vector2(targetEntity.x, targetEntity.y));
+					if (IsRangedAttack() && distance  >= 2 && distance <= stats.attackRange) {
+						ShootToBreak(targetEntity);
+						return true;
+					}
+				}
+				
+				// otherwise, set target as walkable in astar walkability
+				Astar.instance.walkability[targetEntity.x, targetEntity.y] = 0;
+			}
+		}
+
+		return false;
+	}
 
 	protected List<Vector2> CapPathToFirstEncounter (List<Vector2> path) {
 		int i;

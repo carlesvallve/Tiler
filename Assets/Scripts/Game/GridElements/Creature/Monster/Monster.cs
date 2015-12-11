@@ -30,9 +30,16 @@ public class Monster : Creature {
 	// =====================================================
 
 	public override void SetVisibility (Tile tile, bool visible, float shadowValue) {
+		// when a monster becomes visible, player will have discovered this monster
+		// this does no necessary mean that the monster sees the player yet
+		if (!this.visible && visible) {
+			grid.player.DiscoverMonster(this);
+		}
+
+		// update monster visibility
 		base.SetVisibility(tile, visible, shadowValue);
 
-		// manage monster alert mode
+		// set monster alert mode
 		SetAlertMode(visible);
 	}
 
@@ -42,6 +49,7 @@ public class Monster : Creature {
 		float distanceToPlayer = Mathf.Round(Vector2.Distance(new Vector2(x, y), new Vector2(grid.player.x, grid.player.y)) * 10) / 10;
 		
 		if (distanceToPlayer < stats.visionRadius) {
+			// at this point, monster sees the player
 			// if monster wasnt in alert mode, speak surprise message and start alert mode
 			if (visible && stats.alert == 0) {
 				Speak(isAgressive ? "Hey!" : "!", Color.yellow, true);

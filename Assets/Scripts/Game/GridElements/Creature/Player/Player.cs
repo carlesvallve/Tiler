@@ -112,6 +112,13 @@ public class Player : Creature {
 	// Encounters
 	// =====================================================
 
+	public virtual void DiscoverMonster (Creature creature) {
+		// stop the player on his tracks as soon as he sees a new monster
+		Speak("!", Color.white, true);
+		StopMoving();
+	}
+	
+
 	protected override void ResolveEntityEncounters (int x, int y) {
 		base.ResolveEntityEncounters(x, y);
 
