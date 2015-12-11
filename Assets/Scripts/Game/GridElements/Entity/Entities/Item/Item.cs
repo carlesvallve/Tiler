@@ -45,11 +45,30 @@ public class Item : Entity {
 
 	public virtual void Drop (Tile tile, int x, int y) {
 		transform.SetParent(grid.container.Find("Entities"), false);
-		LocateAtCoords(x, y);
+		transform.localPosition = new Vector3(tile.x, tile.y, 0);
+		//LocateAtCoords(x, y);
 		gameObject.SetActive(true);
 
 		sfx.Play("Audio/Sfx/Item/armour", 0.6f, Random.Range(0.8f, 1.2f));
 
 		// TODO: Animate items interpolating them form creature pos to x,y
+		StartCoroutine(DropAnimation(x, y, 0.15f));
+	}
+
+
+	private IEnumerator DropAnimation (int x, int y, float duration = 0.15f) {
+		//duration = 0.5f;
+		// interpolate creature position
+		float t = 0;
+		Vector3 startPos = transform.localPosition;
+		Vector3 endPos = new Vector3(x, y, 0);
+		while (t <= 1) {
+			t += Time.deltaTime / duration;
+			transform.localPosition = Vector3.Lerp(startPos, endPos, Mathf.SmoothStep(0f, 1f, t));
+
+			yield return null;
+		}
+
+		LocateAtCoords(x, y);
 	}
 }
