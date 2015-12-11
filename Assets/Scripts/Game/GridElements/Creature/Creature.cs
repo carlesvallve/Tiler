@@ -205,12 +205,14 @@ public class Creature : Tile {
 			// if we are the player and goal is a creature, set goal tile as walkable
 			if (this is Player) {
 				Creature target = grid.GetCreature(x, y);
-				if (target != null) {
+				if (target != null ) {
 					// if we have a ranged attack and we are in range, shoot the target
-					float distance = Vector2.Distance(new Vector2(this.x, this.y), new Vector2(target.x, target.y));
-					if (IsRangedAttack() && distance  >= 2 && distance <= stats.attackRange) {
-						Shoot(target);
-						return;
+					if (target.visible) {
+						float distance = Vector2.Distance(new Vector2(this.x, this.y), new Vector2(target.x, target.y));
+						if (IsRangedAttack() && distance  >= 2 && distance <= stats.attackRange) {
+							Shoot(target);
+							return;
+						}
 					}
 
 					// otherwise, set target as walkable in astar walkability
@@ -220,7 +222,7 @@ public class Creature : Tile {
 				Entity targetEntity = grid.GetEntity(x, y);
 				if (targetEntity != null && (targetEntity is Chest) && targetEntity.state != EntityStates.Open) {
 					// if we have a ranged attack and we are in range, shoot the target
-					if (targetEntity.breakable) {
+					if (targetEntity.breakable && targetEntity.visible) {
 						float distance = Vector2.Distance(new Vector2(this.x, this.y), new Vector2(targetEntity.x, targetEntity.y));
 						if (IsRangedAttack() && distance  >= 2 && distance <= stats.attackRange) {
 							ShootToBreak(targetEntity);
