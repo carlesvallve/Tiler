@@ -41,6 +41,10 @@ public class Monster : Creature {
 
 		// set monster alert mode
 		SetAlertMode(visible);
+
+		if (!visible) {
+			SetInfo("", Color.yellow);
+		}
 	}
 
 
