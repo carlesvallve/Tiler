@@ -11,7 +11,6 @@ public class Player : Creature {
 	public delegate void GameOverHandler();
 	public event GameOverHandler OnGameOver;
 
-	protected bool cameraFollow = true;
 	protected int cameraMargin = 3;
 
 	protected string playerName;
@@ -21,6 +20,9 @@ public class Player : Creature {
 	// list of monster that are currently attacking the player
 	// used for calculating the monster attack delay, so they dont attack all at once
 	public List<Monster> monsterQueue = new List<Monster>();
+
+
+	public List<Creature> newVisibleMonsters = new List<Creature>();
 
 
 	public override void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null) {
@@ -80,6 +82,12 @@ public class Player : Creature {
 	// =====================================================
 
 	public override void UpdateGameTurn () {
+		
+		// if after all our actions, we discovered some new monsters, 
+		// stop moving and log them
+		LogNewVisibleMonsters();
+
+		// emit update game turn event
 		if (OnGameTurnUpdate != null) { 
 			OnGameTurnUpdate.Invoke(); 
 		}
@@ -97,14 +105,28 @@ public class Player : Creature {
 	// Path and Movement
 	// =====================================================
 
+	/*public override void SetPath(int x, int y) {
+		
+
+		base.SetPath(x, y);
+	}*/
+
+
 	protected override IEnumerator FollowPathStep (int x, int y) {
 		// clear monster queue
 		monsterQueue.Clear();
+
+		newVisibleMonsters.Clear();
+		Hud.instance.Log("");
 		
 		yield return StartCoroutine(base.FollowPathStep(x, y));
 
 		// check if camera needs to track player
 		CheckCamera();
+
+		// if after all our actions, we discovered some new monsters, 
+		// stop moving and log them
+		LogNewVisibleMonsters();
 	}
 
 
@@ -113,23 +135,40 @@ public class Player : Creature {
 	// =====================================================
 
 	public virtual void DiscoverMonster (Creature creature) {
-		// stop the player on his tracks as soon as he sees a new monster
-		Speak("!", Color.white, true);
+		newVisibleMonsters.Add(creature);
+	}
+
+
+	private void LogNewVisibleMonsters () {
+		if (newVisibleMonsters.Count == 0) {
+			return;
+		}
+
 		StopMoving();
+		Speak("!", Color.white, true);
+
+		string str = "";
+		string punctuation = "";
+		for (int i = 0; i < newVisibleMonsters.Count; i++) {
+			if (newVisibleMonsters.Count > 1) {
+				if (i > 0 && i < newVisibleMonsters.Count - 1) { punctuation = ", "; }
+				if (i == newVisibleMonsters.Count - 1) { punctuation = " and "; }
+			}
+
+			string desc = newVisibleMonsters[i].GetType().ToString();
+			str += punctuation + Utils.GetStringPrepositions(desc) + " " + desc;
+		}
+
+		Hud.instance.Log("You see " + str);
+		//Utils.DebugList(newVisibleMonsters);
+
+		// pick a random monster from the list and move camera to center pint between him and us
+		Creature creature = newVisibleMonsters[Random.Range(0, newVisibleMonsters.Count)];
+		Vector2 point = transform.localPosition + 
+		(creature.transform.localPosition - transform.localPosition) / 2;
+		MoveCameraTo((int)point.x, (int)point.y);
 	}
 	
-
-	protected override void ResolveEntityEncounters (int x, int y) {
-		base.ResolveEntityEncounters(x, y);
-
-		// if stairs and is our last movement, disable camera follow
-		Entity entity = grid.GetEntity(x, y);
-		if (entity != null && (entity is Stair)) {
-			if (x == (int)(path[path.Count -1].x) && y == (int)(path[path.Count -1].y)) {
-				cameraFollow = false;
-			}
-		}
-	}
 
 	// =====================================================
 	// Camera
@@ -153,15 +192,13 @@ public class Player : Creature {
 		} else {
 			Camera2D.instance.LocateAtPos(new Vector2(this.x, this.y));
 		}
-
-		cameraFollow = true;
 	}
 
 
 	protected void CheckCamera () {
-		if (!cameraFollow) {
-			return;
-		}
+		/*if (state != CreatureStates.Idle) { 
+			return; 
+		}*/
 
 		Vector3 screenPos = Camera.main.WorldToScreenPoint(transform.position);
 

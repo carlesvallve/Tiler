@@ -241,7 +241,7 @@ public class Creature : Tile {
 	// Movement
 	// =====================================================
 
-	protected IEnumerator FollowPath () {
+	protected virtual IEnumerator FollowPath () {
 		state = CreatureStates.Moving;
 
 		for (int i = 0; i < path.Count; i++) {

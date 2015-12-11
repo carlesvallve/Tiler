@@ -49,11 +49,11 @@ public class Item : Entity {
 		sfx.Play("Audio/Sfx/Item/armour", 0.6f, Random.Range(0.8f, 1.2f));
 
 		// Animate items interpolating them form chest position to x,y
-		StartCoroutine(DropAnimation(x, y, 0.15f));
+		StartCoroutine(DropAnimation(x, y, 0.1f));
 	}
 
 
-	private IEnumerator DropAnimation (int x, int y, float duration = 0.15f) {
+	private IEnumerator DropAnimation (int x, int y, float duration = 0.1f) {
 		// interpolate item position
 		float t = 0;
 		Vector3 startPos = transform.localPosition;

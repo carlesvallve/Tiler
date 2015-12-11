@@ -34,6 +34,20 @@ public static class Utils {
 
 		return str;
 	}
+
+
+	public static void DebugList<T>(this IList<T> ts) {
+		Debug.Log (ListToString(ts));
+	}
+
+
+	public static string GetStringPrepositions (string str) {
+		if (str == "a" || str == "e" || str == "i" || str == "o" || str == "u") {
+			return "an";
+		} else {
+			return "a";
+		}
+	}
 }
 
 
