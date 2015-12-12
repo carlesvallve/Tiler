@@ -8,5 +8,6 @@ public class Monkey : Humanoid {
 		base.Init(grid, x, y, scale, asset);
 
 		stats.energyRate = 1.25f;
+		stats.energy = Mathf.Max(1f, stats.energyRate);
 	}
 }

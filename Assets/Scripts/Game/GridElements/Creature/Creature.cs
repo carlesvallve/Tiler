@@ -14,6 +14,7 @@ public class Creature : Tile {
 
 	protected List<Vector2> path;
 	public float speed = 0.15f;
+	public float speedMove = 0.15f;
 
 	protected Creature target;
 
@@ -319,6 +320,9 @@ public class Creature : Tile {
 
 
 	protected virtual IEnumerator FollowPathStep (int x, int y) {
+		// adjust speed to energy rate
+		speedMove = Mathf.Min(0.15f / stats.energyRate, 0.15f);
+
 		if (state != CreatureStates.Moving) { 
 			yield break; 
 		}
@@ -350,7 +354,7 @@ public class Creature : Tile {
 		Vector3 startPos = transform.localPosition;
 		Vector3 endPos = new Vector3(x, y, 0);
 		while (t <= 1) {
-			t += Time.deltaTime / speed;
+			t += Time.deltaTime / speedMove;
 			transform.localPosition = Vector3.Lerp(startPos, endPos, Mathf.SmoothStep(0f, 1f, t));
 
 			UpdatePosInGrid(x, y);
@@ -569,6 +573,7 @@ public class Creature : Tile {
 	public virtual void UpdateVision (int x, int y) {}
 
 	public virtual void Think () {}
+	protected virtual bool CanMove () { return true; }
 
 	// event emission
 	public virtual void UpdateGameTurn () {}
@@ -610,13 +615,8 @@ public class Creature : Tile {
 		if (state == CreatureStates.Using) { return; }
 		if (target.state == CreatureStates.Dying) { return; }
 
-		// Attack rate and movement rate should be independent:
-		// A creature should always can have 1 attack per turn
-		// so his energy gets reseted each time he attacks (for now)
-		// TODO: propper way of doing this should be implementing a propper AttackRate
-		// and checking for additional attacks, etc...
-		stats.energy = 1 - stats.energyRate;
-		
+		//stats.energy = stats.energyRate;
+
 		state = CreatureStates.Attacking;
 
 		StartCoroutine(AttackAnimation(target, delay, 3));

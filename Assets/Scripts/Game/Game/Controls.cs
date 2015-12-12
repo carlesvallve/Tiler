@@ -64,7 +64,7 @@ public class Controls : MonoBehaviour {
 			}
 		}
 
-		print ("Idle monsters " + c + "/" + monsters.Length);
+		//print ("Idle monsters " + c + "/" + monsters.Length);
 		if (c == monsters.Length) {
 			return true;
 		}

@@ -9,7 +9,7 @@ public class MonsterGenerator : DungeonFeatureGenerator {
 	// Monster generation
 	// =====================================================
 
-	// TODO: 
+	// TODO:
 	// Implement a balanced level spawning algorithm
 	// Monsters should be spawned by affinity groups, relative to the dungeon level 
 	
@@ -24,6 +24,8 @@ public class MonsterGenerator : DungeonFeatureGenerator {
 
 		List<System.Type> types = GetMonsterTypes();
 		System.Type monsterType = types[Random.Range(0, types.Count)];
+
+		monsterType = typeof(Centaur);
 
 		grid.CreateCreature(monsterType, tile.x, tile.y, 0.7f, null);
 	}
@@ -66,7 +68,7 @@ public class MonsterGenerator : DungeonFeatureGenerator {
 		// Pick a random creature type
 		List<System.Type> types = new List<System.Type>() { 
 			// animals
-			/*typeof(Bat), 
+			typeof(Bat), 
 			typeof(Bear), 
 			typeof(Cat), 
 			typeof(Chicken), 
@@ -85,7 +87,7 @@ public class MonsterGenerator : DungeonFeatureGenerator {
 			typeof(Sheep),
 			typeof(Scorpion),
 			typeof(Turkey), 
-			typeof(Wolf),*/
+			typeof(Wolf),
 			 
 			// humanoids
 			typeof(Caveman), 

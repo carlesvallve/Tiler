@@ -8,5 +8,6 @@ public class Zombie : Humanoid {
 		base.Init(grid, x, y, scale, asset);
 
 		stats.energyRate = 0.5f;
+		stats.energy = Mathf.Max(1f, stats.energyRate);
 	}
 }

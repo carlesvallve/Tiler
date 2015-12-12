@@ -11,5 +11,6 @@ public class Centaur : Humanoid {
 		base.Init(grid, x, y, scale, asset);
 
 		stats.energyRate = 2f;
+		stats.energy = Mathf.Max(1f, stats.energyRate);
 	}
 }

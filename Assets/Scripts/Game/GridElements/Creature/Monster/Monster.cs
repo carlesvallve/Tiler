@@ -20,6 +20,9 @@ public class Monster : Creature {
 			if (state == CreatureStates.Dying) { return; }
 			if (grid.player.state == CreatureStates.Descending) { return; }
 
+			// apply events that happen once per turn independent of energy rates
+			RegenerateHp();
+
 			// make monster take a decision
 			Think();
 		};
@@ -93,9 +96,9 @@ public class Monster : Creature {
 
 	public override void Think () {
 		// escape if we are doing something already
-		if (state != CreatureStates.Idle) {
+		/*if (state != CreatureStates.Idle) {
 			return;
-		}
+		}*/
 
 		state = CreatureStates.Idle;
 
@@ -105,8 +108,7 @@ public class Monster : Creature {
 			return;
 		}
 		
-		// set monster actions
-		RegenerateHp();
+		
 
 		//if monster is not aware of the player, just freeze and do nothing
 		/*if (!IsAware()) {
@@ -165,7 +167,8 @@ public class Monster : Creature {
 
 	protected void MoveAgain () {
 		// tell game to wait until we finished our action, then think again
-		Game.instance.StartCoroutine(Game.instance.WaitForTurnToEnd(this, speed));
+		float duration = state == CreatureStates.Moving ? speedMove : speed;
+		Game.instance.StartCoroutine(Game.instance.WaitForTurnToEnd(this, duration));
 	}
 
 

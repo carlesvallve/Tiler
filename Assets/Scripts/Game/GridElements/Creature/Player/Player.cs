@@ -139,6 +139,9 @@ public class Player : Creature {
 		// check if camera needs to track player
 		CheckCamera();
 
+		// wait one frame more than other creatures
+		yield return null;
+
 		// if after all our actions, we discovered some new monsters, 
 		// stop moving and log them
 		LogNewVisibleMonsters();

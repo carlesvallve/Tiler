@@ -50,9 +50,18 @@ public class Game : MonoSingleton <Game> {
 
 
 	public IEnumerator WaitForTurnToEnd (Creature creature, float duration) {
+		// Attack rate and movement rate should be independent:
+		// A creature should always have 1 attack per turn for now,
+		// so avoid thinking again if we are attacking
+		if (creature.state == CreatureStates.Attacking) {
+			creature.stats.energy += creature.stats.energyRate;
+			yield break;
+		}
+
 		// wait until monster has realize his action, then think again
 		yield return new WaitForSeconds(duration);
-		yield return null;
+
+		// think again
 		creature.Think();
 	}
 
@@ -147,14 +156,14 @@ public class Game : MonoSingleton <Game> {
 		bgm1 = GetRandomBgm(musicList, 90);
 		if (bgm1 != null) {
 			sfx.Play(bgm1, 0, Random.Range(0.8f, 1.2f), true); 
-			sfx.Fade(bgm1, 0.3f, 1f);	
+			sfx.Fade(bgm1, 0.25f, 1f);	
 		}
 		
 
 		bgm2 = GetRandomBgm(ambientList, 60);
 		if (bgm2 != null) {
 			sfx.Play(bgm2, 0, Random.Range(0.8f, 1.2f), true);
-			sfx.Fade(bgm2, 0.3f, 1f);
+			sfx.Fade(bgm2, 0.25f, 1f);
 		}
 	}
 
