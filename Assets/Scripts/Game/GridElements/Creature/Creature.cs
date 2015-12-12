@@ -544,13 +544,9 @@ public class Creature : Tile {
 	
 
 	protected void Attack (Creature target, float delay = 0) {
-
 		if (state == CreatureStates.Using) { return; }
 		if (target.state == CreatureStates.Dying) { return; }
 		
-		//delay += state == CreatureStates.Moving ? speed : 0;
-
-		//StopMoving();
 		state = CreatureStates.Attacking;
 
 		StartCoroutine(AttackAnimation(target, delay, 3));
@@ -578,13 +574,16 @@ public class Creature : Tile {
 			if (damage > 0) {
 				// apply damage
 				UpdateHp(-damage);
+
 				// display damage info
 				string[] arr = new string[] { "painA", "painB", "painC", "painD" };
 				sfx.Play("Audio/Sfx/Combat/" + arr[Random.Range(0, arr.Length)], 0.1f, Random.Range(0.6f, 1.8f));
 				sfx.Play("Audio/Sfx/Combat/hitB", 0.5f, Random.Range(0.8f, 1.2f));
 				Speak("-" + damage, Color.red);
+
 				// create blood
 				grid.CreateBlood(transform.position, damage, Color.red);
+				
 				// set isDead to true
 				if (stats.hp == 0) {
 					return true;
