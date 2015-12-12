@@ -65,7 +65,7 @@ public class Creature : Tile {
 		// initialize xp
 		stats.xp = 0;
 		stats.xpMax = 100 * stats.level;
-		stats.xpValue = 10 * stats.level;
+		stats.xpValue = 20 * stats.level;
 		if (this is Player) {
 			Hud.instance.LogXp("LEVEL " + stats.level + "   XP: " + stats.xp + " / " + stats.xpMax);
 		}
@@ -81,7 +81,7 @@ public class Creature : Tile {
 
 		// level up
 		if (stats.xp >= stats.xpMax) { LevelUp(1); }
-		if (stats.xp <= 0) { LevelUp(-1); }
+		if (stats.xp < 0) { LevelUp(-1); }
 
 		// update hud
 		if (this is Player) {
@@ -97,7 +97,7 @@ public class Creature : Tile {
 		if (ammount < 0) { stats.xp = stats.xpMax - stats.xp; } // check if this is correct (?)
 		
 		stats.xpMax = 100 * stats.level;
-		stats.xpValue = 10 * stats.level;
+		stats.xpValue = 20 * stats.level;
 
 		// increase hp
 		int hpIncrease = Random.Range(1, 5);
@@ -107,7 +107,7 @@ public class Creature : Tile {
 
 		// play levelup sound
 		if (this is Player) {
-			sfx.Play("Audio/Sfx/Stats/trumpets", 0.25f, 1.2f); //Random.Range(0.8f, 1.2f));
+			sfx.Play("Audio/Sfx/Stats/trumpets", 0.25f, Random.Range(0.8f, 1.2f));
 		}
 	}
 

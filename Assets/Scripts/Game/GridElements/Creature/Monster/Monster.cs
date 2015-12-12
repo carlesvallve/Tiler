@@ -33,7 +33,11 @@ public class Monster : Creature {
 		// when a monster becomes visible, player will have discovered this monster
 		// this does no necessary mean that the monster sees the player yet
 		if (!this.visible && visible) {
+			// add to player's newVisibleMonsters
 			grid.player.DiscoverMonster(this);
+		} else if (this.visible && !visible) {
+			// remove from player's newVisibleMonsters
+			grid.player.UndiscoverMonster(this);
 		}
 
 		// update monster visibility
@@ -44,13 +48,6 @@ public class Monster : Creature {
 
 		if (!visible) {
 			SetInfo("", Color.yellow);
-
-			// remove from player newVisibleMonsters
-			foreach (Creature creature in grid.player.newVisibleMonsters) {
-				if (creature == this) {
-					grid.player.newVisibleMonsters.Remove(this);
-				}
-			}
 		}
 	}
 
@@ -113,9 +110,13 @@ public class Monster : Creature {
 		}
 
 		// if we are not agresive, we are not interested on the player
-		if (!IsAgressive()) {
+		/*if (!IsAgressive()) {
 			stats.interest[typeof(Player)] = 0;
-		}
+		}*/
+
+		//print (this + " " + IsAgressive());
+
+		stats.interest[typeof(Player)] = IsAgressive() ? 100 : 0;
 
 
 		// if we dont have a target tile, get a new one

@@ -135,7 +135,18 @@ public class Player : Creature {
 	// =====================================================
 
 	public virtual void DiscoverMonster (Creature creature) {
+		if (state == CreatureStates.Descending) { return; }
 		newVisibleMonsters.Add(creature);
+	}
+
+
+	public virtual void UndiscoverMonster (Creature creature) {
+		foreach (Creature c in grid.player.newVisibleMonsters) {
+			if (c == creature) {
+				grid.player.newVisibleMonsters.Remove(creature);
+				break;
+			}
+		}
 	}
 
 
@@ -143,7 +154,7 @@ public class Player : Creature {
 		if (state == CreatureStates.Descending) {
 			return;
 		}
-		
+
 		if (newVisibleMonsters.Count == 0) {
 			return;
 		}

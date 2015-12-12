@@ -99,13 +99,13 @@ public class Game : MonoSingleton <Game> {
 			"Audio/Bgm/Dungeon/Music/piano-5",
 
 			"Audio/Bgm/Dungeon/Musi/synth-1",
-			"Audio/Bgm/Dungeon/Music2/synth-2",
+			"Audio/Bgm/Dungeon/Music/synth-2",
 			"Audio/Bgm/Dungeon/Music/synth-3",
 
-			"Audio/Bgm/Dungeon/Music2/Alone",
-			"Audio/Bgm/Dungeon/Music2/Elementarywave",
-			"Audio/Bgm/dungeoneon/Music2/GambooPiano",
-			"Audio/Bgm/Dungeon/Music2/Lifeline",
+			"Audio/Bgm/Dungeon/Music/Alone",
+			"Audio/Bgm/Dungeon/Music/Elementarywave",
+			"Audio/Bgm/Dungeon/Music/GambooPiano",
+			"Audio/Bgm/Dungeon/Music/Lifeline",
 		};
 
 		ambientList = new List<string>() {
@@ -141,18 +141,16 @@ public class Game : MonoSingleton <Game> {
 
 		bgm1 = GetRandomBgm(musicList, 90);
 		if (bgm1 != null) {
-			sfx.Play(bgm1, 0, 1f, true); // Random.Range(0.5f, 1.5f)
+			sfx.Play(bgm1, 0, Random.Range(0.8f, 1.2f), true); 
 			sfx.Fade(bgm1, 0.3f, 1f);	
 		}
 		
 
 		bgm2 = GetRandomBgm(ambientList, 60);
 		if (bgm2 != null) {
-			sfx.Play(bgm2, 0, 1f, true); // Random.Range(0.5f, 1.5f)
+			sfx.Play(bgm2, 0, Random.Range(0.8f, 1.2f), true);
 			sfx.Fade(bgm2, 0.3f, 1f);
 		}
-
-		print (bgm1 + " " + bgm2);
 	}
 
 

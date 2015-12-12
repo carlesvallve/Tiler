@@ -8,7 +8,7 @@ public class CreatureStats {
 	public int level = 1;
 	public int xp = 0;
 	public int xpMax = 100;
-	public int xpValue = 10;
+	public int xpValue = 20;
 
 	// hp
 	public int hpMax = 10;
