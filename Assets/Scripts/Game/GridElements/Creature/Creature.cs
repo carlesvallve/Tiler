@@ -53,13 +53,20 @@ public class Creature : Tile {
 		walkable = false;
 
 		SetImages(scale, new Vector3(0, 0.1f, 0), 0.035f);
-		
 
 		state = CreatureStates.Idle;
 		stats = new CreatureStats();
 		bar.Init(this);
 
 		LocateAtCoords(x, y);
+
+		// initialize xp
+		stats.xp = 0;
+		stats.xpMax = 100 * stats.level;
+		stats.xpValue = 10 * stats.level;
+		if (this is Player) {
+			Hud.instance.LogXp("LEVEL " + stats.level + "   XP: " + stats.xp + " / " + stats.xpMax);
+		}
 	}
 
 
@@ -70,14 +77,34 @@ public class Creature : Tile {
 	}
 
 
-	/*void Update () {
-		SetInfo(stats.alert.ToString(), Color.yellow);
-	}*/
-
-	
 	// =====================================================
 	// Stats
 	// =====================================================
+
+	public virtual void UpdateXp (int ammount) {
+		stats.xp += ammount; 
+
+		// level up
+		if (stats.xp > stats.xpMax) { LevelUp(1); }
+		if (stats.xp < 0) { LevelUp(-1); }
+
+		// update hud
+		if (this is Player) {
+			Hud.instance.LogXp("LEVEL " + stats.level + "   XP: " + stats.xp + " / " + stats.xpMax);
+			sfx.Play("Audio/Sfx/Stats/level-up", 0.8f, Random.Range(0.8f, 1.2f));
+		}
+	}
+
+
+	protected void LevelUp (int ammount) {
+		stats.level += ammount;
+		
+		stats.hpMax = 100 * stats.level;
+		stats.xpValue = 10 * stats.level;
+
+		stats.xp = 0; //ammount > 0 ? stats.xp - stats.xpMax : stats.xpMax - stats.xp;
+	}
+
 
 	public virtual void UpdateHp (int ammount) {
 		stats.hp += ammount; 
@@ -718,8 +745,15 @@ public class Creature : Tile {
 		grid.SetCreature(this.x, this.y, null);
 		Destroy(gameObject);
 
+		// update attacker xp
+		attacker.UpdateXp(stats.xpValue);
+
 		// if player died, emit gameover event
-		this.GameOver();
+		if (this is Player) {
+			this.GameOver();
+		}
+		
+		
 
 		yield break;
 	}

@@ -6,9 +6,11 @@ public class Hud : MonoSingleton <Hud> {
 
 	public float textSpeed = 0.025f;
 
-	private Text playerText;
-	private Text dungeonText;
-	private Text turnText;
+	private Text playerName;
+	private Text playerXp;
+	private Text dungeonLevel;
+	private Text gameTurn;
+
 	private Text logText;
 	private string lastLog;
 
@@ -24,13 +26,18 @@ public class Hud : MonoSingleton <Hud> {
 		canvas.sortingOrder = short.MaxValue;
 
 		overlayGroup = transform.Find("Overlay").GetComponent<CanvasGroup>();
+		world = transform.Find("World");
 
-		playerText = transform.Find("Header/PlayerName/Text").GetComponent<Text>();
-		dungeonText = transform.Find("Header/DungeonLevel/Text").GetComponent<Text>();
-		turnText = transform.Find("Header/Turn/Text").GetComponent<Text>();
+
+		playerName = transform.Find("Header/PlayerName/Text").GetComponent<Text>();
+		playerXp = transform.Find("Header/PlayerXp/Text").GetComponent<Text>();
+
+		dungeonLevel = transform.Find("Header/DungeonLevel/Text").GetComponent<Text>();
+		gameTurn = transform.Find("Header/Turn/Text").GetComponent<Text>();
+
 		logText = transform.Find("Footer/Log/Text").GetComponent<Text>();
 
-		world = transform.Find("World");
+		
 	}
 
 	// ==============================================================
@@ -105,16 +112,20 @@ public class Hud : MonoSingleton <Hud> {
 	// ==============================================================
 
 	public void LogPlayer (string str) {
-		playerText.text = str;
+		playerName.text = str;
+	}
+
+	public void LogXp (string str) {
+		playerXp.text = str;
 	}
 
 	public void LogTurn (string str) {
-		turnText.text = str;
+		gameTurn.text = str;
 	}
 
 
 	public void LogDungeon (string str) {
-		dungeonText.text = str;
+		dungeonLevel.text = str;
 	}
 
 
