@@ -25,6 +25,11 @@ public class Player : Creature {
 	public List<Creature> newVisibleMonsters = new List<Creature>();
 
 
+	void Update() {
+		SetInfo(walkable.ToString(), Color.yellow);
+	}
+
+
 	public override void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null) {
 		// set random name, race, class
 		SetPlayerName();
@@ -82,14 +87,15 @@ public class Player : Creature {
 	// =====================================================
 
 	public override void UpdateGameTurn () {
+		// update player's vision
+		UpdateVision(x, y);
 		
-		// if after all our actions, we discovered some new monsters, 
-		// stop moving and log them
+		// if we discovered some new monsters, stop moving and log them
 		LogNewVisibleMonsters();
 
 		// emit update game turn event
 		if (OnGameTurnUpdate != null) { 
-			OnGameTurnUpdate.Invoke(); 
+			OnGameTurnUpdate.Invoke();
 		}
 	}
 
@@ -104,13 +110,6 @@ public class Player : Creature {
 	// =====================================================
 	// Path and Movement
 	// =====================================================
-
-	/*public override void SetPath(int x, int y) {
-		
-
-		base.SetPath(x, y);
-	}*/
-
 
 	protected override IEnumerator FollowPathStep (int x, int y) {
 		// clear monster queue
@@ -257,10 +256,11 @@ public class Player : Creature {
 					
 					// render tiles (and record fov info)
 					float distance = Mathf.Round(Vector2.Distance(new Vector2(px, py), new Vector2(x, y)) * 10) / 10;
-					float shadowValue = - 0.1f + Mathf.Min((distance / radius) * 0.6f, 0.6f);
-
-					tile.SetVisibility(tile, lit[x, y], shadowValue);
 					tile.SetFovInfo(Game.instance.turn, distance);
+
+					// render tiles
+					float shadowValue = - 0.1f + Mathf.Min((distance / radius) * 0.6f, 0.6f);
+					tile.SetVisibility(tile, lit[x, y], shadowValue);
 
 					// render entities
 					Entity entity = grid.GetEntity(x, y);

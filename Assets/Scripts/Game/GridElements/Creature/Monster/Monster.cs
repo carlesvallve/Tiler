@@ -20,6 +20,8 @@ public class Monster : Creature {
 
 			// set monster actions
 			RegenerateHp();
+
+			// make monster take a decision
 			Think();
 		};
 	}
@@ -96,10 +98,9 @@ public class Monster : Creature {
 			return;
 		}
 
-		// modify interest depending on current situation
+		//if monster is not aware of the player, just freeze and do nothing
 		if (!IsAware()) {
 			return;
-			//stats.interest[typeof(Player)] = 0;
 		}
 
 		// TODO: this should not be a boolean state, but rather a degree of agressivity
@@ -110,14 +111,7 @@ public class Monster : Creature {
 		}
 
 		// if we are not agresive, we are not interested on the player
-		/*if (!IsAgressive()) {
-			stats.interest[typeof(Player)] = 0;
-		}*/
-
-		//print (this + " " + IsAgressive());
-
 		stats.interest[typeof(Player)] = IsAgressive() ? 100 : 0;
-
 
 		// if we dont have a target tile, get a new one
 		// if no interesting stuff was found, target will be a random tile to roam to
@@ -286,21 +280,20 @@ public class Monster : Creature {
 
 
 	protected virtual void ChaseAndFollow (int direction = 1) { 
-		// if we are a monster in attacking mood, set goal tile as walkable
-		if (IsAgressive()) { grid.player.walkable = true; }
+		// if we are a monster in attacking mood, set player as walkable so we can hit him
+		grid.player.walkable = true; 
 
 		// get best available tile for moving to while chasing/fleeing at/from the player
 		// monsters can't follow LOS marks more than some number of (say 5?) rounds old.
 		// (if we set it to 0, monster will only chase the player if they see him)
-		Tile tile = GetTileWithBestFov(this.x, this.y, 5, direction); // x, y, maxTurnsOld, direction(chase or flee)
+		Tile tile = GetTileWithBestFov(this.x, this.y, 5, direction);
 		if (tile == null) { return; }
 
 		// move to selected neighbour tile
 		path = new List<Vector2>() { new Vector2(tile.x, tile.y) };
-
 		StartCoroutine(FollowPath());
 
-		// restore player to unwalkable
+		// restore player to unwalkable after this monster's action
 		grid.player.walkable = false;
 	}
 
@@ -316,7 +309,9 @@ public class Monster : Creature {
 	}
 
 
-	private List<Tile> GetTilesWithBestFovTurn (List<Tile> neighbours, int maxTurnsOld, int order = 1) { // 1: greatest, -1: smallest
+	private List<Tile> GetTilesWithBestFovTurn (List<Tile> neighbours, int maxTurnsOld, int order = 1) { 
+		// order -> 1: greatest value, -1: smallest value
+
 		// generate an array with fov values
 		int[] values = new int[neighbours.Count];
 		for(int i = 0; i < neighbours.Count; i ++) {
@@ -351,7 +346,7 @@ public class Monster : Creature {
 	}
 
 
-	private Tile GetTileWithBestFovDistance (List<Tile> tiles, int order = 1) { // 1: smallest, -1: greatest
+	private Tile GetTileWithBestFovDistance (List<Tile> tiles, int order = 1) {
 		Tile selectedTile = null;
 
 		float minDistance = order == 1 ? Mathf.Infinity : 0;

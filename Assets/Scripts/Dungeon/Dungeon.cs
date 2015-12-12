@@ -66,7 +66,8 @@ public class Dungeon : MonoSingleton <Dungeon> {
 		// Generate dungeon features
 		GenerateDungeonFeatures(direction);
 
-		
+		// initialize player's vision after everything has been created
+		grid.player.UpdateVision(grid.player.x, grid.player.y);
 
 		// Update game turn
 		game.UpdateGameTurn();

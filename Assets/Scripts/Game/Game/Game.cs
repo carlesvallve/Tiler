@@ -53,9 +53,6 @@ public class Game : MonoSingleton <Game> {
 		// update game turn
 		turn += 1;
 		Hud.instance.LogTurn("TURN " + turn);
-
-		// recalculate player's vision
-		grid.player.UpdateVision(grid.player.x, grid.player.y);
 	}
 
 
@@ -98,7 +95,7 @@ public class Game : MonoSingleton <Game> {
 			"Audio/Bgm/Dungeon/Music/piano-4",
 			"Audio/Bgm/Dungeon/Music/piano-5",
 
-			"Audio/Bgm/Dungeon/Musi/synth-1",
+			"Audio/Bgm/Dungeon/Music/synth-1",
 			"Audio/Bgm/Dungeon/Music/synth-2",
 			"Audio/Bgm/Dungeon/Music/synth-3",
 

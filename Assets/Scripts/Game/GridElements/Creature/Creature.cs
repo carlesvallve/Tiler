@@ -385,10 +385,13 @@ public class Creature : Tile {
 	// =====================================================
 
 	protected bool CheckForTargets (int x, int y) {
+
 		// if we are the player and goal is a creature, set goal tile as walkable
 		if (this is Player) {
 			Creature target = grid.GetCreature(x, y);
 			if (target != null ) {
+				Astar.instance.walkability[target.x, target.y] = 1;
+
 				// if we have a ranged attack and we are in range, shoot the target
 				if (target.visible) {
 					if (IsAtShootRange(target)) {
@@ -403,6 +406,8 @@ public class Creature : Tile {
 
 			Entity targetEntity = grid.GetEntity(x, y);
 			if (targetEntity != null && (targetEntity is Container) && targetEntity.state != EntityStates.Open) {
+				Astar.instance.walkability[targetEntity.x, targetEntity.y] = 1;
+
 				// if we have a ranged attack and we are in range, shoot the target
 				if (targetEntity.breakable && targetEntity.visible) {
 					if (IsAtShootRange(targetEntity)) {
