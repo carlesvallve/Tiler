@@ -3,7 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class CreatureStats {
-	
+
+	// speed
+	public float energy = 1f;
+	public float energyRate = 1f;
+
 	// xp
 	public int level = 1;
 	public int xp = 0;

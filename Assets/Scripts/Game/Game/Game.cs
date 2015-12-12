@@ -49,6 +49,14 @@ public class Game : MonoSingleton <Game> {
 	}
 
 
+	public IEnumerator WaitForTurnToEnd (Creature creature, float duration) {
+		// wait until monster has realize his action, then think again
+		yield return new WaitForSeconds(duration);
+		yield return null;
+		creature.Think();
+	}
+
+
 	public void UpdateGameTurn () {
 		// update game turn
 		turn += 1;

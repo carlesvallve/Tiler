@@ -28,6 +28,10 @@ public class Controls : MonoBehaviour {
 
 
 	private void TapAtPos (Vector3 pos) {
+		if (!CanTap()) {
+			return;
+		}
+
 		// get tap position in world/grid units
 		pos = Camera.main.ScreenToWorldPoint(new Vector3(pos.x, pos.y, Camera.main.nearClipPlane));
 
@@ -40,15 +44,32 @@ public class Controls : MonoBehaviour {
 			return;
 		}
 
-		// try to move player to goal
-		/*if (!grid.player.moving) {
-			grid.player.SetPath(x, y);
-		} else {
-			grid.player.StopMoving();
-		}*/
-
+		// tell player to look for an astar path and follow it
 		grid.player.SetPath(x, y);
-		
+	}
+
+
+	private bool CanTap () {
+		// make sure player is in idle state
+		if (grid.player.state != CreatureStates.Idle) {
+			return false;
+		}
+
+		// make sure that all monsters are in idle state
+		Monster[] monsters = FindObjectsOfType<Monster>();
+		int c = 0;
+		foreach (Monster monster in monsters) {
+			if (monster.state == CreatureStates.Idle) {
+				c++;
+			}
+		}
+
+		print ("Idle monsters " + c + "/" + monsters.Length);
+		if (c == monsters.Length) {
+			return true;
+		}
+
+		return false;
 	}
 
 

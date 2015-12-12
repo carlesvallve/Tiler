@@ -25,7 +25,6 @@ public class MonsterGenerator : DungeonFeatureGenerator {
 		List<System.Type> types = GetMonsterTypes();
 		System.Type monsterType = types[Random.Range(0, types.Count)];
 
-		Debug.Log (monsterType);
 		grid.CreateCreature(monsterType, tile.x, tile.y, 0.7f, null);
 	}
 
@@ -67,7 +66,7 @@ public class MonsterGenerator : DungeonFeatureGenerator {
 		// Pick a random creature type
 		List<System.Type> types = new List<System.Type>() { 
 			// animals
-			typeof(Bat), 
+			/*typeof(Bat), 
 			typeof(Bear), 
 			typeof(Cat), 
 			typeof(Chicken), 
@@ -86,7 +85,7 @@ public class MonsterGenerator : DungeonFeatureGenerator {
 			typeof(Sheep),
 			typeof(Scorpion),
 			typeof(Turkey), 
-			typeof(Wolf),
+			typeof(Wolf),*/
 			 
 			// humanoids
 			typeof(Caveman), 

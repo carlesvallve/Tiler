@@ -9,5 +9,7 @@ public class Fly: Animal {
 		if (asset == null) { Debug.LogError(path); }
 		
 		base.Init(grid, x, y, scale, asset);
+
+		stats.energyRate = 0.5f;
 	}
 }

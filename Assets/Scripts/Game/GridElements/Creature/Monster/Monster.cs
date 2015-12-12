@@ -11,15 +11,14 @@ public class Monster : Creature {
 	public override void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null) {
 		base.Init(grid, x, y, scale, asset);
 
+		stats.energyRate = 1f;
+
 		// Each monster will evaluate what to do on each game turn update
 		grid.player.OnGameTurnUpdate += () => {
 			// escape if we are dying or already dead
 			if (this == null) { return; }
 			if (state == CreatureStates.Dying) { return; }
 			if (grid.player.state == CreatureStates.Descending) { return; }
-
-			// set monster actions
-			RegenerateHp();
 
 			// make monster take a decision
 			Think();
@@ -92,22 +91,39 @@ public class Monster : Creature {
 	// Monster AI
 	// =====================================================
 
-	protected virtual void Think () {
+	public override void Think () {
 		// escape if we are doing something already
 		if (state != CreatureStates.Idle) {
 			return;
 		}
 
-		//if monster is not aware of the player, just freeze and do nothing
-		if (!IsAware()) {
+		state = CreatureStates.Idle;
+
+		// update energy and escape if we dont have enough to move
+		bool enoughEnergy = UpdateEnergy ();
+		if (!enoughEnergy) {
 			return;
 		}
+		
+		// set monster actions
+		RegenerateHp();
+
+		//if monster is not aware of the player, just freeze and do nothing
+		/*if (!IsAware()) {
+			return;
+		}*/
 
 		// TODO: this should not be a boolean state, but rather a degree of agressivity
 		if (IsAfraid()) {
-			SetInfo("Flee", Color.yellow);
+			//SetInfo("Flee", Color.yellow);
 			Flee();
-			return;
+
+			if (path.Count > 0) {
+				// move again if we have action points left
+				MoveAgain();
+				return;
+			}
+			
 		}
 
 		// if we are not agresive, we are not interested on the player
@@ -129,19 +145,27 @@ public class Monster : Creature {
 		if (targetTile is Player) {
 			if (IsAtShootRange(targetTile)) {
 				// shoot the player if in range
-				SetInfo("Shoot", Color.yellow);
+				//SetInfo("Shoot", Color.yellow);
 				Shoot((Player)targetTile);
 			} else {
 				// use chase and follow algorithm
-				SetInfo("Kill", Color.yellow);
+				//SetInfo("Kill", Color.yellow);
 				ChaseAndFollow();
 			}
 			
 		} else {
 			// use astar pathfinding
-			SetInfo(this.targetTile.name, Color.yellow);
+			//SetInfo(this.targetTile.name, Color.yellow);
 			GotoTargetTile(this.targetTile); 
 		}
+
+		// move again if we have action points left
+		MoveAgain();
+	}
+
+	protected void MoveAgain () {
+		// tell game to wait until we finished our action, then think again
+		Game.instance.StartCoroutine(Game.instance.WaitForTurnToEnd(this, speed));
 	}
 
 

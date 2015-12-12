@@ -9,5 +9,7 @@ public class Centaur : Humanoid {
 		if (asset == null) { Debug.LogError(path); }
 		
 		base.Init(grid, x, y, scale, asset);
+
+		stats.energyRate = 2f;
 	}
 }

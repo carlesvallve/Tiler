@@ -73,6 +73,19 @@ public class Creature : Tile {
 	// Stats
 	// =====================================================
 
+	public virtual bool UpdateEnergy () {
+		//SetInfo(stats.energy.ToString(), Color.cyan);
+
+		if (stats.energy < 1) {
+			stats.energy += stats.energyRate;
+			stats.energy = Mathf.Round(stats.energy * 100f) / 100f;
+			return false;
+		}
+
+		stats.energy -= 1;
+		return true;
+	}
+
 	public virtual void UpdateXp (int ammount) {
 		stats.xp += ammount; 
 
@@ -104,6 +117,21 @@ public class Creature : Tile {
 	}
 
 
+	/*public virtual bool UpdateEnergy () {
+		// escape if we dont have enough action points for acting this turn
+		stats.energy += stats.energyRate;
+		SetInfo(stats.energy.ToString(), Color.cyan);
+
+		if (stats.energy >= 1) {
+			//stats.energy = 1;
+			stats.energy -= 1;
+			return true;
+		} 
+
+		return false;
+	}*/
+
+
 	public virtual void UpdateHp (int ammount) {
 		stats.hp += ammount; 
 
@@ -112,6 +140,7 @@ public class Creature : Tile {
 
 		bar.UpdateHp();
 	}
+
 
 	public virtual void RegenerateHp() {
 		stats.regeneration += stats.regenerationRate;
@@ -357,7 +386,7 @@ public class Creature : Tile {
 	}
 
 
-	public virtual void StopMoving () {
+	protected virtual void StopMoving () {
 		if (state == CreatureStates.Moving || state == CreatureStates.Using) {
 			StopAllCoroutines();
 		}
@@ -507,6 +536,8 @@ public class Creature : Tile {
 	}
 
 	protected void ResolveEncountersAtGoal (int x, int y) {
+		if (path.Count == 0) { return; }
+
 		Vector2 goal = path[path.Count - 1];
 		if (x == (int)goal.x && y == (int)goal.y) {
 
@@ -530,12 +561,14 @@ public class Creature : Tile {
 	}
 
 	// =====================================================
-	// Functions overriden by Player class
+	// Functions overriden by Player or Monster class
 	// =====================================================
 
 	public virtual void MoveCameraTo (int x, int y) {}
 	public virtual void CenterCamera (bool interpolate = true) {}
 	public virtual void UpdateVision (int x, int y) {}
+
+	public virtual void Think () {}
 
 	// event emission
 	public virtual void UpdateGameTurn () {}
@@ -576,6 +609,13 @@ public class Creature : Tile {
 	protected void Attack (Creature target, float delay = 0) {
 		if (state == CreatureStates.Using) { return; }
 		if (target.state == CreatureStates.Dying) { return; }
+
+		// Attack rate and movement rate should be independent:
+		// A creature should always can have 1 attack per turn
+		// so his energy gets reseted each time he attacks (for now)
+		// TODO: propper way of doing this should be implementing a propper AttackRate
+		// and checking for additional attacks, etc...
+		stats.energy = 1 - stats.energyRate;
 		
 		state = CreatureStates.Attacking;
 

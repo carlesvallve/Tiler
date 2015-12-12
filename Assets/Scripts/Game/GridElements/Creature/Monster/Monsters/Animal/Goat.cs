@@ -9,5 +9,7 @@ public class Goat: Animal {
 		if (asset == null) { Debug.LogError(path); }
 		
 		base.Init(grid, x, y, scale, asset);
+
+		stats.energyRate = 1.5f;
 	}
 }

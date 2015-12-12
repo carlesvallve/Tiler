@@ -7,5 +7,8 @@ public class Humanoid : Monster {
 		base.Init(grid, x, y, scale, asset);
 
 		isAgressive = true;
+
+		//stats.energy = 1f;
+		//stats.energyRate = 0.75f;
 	}
 }

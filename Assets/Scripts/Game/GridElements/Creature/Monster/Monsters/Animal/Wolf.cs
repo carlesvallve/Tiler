@@ -9,5 +9,9 @@ public class Wolf: Animal {
 		if (asset == null) { Debug.LogError(path); }
 		
 		base.Init(grid, x, y, scale, asset);
+
+		// stats
+		isAgressive = true;
+		stats.energyRate = 2f;
 	}
 }
