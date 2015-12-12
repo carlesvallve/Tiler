@@ -11,7 +11,7 @@ public class Player : Creature {
 	public delegate void GameOverHandler();
 	public event GameOverHandler OnGameOver;
 
-	protected int cameraMargin = 3;
+	protected int cameraMargin = 4;
 
 	protected string playerName;
 	protected string playerRace;
@@ -21,13 +21,9 @@ public class Player : Creature {
 	// used for calculating the monster attack delay, so they dont attack all at once
 	public List<Monster> monsterQueue = new List<Monster>();
 
-
+	// list of monsters that enetered in view range this turn
+	// used for displaying monster descriptions on encounters
 	public List<Creature> newVisibleMonsters = new List<Creature>();
-
-
-	void Update() {
-		SetInfo(walkable.ToString(), Color.yellow);
-	}
 
 
 	public override void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null) {
@@ -35,7 +31,7 @@ public class Player : Creature {
 		SetPlayerName();
 		SetPlayerRace();
 		SetPlayerClass();
-		Hud.instance.LogPlayer(
+		Hud.instance.LogPlayerName(
 			Utils.UppercaseFirst(playerName) + ", the " +
 			Utils.UppercaseFirst(playerRace) + " " +
 			Utils.UppercaseFirst(playerClass)
@@ -57,7 +53,6 @@ public class Player : Creature {
 		stats.attack = 5;
 		stats.defense = 2;
 		stats.str = 2;
-
 		stats.attackRange = 5;
 	}
 
@@ -80,6 +75,24 @@ public class Player : Creature {
 	protected void SetPlayerClass () {
 		string[] classes = new string[] { "guard", "warrior", "ranger", "mage", "monk", "priest" }; // "normal", 
 		playerClass = classes[Random.Range(0, classes.Length)];
+	}
+
+
+	protected void LogPlayerInfo () {
+		string info = "";
+
+		info = "LEVEL " + stats.level;
+		info += "   XP: " + stats.xp + " / " + stats.xpMax;
+		info += "   HP: " + stats.hp + " / " + stats.hpMax;
+		info += "   Combat: " + stats.attack + " / " + stats.defense;
+		info += "   Gold: " + stats.gold;
+
+		Hud.instance.LogPlayerInfo(info);
+	}
+
+
+	void Update() {
+		LogPlayerInfo();
 	}
 
 	// =====================================================
@@ -210,10 +223,6 @@ public class Player : Creature {
 
 
 	protected void CheckCamera () {
-		/*if (state != CreatureStates.Idle) { 
-			return; 
-		}*/
-
 		Vector3 screenPos = Camera.main.WorldToScreenPoint(transform.position);
 
 		int margin = 16 + 32 * cameraMargin;

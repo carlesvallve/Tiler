@@ -31,6 +31,15 @@ public class HpBar : MonoBehaviour {
 
 		percent.transform.localPosition = new Vector3(x, percent.transform.localPosition.y, 0);
 		percent.transform.localScale = new Vector3(value, percent.transform.localScale.y, 1);
-	}
 
+		// set color
+		if (value <= 0.25f) {
+			percent.color = Color.red;
+		} else if (value <= 0.5) {
+			percent.color = Color.yellow;
+		} else {
+			percent.color = Color.green;
+		}
+	}
+	
 }
