@@ -19,6 +19,8 @@ public class Hud : MonoSingleton <Hud> {
 	private Transform world;
 	public GameObject labelPrefab;
 
+	private Transform popupInventory;
+
 
 	void Awake () {
 		Canvas canvas = GetComponent<Canvas>();
@@ -37,7 +39,15 @@ public class Hud : MonoSingleton <Hud> {
 
 		logText = transform.Find("Footer/Log/Text").GetComponent<Text>();
 
-		
+		popupInventory = transform.Find("Popups/PopupInventory");
+		popupInventory.gameObject.SetActive(false);
+	}
+
+
+	void Update () {
+		if (Input.GetKeyDown(KeyCode.I)) {
+			popupInventory.gameObject.SetActive(!popupInventory.gameObject.activeSelf);
+		}
 	}
 
 	// ==============================================================
