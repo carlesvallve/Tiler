@@ -10,6 +10,6 @@ public class Goose: Animal {
 		
 		base.Init(grid, x, y, scale, asset);
 
-		stats.energyRate = 0.75f;
+		SetEnergy(0.75f);
 	}
 }

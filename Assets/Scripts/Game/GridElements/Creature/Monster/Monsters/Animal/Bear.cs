@@ -12,6 +12,6 @@ public class Bear: Animal {
 
 		// stats
 		isAgressive = true;
-		stats.energyRate = 2f;
+		SetEnergy(2f);
 	}
 }

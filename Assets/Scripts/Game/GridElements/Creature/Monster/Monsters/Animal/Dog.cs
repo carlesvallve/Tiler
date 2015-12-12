@@ -12,6 +12,6 @@ public class Dog: Animal {
 
 		// stats
 		isAgressive = true;
-		stats.energyRate = 2f;
+		SetEnergy(1.8f);
 	}
 }

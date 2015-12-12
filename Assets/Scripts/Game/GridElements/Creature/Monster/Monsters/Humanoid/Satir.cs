@@ -7,7 +7,6 @@ public class Satir : Humanoid {
 		asset = Resources.Load<Sprite>("Tilesets/Monster/Humanoid/Satir/satir-" + Random.Range(1, 12));
 		base.Init(grid, x, y, scale, asset);
 
-		stats.energyRate = 1.1f;
-		stats.energy = Mathf.Max(1f, stats.energyRate);
+		SetEnergy(1.1f);
 	}
 }

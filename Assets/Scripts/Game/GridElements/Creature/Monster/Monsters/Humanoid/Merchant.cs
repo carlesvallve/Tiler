@@ -8,5 +8,7 @@ public class Merchant : Humanoid {
 		base.Init(grid, x, y, scale, asset);
 
 		isAgressive = false;
+
+		SetEnergy(0.8f);
 	}
 }

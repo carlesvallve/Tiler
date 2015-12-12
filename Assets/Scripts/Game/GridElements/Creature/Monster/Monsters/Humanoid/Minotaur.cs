@@ -7,7 +7,6 @@ public class Minotaur : Humanoid {
 		asset = Resources.Load<Sprite>("Tilesets/Monster/Humanoid/Minotaur/minotaur-" + Random.Range(1, 11));
 		base.Init(grid, x, y, scale, asset);
 
-		stats.energyRate = 1.25f;
-		stats.energy = Mathf.Max(1f, stats.energyRate);
+		SetEnergy(1.25f);
 	}
 }

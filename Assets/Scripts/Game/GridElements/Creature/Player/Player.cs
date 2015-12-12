@@ -53,10 +53,9 @@ public class Player : Creature {
 		stats.attack = 5;
 		stats.defense = 2;
 		stats.str = 2;
-		stats.attackRange = 5;
+		stats.attackRange = 1; //5;
 
-		stats.energy = 1f;
-		stats.energyRate = 1f;
+		SetEnergy(1f);
 	}
 
 

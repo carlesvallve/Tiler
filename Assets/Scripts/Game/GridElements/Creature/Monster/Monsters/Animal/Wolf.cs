@@ -12,6 +12,6 @@ public class Wolf: Animal {
 
 		// stats
 		isAgressive = true;
-		stats.energyRate = 2f;
+		SetEnergy(1.9f);
 	}
 }

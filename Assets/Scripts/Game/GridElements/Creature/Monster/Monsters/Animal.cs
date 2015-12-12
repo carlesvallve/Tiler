@@ -8,7 +8,6 @@ public class Animal : Monster {
 
 		isAgressive = false;
 
-		//stats.energy = 1f;
-		//stats.energyRate = 0.75f;
+		SetEnergy(2f);
 	}
 }

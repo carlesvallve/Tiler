@@ -8,7 +8,6 @@ public class Humanoid : Monster {
 
 		isAgressive = true;
 
-		//stats.energy = 1f;
-		//stats.energyRate = 0.75f;
+		SetEnergy(1f);
 	}
 }

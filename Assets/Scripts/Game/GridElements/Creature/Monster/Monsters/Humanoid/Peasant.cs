@@ -7,7 +7,6 @@ public class Peasant : Humanoid {
 		asset = Resources.Load<Sprite>("Tilesets/Monster/Humanoid/Peasant/peasant-" + Random.Range(1, 12));
 		base.Init(grid, x, y, scale, asset);
 
-		stats.energyRate = 0.75f;
-		stats.energy = Mathf.Max(1f, stats.energyRate);
+		SetEnergy(0.9f);
 	}
 }

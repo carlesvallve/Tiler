@@ -7,7 +7,7 @@ public class Monkey : Humanoid {
 		asset = Resources.Load<Sprite>("Tilesets/Monster/Humanoid/Monkey/Monkey/monkey-" + Random.Range(1, 7));
 		base.Init(grid, x, y, scale, asset);
 
-		stats.energyRate = 1.25f;
-		stats.energy = Mathf.Max(1f, stats.energyRate);
+		isAgressive = true;
+		SetEnergy(1.1f);
 	}
 }

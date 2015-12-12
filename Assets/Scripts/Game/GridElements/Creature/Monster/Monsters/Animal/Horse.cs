@@ -10,6 +10,6 @@ public class Horse: Animal {
 		
 		base.Init(grid, x, y, scale, asset);
 
-		stats.energyRate = 2f;
+		SetEnergy(2f);
 	}
 }

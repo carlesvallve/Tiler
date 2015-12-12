@@ -9,5 +9,7 @@ public class Goblin : Humanoid {
 		if (asset == null) { Debug.LogError(path); }
 
 		base.Init(grid, x, y, scale, asset);
+
+		SetEnergy(1f);
 	}
 }

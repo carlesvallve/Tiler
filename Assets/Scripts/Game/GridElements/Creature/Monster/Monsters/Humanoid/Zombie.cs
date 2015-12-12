@@ -7,7 +7,6 @@ public class Zombie : Humanoid {
 		asset = Resources.Load<Sprite>("Tilesets/Monster/Humanoid/Zombie/zombie-" + Random.Range(1, 11));
 		base.Init(grid, x, y, scale, asset);
 
-		stats.energyRate = 0.5f;
-		stats.energy = Mathf.Max(1f, stats.energyRate);
+		SetEnergy(0.5f);
 	}
 }

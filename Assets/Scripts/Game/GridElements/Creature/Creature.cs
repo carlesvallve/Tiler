@@ -63,6 +63,9 @@ public class Creature : Tile {
 
 		LocateAtCoords(x, y);
 
+		// initialize energy
+		SetEnergy(stats.energyRate);
+
 		// initialize xp
 		stats.xp = 0;
 		stats.xpMax = 100 * stats.level;
@@ -73,6 +76,12 @@ public class Creature : Tile {
 	// =====================================================
 	// Stats
 	// =====================================================
+
+	public virtual void SetEnergy (float rate) {
+		stats.energyRate = rate;
+		stats.energy = Mathf.Max(1f, stats.energyRate);
+	}
+
 
 	public virtual bool UpdateEnergy () {
 		//SetInfo(stats.energy.ToString(), Color.cyan);

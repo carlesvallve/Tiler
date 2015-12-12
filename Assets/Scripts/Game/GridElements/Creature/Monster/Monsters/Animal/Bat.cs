@@ -12,6 +12,6 @@ public class Bat: Animal {
 
 		// stats
 		isAgressive = true;
-		stats.energyRate = 1.5f;
+		SetEnergy(1.5f);
 	}
 }

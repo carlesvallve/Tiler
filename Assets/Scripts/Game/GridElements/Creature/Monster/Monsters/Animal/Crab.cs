@@ -12,6 +12,6 @@ public class Crab: Animal {
 
 		// stats
 		isAgressive = true;
-		stats.energyRate = 1.1f;
+		SetEnergy(1.1f);
 	}
 }

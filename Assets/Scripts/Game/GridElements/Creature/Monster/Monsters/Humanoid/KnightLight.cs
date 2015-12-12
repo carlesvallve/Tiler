@@ -7,7 +7,6 @@ public class KnightLight : Humanoid {
 		asset = Resources.Load<Sprite>("Tilesets/Monster/Humanoid/KnightLight/knight-light-" + Random.Range(1, 7));
 		base.Init(grid, x, y, scale, asset);
 
-		stats.energyRate = 0.9f;
-		stats.energy = Mathf.Max(1f, stats.energyRate);
+		SetEnergy(0.9f);
 	}
 }

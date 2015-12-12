@@ -7,7 +7,6 @@ public class Vampire : Humanoid {
 		asset = Resources.Load<Sprite>("Tilesets/Monster/Humanoid/Vampire/vampire-" + Random.Range(1, 4));
 		base.Init(grid, x, y, scale, asset);
 
-		stats.energyRate = 1.5f;
-		stats.energy = Mathf.Max(1f, stats.energyRate);
+		SetEnergy(1.5f);
 	}
 }

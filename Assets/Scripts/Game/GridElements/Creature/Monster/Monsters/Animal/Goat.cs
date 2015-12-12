@@ -10,6 +10,6 @@ public class Goat: Animal {
 		
 		base.Init(grid, x, y, scale, asset);
 
-		stats.energyRate = 1.5f;
+		SetEnergy(1.25f);
 	}
 }
