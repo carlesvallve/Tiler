@@ -44,6 +44,13 @@ public class Monster : Creature {
 
 		if (!visible) {
 			SetInfo("", Color.yellow);
+
+			// remove from player newVisibleMonsters
+			foreach (Creature creature in grid.player.newVisibleMonsters) {
+				if (creature == this) {
+					grid.player.newVisibleMonsters.Remove(this);
+				}
+			}
 		}
 	}
 

@@ -104,7 +104,7 @@ public class Game : MonoSingleton <Game> {
 
 			"Audio/Bgm/Dungeon/Music2/Alone",
 			"Audio/Bgm/Dungeon/Music2/Elementarywave",
-			"Audio/Bgm/Dungeon/Music2/GambooPiano",
+			"Audio/Bgm/dungeoneon/Music2/GambooPiano",
 			"Audio/Bgm/Dungeon/Music2/Lifeline",
 		};
 
