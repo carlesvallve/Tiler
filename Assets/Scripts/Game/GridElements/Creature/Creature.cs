@@ -706,9 +706,6 @@ public class Creature : Tile {
 
 		// spawn all the items carried by the creature
 		SpawnItemsFromInventory(allItems);
-
-		// update vision to refresh spawned items rendering
-		grid.player.UpdateVision(grid.player.x, grid.player.y);
 	}
 
 
