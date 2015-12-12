@@ -132,13 +132,6 @@ public class Creature : Tile {
 	}
 
 
-	public virtual void UpdateVisibility () {
-		// creatures need to set their visibility also after they moved
-		Tile tile = grid.GetTile(x, y);
-		SetVisibility(tile, tile.visible, tile.GetShadowValue());
-	}
-
-
 	// =====================================================
 	// Ai
 	// =====================================================

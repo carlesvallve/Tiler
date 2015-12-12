@@ -50,6 +50,8 @@ public class Item : Entity {
 
 		// Animate items interpolating them form chest position to x,y
 		StartCoroutine(DropAnimation(x, y, 0.1f));
+
+		UpdateVisibility();
 	}
 
 
@@ -67,5 +69,7 @@ public class Item : Entity {
 
 		// set item in grid array
 		LocateAtCoords(x, y);
+
+		UpdateVisibility();
 	}
 }

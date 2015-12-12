@@ -154,6 +154,15 @@ public class Tile : MonoBehaviour {
 	}
 
 
+	public virtual void UpdateVisibility () {
+		// creatures need to set their visibility also after they moved
+		Tile tile = grid.GetTile(x, y);
+		if (tile != null) {
+			SetVisibility(tile, tile.visible, tile.GetShadowValue());
+		}
+	}
+
+
 	public virtual void SetFovInfo (int turn, float distance, bool debug = false) {
 		// generate tile fov info, used by monster ai for chase and follow behaviour
 		if (IsPassable()) {
@@ -243,7 +252,7 @@ public class Tile : MonoBehaviour {
 	protected virtual void SpawnItemsFromInventory (List<Item> allItems, bool useCenterTile = true) {
 		if (allItems.Count == 0) { return; }
 
-		// get neighbours, including the creature's tile
+		// get neighbours, not including the creature's tile, which will be manually added for the first item
 		List<Tile> neighbours = grid.GetNonOccupiedNeighbours(this.x, this.y, false);
 
 		//randomize item list
@@ -251,11 +260,15 @@ public class Tile : MonoBehaviour {
 
 		Item item = null;
 
-		// spawn first items always on creature tile
+		// spawn first item always on creature's tile (except if occupied by a an entity)
+		// the goal here is not to spawn an entity where another one already exists (i,e: over stairs)
 		if (useCenterTile) {
-			item = allItems[0];
-			item.Drop(this, this.x, this.y);
-			allItems.RemoveAt(0);
+			Tile tile = grid.GetTile(x, y);
+			if (tile != null && !tile.IsOccupied()) {
+				item = allItems[0];
+				item.Drop(this, this.x, this.y);
+				allItems.RemoveAt(0);
+			}
 		}
 		
 		// spawn one item for each available neighbour
@@ -268,4 +281,5 @@ public class Tile : MonoBehaviour {
 		}
 	}
 	
+
 }
