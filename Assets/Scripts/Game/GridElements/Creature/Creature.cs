@@ -369,7 +369,7 @@ public class Creature : Tile {
 			}
 
 			Entity targetEntity = grid.GetEntity(x, y);
-			if (targetEntity != null && (targetEntity is Chest) && targetEntity.state != EntityStates.Open) {
+			if (targetEntity != null && (targetEntity is Container) && targetEntity.state != EntityStates.Open) {
 				// if we have a ranged attack and we are in range, shoot the target
 				if (targetEntity.breakable && targetEntity.visible) {
 					if (IsAtShootRange(targetEntity)) {
@@ -435,20 +435,20 @@ public class Creature : Tile {
 			}
 		}
 
-		// resolve closed/locked chests
-		if (entity is Chest) {
-			Chest chest = (Chest)entity;
-			if (chest.state != EntityStates.Open) {
+		// resolve closed/locked containers
+		if (entity is Container) {
+			Container container = (Container)entity;
+			if (container.state != EntityStates.Open) {
 				// open the door
-				if (chest.state == EntityStates.Closed) { 
+				if (container.state == EntityStates.Closed) { 
 					state = CreatureStates.Using;
-					StartCoroutine(chest.Open(this));
+					StartCoroutine(container.Open(this));
 					return; 
 					
 				// unlock the door
-				} else if (chest.state == EntityStates.Locked) { 
+				} else if (container.state == EntityStates.Locked) { 
 					state = CreatureStates.Using;
-					StartCoroutine(chest.Unlock(this));
+					StartCoroutine(container.Unlock(this));
 					return;
 				}
 			}
@@ -531,9 +531,9 @@ public class Creature : Tile {
 		// create bullet
 		grid.CreateBullet(transform.localPosition, target.transform.localPosition, speed, 8, Color.yellow);
 
-		// break barrel
-		Chest chest = (Chest)target;
-		chest.StartCoroutine(chest.Open(this));
+		// break container
+		Container container = (Container)target;
+		container.StartCoroutine(container.Open(this));
 	}
 
 
