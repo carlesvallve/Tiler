@@ -50,6 +50,7 @@ public class CreatureStats {
 
 	// ai interest
 
+	public Dictionary<System.Type, int> interest = new Dictionary<System.Type, int>();
 	public Dictionary<System.Type, int> baseInterest = new Dictionary<System.Type, int>() {
 		// greed for items
 		{ typeof(Armour), 10 },
@@ -60,28 +61,16 @@ public class CreatureStats {
 		{ typeof(Treasure), 10 },
 
 		// hate/fear from monsters
-		{ typeof(Player), 60 },
-		{ typeof(Monster), 0 },
-	};
-
-
-	public Dictionary<System.Type, int> interest = new Dictionary<System.Type, int>() {
-		// greed for items
-		{ typeof(Armour), 0 },
-		{ typeof(Weapon), 0 },
-		{ typeof(Book), 0 },
-		{ typeof(Food), 0 },
-		{ typeof(Potion), 0 },
-		{ typeof(Treasure), 0 },
-
-		// hate/fear of creatures
-		{ typeof(Player), 0 },
+		{ typeof(Player), 100 },
 		{ typeof(Monster), 0 },
 	};
 
 
 	public CreatureStats () {
-		// set interest with baseInterest values
-		interest = baseInterest;
+		// fill interest dict with baseIterest values
+		foreach (System.Type key in interest.Keys) {
+     		interest.Add(key, baseInterest[key]);
+ 		}
 	}
+
 }

@@ -18,7 +18,8 @@ public class Tile : MonoBehaviour {
 
 	public Sprite asset { get; set; }
 	public Color color;
-	protected int zIndex;
+
+	protected int zIndex = 0;
 
 	protected Transform container;
 	protected SpriteRenderer shadow;
@@ -56,7 +57,7 @@ public class Tile : MonoBehaviour {
 
 		SetAsset(asset);
 		SetImages(scale, Vector3.zero, 0);
-		SetSortingOrder(0);
+		SetSortingOrder();
 
 		visible = false;
 		explored = false;
@@ -66,7 +67,9 @@ public class Tile : MonoBehaviour {
 	public virtual void LocateAtCoords (int x, int y) {
 		UpdatePosInGrid(x, y);
 		transform.localPosition = new Vector3(x, y, 0);
+		SetSortingOrder();
 	}
+	
 
 	protected virtual void UpdatePosInGrid (int x, int y) {
 		grid.SetTile(this.x, this.y, null);
@@ -114,8 +117,8 @@ public class Tile : MonoBehaviour {
 	}
 
 
-	protected virtual void SetSortingOrder (int zIndex) {
-		this.zIndex = zIndex;
+	protected virtual void SetSortingOrder () {
+		//this.zIndex = zIndex;
 
 		zIndex += grid.height - this.y;
 		outline.sortingOrder = zIndex;

@@ -49,6 +49,8 @@ public class Creature : Tile {
 	// =====================================================
 
 	public override void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null) {
+		zIndex = 200;
+
 		base.Init(grid, x, y, scale, asset);
 		walkable = false;
 
@@ -70,13 +72,6 @@ public class Creature : Tile {
 	}
 
 
-	public override void LocateAtCoords (int x, int y) {
-		UpdatePosInGrid(x, y);
-		transform.localPosition = new Vector3(x, y, 0);
-		SetSortingOrder(200);
-	}
-
-
 	// =====================================================
 	// Stats
 	// =====================================================
@@ -85,24 +80,35 @@ public class Creature : Tile {
 		stats.xp += ammount; 
 
 		// level up
-		if (stats.xp > stats.xpMax) { LevelUp(1); }
-		if (stats.xp < 0) { LevelUp(-1); }
+		if (stats.xp >= stats.xpMax) { LevelUp(1); }
+		if (stats.xp <= 0) { LevelUp(-1); }
 
 		// update hud
 		if (this is Player) {
 			Hud.instance.LogXp("LEVEL " + stats.level + "   XP: " + stats.xp + " / " + stats.xpMax);
-			sfx.Play("Audio/Sfx/Stats/level-up", 0.8f, Random.Range(0.8f, 1.2f));
 		}
 	}
 
 
 	protected void LevelUp (int ammount) {
 		stats.level += ammount;
+
+		if (ammount > 0) { stats.xp = stats.xp - stats.xpMax; }
+		if (ammount < 0) { stats.xp = stats.xpMax - stats.xp; } // check if this is correct (?)
 		
-		stats.hpMax = 100 * stats.level;
+		stats.xpMax = 100 * stats.level;
 		stats.xpValue = 10 * stats.level;
 
-		stats.xp = 0; //ammount > 0 ? stats.xp - stats.xpMax : stats.xpMax - stats.xp;
+		// increase hp
+		int hpIncrease = Random.Range(1, 5);
+		stats.hpMax = ammount > 0 ? stats.hpMax + hpIncrease : stats.hpMax - hpIncrease;
+		stats.hp = stats.hpMax;
+		bar.UpdateHp();
+
+		// play levelup sound
+		if (this is Player) {
+			sfx.Play("Audio/Sfx/Stats/trumpets", 0.25f, 1.2f); //Random.Range(0.8f, 1.2f));
+		}
 	}
 
 

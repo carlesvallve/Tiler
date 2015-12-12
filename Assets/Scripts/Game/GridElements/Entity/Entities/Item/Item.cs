@@ -11,7 +11,7 @@ public class Item : Entity {
 		base.Init(grid, x, y, scale, asset);
 		walkable = true;
 
-		SetSortingOrder(110);
+		//SetSortingOrder(110);
 		SetImages(scale, Vector3.zero, 0.04f);
 
 		//print (typeId + " " + asset);

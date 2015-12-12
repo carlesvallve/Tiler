@@ -140,6 +140,10 @@ public class Player : Creature {
 
 
 	private void LogNewVisibleMonsters () {
+		if (state == CreatureStates.Descending) {
+			return;
+		}
+		
 		if (newVisibleMonsters.Count == 0) {
 			return;
 		}

@@ -9,7 +9,5 @@ public class Horse: Animal {
 		if (asset == null) { Debug.LogError(path); }
 		
 		base.Init(grid, x, y, scale, asset);
-
-		isAgressive = false;
 	}
 }

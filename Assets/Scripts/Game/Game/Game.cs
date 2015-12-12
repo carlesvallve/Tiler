@@ -12,7 +12,8 @@ public class Game : MonoSingleton <Game> {
 	
 	public Dictionary<string, ProceduralNameGenerator> gameNames;
 
-	private List<string> bgmList;
+	private List<string> musicList;
+	private List<string> ambientList;
 	private string bgm1;
 	private string bgm2;
 
@@ -88,17 +89,27 @@ public class Game : MonoSingleton <Game> {
 	// =====================================================
 
 	private void SetBgm() {
-		bgmList = new List<string>() {
-			"Audio/Bgm/Dungeon/Music/Alone",
-			"Audio/Bgm/Dungeon/Music/GambooPiano",
-			"Audio/Bgm/Dungeon/Music/Suspense",
-			"Audio/Bgm/Dungeon/Music/Elementarywave",
-			"Audio/Bgm/Dungeon/Music/Lifeline",
-			"Audio/Bgm/Dungeon/Music/Suspense",
+		musicList = new List<string>() {
+			"Audio/Bgm/Dungeon/Music/guitar-rythm",
+			"Audio/Bgm/Dungeon/Music/mystic-chamber",
+			"Audio/Bgm/Dungeon/Music/piano-1",
+			"Audio/Bgm/Dungeon/Music/piano-2",
+			"Audio/Bgm/Dungeon/Music/piano-3",
+			"Audio/Bgm/Dungeon/Music/piano-4",
+			"Audio/Bgm/Dungeon/Music/piano-5",
 
+			"Audio/Bgm/Dungeon/Musi/synth-1",
+			"Audio/Bgm/Dungeon/Music2/synth-2",
+			"Audio/Bgm/Dungeon/Music/synth-3",
+
+			"Audio/Bgm/Dungeon/Music2/Alone",
+			"Audio/Bgm/Dungeon/Music2/Elementarywave",
+			"Audio/Bgm/Dungeon/Music2/GambooPiano",
+			"Audio/Bgm/Dungeon/Music2/Lifeline",
+		};
+
+		ambientList = new List<string>() {
 			"Audio/Bgm/Dungeon/Ambient/Forest",
-			"Audio/Bgm/Dungeon/Ambient/Pulse",
-			"Audio/Bgm/Dungeon/Ambient/Reaktor",
 			"Audio/Bgm/Dungeon/Ambient/Space",
 			"Audio/Bgm/Dungeon/Ambient/Waterstream"
 		};
@@ -107,11 +118,16 @@ public class Game : MonoSingleton <Game> {
 	}
 
 
-	private string GetRandomBgm () {
+	private string GetRandomBgm (List<string> list, int probability) {
+		int r = Random.Range(1, 100);
+		if (r > probability) {
+			return null;
+		}
+
 		string wav = null;
 
 		while (true) {
-			wav = bgmList[Random.Range(0, bgmList.Count)];
+			wav = list[Random.Range(0, list.Count)];
 			if (!sfx.audioSources.ContainsKey(wav)) { break; }
 		}
 
@@ -123,13 +139,20 @@ public class Game : MonoSingleton <Game> {
 		if (bgm1 != null) { sfx.Fade(bgm1, 0, 1f); }
 		if (bgm2 != null) { sfx.Fade(bgm2, 0, 1f); }
 
-		bgm1 = GetRandomBgm();
-		sfx.Play(bgm1, 0, 1f, true); // Random.Range(0.5f, 1.5f)
-		sfx.Fade(bgm1, 0.5f, 1f);
+		bgm1 = GetRandomBgm(musicList, 90);
+		if (bgm1 != null) {
+			sfx.Play(bgm1, 0, 1f, true); // Random.Range(0.5f, 1.5f)
+			sfx.Fade(bgm1, 0.3f, 1f);	
+		}
+		
 
-		bgm2 = GetRandomBgm();
-		sfx.Play(bgm2, 0, 1f, true); // Random.Range(0.5f, 1.5f)
-		sfx.Fade(bgm2, 0.4f, 1f);
+		bgm2 = GetRandomBgm(ambientList, 60);
+		if (bgm2 != null) {
+			sfx.Play(bgm2, 0, 1f, true); // Random.Range(0.5f, 1.5f)
+			sfx.Fade(bgm2, 0.3f, 1f);
+		}
+
+		print (bgm1 + " " + bgm2);
 	}
 
 
