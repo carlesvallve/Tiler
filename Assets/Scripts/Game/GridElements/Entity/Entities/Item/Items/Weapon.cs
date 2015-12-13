@@ -5,7 +5,9 @@ using System.Collections;
 public class Weapon : Item {
 
 	public override void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null) {
-		asset = Resources.Load<Sprite>("Tilesets/Item/weapon/" + GetRandomAssetName());
+		string path = "Tilesets/Item/Weapon/Melee/" + GetRandomAssetName();
+		asset = Resources.Load<Sprite>(path);
+		if (asset == null) { Debug.Log(path); }
 
 		base.Init(grid, x, y, scale, asset);
 		walkable = true;
@@ -18,20 +20,14 @@ public class Weapon : Item {
 
 	protected override string GetRandomAssetName () {
 		string[] arr = new string[] { 
-			"axe-great", 
-			"axe-long", 
-			"axe-short", 
+			"axe-great", "axe-long", "axe-short", 
 			"club", 
 			"dagger", 
 			"katana", 
-			"mace", 
-			"mace-great", 
+			"mace", "mace-great", 
 			"quarterstaff", 
-			"sabre", 
-			"scimitar", 
-			"sword-great", 
-			"sword-long", 
-			"sword-short", 
+			"sabre", "scimitar", 
+			"sword-great", "sword-long", "sword-short", 
 		};
 
 		return arr[Random.Range(0, arr.Length)];

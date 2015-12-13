@@ -5,7 +5,9 @@ using System.Collections;
 public class Food : Item {
 
 	public override void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null) {
-		asset = Resources.Load<Sprite>("Tilesets/Item/Food/" + GetRandomAssetName());
+		string path = "Tilesets/Item/Food/" + GetRandomAssetName();
+		asset = Resources.Load<Sprite>(path);
+		if (asset == null) { Debug.Log(path); }
 
 		base.Init(grid, x, y, scale, asset);
 		walkable = true;
