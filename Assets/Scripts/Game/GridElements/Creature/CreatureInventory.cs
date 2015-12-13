@@ -4,20 +4,25 @@ using System.Collections.Generic;
 
 
 public class CreatureInventory  {
-
+	
 	protected Creature creature;
+
 	public List<CreatureInventoryItem> items;
 
-	/*public Dictionary<string, Item> equipment = new Dictionary<string, Item>() {
-		{ "helmet",  null },
-		{ "armour",  null },
-		{ "shoes",   null },
-		{ "weaponR", null },
-		{ "weaponL", null },
-		{ "ammo", 	 null }
-	};*/
+	public Dictionary<string, CreatureInventoryItem> equipment = 
+	new Dictionary<string, CreatureInventoryItem>() {
+		{ "Hat",  	null },
+		{ "Cloak",  null },
+		{ "Gloves", null },
+		{ "Armour", null },
+		{ "Weapon", null },
+		{ "WeaponRanged", null },
+		{ "Ring",  	null },
+		{ "Shield", null },
+		{ "Boots",  null },
+	};
 
-
+	
 	public CreatureInventory (Creature creature) {
 		this.creature = creature;
 		items = new List<CreatureInventoryItem>();
@@ -27,13 +32,15 @@ public class CreatureInventory  {
 	public void AddItem (Item item) {
 		Sprite sprite = item.transform.Find("Sprites/Sprite").GetComponent<SpriteRenderer>().sprite;
 
-		foreach (CreatureInventoryItem invItem in items) {
-			if (sprite.name == invItem.id) {
-				invItem.ammount += item.ammount;
-				return;
+		if (item.stackable) {
+			foreach (CreatureInventoryItem invItem in items) {
+				if (sprite.name == invItem.id) {
+					invItem.ammount += item.ammount;
+					return;
+				}
 			}
 		}
-
+		
 		items.Add(new CreatureInventoryItem(item, sprite));
 	}
 
@@ -54,52 +61,55 @@ public class CreatureInventory  {
 	}
 
 
-	public bool UseItem (string id) {
+	public CreatureInventoryItem GetInventoryItemById (string id) {
 		foreach (CreatureInventoryItem invItem in items) {
 			if (id == invItem.id) {
-				Item item = invItem.item;
-
-				if (item.CanUse(creature)) {
-					item.Use(creature);
-					RemoveItem(item);
-					return true;
-				}
-				
-				return false;
+				return invItem;
 			}
 		}
 
+		return null;
+	}
+
+
+	public bool UseItem (CreatureInventoryItem invItem) {
+		Item item = invItem.item;
+
+		if (item.CanUse(creature)) {
+			item.Use(creature);
+			RemoveItem(item);
+			return true;
+		} 
+
 		return false;
 	}
+
+
+	public void EquipItem (CreatureInventoryItem invItem) {
+		Item item = invItem.item;
+		if (item.equipmentSlot == null) { return; }
+
+		// unequipped equipped item
+		if (equipment[item.equipmentSlot] != null) {
+			bool wasEquipped = invItem.equipped;
+			equipment[item.equipmentSlot].equipped = false;
+			equipment[item.equipmentSlot] = null;
+			if (wasEquipped) { 
+				return; 
+			}
+		}
+		
+		// equip non-equipped item
+		if (!invItem.equipped) {
+			equipment[item.equipmentSlot] = invItem;
+			invItem.equipped = true;
+			return;
+		}
+	}
+
 }
 
 
-public class CreatureInventoryItem {
-
-	public string id;
-	public Item item;
-	public Sprite sprite;
-	public int ammount;
-	public bool equipped;
-
-	public CreatureInventoryItem (Item item, Sprite sprite) {
-		this.item = item;
-		this.sprite = sprite;
-		this.id = sprite.name;
-		this.ammount = item.ammount;
-		this.equipped = false;
-	}
-
-
-	public void Equip () {
-		this.equipped = true;
-	}
-
-
-	public void Unequip () {
-		this.equipped = false;
-	}
-}
 
 
 

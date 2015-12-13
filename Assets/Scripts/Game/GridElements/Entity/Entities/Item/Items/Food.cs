@@ -13,6 +13,8 @@ public class Food : Item {
 		walkable = true;
 
 		SetImages(scale, Vector3.zero, 0.04f);
+
+		consumable = true;
 	}
 
 
@@ -24,15 +26,6 @@ public class Food : Item {
 		return arr[Random.Range(0, arr.Length)];
 	}
 
-
-	public override void Pickup(Creature creature) {
-		if (creature.visible) {
-			sfx.Play("Audio/Sfx/Item/food", 0.5f, Random.Range(0.8f, 1.2f));
-		}
-
-		base.Pickup(creature);
-	}
-	
 
 	public override void Use (Creature creature) {
 		// food heals 1d4 hp for now
@@ -53,6 +46,11 @@ public class Food : Item {
 
 		Speak("Full", Color.cyan);
 		return false;
+	}
+
+
+	public override void PlaySound () {
+		sfx.Play("Audio/Sfx/Item/food", 0.5f, Random.Range(0.8f, 1.2f));
 	}
 
 }

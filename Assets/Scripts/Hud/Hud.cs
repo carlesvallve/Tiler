@@ -6,6 +6,8 @@ using System.Collections.Generic;
 
 public class Hud : MonoSingleton <Hud> {
 
+	protected AudioManager sfx;
+
 	public GameObject labelPrefab;
 	public GameObject slotPrefab;
 	public float textSpeed = 0.025f;
@@ -22,35 +24,44 @@ public class Hud : MonoSingleton <Hud> {
 
 	private Transform world;
 	
-
 	private Transform popupInventory;
-
+	private List<GameObject> inventorySlots;
+	
 
 	void Awake () {
+
+		// audio
+		sfx = AudioManager.instance;
+
+		// hud canvas
 		Canvas canvas = GetComponent<Canvas>();
 		canvas.sortingLayerName = "Ui";
 		canvas.sortingOrder = short.MaxValue;
 
-		overlayGroup = transform.Find("Overlay").GetComponent<CanvasGroup>();
-		world = transform.Find("World");
-
-
+		// header
 		playerName = transform.Find("Header/PlayerName/Text").GetComponent<Text>();
 		playerInfo = transform.Find("Header/PlayerXp/Text").GetComponent<Text>();
-
 		dungeonLevel = transform.Find("Header/DungeonLevel/Text").GetComponent<Text>();
 		gameTurn = transform.Find("Header/Turn/Text").GetComponent<Text>();
 
+		// footer
 		logText = transform.Find("Footer/Log/Text").GetComponent<Text>();
 
+		// popups
 		popupInventory = transform.Find("Popups/PopupInventory");
 		popupInventory.gameObject.SetActive(false);
+
+		// in-game labels
+		overlayGroup = transform.Find("Overlay").GetComponent<CanvasGroup>();
+		world = transform.Find("World");
 	}
 
 
 	void Update () {
 		if (Input.GetKeyDown(KeyCode.I)) {
-			DisplayInventory();
+			bool value = !popupInventory.gameObject.activeSelf;
+			DisplayInventory(value);
+			if (value) { sfx.Play("Audio/Sfx/Item/book", 0.15f, Random.Range(0.8f, 1.2f)); }
 		}
 	}
 
@@ -58,51 +69,87 @@ public class Hud : MonoSingleton <Hud> {
 	// Inventory
 	// ==============================================================
 
-	public void DisplayInventory () {
-		bool value = !popupInventory.gameObject.activeSelf;
+	public void DisplayInventory (bool value) {
+		// display popup, and escape if it was closed
 		popupInventory.gameObject.SetActive(value);
-		if (!value) {return;}
+		if (!value) { 
+			sfx.Play("Audio/Sfx/Item/book", 0.15f, Random.Range(0.8f, 1.2f));
+			return; 
+		}
 
-		Player player = Grid.instance.player;
-		Transform parent = transform.Find("Popups/PopupInventory/Main/Bag/Inventory");
-
-		foreach (Transform child in parent) {
+		// destroy all inventory slots
+		Transform inventoryContainer = transform.Find("Popups/PopupInventory/Main/Bag/Inventory/Slots");
+		foreach (Transform child in inventoryContainer) {
 			Destroy(child.gameObject);
 		}
 
-		List<GameObject> slots = new List<GameObject>();
-		foreach(CreatureInventoryItem invItem in player.inventory.items) {
-			slots.Add(CreateInventorySlot(parent, invItem));
+		// destroy all equipment slots
+		Transform equipmentContainer = transform.Find("Popups/PopupInventory/Main/Bag/Equipment/Slots/");
+		foreach (Transform child in equipmentContainer) {
+			Transform tr = child.Find(child.name);
+			if (tr != null) { Destroy(tr.gameObject); }
+		}
+
+		// generate inventory slots from player's CreatureInventory items
+		inventorySlots = new List<GameObject>();
+		foreach(CreatureInventoryItem invItem in Grid.instance.player.inventory.items) {
+			if (invItem.equipped) {
+				// equipment slots
+				Transform container = equipmentContainer.Find(invItem.item.equipmentSlot);
+				CreateInventorySlot(container, invItem);
+			} else {
+				// inventory slots
+				inventorySlots.Add(CreateInventorySlot(inventoryContainer, invItem));
+			}
 		}
 	}
 
 
 	private GameObject CreateInventorySlot (Transform parent, CreatureInventoryItem invItem) {
-		
+		// instantiate slot prefab
 		GameObject obj = (GameObject)Instantiate(slotPrefab);
 		obj.transform.SetParent(parent, false);
+		obj.transform.localPosition = Vector3.zero;
+		obj.name = invItem.item.equipmentSlot;
 
+		// set image
 		Image image = obj.transform.Find("Image").GetComponent<Image>();
 		image.sprite = invItem.sprite;
 
+		// set text
 		Text text = obj.transform.Find("Text").GetComponent<Text>();
 		text.text = invItem.ammount > 1 ? invItem.ammount.ToString() : "";
 
+		// set button
 		Button button = obj.GetComponent<Button>();
  		button.onClick.AddListener(() => { 
- 			UseItem(image.sprite.name);
+ 			ApplyItem(obj);
  		});
 
 		return obj;
 	}
 
 
-	private void UseItem (string id) {
-		bool success = Grid.instance.player.inventory.UseItem(id);
-		if (success) {
-			DisplayInventory();
-		} 
+	private void ApplyItem (GameObject obj) {
+		string id = obj.transform.Find("Image").GetComponent<Image>().sprite.name;
+		CreatureInventoryItem invItem = Grid.instance.player.inventory.GetInventoryItemById(id);
+
+		// use item
+		if (invItem.item.consumable) {
+			Grid.instance.player.inventory.UseItem(invItem);
+			DisplayInventory(false);
+			return;
+		}
+
+		// equip/unequip item
+		if (invItem.item.equipmentSlot != null) {
+			Grid.instance.player.inventory.EquipItem(invItem);
+			DisplayInventory(true);
+			sfx.Play("Audio/Sfx/Item/armour", 0.9f, Random.Range(0.8f, 1.2f));
+			return;
+		}
 	}
+
 
 	// ==============================================================
 	// Header

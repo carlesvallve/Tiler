@@ -28,10 +28,15 @@ public class Treasure : Item {
 		creature.stats.gold += ammount;
 
 		if (creature.visible) {
-			sfx.Play("Audio/Sfx/Item/treasure", 0.15f, Random.Range(0.5f, 1.0f));
 			Speak("+" + ammount, Color.yellow);
 		}
 
 		base.Pickup(creature);
 	}
+
+
+	public override void PlaySound () {
+		sfx.Play("Audio/Sfx/Item/treasure", 0.15f, Random.Range(0.5f, 1.0f));
+	}
+	
 }

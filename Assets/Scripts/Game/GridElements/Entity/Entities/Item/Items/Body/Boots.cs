@@ -14,7 +14,8 @@ public class Boots : Item {
 
 		SetImages(scale, Vector3.zero, 0.04f);
 
-		equippable = true;
+		stackable = false;
+		equipmentSlot = "Boots";
 	}
 
 
@@ -28,12 +29,8 @@ public class Boots : Item {
 	}
 
 
-	public override void Pickup (Creature creature) {
-		if (creature.visible) {
-			sfx.Play("Audio/Sfx/Item/armour", 0.9f, Random.Range(0.8f, 1.2f));
-		}
-		
-		base.Pickup(creature);
+	public override void PlaySound () {
+		sfx.Play("Audio/Sfx/Item/armour", 0.9f, Random.Range(0.8f, 1.2f));
 	}
 
 }

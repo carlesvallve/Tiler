@@ -14,7 +14,8 @@ public class Weapon : Item {
 
 		SetImages(scale, Vector3.zero, 0.04f);
 
-		equippable = true;
+		stackable = false;
+		equipmentSlot = "Weapon";
 	}
 
 
@@ -34,11 +35,8 @@ public class Weapon : Item {
 	}
 
 
-	public override void Pickup(Creature creature) {
-		if (creature.visible) {
-			sfx.Play("Audio/Sfx/Item/weapon", 0.6f, Random.Range(0.8f, 1.2f));
-		}
-		
-		base.Pickup(creature);
+	public override void PlaySound () {
+		sfx.Play("Audio/Sfx/Item/weapon", 0.6f, Random.Range(0.8f, 1.2f));
 	}
+	
 }

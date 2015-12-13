@@ -14,7 +14,8 @@ public class Armour : Item {
 
 		SetImages(scale, Vector3.zero, 0.04f);
 
-		equippable = true;
+		stackable = false;
+		equipmentSlot = "Armour";
 	}
 
 
@@ -28,19 +29,15 @@ public class Armour : Item {
 			"mail-scale-1", "mail-scale-eleven",  
 			"mail-splint",
 			"robe-blue", "robe-mage", "robe-simple", 
-			"sin-animal-1", "sin-animal-2", "sin-lizard", 
+			"skin-animal-1", "skin-animal-2", "skin-lizard", 
 		};
 
 		return arr[Random.Range(0, arr.Length)];
 	}
 
 
-	public override void Pickup (Creature creature) {
-		if (creature.visible) {
-			sfx.Play("Audio/Sfx/Item/armour", 0.9f, Random.Range(0.8f, 1.2f));
-		}
-		
-		base.Pickup(creature);
+	public override void PlaySound () {
+		sfx.Play("Audio/Sfx/Item/armour", 0.9f, Random.Range(0.8f, 1.2f));
 	}
 
 }

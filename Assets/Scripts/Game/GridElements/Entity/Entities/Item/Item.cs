@@ -5,7 +5,9 @@ using System.Collections;
 public class Item : Entity {
 
 	public int ammount = 1;
-	public bool equippable = false;
+	public bool stackable = true;
+	public bool consumable = false;
+	public string equipmentSlot = null;
 
 
 	public override void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null) {
@@ -24,6 +26,11 @@ public class Item : Entity {
 	// Pickup
 
 	public virtual void Pickup (Creature creature) {
+		// play item sound
+		if (creature.visible) {
+			PlaySound();
+		}
+
 		// spawn glow particles
 		if (creature.visible) {
 			Grid.instance.CreateGlow(transform.position, 8, Color.white);
@@ -86,5 +93,9 @@ public class Item : Entity {
 
 	public virtual void Use (Creature creature) {}
 	public virtual bool CanUse (Creature creature) { return false; }
+
+	// sfx
+
+	public virtual void PlaySound () {}
 
 }

@@ -13,6 +13,8 @@ public class Potion : Item {
 		walkable = true;
 
 		SetImages(scale, Vector3.zero, 0.04f);
+
+		consumable = true;
 	}
 
 
@@ -28,22 +30,13 @@ public class Potion : Item {
 	}
 
 
-	public override void Pickup(Creature creature) {
-		if (creature.visible) {
-			sfx.Play("Audio/Sfx/Item/potion", 0.4f, Random.Range(0.8f, 1.2f));
-		}
-		
-		base.Pickup(creature);
-	}
-
-
 	public override void Use (Creature creature) {
 		// food heals 2d6 hp for now
 		int hp = Dice.Roll("2d6");
 		creature.UpdateHp(hp);
 		 
 		if (creature.visible) {
-			sfx.Play("Audio/Sfx/Item/potion", 0.4f, Random.Range(0.8f, 1.2f));
+			PlaySound();
 			Speak("+" + hp, Color.cyan);
 		} 
 	}
@@ -56,6 +49,11 @@ public class Potion : Item {
 
 		Speak("Full", Color.cyan);
 		return false;
+	}
+
+
+	public override void PlaySound () {
+		sfx.Play("Audio/Sfx/Item/potion", 0.4f, Random.Range(0.8f, 1.2f));
 	}
 
 }
