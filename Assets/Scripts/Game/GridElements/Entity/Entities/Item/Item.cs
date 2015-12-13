@@ -5,7 +5,7 @@ using System.Collections;
 public class Item : Entity {
 
 	public string typeId;
-	public int ammount;
+	public int ammount = 1;
 
 	public override void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null) {
 		base.Init(grid, x, y, scale, asset);
@@ -13,6 +13,8 @@ public class Item : Entity {
 
 		//SetSortingOrder(110);
 		SetImages(scale, Vector3.zero, 0.04f);
+
+		ammount = 1;
 
 		//print (typeId + " " + asset);
 	}

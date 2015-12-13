@@ -86,7 +86,7 @@ public class Hud : MonoSingleton <Hud> {
 		image.sprite = invItem.sprite;
 
 		Text text = obj.transform.Find("Text").GetComponent<Text>();
-		text.text = invItem.ammount.ToString();
+		text.text = invItem.ammount > 1 ? invItem.ammount.ToString() : "";
 
 		Button button = obj.GetComponent<Button>();
  		button.onClick.AddListener(() => { 

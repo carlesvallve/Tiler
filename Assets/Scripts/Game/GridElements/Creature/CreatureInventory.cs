@@ -29,7 +29,7 @@ public class CreatureInventory  {
 
 		foreach (CreatureInventoryItem invItem in items) {
 			if (sprite.name == invItem.id) {
-				invItem.ammount += 1;
+				invItem.ammount += item.ammount;
 				return;
 			}
 		}
@@ -86,7 +86,7 @@ public class CreatureInventoryItem {
 		this.item = item;
 		this.sprite = sprite;
 		this.id = sprite.name;
-		this.ammount = 1;
+		this.ammount = item.ammount;
 		this.equipped = false;
 	}
 
