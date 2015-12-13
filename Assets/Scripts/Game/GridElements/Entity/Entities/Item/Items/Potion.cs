@@ -11,9 +11,6 @@ public class Potion : Item {
 		walkable = true;
 
 		SetImages(scale, Vector3.zero, 0.04f);
-
-		typeId = "potion";
-		ammount = 1;
 	}
 
 
@@ -40,7 +37,7 @@ public class Potion : Item {
 
 	public override void Use (Creature creature) {
 		// food heals 2d6 hp for now
-		int hp = Dice.Roll("2d6"); //Random.Range(1, 5);
+		int hp = Dice.Roll("2d6");
 		creature.UpdateHp(hp);
 		 
 		if (creature.visible) {

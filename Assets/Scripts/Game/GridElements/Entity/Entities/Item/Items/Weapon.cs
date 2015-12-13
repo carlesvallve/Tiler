@@ -12,8 +12,7 @@ public class Weapon : Item {
 
 		SetImages(scale, Vector3.zero, 0.04f);
 
-		typeId = "weapon";
-		ammount = 1;
+		equippable = true;
 	}
 
 

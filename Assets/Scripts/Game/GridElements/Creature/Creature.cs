@@ -12,39 +12,23 @@ using System.Collections.Generic;
 
 public class Creature : Tile {
 
+	// movement
 	protected List<Vector2> path;
 	public float speed = 0.15f;
 	public float speedMove = 0.15f;
 
-	protected Creature target;
-
-	public CreatureStates state { get; set; }
-
+	// stats
 	public CreatureStats stats;
 	public HpBar bar;
 
+	// states
+	public CreatureStates state { get; set; }
+
+	// ai
+	protected Creature target;
 	public bool isAgressive = true;
 
-
-	/*public Dictionary<string, List<Item>> inventory = new Dictionary<string, List<Item>>() {
-		{ "food",     new List<Item>() },
-		{ "treasure", new List<Item>() },
-		{ "potion",   new List<Item>() },
-		{ "book", 	  new List<Item>() },
-		{ "weapon",   new List<Item>() },
-		{ "armour",   new List<Item>() }
-	};*/
-
-	/*public Dictionary<string, Item> equipment = new Dictionary<string, Item>() {
-		{ "helmet",  null },
-		{ "armour",  null },
-		{ "shoes",   null },
-		{ "weaponR", null },
-		{ "weaponL", null },
-		{ "ammo", 	 null }
-	};*/
-
-
+	// inventory
 	public CreatureInventory inventory;
 
 	
@@ -131,21 +115,6 @@ public class Creature : Tile {
 			sfx.Play("Audio/Sfx/Stats/trumpets", 0.25f, Random.Range(0.8f, 1.2f));
 		}
 	}
-
-
-	/*public virtual bool UpdateEnergy () {
-		// escape if we dont have enough action points for acting this turn
-		stats.energy += stats.energyRate;
-		SetInfo(stats.energy.ToString(), Color.cyan);
-
-		if (stats.energy >= 1) {
-			//stats.energy = 1;
-			stats.energy -= 1;
-			return true;
-		} 
-
-		return false;
-	}*/
 
 
 	public virtual void UpdateHp (int ammount) {

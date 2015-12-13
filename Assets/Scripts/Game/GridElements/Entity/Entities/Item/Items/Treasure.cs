@@ -12,7 +12,6 @@ public class Treasure : Item {
 
 		SetImages(scale, Vector3.zero, 0.04f);
 
-		typeId = "treasure";
 		ammount = Random.Range(1, 10);
 	}
 
@@ -33,5 +32,4 @@ public class Treasure : Item {
 
 		base.Pickup(creature);
 	}
-
 }

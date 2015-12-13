@@ -11,9 +11,6 @@ public class Book : Item {
 		walkable = true;
 
 		SetImages(scale, Vector3.zero, 0.04f);
-
-		typeId = "book";
-		ammount = 1;
 	}
 
 
@@ -37,5 +34,4 @@ public class Book : Item {
 		
 		base.Pickup(creature);
 	}
-
 }

@@ -4,19 +4,15 @@ using System.Collections;
 
 public class Item : Entity {
 
-	public string typeId;
 	public int ammount = 1;
+	public bool equippable = false;
+
 
 	public override void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null) {
 		base.Init(grid, x, y, scale, asset);
 		walkable = true;
 
-		//SetSortingOrder(110);
 		SetImages(scale, Vector3.zero, 0.04f);
-
-		ammount = 1;
-
-		//print (typeId + " " + asset);
 	}
 
 
@@ -62,7 +58,6 @@ public class Item : Entity {
 		// remove from creature's inventory dictionary
 		if (tile is Creature) {
 			Creature creature = (Creature)tile;
-			//creature.inventory[typeId].Remove(this);
 			creature.inventory.RemoveItem(this);
 		}
 	}
