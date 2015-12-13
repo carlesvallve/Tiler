@@ -4,6 +4,11 @@ using System.Collections;
 
 public class WeaponRanged : Item {
 
+	public string damage = "1d4";
+	public int range = 5;
+	public int speed = 1;
+
+
 	public override void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null) {
 		string path = "Tilesets/Item/Weapon/Ranged/" + GetRandomAssetName();
 		asset = Resources.Load<Sprite>(path);

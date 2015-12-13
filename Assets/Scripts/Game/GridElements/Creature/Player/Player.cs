@@ -47,13 +47,13 @@ public class Player : Creature {
 		walkable = false;
 
 		// init stats
-		stats.hpMax = 30; 
+		stats.hpMax = 20; 
 		stats.hp = stats.hpMax;
 		stats.visionRadius = 6;
 		stats.attack = 5;
 		stats.defense = 2;
 		stats.str = 2;
-		stats.attackRange = 1; //5;
+		stats.attackRange = 1;
 
 		SetEnergy(1f);
 	}
