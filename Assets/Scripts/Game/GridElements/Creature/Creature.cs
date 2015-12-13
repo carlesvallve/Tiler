@@ -26,23 +26,26 @@ public class Creature : Tile {
 	public bool isAgressive = true;
 
 
-	public Dictionary<string, List<Item>> items = new Dictionary<string, List<Item>>() {
+	/*public Dictionary<string, List<Item>> inventory = new Dictionary<string, List<Item>>() {
 		{ "food",     new List<Item>() },
 		{ "treasure", new List<Item>() },
 		{ "potion",   new List<Item>() },
 		{ "book", 	  new List<Item>() },
 		{ "weapon",   new List<Item>() },
 		{ "armour",   new List<Item>() }
-	};
+	};*/
 
-	public Dictionary<string, Item> equipment = new Dictionary<string, Item>() {
+	/*public Dictionary<string, Item> equipment = new Dictionary<string, Item>() {
 		{ "helmet",  null },
 		{ "armour",  null },
 		{ "shoes",   null },
 		{ "weaponR", null },
 		{ "weaponL", null },
 		{ "ammo", 	 null }
-	};
+	};*/
+
+
+	public CreatureInventory inventory;
 
 	
 	// =====================================================
@@ -70,6 +73,9 @@ public class Creature : Tile {
 		stats.xp = 0;
 		stats.xpMax = 100 * stats.level;
 		stats.xpValue = 20 * stats.level;
+
+		// initialize inventory
+		inventory = new CreatureInventory();
 	}
 
 
@@ -776,11 +782,16 @@ public class Creature : Tile {
 
 		// get a list of all items carried by the creature
 		List<Item> allItems = new List<Item>();
-		foreach (List<Item> itemCategory in items.Values) {
+		foreach (CreatureInventoryItem invItem in inventory.items) {
+			allItems.Add(invItem.item);
+		}
+
+		/*List<Item> allItems = new List<Item>();
+		foreach (List<Item> itemCategory in inventory.Values) {
 			foreach(Item item in itemCategory) {
 				allItems.Add(item);
 			}
-		}
+		}*/
 
 		// spawn all the items carried by the creature
 		SpawnItemsFromInventory(allItems);

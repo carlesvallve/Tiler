@@ -1,9 +1,13 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using System.Collections.Generic;
+
 
 public class Hud : MonoSingleton <Hud> {
 
+	public GameObject labelPrefab;
+	public GameObject slotPrefab;
 	public float textSpeed = 0.025f;
 
 	private Text playerName;
@@ -17,7 +21,7 @@ public class Hud : MonoSingleton <Hud> {
 	private CanvasGroup overlayGroup;
 
 	private Transform world;
-	public GameObject labelPrefab;
+	
 
 	private Transform popupInventory;
 
@@ -46,76 +50,55 @@ public class Hud : MonoSingleton <Hud> {
 
 	void Update () {
 		if (Input.GetKeyDown(KeyCode.I)) {
-			popupInventory.gameObject.SetActive(!popupInventory.gameObject.activeSelf);
+			DisplayInventory();
 		}
 	}
 
 	// ==============================================================
-	// UI labels
+	// Inventory
 	// ==============================================================
 
-	// TODO:  We probably want to create a 'Label' class to handle all these
-	
-	public void CreateLabel (Tile tile, string str, Color color, bool stick = false, float duration = 1f, float startY = 32) {
-		GameObject obj = (GameObject)Instantiate(labelPrefab);
-		obj.transform.SetParent(world, false);
-		obj.name = "Label";
+	public void DisplayInventory () {
+		bool value = !popupInventory.gameObject.activeSelf;
+		popupInventory.gameObject.SetActive(value);
+		if (!value) {return;}
+
+		Player player = Grid.instance.player;
+		Transform parent = transform.Find("Popups/PopupInventory/Main/Bag/Inventory");
+
+		List<GameObject> slots = new List<GameObject>();
+		foreach(CreatureInventoryItem invItem in player.inventory.items) {
+			slots.Add(CreateInventorySlot(parent, invItem));
+		}
+
+		// get a list of all items carried by the creature
+		/*List<Item> allItems = new List<Item>();
+		foreach (List<Item> itemCategory in player.inventory.Values) {
+			foreach(Item item in itemCategory) {
+				allItems.Add(item);
+			}
+		}
+
+		List<GameObject> slots = new List<GameObject>();
+		foreach (Item item in allItems) {
+			slots.Add(CreateInventorySlot(item));
+		}*/
+	}
+
+
+	private GameObject CreateInventorySlot (Transform parent, CreatureInventoryItem invItem) {
+		
+		GameObject obj = (GameObject)Instantiate(slotPrefab);
+		obj.transform.SetParent(parent, false);
+
+		Image image = obj.transform.Find("Image").GetComponent<Image>();
+		image.sprite = invItem.sprite;
 
 		Text text = obj.transform.Find("Text").GetComponent<Text>();
-		text.color = color;
-		text.text = str;
+		text.text = invItem.ammount.ToString();
 
-		StartCoroutine(AnimateLabel(tile, obj, stick, duration, startY));
-		StartCoroutine(FadeLabel(tile, obj, duration));
-	} 
-
-	
-	private IEnumerator AnimateLabel(Tile tile, GameObject obj, bool stick, float duration, float startY) {
-		Vector3 startPos = tile.transform.position;
-		float endY = startY + 32;
-		float t = 0;
-		
-		while (t <= 1) {
-			t += Time.deltaTime / duration;
-
-			float y = Mathf.Lerp(startY, endY, Mathf.SmoothStep(0f, 1f, t));
-
-			Vector3 pos = Camera.main.WorldToScreenPoint(
-				tile != null && stick ? tile.transform.position : startPos
-			) + Vector3.up * y;
-
-			if (obj != null) { obj.transform.position = pos; } 
-			
-			yield return null;
-		}
+		return obj;
 	}
-
-
-	private IEnumerator FadeLabel(Tile tile, GameObject obj, float duration) {
-		CanvasGroup group = obj.GetComponent<CanvasGroup>();
-
-		float t = 0;
-		while (t <= 1) {
-			t += Time.deltaTime / (duration * 0.2f);
-			group.alpha = t;
-			yield return null;
-		}
-
-		yield return new WaitForSeconds(duration * 0.4f);
-
-		t = 0;
-		while (t <= 1) {
-			t += Time.deltaTime / (duration * 0.4f);
-			group.alpha = (1 - t);
-			yield return null;
-		}
-
-		yield return null;
-
-
-		Destroy(obj);
-	}
-
 
 	// ==============================================================
 	// Header
@@ -244,5 +227,72 @@ public class Hud : MonoSingleton <Hud> {
 		}
 		
 		group.alpha = 1;	
+	}
+
+
+	// ==============================================================
+	// UI labels
+	// ==============================================================
+
+	// TODO:  We probably want to create a 'Label' class to handle all these
+	
+	public void CreateLabel (Tile tile, string str, Color color, bool stick = false, float duration = 1f, float startY = 32) {
+		GameObject obj = (GameObject)Instantiate(labelPrefab);
+		obj.transform.SetParent(world, false);
+		obj.name = "Label";
+
+		Text text = obj.transform.Find("Text").GetComponent<Text>();
+		text.color = color;
+		text.text = str;
+
+		StartCoroutine(AnimateLabel(tile, obj, stick, duration, startY));
+		StartCoroutine(FadeLabel(tile, obj, duration));
+	} 
+
+	
+	private IEnumerator AnimateLabel(Tile tile, GameObject obj, bool stick, float duration, float startY) {
+		Vector3 startPos = tile.transform.position;
+		float endY = startY + 32;
+		float t = 0;
+		
+		while (t <= 1) {
+			t += Time.deltaTime / duration;
+
+			float y = Mathf.Lerp(startY, endY, Mathf.SmoothStep(0f, 1f, t));
+
+			Vector3 pos = Camera.main.WorldToScreenPoint(
+				tile != null && stick ? tile.transform.position : startPos
+			) + Vector3.up * y;
+
+			if (obj != null) { obj.transform.position = pos; } 
+			
+			yield return null;
+		}
+	}
+
+
+	private IEnumerator FadeLabel(Tile tile, GameObject obj, float duration) {
+		CanvasGroup group = obj.GetComponent<CanvasGroup>();
+
+		float t = 0;
+		while (t <= 1) {
+			t += Time.deltaTime / (duration * 0.2f);
+			group.alpha = t;
+			yield return null;
+		}
+
+		yield return new WaitForSeconds(duration * 0.4f);
+
+		t = 0;
+		while (t <= 1) {
+			t += Time.deltaTime / (duration * 0.4f);
+			group.alpha = (1 - t);
+			yield return null;
+		}
+
+		yield return null;
+
+
+		Destroy(obj);
 	}
 }

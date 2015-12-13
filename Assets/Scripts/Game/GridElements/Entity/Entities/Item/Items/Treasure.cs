@@ -34,13 +34,4 @@ public class Treasure : Item {
 		base.Pickup(creature);
 	}
 
-	
-	/*public override void Drop(Creature creature, int x, int y) {
-		if (creature.visible) {
-			sfx.Play("Audio/Sfx/Item/treasure", 0.15f, Random.Range(0.5f, 1.0f));
-		}
-
-		base.Drop(creature, x, y);
-	}*/
-
 }

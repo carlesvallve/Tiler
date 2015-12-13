@@ -38,12 +38,4 @@ public class Book : Item {
 		base.Pickup(creature);
 	}
 
-
-	/*public override void Drop (Creature creature, int x, int y) {
-		if (creature.visible) {
-			sfx.Play("Audio/Sfx/Item/book", 0.15f, Random.Range(0.8f, 1.2f));
-		}
-		
-		base.Drop(creature, x, y);
-	}*/
 }

@@ -44,7 +44,7 @@ public class Game : MonoSingleton <Game> {
 		};
 
 		grid.player.OnGameOver += () => {
-			StartCoroutine(GameOver());
+			StartCoroutine(GameOver());	
 		};
 	}
 

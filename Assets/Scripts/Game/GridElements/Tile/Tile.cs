@@ -24,7 +24,7 @@ public class Tile : MonoBehaviour {
 	protected Transform container;
 	protected SpriteRenderer shadow;
 	protected SpriteRenderer outline;
-	protected SpriteRenderer img;
+	public SpriteRenderer img { get; private set; }
 	protected TextMesh label;
 	
 	// used by ai

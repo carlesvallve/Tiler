@@ -37,12 +37,4 @@ public class Potion : Item {
 		base.Pickup(creature);
 	}
 
-
-	/*public override void Drop(Creature creature, int x, int y) {
-		if (creature.visible) {
-			sfx.Play("Audio/Sfx/Item/potion", 0.4f, Random.Range(0.8f, 1.2f));
-		}
-		
-		base.Drop(creature, x, y);
-	}*/
 }

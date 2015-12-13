@@ -29,8 +29,11 @@ public class Item : Entity {
 			Grid.instance.CreateGlow(transform.position, 8, Color.white);
 		}
 
-		// add to creature's items dictionary
-		creature.items[typeId].Add(this);
+		// add to creature's inventory dictionary
+		//creature.inventory[typeId].Add(this);
+
+		// add to creature's inventory
+		creature.inventory.AddItem(this);
 
 		// reparent item to creature
 		transform.SetParent(creature.transform, false);
@@ -52,6 +55,13 @@ public class Item : Entity {
 		StartCoroutine(DropAnimation(x, y, 0.1f));
 
 		UpdateVisibility();
+
+		// remove from creature's inventory dictionary
+		if (tile is Creature) {
+			Creature creature = (Creature)tile;
+			//creature.inventory[typeId].Remove(this);
+			creature.inventory.RemoveItem(this);
+		}
 	}
 
 
