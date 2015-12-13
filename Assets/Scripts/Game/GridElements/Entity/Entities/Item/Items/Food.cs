@@ -27,25 +27,33 @@ public class Food : Item {
 
 
 	public override void Pickup(Creature creature) {
-		// food heals hp for now
-		int hp = Random.Range(1, 5);
-		if (creature.stats.hp < creature.stats.hpMax) {
-			creature.UpdateHp(hp);
-		} else {
-			hp = 0;
-		}
-
 		if (creature.visible) {
-			if (hp > 0) {
-				sfx.Play("Audio/Sfx/Item/food", 0.5f, Random.Range(0.8f, 1.2f));
-				Speak("+" + hp, Color.cyan);
-			} else {
-				Speak("Full", Color.cyan);
-				return;
-			}
+			sfx.Play("Audio/Sfx/Item/food", 0.5f, Random.Range(0.8f, 1.2f));
 		}
 
 		base.Pickup(creature);
+	}
+	
+
+	public override void Use (Creature creature) {
+		// food heals 1d4 hp for now
+		int hp = Dice.Roll("1d4"); //Random.Range(1, 5);
+		creature.UpdateHp(hp);
+		 
+		if (creature.visible) {
+			sfx.Play("Audio/Sfx/Item/food", 0.5f, Random.Range(0.8f, 1.2f));
+			Speak("+" + hp, Color.cyan);
+		} 
+	}
+
+
+	public override bool CanUse (Creature creature) {
+		if (creature.stats.hp < creature.stats.hpMax) {
+			return true;
+		}
+
+		Speak("Full", Color.cyan);
+		return false;
 	}
 
 }

@@ -66,23 +66,14 @@ public class Hud : MonoSingleton <Hud> {
 		Player player = Grid.instance.player;
 		Transform parent = transform.Find("Popups/PopupInventory/Main/Bag/Inventory");
 
+		foreach (Transform child in parent) {
+			Destroy(child.gameObject);
+		}
+
 		List<GameObject> slots = new List<GameObject>();
 		foreach(CreatureInventoryItem invItem in player.inventory.items) {
 			slots.Add(CreateInventorySlot(parent, invItem));
 		}
-
-		// get a list of all items carried by the creature
-		/*List<Item> allItems = new List<Item>();
-		foreach (List<Item> itemCategory in player.inventory.Values) {
-			foreach(Item item in itemCategory) {
-				allItems.Add(item);
-			}
-		}
-
-		List<GameObject> slots = new List<GameObject>();
-		foreach (Item item in allItems) {
-			slots.Add(CreateInventorySlot(item));
-		}*/
 	}
 
 
@@ -97,7 +88,20 @@ public class Hud : MonoSingleton <Hud> {
 		Text text = obj.transform.Find("Text").GetComponent<Text>();
 		text.text = invItem.ammount.ToString();
 
+		Button button = obj.GetComponent<Button>();
+ 		button.onClick.AddListener(() => { 
+ 			UseItem(image.sprite.name);
+ 		});
+
 		return obj;
+	}
+
+
+	private void UseItem (string id) {
+		bool success = Grid.instance.player.inventory.UseItem(id);
+		if (success) {
+			DisplayInventory();
+		} 
 	}
 
 	// ==============================================================

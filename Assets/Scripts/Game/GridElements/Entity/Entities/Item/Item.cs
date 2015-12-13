@@ -23,14 +23,13 @@ public class Item : Entity {
 	}
 
 
+	// Pickup
+
 	public virtual void Pickup (Creature creature) {
 		// spawn glow particles
 		if (creature.visible) {
 			Grid.instance.CreateGlow(transform.position, 8, Color.white);
 		}
-
-		// add to creature's inventory dictionary
-		//creature.inventory[typeId].Add(this);
 
 		// add to creature's inventory
 		creature.inventory.AddItem(this);
@@ -43,6 +42,8 @@ public class Item : Entity {
 		grid.SetEntity(x, y, null);
 	}
 
+
+	// Drop
 
 	public virtual void Drop (Tile tile, int x, int y) {
 		transform.SetParent(grid.container.Find("Entities"), false);
@@ -82,4 +83,11 @@ public class Item : Entity {
 
 		UpdateVisibility();
 	}
+
+
+	// Use
+
+	public virtual void Use (Creature creature) {}
+	public virtual bool CanUse (Creature creature) { return false; }
+
 }

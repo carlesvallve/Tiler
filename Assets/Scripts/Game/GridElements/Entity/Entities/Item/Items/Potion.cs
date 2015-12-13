@@ -37,4 +37,26 @@ public class Potion : Item {
 		base.Pickup(creature);
 	}
 
+
+	public override void Use (Creature creature) {
+		// food heals 2d6 hp for now
+		int hp = Dice.Roll("2d6"); //Random.Range(1, 5);
+		creature.UpdateHp(hp);
+		 
+		if (creature.visible) {
+			sfx.Play("Audio/Sfx/Item/potion", 0.4f, Random.Range(0.8f, 1.2f));
+			Speak("+" + hp, Color.cyan);
+		} 
+	}
+
+
+	public override bool CanUse (Creature creature) {
+		if (creature.stats.hp < creature.stats.hpMax) {
+			return true;
+		}
+
+		Speak("Full", Color.cyan);
+		return false;
+	}
+
 }

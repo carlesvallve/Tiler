@@ -75,7 +75,7 @@ public class Creature : Tile {
 		stats.xpValue = 20 * stats.level;
 
 		// initialize inventory
-		inventory = new CreatureInventory();
+		inventory = new CreatureInventory(this);
 	}
 
 
