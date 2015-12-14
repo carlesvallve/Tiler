@@ -68,6 +68,10 @@ public class Creature : Tile {
 		inventory = new CreatureInventory(this);
 	}
 
+	void Update () {
+		SetInfo((Mathf.Round(stats.energy * 100f) / 100f).ToString(), Color.yellow);
+	}
+
 
 	// =====================================================
 	// Stats
@@ -312,7 +316,7 @@ public class Creature : Tile {
 		}
 
 		// resolve encounters once we arrived to the goal
-		ResolveEncountersAtGoal(this.x, this.y);
+		//ResolveEncountersAtGoal(this.x, this.y);
 
 		// stop moving once we reach the goal
 		StopMoving();
@@ -372,7 +376,8 @@ public class Creature : Tile {
 		}
 
 		// resolve encounters with current tile after moving
-		ResolveEncountersAtCurrentTile(this.x, this.y);
+		bool escape = ResolveEncountersAtCurrentTile(this.x, this.y);
+		if (escape) { yield break; }
 
 		// emit event
 		this.UpdateGameTurn();
@@ -523,12 +528,16 @@ public class Creature : Tile {
 		// if next tile is a creature, attack it
 		Creature creature = grid.GetCreature(x, y);
 		if (creature != null && creature != this) {
+
+			// attack will use 1 energy, but energy will never get below 0
+			stats.energy = creature.stats.energyRate; //Mathf.Max(creature.stats.energyRate - 1f, 0); 
+
 			combat.Attack(creature, 0);
 		}
 	}
 
 
-	protected void ResolveEncountersAtCurrentTile (int x, int y) {
+	protected bool ResolveEncountersAtCurrentTile (int x, int y) {
 		Entity entity = grid.GetEntity(x, y);
 		if (entity != null) {
 
@@ -536,34 +545,29 @@ public class Creature : Tile {
 			if (entity is Item) {
 				((Item)entity).Pickup(this);
 			}
-		}
-	}
 
-	protected void ResolveEncountersAtGoal (int x, int y) {
-		if (path.Count == 0) { return; }
-
-		Vector2 goal = path[path.Count - 1];
-		if (x == (int)goal.x && y == (int)goal.y) {
-
-			Entity entity = grid.GetEntity(x, y);
-			if (entity != null) {
-
-				// stairs (player only)
+			// check stairs at goal
+			Vector2 goal = path[path.Count - 1];
+			if (x == (int)goal.x && y == (int)goal.y) {
 				if ((this is Player) && (entity is Stair)) {
 					Stair stair = (Stair)entity;
 
 					if (stair.state == EntityStates.Open) {
 						state = CreatureStates.Descending;
 						Dungeon.instance.ExitLevel (stair.direction);
+						return true;
 					} else {
 						Hud.instance.Log("The stair doors are locked.");
 					}
 				}
-
 			}
+
 		}
+
+		return false;
 	}
 
+	
 	// =====================================================
 	// Functions overriden by Player or Monster class
 	// =====================================================

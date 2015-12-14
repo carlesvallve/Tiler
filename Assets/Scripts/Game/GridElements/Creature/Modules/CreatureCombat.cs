@@ -102,15 +102,30 @@ public class CreatureCombat : CreatureModule {
 		if (me.state == CreatureStates.Using) { return; }
 		if (target.state == CreatureStates.Dying) { return; }
 
-		me.state = CreatureStates.Attacking;
+		me.StopMoving();
+		target.StopMoving();
 
+		me.StartCoroutine(CombatAnimation(target, delay));
+		
+	}
+
+
+	private IEnumerator CombatAnimation (Creature target, float delay = 0) {
+		// play both attack and defend animations
 		me.StartCoroutine(AttackAnimation(target, delay, 3));
+		yield return target.StartCoroutine(target.combat.DefendAnimation(me, delay, 8));
 
-		target.combat.Defend(me, delay);
+		// once combat turn has fully finished, emit game event
+		if (me is Player) {
+			me.UpdateGameTurn();
+		}
 	}
 
 
 	private IEnumerator AttackAnimation (Tile target, float delay = 0, float advanceDiv = 2) {
+		me.state = CreatureStates.Attacking;
+
+		// wait for attack to start
 		yield return new WaitForSeconds(delay);
 		if (target == null) { yield break; }
 		
@@ -144,20 +159,12 @@ public class CreatureCombat : CreatureModule {
 	// Defend
 	// =====================================================
 
-	public void Defend (Creature attacker, float delay = 0) {
-		me.StopMoving();
-
-		me.state = CreatureStates.Defending;
-		me.StartCoroutine(DefendAnimation(attacker, delay, 8));
-	}
-
-
 	private IEnumerator DefendAnimation (Creature attacker, float delay = 0, float advanceDiv = 8) {
-		yield return new WaitForSeconds(delay);
+		float duration = me.speed * 0.5f;
+		me.state = CreatureStates.Defending;
 
 		// wait for impact
-		float duration = me.speed * 0.5f;
-		yield return new WaitForSeconds(duration);
+		yield return new WaitForSeconds(delay + duration);
 
 		// get combat positions
 		Vector3 startPos = new Vector3(me.x, me.y, 0);
@@ -168,7 +175,7 @@ public class CreatureCombat : CreatureModule {
 
 		bool isDead = ResolveCombatOutcome(attacker, me);
 		if (isDead) {
-			Die(attacker);
+			Die(me);
 			yield break;
 		}
 
@@ -191,9 +198,6 @@ public class CreatureCombat : CreatureModule {
 		}
 
 		me.state = CreatureStates.Idle;
-
-		// emmit event once the defender has finished this action
-		attacker.UpdateGameTurn();
 	}
 
 	// =====================================================

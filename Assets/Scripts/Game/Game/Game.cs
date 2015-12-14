@@ -54,7 +54,7 @@ public class Game : MonoSingleton <Game> {
 		// A creature should always have 1 attack per turn for now,
 		// so avoid thinking again if we are attacking
 		if (creature.state == CreatureStates.Attacking) {
-			creature.stats.energy += creature.stats.energyRate;
+			//creature.stats.energy += creature.stats.energyRate;
 			yield break;
 		}
 
