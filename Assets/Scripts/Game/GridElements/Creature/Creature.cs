@@ -67,6 +67,16 @@ public class Creature : Tile {
 	// Stats
 	// =====================================================
 
+
+	public virtual void SetWeapons () {
+		stats.weapon = inventory.equipment["Weapon"] != null ? (Weapon)inventory.equipment["Weapon"].item : null;
+		stats.shield = inventory.equipment["Shield"] != null ? (Shield)inventory.equipment["Shield"].item : null;
+
+		stats.attackRange = 1; 
+		if (stats.weapon != null) { stats.attackRange = stats.weapon.range; }
+	}
+
+
 	public virtual void SetEnergy (float rate) {
 		stats.energyRate = rate;
 		stats.energy = Mathf.Max(1f, stats.energyRate);
@@ -618,13 +628,22 @@ public class Creature : Tile {
 
 	
 	private bool ResolveCombatOutcome (Creature attacker) {
+		// TODO: Implement propper combat stats
+		// - weapon hit / damage
+		// - shield block
+		// - armour EV / AC
+
 		// resolve combat outcome
 		int attack = attacker.stats.attack + Dice.Roll("1d8+2");
 		int defense = stats.defense + Dice.Roll("1d6+1");
 
 		// hit
 		if (attack > defense) {
-			int damage = attacker.stats.str + Dice.Roll("1d4");
+
+			// damage = str + weapon damage dice
+			string weaponDamage = stats.weapon != null ? stats.weapon.damage : null;
+			int damage = attacker.stats.str + Dice.Roll(weaponDamage) + Dice.Roll("1d4 - 2");
+			
 			if (damage > 0) {
 				// apply damage
 				UpdateHp(-damage);

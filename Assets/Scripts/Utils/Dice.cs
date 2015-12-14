@@ -11,6 +11,10 @@ public class Dice {
 	// =====================================================
 
 	public static int Roll (string rpg) {
+		if (rpg == null) {
+			return 0;
+		}
+		
 		char[] delimiters = new char[] { '+', '-', 'd' };
 		string[] arr = rpg.Split(delimiters);
 

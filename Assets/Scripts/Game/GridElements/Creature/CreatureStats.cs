@@ -35,6 +35,9 @@ public class CreatureStats {
 	public int attack = 1;
 	public int defense = 1;
 
+	public Weapon weapon = null;
+	public Shield shield = null;
+
 	public int attackRange = 1;
 
 	// regeneration

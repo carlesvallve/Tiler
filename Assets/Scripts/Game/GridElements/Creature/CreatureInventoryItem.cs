@@ -10,20 +10,14 @@ public class CreatureInventoryItem {
 	public bool equipped = false;
 
 	public CreatureInventoryItem (Item item, Sprite sprite) {
+		if (sprite == null) {
+			Debug.Log ("Item does not have a sprite! " + item + " " + item.GetType());
+		}
+
 		this.item = item;
 		this.sprite = sprite;
 		this.id = sprite.name;
 		this.ammount = item.ammount;
-		this.equipped = false;
-	}
-
-
-	public void Equip () {
-		this.equipped = true;
-	}
-
-
-	public void Unequip () {
 		this.equipped = false;
 	}
 }

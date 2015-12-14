@@ -16,7 +16,7 @@ public class CreatureInventory  {
 		{ "Gloves", null },
 		{ "Armour", null },
 		{ "Weapon", null },
-		{ "WeaponRanged", null },
+		//{ "WeaponRanged", null },
 		{ "Ring",  	null },
 		{ "Shield", null },
 		{ "Boots",  null },
@@ -94,6 +94,9 @@ public class CreatureInventory  {
 			bool wasEquipped = invItem.equipped;
 			equipment[item.equipmentSlot].equipped = false;
 			equipment[item.equipmentSlot] = null;
+
+			creature.SetWeapons();
+
 			if (wasEquipped) { 
 				return; 
 			}
@@ -103,6 +106,9 @@ public class CreatureInventory  {
 		if (!invItem.equipped) {
 			equipment[item.equipmentSlot] = invItem;
 			invItem.equipped = true;
+
+			creature.SetWeapons();
+
 			return;
 		}
 	}
