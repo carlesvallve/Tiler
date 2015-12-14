@@ -25,7 +25,7 @@ public class CreatureCombat : CreatureModule {
 
 			// damage = str + weapon damage dice
 			string weaponDamage = attacker.stats.weapon != null ? attacker.stats.weapon.damage : null;
-			int damage = attacker.stats.str + Dice.Roll(weaponDamage) + Dice.Roll("1d4-2");
+			int damage = attacker.stats.str + Dice.Roll(weaponDamage) + Dice.Roll("1d4");
 
 			if (damage > 0) {
 				// apply damage

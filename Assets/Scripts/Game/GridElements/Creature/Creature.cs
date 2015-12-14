@@ -579,15 +579,5 @@ public class Creature : Tile {
 	public virtual void UpdateGameTurn () {}
 	public virtual void GameOver () {}
 
-
-	// =====================================================
-	// Combat
-	// =====================================================
-
-	
-
-
-
-
 }
 

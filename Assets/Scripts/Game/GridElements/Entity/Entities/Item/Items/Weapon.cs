@@ -4,7 +4,7 @@ using System.Collections;
 
 public class Weapon : Item {
 
-	public string damage = "1d6";
+	public string damage = "1d4";
 	public int range = 1;
 	public int speed = 1;
 
