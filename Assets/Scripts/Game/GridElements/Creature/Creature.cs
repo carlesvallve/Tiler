@@ -69,7 +69,8 @@ public class Creature : Tile {
 	}
 
 	void Update () {
-		SetInfo((Mathf.Round(stats.energy * 100f) / 100f).ToString(), Color.yellow);
+		string energy = (Mathf.Round(stats.energy * 100f) / 100f).ToString();
+		SetInfo(state.ToString() + "\n" + energy, Color.yellow);
 	}
 
 
@@ -96,9 +97,9 @@ public class Creature : Tile {
 	public virtual bool UpdateEnergy () {
 		//SetInfo(stats.energy.ToString(), Color.cyan);
 
-		if (stats.energy < 1) {
+		if (stats.energy < 1) {// stats.energyRate
 			stats.energy += stats.energyRate;
-			stats.energy = Mathf.Round(stats.energy * 100f) / 100f;
+			//stats.energy = Mathf.Round(stats.energy * 100f) / 100f;
 			return false;
 		}
 
@@ -343,13 +344,21 @@ public class Creature : Tile {
 			// wait enough time for monsters to complete their actions
 			yield return new WaitForSeconds(speed);
 
-			// emmit event if we used something
+
+
+			// emit event if we used something
 			if (state == CreatureStates.Using) {
-				this.UpdateGameTurn();
+				// emit event
+				if (this is Player) {
+					this.UpdateGameTurn();
+					yield return null;
+				}
 			}
-			
-			// and stop moving
+
+			// stop moving
 			StopMoving();
+			
+			
 			yield break;
 		}
 		
@@ -373,6 +382,11 @@ public class Creature : Tile {
 		// play step sound (player only)
 		if (this is Player) {
 			sfx.Play("Audio/Sfx/Step/step", 0.8f, Random.Range(0.8f, 1.2f));
+		} else {
+			if (this.visible) {
+				sfx.Play("Audio/Sfx/Step/step", 0.4f, Random.Range(0.8f, 1.2f));
+			}
+			
 		}
 
 		// resolve encounters with current tile after moving
@@ -380,7 +394,10 @@ public class Creature : Tile {
 		if (escape) { yield break; }
 
 		// emit event
-		this.UpdateGameTurn();
+		if (this is Player) {
+			this.UpdateGameTurn();
+			yield return null;
+		}
 	}
 
 
@@ -530,7 +547,7 @@ public class Creature : Tile {
 		if (creature != null && creature != this) {
 
 			// replenish creature's energy to max just before attacking
-			stats.energy = creature.stats.energyRate;
+			//stats.energy = creature.stats.energyRate;
 
 			combat.Attack(creature, 0);
 		}

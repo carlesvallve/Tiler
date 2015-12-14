@@ -94,7 +94,8 @@ public class CreatureCombat : CreatureModule {
 
 	public void AttackToBreak (Entity target) {
 		float delay = me.state == CreatureStates.Moving ? me.speed : 0;
-		me.StartCoroutine(AttackAnimation(target, delay, 4));
+		//me.StartCoroutine(AttackAnimation(target, delay, 4));
+		me.StartCoroutine(CombatAnimation(target, delay));
 	}
 
 
@@ -110,14 +111,26 @@ public class CreatureCombat : CreatureModule {
 	}
 
 
-	private IEnumerator CombatAnimation (Creature target, float delay = 0) {
+	private IEnumerator CombatAnimation (Tile target, float delay = 0) {
 		// play both attack and defend animations
 		me.StartCoroutine(AttackAnimation(target, delay, 3));
-		yield return target.StartCoroutine(target.combat.DefendAnimation(me, delay, 8));
+
+		if (target is Creature) {
+			// play both attack and defend animations
+			me.StartCoroutine(AttackAnimation((Creature)target, delay, 3));
+			yield return target.StartCoroutine(((Creature)target).combat.DefendAnimation(me, delay, 8));
+		} else {
+			yield return me.StartCoroutine(AttackAnimation(target, delay, 3));
+		}
+		
+
+		// recharge all energy
+		me.stats.energy = me.stats.energyRate;
 
 		// once combat turn has fully finished, emit game event
 		if (me is Player) {
 			me.UpdateGameTurn();
+			yield return null;
 		}
 	}
 
@@ -229,7 +242,7 @@ public class CreatureCombat : CreatureModule {
 		grid.CreateBlood(me.transform.localPosition, 16, Color.red);
 
 		grid.SetCreature(me.x, me.y, null);
-		Destroy(me.gameObject);
+		me.Destroy();
 
 		// update attacker xp
 		attacker.UpdateXp(me.stats.xpValue);

@@ -26,6 +26,7 @@ public class Tile : MonoBehaviour {
 	protected SpriteRenderer outline;
 	public SpriteRenderer img { get; private set; }
 	protected TextMesh label;
+	protected TextMesh labelShadow;
 	
 	// used by ai
 	public int interestWeight = 0;
@@ -44,7 +45,13 @@ public class Tile : MonoBehaviour {
 		
 		label = transform.Find("Label").GetComponent<TextMesh>();
 		label.GetComponent<Renderer>().sortingLayerName = "Ui";
+		label.GetComponent<Renderer>().sortingOrder = 10;
 		label.gameObject.SetActive(Debug.isDebugBuild);
+
+		labelShadow = transform.Find("Label/Shadow").GetComponent<TextMesh>();
+		labelShadow.GetComponent<Renderer>().sortingLayerName = "Ui";
+		labelShadow.GetComponent<Renderer>().sortingOrder = 9;
+		labelShadow.gameObject.SetActive(Debug.isDebugBuild);
 
 		this.grid = grid;
 		this.x = x;
@@ -61,6 +68,11 @@ public class Tile : MonoBehaviour {
 
 		visible = false;
 		explored = false;
+	}
+
+
+	public virtual void Destroy (float delay = 0) {
+		Destroy(gameObject, delay);
 	}
 
 
@@ -92,6 +104,9 @@ public class Tile : MonoBehaviour {
 		label.color = color;
 		label.text = str;
 		label.gameObject.SetActive(str != null && str != "");
+
+		labelShadow.text = str;
+		labelShadow.gameObject.SetActive(label.gameObject.activeSelf);
 	}
 
 

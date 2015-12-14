@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class CreatureModule : MonoBehaviour {
+public class CreatureModule {
 
 	protected Grid grid;
 	protected AudioManager sfx;

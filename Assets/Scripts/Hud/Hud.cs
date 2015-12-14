@@ -78,7 +78,7 @@ public class Hud : MonoSingleton <Hud> {
 		}
 
 		// destroy all inventory slots
-		Transform inventoryContainer = transform.Find("Popups/PopupInventory/Main/Bag/Inventory/Slots");
+		Transform inventoryContainer = transform.Find("Popups/PopupInventory/Main/Bag/Inventory/Container/Slots");
 		foreach (Transform child in inventoryContainer) {
 			Destroy(child.gameObject);
 		}

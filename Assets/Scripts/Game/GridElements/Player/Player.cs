@@ -139,7 +139,7 @@ public class Player : Creature {
 		CheckCamera();
 
 		// wait one frame more than other creatures
-		yield return null;
+		//yield return null; //new WaitForSeconds(0.1f); //null;
 
 		// if after all our actions, we discovered some new monsters, 
 		// stop moving and log them

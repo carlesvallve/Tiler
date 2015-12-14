@@ -13,19 +13,20 @@ public class MonsterGenerator : DungeonFeatureGenerator {
 	// Implement a balanced level spawning algorithm
 	// Monsters should be spawned by affinity groups, relative to the dungeon level 
 	
-	public void GenerateSingle () {
+	public void GenerateSingle (System.Type monsterType) {
 		int roomId = Grid.instance.GetTile(Grid.instance.player.x, Grid.instance.player.y).roomId;
 		DungeonRoom room = dungeonGenerator.rooms[roomId];
 
 		Tile tile = GetFreeTileOnRoom(room, 0);
 		if (tile == null) { 
 			Debug.LogError ("Monster could not be placed anywhere!"); 
+			return;
 		}
 
-		List<System.Type> types = GetMonsterTypes();
+		/*List<System.Type> types = GetMonsterTypes();
 		System.Type monsterType = types[Random.Range(0, types.Count)];
 
-		monsterType = typeof(Centaur);
+		monsterType = typeof(Centaur);*/
 
 		grid.CreateCreature(monsterType, tile.x, tile.y, 0.7f, null);
 	}
