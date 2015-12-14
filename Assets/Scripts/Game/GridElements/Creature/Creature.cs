@@ -529,8 +529,8 @@ public class Creature : Tile {
 		Creature creature = grid.GetCreature(x, y);
 		if (creature != null && creature != this) {
 
-			// attack will use 1 energy, but energy will never get below 0
-			stats.energy = creature.stats.energyRate; //Mathf.Max(creature.stats.energyRate - 1f, 0); 
+			// replenish creature's energy to max just before attacking
+			stats.energy = creature.stats.energyRate;
 
 			combat.Attack(creature, 0);
 		}
