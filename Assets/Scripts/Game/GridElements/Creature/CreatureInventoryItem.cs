@@ -15,6 +15,7 @@ public class CreatureInventoryItem {
 		}
 
 		this.item = item;
+		
 		this.sprite = sprite;
 		this.id = sprite.name;
 		this.ammount = item.ammount;

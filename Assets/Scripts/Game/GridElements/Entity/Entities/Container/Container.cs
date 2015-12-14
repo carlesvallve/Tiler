@@ -147,7 +147,6 @@ public class Container : Entity {
 			
 			{ typeof(Shield), 		10 },
 			{ typeof(Weapon), 		10 },
-			//{ typeof(WeaponRanged), 10 },
 
 			{ typeof(Treasure), 	20 },
 			{ typeof(Book), 		10 },

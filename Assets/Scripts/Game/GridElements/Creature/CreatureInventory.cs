@@ -16,7 +16,6 @@ public class CreatureInventory  {
 		{ "Gloves", null },
 		{ "Armour", null },
 		{ "Weapon", null },
-		//{ "WeaponRanged", null },
 		{ "Ring",  	null },
 		{ "Shield", null },
 		{ "Boots",  null },
