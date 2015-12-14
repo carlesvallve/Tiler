@@ -107,7 +107,7 @@ public class Dungeon : MonoSingleton <Dungeon> {
 		// Generate monsters
 		MonsterGenerator monsters = new MonsterGenerator();
 		//monsters.Generate();
-		monsters.GenerateSingle(typeof(Centaur));
+		monsters.GenerateSingle(typeof(Zombie));
 
 		// Generate containers
 		ContainerGenerator containers = new ContainerGenerator();

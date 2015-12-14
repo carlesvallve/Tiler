@@ -246,9 +246,7 @@ public class Creature : Tile {
 		}
 
 		// clear previous path
-		/*if (path != null) {
-			DrawPath(Color.white);
-		}*/
+		//if (path != null) { DrawPath(Color.white); }
 
 		// escape if goal has not been explored yet
 		Tile tile = grid.GetTile(x, y);
@@ -259,7 +257,9 @@ public class Creature : Tile {
 		if (x == this.x && y == this.y) {
 			// if goal is ourselves, wait one turn instead
 			path = new List<Vector2>() { new Vector2(this.x, this.y) };
-			if (this is Player) { Hud.instance.Log("You wait..."); }
+			if (this is Player) { 
+				Hud.instance.Log("You wait..."); 
+			}
 			//Speak("...", Color.yellow);
 		} else {
 
@@ -316,9 +316,6 @@ public class Creature : Tile {
 			yield return StartCoroutine (FollowPathStep(x, y));
 		}
 
-		// resolve encounters once we arrived to the goal
-		//ResolveEncountersAtGoal(this.x, this.y);
-
 		// stop moving once we reach the goal
 		StopMoving();
 	}
@@ -332,7 +329,10 @@ public class Creature : Tile {
 			yield break; 
 		}
 
-		if (this is Player) { Hud.instance.Log(""); }
+		// clear logs
+		if (this is Player) { 
+			Hud.instance.Log(""); 
+		}
 		
 		// resolve encounters with next tile
 		ResolveEntityEncounters(x, y);
@@ -342,9 +342,7 @@ public class Creature : Tile {
 		if (state != CreatureStates.Moving) { 
 
 			// wait enough time for monsters to complete their actions
-			yield return new WaitForSeconds(speed);
-
-
+			yield return new WaitForSeconds(speed); // is this enough always?
 
 			// emit event if we used something
 			if (state == CreatureStates.Using) {
@@ -357,8 +355,6 @@ public class Creature : Tile {
 
 			// stop moving
 			StopMoving();
-			
-			
 			yield break;
 		}
 		
@@ -545,10 +541,6 @@ public class Creature : Tile {
 		// if next tile is a creature, attack it
 		Creature creature = grid.GetCreature(x, y);
 		if (creature != null && creature != this) {
-
-			// replenish creature's energy to max just before attacking
-			//stats.energy = creature.stats.energyRate;
-
 			combat.Attack(creature, 0);
 		}
 	}
@@ -578,7 +570,6 @@ public class Creature : Tile {
 					}
 				}
 			}
-
 		}
 
 		return false;

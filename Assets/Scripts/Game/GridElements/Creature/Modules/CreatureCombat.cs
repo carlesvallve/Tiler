@@ -125,7 +125,7 @@ public class CreatureCombat : CreatureModule {
 		
 
 		// recharge all energy
-		me.stats.energy = me.stats.energyRate;
+		me.stats.energy = Mathf.Max(me.stats.energyRate, 1f);
 
 		// once combat turn has fully finished, emit game event
 		if (me is Player) {
