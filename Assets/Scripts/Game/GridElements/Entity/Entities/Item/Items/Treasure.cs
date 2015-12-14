@@ -7,7 +7,7 @@ public class Treasure : Item {
 	public override void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null) {
 		string path = "Tilesets/Item/Treasure/" + GetRandomAssetName();
 		asset = Resources.Load<Sprite>(path);
-		if (asset == null) { Debug.Log(path); }
+		if (asset == null) { Debug.LogError(path); }
 
 		base.Init(grid, x, y, scale, asset);
 		walkable = true;

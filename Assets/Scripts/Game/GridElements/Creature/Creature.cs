@@ -642,8 +642,8 @@ public class Creature : Tile {
 
 			// damage = str + weapon damage dice
 			string weaponDamage = stats.weapon != null ? stats.weapon.damage : null;
-			int damage = attacker.stats.str + Dice.Roll(weaponDamage) + Dice.Roll("1d4 - 2");
-			
+			int damage = attacker.stats.str + Dice.Roll(weaponDamage) + Dice.Roll("1d4-2");
+
 			if (damage > 0) {
 				// apply damage
 				UpdateHp(-damage);

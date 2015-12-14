@@ -7,7 +7,7 @@ public class Armour : Item {
 	public override void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null) {
 		string path = "Tilesets/Item/Body/Armour/" + GetRandomAssetName();
 		asset = Resources.Load<Sprite>(path);
-		if (asset == null) { Debug.Log(path); }
+		if (asset == null) { Debug.LogError(path); }
 
 		base.Init(grid, x, y, scale, asset);
 		walkable = true;
@@ -26,7 +26,7 @@ public class Armour : Item {
 			"mail-chain-1", "mail-chain-2", "mail-chain-3", 
 			"mail-plate-1", "mail-plate-2",
 			"mail-ring", 
-			"mail-scale-1", "mail-scale-eleven",  
+			"mail-scale-1", "mail-scale-elven",  
 			"mail-splint",
 			"robe-blue", "robe-mage", "robe-simple", 
 			"skin-animal-1", "skin-animal-2", "skin-lizard", 
