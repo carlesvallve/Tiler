@@ -252,7 +252,7 @@ public class Tile : MonoBehaviour {
 	// Methods shared by both entities and creatures
 	// =====================================================
 
-	protected virtual void SpawnItemsFromInventory (List<Item> allItems, bool useCenterTile = true) {
+	public virtual void SpawnItemsFromInventory (List<Item> allItems, bool useCenterTile = true) {
 		if (allItems.Count == 0) { return; }
 
 		// get neighbours, not including the creature's tile, which will be manually added for the first item

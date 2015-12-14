@@ -26,7 +26,7 @@ public class Armour : Item {
 			"mail-chain-1", "mail-chain-2", "mail-chain-3", 
 			"mail-plate-1", "mail-plate-2",
 			"mail-ring", 
-			"mail-scale-1", "mail-scale-elven",  
+			"mail-scale", "mail-scale-elven",  
 			"mail-splint",
 			"robe-blue", "robe-mage", "robe-simple", 
 			"skin-animal-1", "skin-animal-2", "skin-lizard", 

@@ -27,7 +27,7 @@ public class ItemGenerator : DungeonFeatureGenerator {
 					{ typeof(Gloves), 		5 },
 					{ typeof(Hat), 			5 },
 					
-					{ typeof(Shield), 		10 },
+					{ typeof(Shield), 		5 },
 					{ typeof(Weapon), 		10 },
 
 					{ typeof(Treasure), 	20 },

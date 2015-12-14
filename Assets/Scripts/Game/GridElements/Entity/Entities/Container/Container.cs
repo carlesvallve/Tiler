@@ -51,7 +51,7 @@ public class Container : Entity {
 
 	public IEnumerator Open (Creature creature, bool hasBeenUnlocked = false) {
 		if (breakable) {
-			creature.AttackToBreak(this);
+			creature.combat.AttackToBreak(this);
 		}
 
 		yield return new WaitForSeconds(creature.speed / 2);
@@ -156,7 +156,7 @@ public class Container : Entity {
 	}
 
 
-	protected override void SpawnItemsFromInventory (List<Item> allItems, bool useCenterTile = true) {
+	public override void SpawnItemsFromInventory (List<Item> allItems, bool useCenterTile = true) {
 		base.SpawnItemsFromInventory(allItems, useCenterTile);
 		items.Clear();
 	}
