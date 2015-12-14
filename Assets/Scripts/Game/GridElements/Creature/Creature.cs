@@ -609,8 +609,6 @@ public class Creature : Tile {
 		if (state == CreatureStates.Using) { return; }
 		if (target.state == CreatureStates.Dying) { return; }
 
-		//stats.energy = stats.energyRate;
-
 		state = CreatureStates.Attacking;
 
 		StartCoroutine(AttackAnimation(target, delay, 3));
@@ -774,13 +772,6 @@ public class Creature : Tile {
 			allItems.Add(invItem.item);
 		}
 
-		/*List<Item> allItems = new List<Item>();
-		foreach (List<Item> itemCategory in inventory.Values) {
-			foreach(Item item in itemCategory) {
-				allItems.Add(item);
-			}
-		}*/
-
 		// spawn all the items carried by the creature
 		SpawnItemsFromInventory(allItems);
 	}
@@ -804,8 +795,6 @@ public class Creature : Tile {
 			this.GameOver();
 		}
 		
-		
-
 		yield break;
 	}
 
