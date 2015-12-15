@@ -32,8 +32,14 @@ public class CreatureStats {
 	public int cha = 1;
 
 	// combat
-	public int attack = 1;
-	public int defense = 1;
+	public int attackBase = 0;
+	public int attack = 0;
+
+	public int defenseBase = 0;
+	public int defense = 0;
+
+	public int armourBase = 0;
+	public int armour = 0;
 
 	public Weapon weapon = null;
 	public Shield shield = null;

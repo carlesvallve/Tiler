@@ -4,6 +4,7 @@ using System.Collections;
 
 public class Weapon : Item {
 
+	public string attack = "1d6";
 	public string damage = "1d4";
 	public int range = 1;
 	public int speed = 1;
@@ -35,14 +36,13 @@ public class Weapon : Item {
 	protected override string GetRandomAssetName () {
 		string[] arr = new string[] { 
 			// melee
-			"axe-great", "axe-long", "axe-short", 
-			"club", 
 			"dagger", 
-			"katana", 
-			"mace", "mace-great", 
 			"quarterstaff", 
-			"sabre", "scimitar", 
+			"sabre", "scimitar", "katana", 
+
+			"axe-great", "axe-long", "axe-short",
 			"sword-great", "sword-long", "sword-short", 
+			"club", "mace", "mace-great", 
 
 			// ranged
 			"bow-composite", "bow-long", "bow-short", 
@@ -66,6 +66,42 @@ public class Weapon : Item {
 		}
 
 		return false;
+	}
+
+
+	private void SetStats (string assetName) {
+		switch (assetName) {
+			case "dagger": damage = "1d4"; break;
+
+			case "quarterstaff": damage = "1d6"; break;
+
+			case "sabre": damage = "1d6"; break;
+			case "scimitar": damage = "1d8+1"; break;
+			case "katana": damage = "1d10+2"; break;
+
+			case "sword-short": damage = "1d6-1"; break;
+			case "sword-long":  damage = "1d8"; break;
+			case "sword-great": damage = "2d6"; break;
+
+			case "axe-short": damage = "1d6-1"; break;
+			case "axe-long": damage = "1d8"; break;
+			case "axe-great": damage = "2d6"; break;
+
+			case "club": damage = "1d6-1"; break;
+			case "mace": damage = "1d8"; break;
+			case "mace-great": damage = "2d6"; break;
+
+
+			case "bow-short": damage = "1d4-1"; break;
+			case "bow-long": damage = "1d6-1"; break;
+			case "bow-great": damage = "1d8"; break;
+
+			case "crossbow-1": damage = "1d4+1"; break;
+			case "crossbow-2": damage = "1d4+1"; break;
+			
+			case "sling-1": damage = "1d4"; break;
+			case "sling-2": damage = "1d4"; break;
+		}
 	}
 	
 }

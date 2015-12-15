@@ -18,14 +18,19 @@ public class CreatureCombat : CreatureModule {
 	public bool ResolveCombatOutcome (Creature attacker, Creature defender) {
 		// resolve combat outcome
 		int attack = attacker.stats.attack + Dice.Roll("1d8+2");
+		if (attacker.stats.weapon != null) { attacker.stats.attack += Dice.Roll(attacker.stats.weapon.attack); }
+
 		int defense = defender.stats.defense + Dice.Roll("1d6+1");
+		if (defender.stats.shield != null) { defense += Dice.Roll(defender.stats.shield.defense); }
 
 		// hit
 		if (attack > defense) {
 
 			// damage = str + weapon damage dice
-			string weaponDamage = attacker.stats.weapon != null ? attacker.stats.weapon.damage : null;
-			int damage = attacker.stats.str + Dice.Roll(weaponDamage) + Dice.Roll("1d4");
+			//string weaponDamage = attacker.stats.weapon != null ? attacker.stats.weapon.damage : null;
+			int damage = attacker.stats.str + Dice.Roll("1d4") - defender.stats.armour; // + Dice.Roll(weaponDamage); // + Dice.Roll("1d4");
+			if (attacker.stats.weapon != null) { attacker.stats.attack += Dice.Roll(attacker.stats.weapon.damage); }
+
 
 			if (damage > 0) {
 				// apply damage

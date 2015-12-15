@@ -4,6 +4,8 @@ using System.Collections;
 
 public class Armour : Item {
 
+	public int armour;
+
 	public override void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null) {
 		string path = "Tilesets/Item/Body/Armour/" + GetRandomAssetName();
 		asset = Resources.Load<Sprite>(path);
@@ -38,6 +40,32 @@ public class Armour : Item {
 
 	public override void PlaySound () {
 		sfx.Play("Audio/Sfx/Item/armour", 0.9f, Random.Range(0.8f, 1.2f));
+	}
+
+
+	private void SetStats (string assetName) {
+		string[] name = assetName.Split('-');
+		string type = name[0];
+		string quality = name[1];
+
+		switch (type) {
+			case "armour":
+			case "mail":
+			switch (quality) {
+				case "leather": armour = 1; break;
+				case "banded": armour = 2; break;
+				
+				case "ring": armour = 3; break;
+				case "chain": armour = 4; break;
+				case "scale": armour = 5; break;
+				case "splint": armour = 6; break;
+				case "plate": armour = 9; break;
+			}
+			break;
+			
+			case "robe": armour = 0; break;
+			case "skin": armour = 0; break;
+		}
 	}
 
 }

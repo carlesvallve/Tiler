@@ -4,6 +4,9 @@ using System.Collections;
 
 public class Shield : Item {
 
+	public string defense = "1d4";
+
+
 	public override void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null) {
 		string path = "Tilesets/Item/Shield/" + GetRandomAssetName();
 		asset = Resources.Load<Sprite>(path);
@@ -33,6 +36,11 @@ public class Shield : Item {
 
 	public override void PlaySound () {
 		sfx.Play("Audio/Sfx/Item/weapon", 0.6f, Random.Range(0.8f, 1.2f));
+	}
+
+
+	private void SetStats (string assetName) {
+		defense = "1d4";
 	}
 	
 }

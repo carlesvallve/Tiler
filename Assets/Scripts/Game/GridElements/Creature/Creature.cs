@@ -68,10 +68,11 @@ public class Creature : Tile {
 		inventory = new CreatureInventory(this);
 	}
 
-	void Update () {
+
+	/*void Update () {
 		string energy = (Mathf.Round(stats.energy * 100f) / 100f).ToString();
 		SetInfo(state.ToString() + "\n" + energy, Color.yellow);
-	}
+	}*/
 
 
 	// =====================================================
@@ -79,12 +80,22 @@ public class Creature : Tile {
 	// =====================================================
 
 
-	public virtual void SetWeapons () {
+	public virtual void UpdateEquipmentStats () {
 		stats.weapon = inventory.equipment["Weapon"] != null ? (Weapon)inventory.equipment["Weapon"].item : null;
 		stats.shield = inventory.equipment["Shield"] != null ? (Shield)inventory.equipment["Shield"].item : null;
 
-		stats.attackRange = 1; 
-		if (stats.weapon != null) { stats.attackRange = stats.weapon.range; }
+		stats.armour = stats.armourBase;
+		if (inventory.equipment["Armour"] != null) { stats.armour += ((Armour)inventory.equipment["Armour"].item).armour; } 
+
+		if (inventory.equipment["Hat"] != null) { stats.armour += ((Hat)inventory.equipment["Hat"].item).armour; } 
+		if (inventory.equipment["Cloak"] != null) { stats.armour += ((Cloak)inventory.equipment["Cloak"].item).armour; } 
+		if (inventory.equipment["Gloves"] != null) { stats.armour += ((Gloves)inventory.equipment["Gloves"].item).armour; } 
+		if (inventory.equipment["Boots"] != null) { stats.armour += ((Boots)inventory.equipment["Boots"].item).armour; } 
+
+		//stats.defense = stats.defenseBase;
+		//if (inventory.equipment["Shield"] != null) { stats.defense += inventory.equipment["Shield"].defense; } 
+ 
+		stats.attackRange = stats.weapon != null ? stats.weapon.range : 1;
 	}
 
 
