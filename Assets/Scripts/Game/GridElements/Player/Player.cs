@@ -26,7 +26,7 @@ public class Player : Creature {
 	public List<Creature> newVisibleMonsters = new List<Creature>();
 
 
-	public override void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null) {
+	public override void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null, string id = null) {
 		// set random name, race, class
 		SetPlayerName();
 		SetPlayerRace();

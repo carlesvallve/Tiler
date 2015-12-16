@@ -25,8 +25,7 @@ public class MonsterGenerator : DungeonFeatureGenerator {
 		}
 
 		// create the monster and initialize it by given id
-		Monster monster = (Monster)grid.CreateCreature(typeof(Monster), tile.x, tile.y, 0.7f, null) as Monster;
-		monster.InitializeStats(id);
+		grid.CreateCreature(typeof(Monster), tile.x, tile.y, 0.7f, null, id);
 	}
 
 
@@ -56,9 +55,7 @@ public class MonsterGenerator : DungeonFeatureGenerator {
 				string id = GameData.monsters.ElementAt(rand).Key;
 
 				// create the monster and initialize it by id
-				Monster monster = (Monster)grid.CreateCreature(typeof(Monster), tile.x, tile.y, 0.7f, null) as Monster;
-				monster.InitializeStats(id);
-
+				grid.CreateCreature(typeof(Monster), tile.x, tile.y, 0.7f, null, id);
 			}
 		}
 	}

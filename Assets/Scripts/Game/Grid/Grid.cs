@@ -91,7 +91,7 @@ public class Grid : MonoSingleton <Grid> {
 	// Tiles
 	// =====================================================
 
-	public Tile CreateTile (System.Type TileType, int x, int y, float scale = 1, Sprite asset = null, bool setInGrid = true) {
+	public Tile CreateTile (System.Type TileType, int x, int y, float scale = 1, Sprite asset = null, string id = null, bool setInGrid = true) {
 		Transform parent = container.Find("Tiles");
 
 		GameObject obj = (GameObject)Instantiate(tilePrefab);
@@ -99,7 +99,7 @@ public class Grid : MonoSingleton <Grid> {
 		obj.name = TileType.ToString();
 
 		Tile tile = obj.AddComponent(TileType) as Tile;
-		tile.Init(this, x, y, scale, asset);
+		tile.Init(this, x, y, scale, asset, id);
 
 		if (setInGrid) { SetTile(x, y, tile); }
 
@@ -147,7 +147,7 @@ public class Grid : MonoSingleton <Grid> {
 	// Entities
 	// =====================================================
 
-	public Entity CreateEntity (System.Type EntityType, int x, int y, float scale = 1, Sprite asset = null, bool setInGrid = true) {
+	public Entity CreateEntity (System.Type EntityType, int x, int y, float scale = 1, Sprite asset = null, string id = null, bool setInGrid = true) {
 		Transform parent = container.Find("Entities");
 
 		GameObject obj = (GameObject)Instantiate(tilePrefab);
@@ -155,7 +155,7 @@ public class Grid : MonoSingleton <Grid> {
 		obj.name = EntityType.ToString();
 
 		Entity entity = obj.AddComponent(EntityType) as Entity;
-		entity.Init(this, x, y, scale, asset);
+		entity.Init(this, x, y, scale, asset, id);
 
 		if (setInGrid) { SetEntity(x, y, entity); }
 
@@ -183,7 +183,7 @@ public class Grid : MonoSingleton <Grid> {
 	// Creatures
 	// =====================================================
 
-	public Creature CreateCreature (System.Type CreatureType, int x, int y, float scale = 1, Sprite asset = null, bool setInGrid = true) {
+	public Creature CreateCreature (System.Type CreatureType, int x, int y, float scale = 1, Sprite asset = null, string id = null, bool setInGrid = true) {
 		Transform parent = (CreatureType == typeof(Player)) ? container.Find("Player") : container.Find("Creatures");
 
 		GameObject obj = (GameObject)Instantiate(tilePrefab);
@@ -197,7 +197,7 @@ public class Grid : MonoSingleton <Grid> {
 		obj.name = "Bar";
 		creature.bar = obj.GetComponent<HpBar>();
 
-		creature.Init(this, x, y, scale,  asset);
+		creature.Init(this, x, y, scale,  asset, id);
 
 		if (setInGrid) { SetCreature(x, y, creature); }
 

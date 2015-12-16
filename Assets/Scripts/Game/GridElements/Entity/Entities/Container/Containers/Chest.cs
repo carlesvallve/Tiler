@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 public class Chest : Container {
 
-	public override void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null) {
+	public override void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null, string id = null) {
 		this.assetType = GetRandomAssetName();
 		asset = Resources.Load<Sprite>("Tilesets/Container/" + assetType + "-closed");
 
@@ -32,7 +32,7 @@ public class Chest : Container {
 			{ typeof(Hat), 			5 },
 			
 			{ typeof(Shield), 		10 },
-			{ typeof(Weapon), 		10 },
+			{ typeof(Weapon), 		0 },
 
 			{ typeof(Treasure), 	20 },
 			{ typeof(Book), 		10 },

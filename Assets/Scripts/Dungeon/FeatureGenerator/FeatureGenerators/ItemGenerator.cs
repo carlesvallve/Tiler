@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 
 public class ItemGenerator : DungeonFeatureGenerator {
@@ -28,7 +29,7 @@ public class ItemGenerator : DungeonFeatureGenerator {
 					{ typeof(Hat), 			5 },
 					
 					{ typeof(Shield), 		5 },
-					{ typeof(Weapon), 		10 },
+					{ typeof(Weapon), 		100 },
 
 					{ typeof(Treasure), 	20 },
 					{ typeof(Book), 		10 },
@@ -36,7 +37,16 @@ public class ItemGenerator : DungeonFeatureGenerator {
 					{ typeof(Potion), 		10 },
 				});
 				
-				grid.CreateEntity(itemType, tile.x, tile.y, 0.8f);
+				string id = null;
+
+				if (itemType == typeof(Weapon)) {
+					int rand = Random.Range(0, GameData.weapons.Count);
+					id = GameData.weapons.ElementAt(rand).Key;
+				}
+
+				grid.CreateEntity(itemType, tile.x, tile.y, 0.8f, null, id);
+
+				//print (item.GetType);
 
 			}
 		}

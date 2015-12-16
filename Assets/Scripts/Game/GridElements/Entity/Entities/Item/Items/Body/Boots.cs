@@ -6,7 +6,7 @@ public class Boots : Item {
 
 	public int armour;
 
-	public override void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null) {
+	public override void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null, string id = null) {
 		string path = "Tilesets/Item/Body/Boots/" + GetRandomAssetName();
 		asset = Resources.Load<Sprite>(path);
 		if (asset == null) { Debug.LogError(path); }

@@ -7,7 +7,7 @@ public class Shield : Item {
 	public string defense = "1d4";
 
 
-	public override void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null) {
+	public override void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null, string id = null) {
 		string path = "Tilesets/Item/Shield/" + GetRandomAssetName();
 		asset = Resources.Load<Sprite>(path);
 		if (asset == null) { Debug.LogError(path); }

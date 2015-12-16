@@ -5,7 +5,7 @@ using System.Collections;
 public class Door : Entity {
 
 
-	public override void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null) {
+	public override void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null, string id = null) {
 		asset = Resources.Load<Sprite>("Tilesets/Dungeon/door-closed");
 
 		base.Init(grid, x, y, scale, asset);

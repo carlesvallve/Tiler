@@ -8,11 +8,12 @@ public class Monster : Creature {
 	protected Tile targetTile;
 
 
-	public override void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null) {
-		base.Init(grid, x, y, scale, asset);
+	public override void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null, string id = null) {
+		base.Init(grid, x, y, scale, asset, id);
 
 		//stats.energyRate = 1f;
-		//InitializeStats();
+		Debug.Log ("*** " + id);
+		InitializeStats(id);
 
 		// Each monster will evaluate what to do on each game turn update
 		grid.player.OnGameTurnUpdate += () => {
@@ -46,7 +47,8 @@ public class Monster : Creature {
 		stats.damage = data.damage; stats.damageBase = data.damage;
 		stats.vision = data.vision;
 
-		string fileName = data.assets[Random.Range(0, data.assets.Length)]; //"Tilesets/Monster/Humanoid/Caveman/caveman-" + Random.Range(1, 11);
+		// set asset
+		string fileName = data.assets[Random.Range(0, data.assets.Length)];
 		string path = "Tilesets/Monster/" + data.type + "/" + data.id + "/" + fileName;
 		asset = Resources.Load<Sprite>(path);
 		if (asset == null) { Debug.LogError(path); }

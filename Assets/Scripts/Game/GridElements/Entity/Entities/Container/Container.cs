@@ -13,7 +13,7 @@ public class Container : Entity {
 	// Container Initialization
 	// =====================================================
 
-	public override void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null) {
+	public override void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null, string id = null) {
 
 		base.Init(grid, x, y, scale, asset);
 
@@ -125,7 +125,7 @@ public class Container : Entity {
 		System.Type itemType = GetRandomItemType();
 		
 		// create item in grid but without applying grid.SetEntity
-		Item item = (Item)grid.CreateEntity(itemType, 0, 0, 0.8f, null, false) as Item;
+		Item item = (Item)grid.CreateEntity(itemType, 0, 0, 0.8f, null, null, false) as Item;
 
 		// put item inside the container
 		item.transform.SetParent(transform, false);

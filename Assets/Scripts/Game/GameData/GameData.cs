@@ -21,8 +21,9 @@ public class GameData {
 
 	public void LoadAll () {
 		LoadMonsters();
+		LoadWeapons();
 		//LoadArmours();
-		//LoadWeapons();
+		
 	}
 
 

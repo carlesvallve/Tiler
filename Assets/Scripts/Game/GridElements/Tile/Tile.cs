@@ -34,7 +34,7 @@ public class Tile : MonoBehaviour {
 	public float fovDistance;
 
 
-	public virtual void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null) {
+	public virtual void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null, string id = null) {
 		sfx = AudioManager.instance;
 
 		container = transform.Find("Sprites");

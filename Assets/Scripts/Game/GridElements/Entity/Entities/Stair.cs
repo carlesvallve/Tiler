@@ -7,7 +7,7 @@ public class Stair : Entity {
 	public int direction = 1;
 	
 
-	public override void Init (Grid grid, int x, int y,float scale = 1, Sprite asset = null) {
+	public override void Init (Grid grid, int x, int y,float scale = 1, Sprite asset = null, string id = null) {
 		asset = Resources.Load<Sprite>("Tilesets/Dungeon/Stair/stairs-down");
 
 		base.Init(grid, x, y, scale, asset);

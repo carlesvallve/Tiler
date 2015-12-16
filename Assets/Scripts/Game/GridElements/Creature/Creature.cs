@@ -39,7 +39,7 @@ public class Creature : Tile {
 	// Initialization
 	// =====================================================
 
-	public override void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null) {
+	public override void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null, string id = null) {
 		zIndex = 200;
 
 		base.Init(grid, x, y, scale, asset);

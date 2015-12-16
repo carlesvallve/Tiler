@@ -12,7 +12,7 @@ public class Entity: Tile {
 	public bool breakable = false;
 
 
-	public override void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null) {
+	public override void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null, string id = null) {
 		zIndex = 100;
 
 		base.Init(grid, x, y, scale, asset);

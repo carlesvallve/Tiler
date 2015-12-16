@@ -4,20 +4,31 @@ using System.Collections;
 
 public class Weapon : Item {
 
-	public string attack = "1d6";
-	public string damage = "1d4";
-	public int range = 1;
-	public int speed = 1;
+	//public string attack = "1d6";
+	//public string damage = "1d4";
+	//public int range = 1;
+	//public int speed = 1;
+
+	public string id;
+	public string type;
+	public string adjective;
+
+	public int hit;
+	public string damage;
+	public int range;
+	public int hands;
+	public int weight;
+
 
 	// TODO: We need to implement at least one class per weapon type 
 	// (Dagger, Sword, Axe, Mace, Staff, Bow, Crossbow, Sling...)
 
 
-	public override void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null) {
-		string assetName = GetRandomAssetName();
+	public override void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null, string id = null) {
+		/*string assetName = GetRandomAssetName();
 		string path = "Tilesets/Item/Weapon/" + (IsRanged(assetName) ? "Ranged/" : "Melee/") + assetName;
 		asset = Resources.Load<Sprite>(path);
-		if (asset == null) { Debug.LogError(path); }
+		if (asset == null) { Debug.LogError(path); }*/
 
 
 		base.Init(grid, x, y, scale, asset);
@@ -28,29 +39,32 @@ public class Weapon : Item {
 		stackable = false;
 		equipmentSlot = "Weapon";
 
-		
-		this.range = IsRanged(assetName) ? 5 : 1;
+		//this.range = IsRanged(assetName) ? 5 : 1;
+		InitializeStats(id);
 	}
 
 
-	protected override string GetRandomAssetName () {
-		string[] arr = new string[] { 
-			// melee
-			"dagger", 
-			"quarterstaff", 
-			"sabre", "scimitar", "katana", 
+	public void InitializeStats (string id) {
+		// assign props from csv
+		WeaponData data = GameData.weapons[id];
 
-			"axe-great", "axe-long", "axe-short",
-			"sword-great", "sword-long", "sword-short", 
-			"club", "mace", "mace-great", 
+		id = data.id;
+		type = data.type;
+		adjective = data.adjective;
 
-			// ranged
-			"bow-composite", "bow-long", "bow-short", 
-			"crossbow-1", "crossbow-2", 
-			"sling-1", "sling-2", 
-		};
+		hit = data.hit;
+		damage = data.damage;
+		range = data.range;
+		hands = data.hands;
+		weight = data.weight;
 
-		return arr[Random.Range(0, arr.Length)];
+		// set asset
+		string fileName = data.assets[Random.Range(0, data.assets.Length)];
+		string path = "Tilesets/Item/Weapon/" + fileName;
+		asset = Resources.Load<Sprite>(path);
+		if (asset == null) { Debug.LogError(path); }
+
+		SetAsset(asset);
 	}
 
 
@@ -60,12 +74,7 @@ public class Weapon : Item {
 
 
 	public bool IsRanged (string assetName) {
-		string id = assetName.Split('-')[0];
-		if (id =="bow" || id == "crossbow" || id == "sling") {
-			return true;
-		}
-
-		return false;
+		return type == "Ranged";
 	}
 
 
