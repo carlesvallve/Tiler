@@ -10,9 +10,6 @@ public class Monster : Creature {
 
 	public override void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null, string id = null) {
 		base.Init(grid, x, y, scale, asset, id);
-
-		//stats.energyRate = 1f;
-		Debug.Log ("*** " + id);
 		InitializeStats(id);
 
 		// Each monster will evaluate what to do on each game turn update

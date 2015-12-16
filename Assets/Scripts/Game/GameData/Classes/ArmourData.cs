@@ -1,0 +1,30 @@
+﻿using UnityEngine;
+
+public class ArmourData {
+	public string id;
+	public string[] assets;
+
+	public string type;
+	public string adjective;
+
+	public int ac;
+	public int grd;
+	public int sh;
+	public int ev;
+	public int encumberness;
+	public int weight;
+
+	public void Log () {
+		Debug.Log("Id: " + this.id + 
+			"\nassets: " + this.assets.Length + 
+			"\nType: " + this.type + 
+			"\nAdjective: " + this.adjective + 
+			"\nac: " + this.ac + 
+			"\ngrd: "  + this.grd + 
+			"\nsh: " + this.sh + 
+			"\nev: " + this.ev + 
+			"\nencumberness: " + this.encumberness + 
+			"\nweight: " + this.weight
+		);
+	}
+}

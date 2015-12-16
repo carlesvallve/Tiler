@@ -22,7 +22,7 @@ public class GameData {
 	public void LoadAll () {
 		LoadMonsters();
 		LoadWeapons();
-		//LoadArmours();
+		LoadArmours();
 		
 	}
 
@@ -67,8 +67,8 @@ public class GameData {
 
 	
 	public static Dictionary<string, MonsterData> monsters;
-	public static Dictionary<string, ArmourData> armours;
 	public static Dictionary<string, WeaponData> weapons;
+	public static Dictionary<string, ArmourData> armours;
 	
 	private void LoadMonsters () {
 		// load csv and generate a bidimensional table from it
@@ -107,6 +107,40 @@ public class GameData {
 	}
 
 
+	private void LoadWeapons () {
+		// load csv and generate a bidimensional table from it
+		string [,] table = LoadCsv("Data/GameData/Spreadsheet - Weapons");
+
+		// set a dictionary with all weapons
+		weapons = new Dictionary<string,WeaponData>();
+
+		// fill each weaponData object with data from csv table
+		for (int y = 0; y < table.GetLength(0); y++) {
+			string id = table[y, 0];
+			if (id == "") { continue; }
+
+			WeaponData weapon = new WeaponData();
+			weapon.id = 		table[y, 0];
+			weapon.assets = 	table[y, 1].Split(arraySeparator);
+			
+			weapon.type = 		table[y, 2];
+			weapon.adjective = 	table[y, 3];
+			
+			weapon.hit = 		int.Parse(table[y, 4]);
+			weapon.damage = 	table[y, 5];
+			weapon.range = 		int.Parse(table[y, 6]);
+			weapon.hands = 		int.Parse(table[y, 7]);
+			weapon.weight = 	int.Parse(table[y, 8]);
+
+			weapons.Add(id, weapon);
+		}
+
+		// debug a single monster
+		//weapons["LongSword"].Log();
+		
+	}
+
+
 	private void LoadArmours () {
 		// load csv and generate a bidimensional table from it
 		string [,] table = LoadCsv("Data/GameData/Spreadsheet - Armour");
@@ -140,132 +174,16 @@ public class GameData {
 		//armours["LeatherArmour"].Log();
 		
 	}
-
-
-	private void LoadWeapons () {
-		// load csv and generate a bidimensional table from it
-		string [,] table = LoadCsv("Data/GameData/Spreadsheet - Weapons");
-
-		// set a dictionary with all weapons
-		weapons = new Dictionary<string,WeaponData>();
-
-		// fill each weaponData object with data from csv table
-		for (int y = 0; y < table.GetLength(0); y++) {
-			string id = table[y, 0];
-			if (id == "") { continue; }
-
-			WeaponData weapon = new WeaponData();
-			weapon.id = 		table[y, 0];
-			weapon.assets = 	table[y, 1].Split(arraySeparator);
-			
-			weapon.type = 		table[y, 2];
-			weapon.adjective = 	table[y, 3];
-			
-			weapon.hit = 		int.Parse(table[y, 4]);
-			weapon.damage = 	table[y, 5];
-			weapon.range = 		int.Parse(table[y, 6]);
-			weapon.hands = 		int.Parse(table[y, 7]);
-			weapon.weight = 	int.Parse(table[y, 8]);
-
-			weapons.Add(id, weapon);
-		}
-
-		// debug a single monster
-		//weapons["LongSword"].Log();
-		
-	}
 }
 
 
-public class MonsterData {
-	public string id;
-	public string[] assets;
-
-	public string race;
-	public string type;
-	public string adjective;
-
-	public int level;
-	public float movement;
-	public int attack;
-	public int defense;
-	public int damage;
-	public int vision;
 
 
-	public void Log () {
-		Debug.Log("Id: " + this.id + 
-			"\nassets: " + this.assets.Length + 
-			"\nRace: " + this.race + 
-			"\nType: " + this.type + 
-			"\nAdjective: " + this.adjective + 
-			"\nLevel: " + this.level + 
-			"\nMovement: "  + this.movement + 
-			"\nAttack: " + this.attack + 
-			"\nDefense: " + this.defense + 
-			"\nDamage: " + this.damage + 
-			"\nVision: " + this.vision
-		);
-	}
-}
 
 
-public class ArmourData {
-	public string id;
-	public string[] assets;
-
-	public string type;
-	public string adjective;
-
-	public int ac;
-	public int grd;
-	public int sh;
-	public int ev;
-	public int encumberness;
-	public int weight;
-
-	public void Log () {
-		Debug.Log("Id: " + this.id + 
-			"\nassets: " + this.assets.Length + 
-			"\nType: " + this.type + 
-			"\nAdjective: " + this.adjective + 
-			"\nac: " + this.ac + 
-			"\ngrd: "  + this.grd + 
-			"\nsh: " + this.sh + 
-			"\nev: " + this.ev + 
-			"\nencumberness: " + this.encumberness + 
-			"\nweight: " + this.weight
-		);
-	}
-}
 
 
-public class WeaponData {
-	public string id;
-	public string[] assets;
 
-	public string type;
-	public string adjective;
-
-	public int hit;
-	public string damage;
-	public int range;
-	public int hands;
-	public int weight;
-
-	public void Log () {
-		Debug.Log("Id: " + this.id + 
-			"\nassets: " + this.assets.Length + 
-			"\nType: " + this.type + 
-			"\nAdjective: " + this.adjective + 
-			"\nhit: " + this.hit + 
-			"\ndamage: "  + this.damage + 
-			"\nrange: " + this.range + 
-			"\nhands: " + this.hands + 
-			"\nweight: " + this.weight
-		);
-	}
-}
 
 
 
