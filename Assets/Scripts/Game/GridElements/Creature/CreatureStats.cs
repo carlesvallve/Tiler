@@ -4,9 +4,13 @@ using System.Collections.Generic;
 
 public class CreatureStats {
 
-	// speed
-	public float energy = 1f;
-	public float energyRate = 1f;
+	// id
+	public string id;
+
+	// misc
+	public string race;
+	public string type;
+	public string adjective;
 
 	// xp
 	public int level = 1;
@@ -17,9 +21,23 @@ public class CreatureStats {
 	// hp
 	public int hpMax = 10;
 	public int hp = 10;
+	public float regeneration = 0;
+	public float regenerationRate = 0.2f; // 1 point each 5 turns
+
+	// energy
+	public float energyBase, energy;
+	public float energyRate;
+
+	// combat
+	public int attackBase, attack;
+	public int defenseBase, defense;
+	public int damageBase, damage;
+
+	// armour
+	public int armourBase, armour;
 
 	// vision
-	public int visionRadius = 5;
+	public int visionBase, vision;
 	public int alert = 0;
 	public int alertMax = 4;
 
@@ -31,35 +49,18 @@ public class CreatureStats {
 	public int wis = 1;
 	public int cha = 1;
 
-	// combat
-	public int attackBase = 0;
-	public int attack = 0;
-
-	public int defenseBase = 0;
-	public int defense = 0;
-
-	public int armourBase = 0;
-	public int armour = 0;
-
+	// equipment
 	public Weapon weapon = null;
 	public Shield shield = null;
-
 	public int attackRange = 1;
-
-	// regeneration
-	public float regeneration = 0;
-	public float regenerationRate = 0.2f; // 1 point each 5 turns
-
-	// hunger (todo)
-	public float hunger = 0;
-	public float hungerRate = 0.1f; // 10 point each 5 turns
-
-	// stealth (todo)
-	public int awareness = 1;
-	public int stealth = 1;
 
 	// gold
 	public int gold = 0;
+
+	
+
+	// refactor
+	//public int armour = 0;
 
 	// ai interest
 

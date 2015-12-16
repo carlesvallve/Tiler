@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 
 public class MonsterGenerator : DungeonFeatureGenerator {
@@ -13,7 +14,7 @@ public class MonsterGenerator : DungeonFeatureGenerator {
 	// Implement a balanced level spawning algorithm
 	// Monsters should be spawned by affinity groups, relative to the dungeon level 
 	
-	public void GenerateSingle (System.Type monsterType) {
+	public void GenerateSingle (string id) {
 		int roomId = Grid.instance.GetTile(Grid.instance.player.x, Grid.instance.player.y).roomId;
 		DungeonRoom room = dungeonGenerator.rooms[roomId];
 
@@ -23,12 +24,9 @@ public class MonsterGenerator : DungeonFeatureGenerator {
 			return;
 		}
 
-		/*List<System.Type> types = GetMonsterTypes();
-		System.Type monsterType = types[Random.Range(0, types.Count)];
-
-		monsterType = typeof(Centaur);*/
-
-		grid.CreateCreature(monsterType, tile.x, tile.y, 0.7f, null);
+		// create the monster and initialize it by given id
+		Monster monster = (Monster)grid.CreateCreature(typeof(Monster), tile.x, tile.y, 0.7f, null) as Monster;
+		monster.InitializeStats(id);
 	}
 
 
@@ -49,74 +47,20 @@ public class MonsterGenerator : DungeonFeatureGenerator {
 			// continue if this room has no monsters
 			if (maxMonsters == 0) { continue; }
 
-			// decide the type of monsters
-			List<System.Type> types = GetMonsterTypes();
-			System.Type monsterType = types[Random.Range(0, types.Count)];
-
-			// create a monster in a random available tile inside the room
 			for (int i = 1; i <= maxMonsters; i ++) {
 				Tile tile = GetFreeTileOnRoom(room, 0);
 				if (tile == null) { continue; }
-				
-				//Debug.Log (">>> " + monsterType);
-				grid.CreateCreature(monsterType, tile.x, tile.y, 0.7f, null);
+
+				// get a monster random entry from GameData dictionary
+				int rand = Random.Range(0, GameData.monsters.Count);
+				string id = GameData.monsters.ElementAt(rand).Key;
+
+				// create the monster and initialize it by id
+				Monster monster = (Monster)grid.CreateCreature(typeof(Monster), tile.x, tile.y, 0.7f, null) as Monster;
+				monster.InitializeStats(id);
+
 			}
 		}
-	}
-
-
-	private List<System.Type> GetMonsterTypes () {
-		// Pick a random creature type
-		List<System.Type> types = new List<System.Type>() { 
-			// animals
-			typeof(Bat), 
-			typeof(Bear), 
-			typeof(Cat), 
-			typeof(Chicken), 
-			typeof(Cow), 
-			typeof(Crab), 
-			typeof(Dog),
-			typeof(Duck),
-			typeof(Fly),   
-			typeof(Goat),
-			typeof(Goose),  
-			typeof(Horse), 
-			typeof(Lion), 
-			typeof(Mouse),
-			typeof(Pig), 
-			typeof(Pigeon),  
-			typeof(Sheep),
-			typeof(Scorpion),
-			typeof(Turkey), 
-			typeof(Wolf),
-			 
-			// humanoids
-			typeof(Caveman), 
-			typeof(Centaur), 
-			typeof(Circus), 
-			typeof(Demon), 
-			typeof(Giant), 
-			typeof(Goblin), 
-			typeof(Goblin), 
-			typeof(Gorilla), 
-			typeof(KnightDark), 
-			typeof(KnightLight), 
-			typeof(Merchant), 
-			typeof(Minotaur), 
-			typeof(Monkey), 
-			typeof(Orangutan), 
-			typeof(Peasant), 
-			typeof(Pirate), 
-			typeof(Ratman), 
-			typeof(Satir), 
-			typeof(Snakeman), 
-			typeof(Troll), 
-			typeof(Vampire), 
-			typeof(Viking), 
-			typeof(Zombie), 
-		};
-
-		return types;
 	}
 
 }

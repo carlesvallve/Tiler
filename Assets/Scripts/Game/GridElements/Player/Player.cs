@@ -49,7 +49,7 @@ public class Player : Creature {
 		// init stats
 		stats.hpMax = 20; 
 		stats.hp = stats.hpMax;
-		stats.visionRadius = 6;
+		stats.vision = 6;
 		stats.attack = 5;
 		stats.defense = 2;
 		stats.str = 2;
@@ -248,7 +248,7 @@ public class Player : Creature {
 
 		// get lit array from shadowcaster class
 		bool[,] lit = new bool[grid.width, grid.height];
-		int radius = stats.visionRadius;
+		int radius = stats.vision;
 
 		ShadowCaster.ComputeFieldOfViewWithShadowCasting(
 			px, py, radius,

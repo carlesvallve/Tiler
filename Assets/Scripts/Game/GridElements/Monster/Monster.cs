@@ -11,7 +11,8 @@ public class Monster : Creature {
 	public override void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null) {
 		base.Init(grid, x, y, scale, asset);
 
-		stats.energyRate = 1f;
+		//stats.energyRate = 1f;
+		//InitializeStats();
 
 		// Each monster will evaluate what to do on each game turn update
 		grid.player.OnGameTurnUpdate += () => {
@@ -26,6 +27,31 @@ public class Monster : Creature {
 			// make monster take a decision
 			Think();
 		};
+	}
+
+
+	public void InitializeStats (string id) {
+		// assign props from csv
+		MonsterData data = GameData.monsters[id];
+
+		stats.id = data.id;
+		stats.race = data.race;
+		stats.type = data.type;
+		stats.adjective = data.adjective;
+
+		stats.level = data.level;
+		stats.energy = data.movement; stats.energyBase = data.movement; stats.energyRate = data.movement;
+		stats.attack = data.attack; stats.attackBase = data.attack;
+		stats.defense = data.defense; stats.defenseBase = data.defense;
+		stats.damage = data.damage; stats.damageBase = data.damage;
+		stats.vision = data.vision;
+
+		string fileName = data.assets[Random.Range(0, data.assets.Length)]; //"Tilesets/Monster/Humanoid/Caveman/caveman-" + Random.Range(1, 11);
+		string path = "Tilesets/Monster/" + data.type + "/" + data.id + "/" + fileName;
+		asset = Resources.Load<Sprite>(path);
+		if (asset == null) { Debug.LogError(path); }
+
+		SetAsset(asset);
 	}
 
 
@@ -60,7 +86,7 @@ public class Monster : Creature {
 		// Monsters only see the player if he is inside the monster visionRadius
 		float distanceToPlayer = Mathf.Round(Vector2.Distance(new Vector2(x, y), new Vector2(grid.player.x, grid.player.y)) * 10) / 10;
 		
-		if (distanceToPlayer < stats.visionRadius) {
+		if (distanceToPlayer < stats.vision) {
 			// at this point, monster sees the player
 			// if monster wasnt in alert mode, speak surprise message and start alert mode
 			if (visible && stats.alert == 0) {
@@ -203,13 +229,13 @@ public class Monster : Creature {
 		Tile tile = null;
 
 		// 1. choose a target in vision range
-		tile = ChooseTargetByInterest(stats.visionRadius);
+		tile = ChooseTargetByInterest(stats.vision);
 		if (tile != null) {
 			return tile;
 		}
 
 		// 2. if nothig interesting, choose a random tile to roam to
-		tile = GetRandomTileInRadius(stats.visionRadius);
+		tile = GetRandomTileInRadius(stats.vision);
 		if (tile != null) {
 			return tile;
 		}

@@ -3,26 +3,31 @@ using System.Collections;
 using System.Collections.Generic;
 
 
-public class GameData : MonoBehaviour {
+public class GameData {
 
 	private static char lineSeparator = '\n';
 	private static char fieldSeparator = ',';
 	private static char arraySeparator = '$';
 
-	void Start() {
+	/*void Start() {
 		//Text text = GameObject.Find("Text").GetComponent<Text>();
 		//text.text = CsvReader.Load("Data/GameData/Monsters");
 
 		//LoadMonsters();
 		LoadArmours();
 		//LoadWeapons();
+	}*/
+
+
+	public void LoadAll () {
+		LoadMonsters();
+		//LoadArmours();
+		//LoadWeapons();
 	}
 
 
-	private string [,] LoadCsv (string path, bool debug = true) {
+	private string [,] LoadCsv (string path, bool debug = false) {
 		TextAsset csvFile = Resources.Load(path) as TextAsset;
-
-		print (csvFile);
 
 		string[] records = csvFile.text.Split (lineSeparator);
 		string[] headers = records[0].Split(fieldSeparator);
@@ -80,8 +85,9 @@ public class GameData : MonoBehaviour {
 			monster.id = 		table[y, 0];
 			monster.assets = 	table[y, 1].Split(arraySeparator);
 			
-			monster.race = 		table[y, 2];
-			monster.type = 		table[y, 3];
+			
+			monster.type = 		table[y, 2];
+			monster.race = 		table[y, 3];
 			monster.adjective = table[y, 4];
 			
 			monster.level = 	int.Parse(table[y, 5]);
@@ -95,7 +101,7 @@ public class GameData : MonoBehaviour {
 		}
 
 		// debug a single monster
-		monsters["Goblin"].Log();
+		//monsters["Goblin"].Log();
 		
 	}
 
@@ -110,7 +116,6 @@ public class GameData : MonoBehaviour {
 		// fill each armourData object with data from csv table
 		for (int y = 0; y < table.GetLength(0); y++) {
 			string id = table[y, 0];
-			print (">>>>>>>>>>>>" + id);
 			if (id == "") { continue; }
 
 			ArmourData armour = new ArmourData();
@@ -131,7 +136,7 @@ public class GameData : MonoBehaviour {
 		}
 
 		// debug a single monster
-		armours["LeatherArmour"].Log();
+		//armours["LeatherArmour"].Log();
 		
 	}
 
@@ -165,7 +170,7 @@ public class GameData : MonoBehaviour {
 		}
 
 		// debug a single monster
-		weapons["LongSword"].Log();
+		//weapons["LongSword"].Log();
 		
 	}
 }

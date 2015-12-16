@@ -62,8 +62,6 @@ public class Creature : Tile {
 		stats.xpValue = 20 * stats.level;
 
 		// initialize creature modules
-		movement = new CreatureMovement(this);
-		encounters = new CreatureEncounters(this);
 		combat = new CreatureCombat(this);
 		inventory = new CreatureInventory(this);
 	}
@@ -73,6 +71,8 @@ public class Creature : Tile {
 		string energy = (Mathf.Round(stats.energy * 100f) / 100f).ToString();
 		SetInfo(state.ToString() + "\n" + energy, Color.yellow);
 	}*/
+
+	
 
 
 	// =====================================================

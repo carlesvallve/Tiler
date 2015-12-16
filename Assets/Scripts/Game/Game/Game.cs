@@ -33,6 +33,10 @@ public class Game : MonoSingleton <Game> {
 		// initialize game name lists of each category
 		InitializeGameNames();
 
+		// load gmae external fata
+		GameData gameData = new GameData();
+		gameData.LoadAll();
+
 		// Generate dungeon level and render it in the game grid
 		Dungeon dungeon = Dungeon.instance; 
 		dungeon.GenerateDungeon();
