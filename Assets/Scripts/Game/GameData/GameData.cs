@@ -5,71 +5,22 @@ using System.Collections.Generic;
 
 public class GameData {
 
-	private static char lineSeparator = '\n';
-	private static char fieldSeparator = ',';
-	private static char arraySeparator = '$';
-
-	/*void Start() {
-		//Text text = GameObject.Find("Text").GetComponent<Text>();
-		//text.text = CsvReader.Load("Data/GameData/Monsters");
-
-		//LoadMonsters();
-		LoadArmours();
-		//LoadWeapons();
-	}*/
+	public static Dictionary<string, MonsterData> monsters;
+	public static Dictionary<string, WeaponData> weapons;
+	public static Dictionary<string, ArmourData> armours;
 
 
 	public void LoadAll () {
 		LoadMonsters();
 		LoadWeapons();
 		LoadArmours();
-		
 	}
 
-
-	private string [,] LoadCsv (string path, bool debug = false) {
-		TextAsset csvFile = Resources.Load(path) as TextAsset;
-
-		string[] records = csvFile.text.Split (lineSeparator);
-		string[] headers = records[0].Split(fieldSeparator);
-		string[,] table = new string[records.Length - 1, headers.Length];
-
-
-		for (int y = 1; y < records.Length; y++) {
-			string[] fields = records[y].Split(fieldSeparator);
-
-			for (int x = 0; x < fields.Length; x++) {
-				table[y-1, x] = fields[x];
-			}
-		}
-
-		if (debug) {
-			// debug headers
-			string str = "";
-			for (int x = 0; x < headers.Length; x++) {
-				str += headers[x]; if (x < headers.Length) { str += ", "; }
-			}
-			Debug.Log(str);
-
-			// debug table
-			for (int y = 0; y < table.GetLength(0); y++) {
-				str = "";
-				for (int x = 0; x < table.GetLength(1); x++) {
-					str += table[y, x]; if (x < table.GetLength(1)) { str += ", "; }
-				}
-				Debug.Log(str);
-			}
-		}
-		
-		return table;
-	}
-
-
 	
-	public static Dictionary<string, MonsterData> monsters;
-	public static Dictionary<string, WeaponData> weapons;
-	public static Dictionary<string, ArmourData> armours;
-	
+	// =====================================================
+	// Parse Monsters, Weapons, Armour
+	// =====================================================
+
 	private void LoadMonsters () {
 		// load csv and generate a bidimensional table from it
 		string [,] table = LoadCsv("Data/GameData/Spreadsheet - Monsters");
@@ -161,7 +112,7 @@ public class GameData {
 			armour.adjective = 		table[y, 3];
 			
 			armour.ac = 			int.Parse(table[y, 4]);
-			armour.grd = 			int.Parse(table[y, 5]);
+			armour.gdr = 			int.Parse(table[y, 5]);
 			armour.sh = 			int.Parse(table[y, 6]);
 			armour.ev = 			int.Parse(table[y, 7]);
 			armour.encumberness = 	int.Parse(table[y, 8]);
@@ -174,6 +125,52 @@ public class GameData {
 		//armours["LeatherArmour"].Log();
 		
 	}
+
+
+	// =====================================================
+	// Load Csv
+	// =====================================================
+
+	private static char lineSeparator = '\n';
+	private static char fieldSeparator = ',';
+	private static char arraySeparator = '$';
+
+	private string [,] LoadCsv (string path, bool debug = false) {
+		TextAsset csvFile = Resources.Load(path) as TextAsset;
+
+		string[] records = csvFile.text.Split (lineSeparator);
+		string[] headers = records[0].Split(fieldSeparator);
+		string[,] table = new string[records.Length - 1, headers.Length];
+
+		for (int y = 1; y < records.Length; y++) {
+			string[] fields = records[y].Split(fieldSeparator);
+
+			for (int x = 0; x < fields.Length; x++) {
+				table[y-1, x] = fields[x];
+			}
+		}
+
+		if (debug) {
+			// debug headers
+			string str = "";
+			for (int x = 0; x < headers.Length; x++) {
+				str += headers[x]; if (x < headers.Length) { str += ", "; }
+			}
+			Debug.Log(str);
+
+			// debug table
+			for (int y = 0; y < table.GetLength(0); y++) {
+				str = "";
+				for (int x = 0; x < table.GetLength(1); x++) {
+					str += table[y, x]; if (x < table.GetLength(1)) { str += ", "; }
+				}
+				Debug.Log(str);
+			}
+		}
+		
+		return table;
+	}
+
 }
 
 

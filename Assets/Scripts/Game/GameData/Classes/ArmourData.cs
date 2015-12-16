@@ -8,7 +8,7 @@ public class ArmourData {
 	public string adjective;
 
 	public int ac;
-	public int grd;
+	public int gdr;
 	public int sh;
 	public int ev;
 	public int encumberness;
@@ -20,7 +20,7 @@ public class ArmourData {
 			"\nType: " + this.type + 
 			"\nAdjective: " + this.adjective + 
 			"\nac: " + this.ac + 
-			"\ngrd: "  + this.grd + 
+			"\ngdr: "  + this.gdr + 
 			"\nsh: " + this.sh + 
 			"\nev: " + this.ev + 
 			"\nencumberness: " + this.encumberness + 

@@ -33,11 +33,12 @@ public class Weapon : Item {
 
 		base.Init(grid, x, y, scale, asset);
 		walkable = true;
+		stackable = false;
 
 		SetImages(scale, Vector3.zero, 0.04f);
 
-		stackable = false;
-		equipmentSlot = "Weapon";
+		
+		//equipmentSlot = "Weapon";
 
 		//this.range = IsRanged(assetName) ? 5 : 1;
 		InitializeStats(id);

@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 
 public class Container : Entity {
@@ -119,15 +120,23 @@ public class Container : Entity {
 		}
 	}
 
-
+	// TODO: We must try to use the item generator for this, passing the random type
 	protected Item CreateRandomItem () {
 		// get item type
 		System.Type itemType = GetRandomItemType();
-		
-		// create item in grid but without applying grid.SetEntity
-		Item item = (Item)grid.CreateEntity(itemType, 0, 0, 0.8f, null, null, false) as Item;
 
-		// put item inside the container
+		// get item id
+		string id = null;
+		if (itemType == typeof(Weapon)) {
+			id = GameData.weapons.ElementAt( Random.Range(0, GameData.weapons.Count)).Key;
+		} else if (itemType == typeof(Armour)) {
+			id = GameData.armours.ElementAt(Random.Range(0, GameData.armours.Count)).Key;
+		}
+
+		// create item
+		Item item = (Item)grid.CreateEntity(itemType, 0, 0, 0.8f, null, id, false) as Item;
+		
+		// put the item inside the container
 		item.transform.SetParent(transform, false);
 		item.transform.localPosition = Vector3.zero;
 		item.gameObject.SetActive(false);
@@ -139,15 +148,10 @@ public class Container : Entity {
 	protected virtual System.Type GetRandomItemType () {
 		// Pick a weighted random item type
 		return Dice.GetRandomTypeFromDict(new Dictionary<System.Type, double>() {
-			{ typeof(Armour), 		5 },
-			{ typeof(Boots), 		5 },
-			{ typeof(Cloak), 		5 },
-			{ typeof(Gloves), 		5 },
-			{ typeof(Hat), 			5 },
-			
+			{ typeof(Armour), 		100 },
+			{ typeof(Weapon), 		100 },
 			{ typeof(Shield), 		10 },
-			{ typeof(Weapon), 		10 },
-
+			
 			{ typeof(Treasure), 	20 },
 			{ typeof(Book), 		10 },
 			{ typeof(Food), 		10 },

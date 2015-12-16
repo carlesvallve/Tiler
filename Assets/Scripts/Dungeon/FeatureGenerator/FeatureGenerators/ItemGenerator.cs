@@ -22,14 +22,9 @@ public class ItemGenerator : DungeonFeatureGenerator {
 
 				// Pick a weighted random item type
 				System.Type itemType = Dice.GetRandomTypeFromDict(new Dictionary<System.Type, double>() {
-					{ typeof(Armour), 		5 },
-					{ typeof(Boots), 		5 },
-					{ typeof(Cloak), 		5 },
-					{ typeof(Gloves), 		5 },
-					{ typeof(Hat), 			5 },
-					
-					{ typeof(Shield), 		5 },
+					{ typeof(Armour), 		100 },
 					{ typeof(Weapon), 		100 },
+					{ typeof(Shield), 		5 },
 
 					{ typeof(Treasure), 	20 },
 					{ typeof(Book), 		10 },
@@ -37,17 +32,16 @@ public class ItemGenerator : DungeonFeatureGenerator {
 					{ typeof(Potion), 		10 },
 				});
 				
+				// get item id
 				string id = null;
-
 				if (itemType == typeof(Weapon)) {
-					int rand = Random.Range(0, GameData.weapons.Count);
-					id = GameData.weapons.ElementAt(rand).Key;
+					id = GameData.weapons.ElementAt( Random.Range(0, GameData.weapons.Count)).Key;
+				} else if (itemType == typeof(Armour)) {
+					id = GameData.armours.ElementAt(Random.Range(0, GameData.armours.Count)).Key;
 				}
 
+				// create item
 				grid.CreateEntity(itemType, tile.x, tile.y, 0.8f, null, id);
-
-				//print (item.GetType);
-
 			}
 		}
 	}

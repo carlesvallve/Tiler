@@ -25,14 +25,9 @@ public class Chest : Container {
 	protected override System.Type GetRandomItemType () {
 		// Pick a weighted random item type
 		return Dice.GetRandomTypeFromDict(new Dictionary<System.Type, double>() {
-			{ typeof(Armour), 		5 },
-			{ typeof(Boots), 		5 },
-			{ typeof(Cloak), 		5 },
-			{ typeof(Gloves), 		5 },
-			{ typeof(Hat), 			5 },
-			
+			{ typeof(Armour), 		100 },
+			{ typeof(Weapon), 		100 },
 			{ typeof(Shield), 		10 },
-			{ typeof(Weapon), 		0 },
 
 			{ typeof(Treasure), 	20 },
 			{ typeof(Book), 		10 },

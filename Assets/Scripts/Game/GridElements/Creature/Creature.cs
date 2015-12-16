@@ -84,13 +84,13 @@ public class Creature : Tile {
 		stats.weapon = inventory.equipment["Weapon"] != null ? (Weapon)inventory.equipment["Weapon"].item : null;
 		stats.shield = inventory.equipment["Shield"] != null ? (Shield)inventory.equipment["Shield"].item : null;
 
-		stats.armour = stats.armourBase;
+		/*stats.armour = stats.armourBase;
 		if (inventory.equipment["Armour"] != null) { stats.armour += ((Armour)inventory.equipment["Armour"].item).armour; } 
 
 		if (inventory.equipment["Hat"] != null) { stats.armour += ((Hat)inventory.equipment["Hat"].item).armour; } 
 		if (inventory.equipment["Cloak"] != null) { stats.armour += ((Cloak)inventory.equipment["Cloak"].item).armour; } 
 		if (inventory.equipment["Gloves"] != null) { stats.armour += ((Gloves)inventory.equipment["Gloves"].item).armour; } 
-		if (inventory.equipment["Boots"] != null) { stats.armour += ((Boots)inventory.equipment["Boots"].item).armour; } 
+		if (inventory.equipment["Boots"] != null) { stats.armour += ((Boots)inventory.equipment["Boots"].item).armour; } */
 
 		//stats.defense = stats.defenseBase;
 		//if (inventory.equipment["Shield"] != null) { stats.defense += inventory.equipment["Shield"].defense; } 
