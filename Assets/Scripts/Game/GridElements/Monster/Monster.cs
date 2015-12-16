@@ -47,7 +47,7 @@ public class Monster : Creature {
 		// set asset
 		string fileName = data.assets[Random.Range(0, data.assets.Length)];
 		string path = "Tilesets/Monster/" + data.type + "/" + data.id + "/" + fileName;
-		asset = Resources.Load<Sprite>(path);
+		this.asset = Resources.Load<Sprite>(path);
 		if (asset == null) { Debug.LogError(path); }
 
 		SetAsset(asset);

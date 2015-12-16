@@ -17,7 +17,7 @@ public class CreatureInventoryItem {
 		this.item = item;
 		
 		this.sprite = sprite;
-		this.id = sprite.name;
+		this.id = sprite != null ? sprite.name : "NoSprite";
 		this.ammount = item.ammount;
 		this.equipped = false;
 	}

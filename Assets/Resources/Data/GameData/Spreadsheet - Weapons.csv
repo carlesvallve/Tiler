@@ -17,7 +17,7 @@ Sabre,sabre,Sword,,0,1d6,1,1,0
 Scimitar,scimitar,Sword,,0,1d8,1,1,0
 Katana,katana,Sword,,0,2d6,1,1,0
 ,,,,,,,,
-Quarterstaff,quartterstaff,Staff,,0,1d8,1,2,0
+Quarterstaff,quarterstaff,Staff,,0,1d8,1,2,0
 ,,,,,,,,
 ShortBow,bow-short,Ranged,,0,1d4,8,2,0
 LongBow,bow-long,Ranged,,0,1d6,8,2,0

@@ -95,7 +95,7 @@ public class CreatureInventory  {
 			equipment[item.equipmentSlot] = null;
 
 			if (wasEquipped) { 
-				creature.UpdateEquipmentStats(); //SetWeapons();
+				creature.UpdateEquipmentStats();
 				return; 
 			}
 		}
@@ -105,9 +105,7 @@ public class CreatureInventory  {
 			equipment[item.equipmentSlot] = invItem;
 			invItem.equipped = true;
 
-			//creature.SetWeapons();
-			creature.UpdateEquipmentStats(); //SetWeapons();
-
+			creature.UpdateEquipmentStats();
 			return;
 		}
 	}

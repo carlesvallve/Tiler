@@ -85,9 +85,10 @@ public class Hud : MonoSingleton <Hud> {
 
 		// destroy all equipment slots
 		Transform equipmentContainer = transform.Find("Popups/PopupInventory/Main/Bag/Equipment/Slots/");
-		foreach (Transform child in equipmentContainer) {
-			Transform tr = child.Find(child.name);
-			if (tr != null) { Destroy(tr.gameObject); }
+		foreach (Transform category in equipmentContainer) {
+			foreach (Transform child in category) {
+				if (child != null) { Destroy(child.gameObject); }
+			}
 		}
 
 		// generate inventory slots from player's CreatureInventory items
@@ -110,7 +111,7 @@ public class Hud : MonoSingleton <Hud> {
 		GameObject obj = (GameObject)Instantiate(slotPrefab);
 		obj.transform.SetParent(parent, false);
 		obj.transform.localPosition = Vector3.zero;
-		obj.name = invItem.item.equipmentSlot;
+		obj.name = invItem.sprite.name;
 
 		// set image
 		Image image = obj.transform.Find("Image").GetComponent<Image>();
@@ -131,8 +132,13 @@ public class Hud : MonoSingleton <Hud> {
 
 
 	private void ApplyItem (GameObject obj) {
-		string id = obj.transform.Find("Image").GetComponent<Image>().sprite.name;
+		string id = obj.name;
 		CreatureInventoryItem invItem = Grid.instance.player.inventory.GetInventoryItemById(id);
+
+		if (invItem == null) {
+			Debug.LogError("No item was found by id: " + id);
+			return;
+		}
 
 		// use item
 		if (invItem.item.consumable) {
