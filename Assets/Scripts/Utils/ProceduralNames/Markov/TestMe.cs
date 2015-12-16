@@ -6,9 +6,11 @@ using Markov;
 
 public class TestMe : MonoBehaviour {
 
-	void Awake() {
+	void Start() {
 		//GenerateRandomNames();
-		GenerateRandomText();
+		//GenerateRandomText();
+		//Text text = GameObject.Find("Text").GetComponent<Text>();
+		//text.text = CsvReader.Load("Data/GameData/Monsters");
 	}
 
 
