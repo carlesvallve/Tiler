@@ -34,7 +34,8 @@ public class CreatureStats {
 	public int damageBase, damage;
 
 	// armour
-	public int armourBase, armour;
+	//public int armourBase, armour;
+	public int gdr;
 
 	// vision
 	public int visionBase, vision;

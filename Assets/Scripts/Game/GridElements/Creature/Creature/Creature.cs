@@ -29,8 +29,6 @@ public class Creature : Tile {
 	public bool isAgressive = true;
 
 	// modules
-	public CreatureMovement movement;
-	public CreatureEncounters encounters;
 	public CreatureCombat combat;
 	public CreatureInventory inventory;
 

@@ -50,8 +50,8 @@ public class Player : Creature {
 		stats.hpMax = 20; 
 		stats.hp = stats.hpMax;
 		stats.vision = 6;
-		stats.attack = 5;
-		stats.defense = 2;
+		stats.attack = 50;
+		stats.defense = 50;
 		stats.str = 2;
 		stats.attackRange = 1;
 

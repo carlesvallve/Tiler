@@ -43,11 +43,13 @@ public class GameData {
 			monster.adjective = table[y, 4];
 			
 			monster.level = 	int.Parse(table[y, 5]);
-			monster.movement = 	float.Parse(table[y, 6]);
-			monster.attack = 	int.Parse(table[y, 7]);
-			monster.defense = 	int.Parse(table[y, 8]);
-			monster.damage = 	int.Parse(table[y, 9]);
-			monster.vision = 	int.Parse(table[y, 10]);
+			monster.hp = 		int.Parse(table[y, 6]);
+			monster.movement = 	float.Parse(table[y, 7]);
+			monster.attack = 	int.Parse(table[y, 8]);
+			monster.defense = 	int.Parse(table[y, 9]);
+			monster.damage = 	int.Parse(table[y, 10]);
+			monster.gdr = 		int.Parse(table[y, 11]);
+			monster.vision = 	int.Parse(table[y, 12]);
 
 			monsters.Add(id, monster);
 		}

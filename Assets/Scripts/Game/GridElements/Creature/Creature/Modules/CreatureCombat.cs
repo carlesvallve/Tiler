@@ -15,61 +15,152 @@ public class CreatureCombat : CreatureModule {
 	// Combat Outcome
 	// =====================================================
 
-	public bool ResolveCombatOutcome (Creature attacker, Creature defender) {
-		// resolve combat outcome
-		/*int attack = attacker.stats.attack + Dice.Roll("1d8+2");
-		if (attacker.stats.weapon != null) { attacker.stats.attack += Dice.Roll(attacker.stats.weapon.attack); }
+	private bool ResolveCombatOutcome (Creature attacker, Creature defender) { // return isDead
+		int atk, def;
 
-		int defense = defender.stats.defense + Dice.Roll("1d6+1");
-		if (defender.stats.shield != null) { defense += Dice.Roll(defender.stats.shield.defense); }*/
+		atk = Dice.Roll("1d100");
+		def = Dice.Roll("1d100");
 
-		int attack = attacker.stats.attack + Dice.Roll("1d8");
-		int defense = defender.stats.defense + Dice.Roll("1d6");
+		// attacker missed
+		if (atk > attacker.stats.attack + 25) { // 25% extra accuracy
+			Miss(attacker, defender);
+			return false;
+		}
 
-		// hit
-		if (attack > defense) {
+		// defender missed
+		if (def > defender.stats.defense) {
+			return Damage(attacker, defender);
+		}
 
-			// damage = str + weapon damage dice
-			//string weaponDamage = attacker.stats.weapon != null ? attacker.stats.weapon.damage : null;
-			/*int damage = attacker.stats.str + Dice.Roll("1d4") - defender.stats.armour; // + Dice.Roll(weaponDamage); // + Dice.Roll("1d4");
-			if (attacker.stats.weapon != null) { attacker.stats.attack += Dice.Roll(attacker.stats.weapon.damage); }*/
-			int damage = attacker.stats.str + Dice.Roll("1d4");
+		// both succeed, so get difference
+		int attack = (attacker.stats.attack - atk);
+		int defense = (defender.stats.defense - def);
+		int diff = attack - defense;
+		//Debug.Log (attack + "/" + defense + " -> " + diff);
 
-			if (damage > 0) {
-				// apply damage
-				defender.UpdateHp(-damage);
-
-				// display damage info
-				string[] arr = new string[] { "painA", "painB", "painC", "painD" };
-				sfx.Play("Audio/Sfx/Combat/" + arr[Random.Range(0, arr.Length)], 0.1f, Random.Range(0.6f, 1.8f));
-				sfx.Play("Audio/Sfx/Combat/hitB", 0.5f, Random.Range(0.8f, 1.2f));
-				defender.Speak("-" + damage, Color.red);
-
-				// create blood
-				grid.CreateBlood(defender.transform.position, damage, Color.red);
-				
-				// set isDead to true
-				if (defender.stats.hp == 0) {
-					return true;
-				}
-			}
-
-		// parry or dodge
+		if (diff > 0) {
+			// attacker wins
+			return Damage(attacker, defender);
 		} else {
-			int r = Random.Range(0, 2);
-			if (r == 1) {
-				string[] arr = new string[] { "swordB", "swordC" };
-				sfx.Play("Audio/Sfx/Combat/" + arr[Random.Range(0, arr.Length)], 0.15f, Random.Range(0.6f, 1.8f));
-				defender.Speak("Parry", Color.white);
-			} else {
-				sfx.Play("Audio/Sfx/Combat/swishA", 0.1f, Random.Range(0.5f, 1.2f));
-				defender.Speak("Dodge", Color.white);
+			// defender wins
+			Block(attacker, defender);
+			return false;
+		}
+	}
+
+
+	// =====================================================
+	// Outcomes
+	// =====================================================
+
+	private void Miss (Creature attacker, Creature defender) {
+		sfx.Play("Audio/Sfx/Combat/swishA", 0.1f, Random.Range(0.5f, 1.2f));
+		defender.Speak("Miss", Color.white);
+	}
+
+
+	private void Block (Creature attacker, Creature defender) {
+		string[] arr = new string[] { "swordB", "swordC" };
+		sfx.Play("Audio/Sfx/Combat/" + arr[Random.Range(0, arr.Length)], 0.15f, Random.Range(0.6f, 1.8f));
+		defender.Speak("Block", Color.white);
+	}
+
+
+	private void Dodge (Creature attacker, Creature defender) {
+		sfx.Play("Audio/Sfx/Combat/swishA", 0.1f, Random.Range(0.5f, 1.2f));
+		defender.Speak("Dodge", Color.white);
+	}
+
+
+	private bool Damage (Creature attacker, Creature defender) {
+		// damage
+		int damage = GetTotalDamage (attacker, defender);
+		
+		if (damage > 0) {
+			// apply damage
+			defender.UpdateHp(-damage);
+
+			// display damage info
+			string[] arr = new string[] { "painA", "painB", "painC", "painD" };
+			sfx.Play("Audio/Sfx/Combat/" + arr[Random.Range(0, arr.Length)], 0.1f, Random.Range(0.6f, 1.8f));
+			sfx.Play("Audio/Sfx/Combat/hitB", 0.5f, Random.Range(0.8f, 1.2f));
+			defender.Speak("-" + damage, Color.red);
+
+			// create blood
+			grid.CreateBlood(defender.transform.position, damage, Color.red);
+			
+			// set isDead to true
+			if (defender.stats.hp == 0) {
+				return true;
 			}
 		}
 
 		return false;
 	}
 
+
+	// =====================================================
+	// Damage Calculations
+	// =====================================================
+
+	private int GetTotalDamage (Creature attacker, Creature defender, bool debug = false) {
+		int damage = attacker.stats.str;
+
+		// get weapon adittional damage
+		if (attacker.stats.weapon != null) {
+			damage += Dice.Roll(attacker.stats.weapon.damage);
+		} else {
+			damage += Dice.Roll("1d4-1");
+		}
+
+		// get total gdr (garanteed damage reduction %)
+		List<Armour> armours = GetArmourParts(defender);
+		int gdr = GetArmourGdr(armours);
+
+		// get damage protection (how many points will be discounted from damage)
+		int protection = Mathf.RoundToInt(gdr * damage / 100f);
+
+		if (debug) {
+			Debug.Log(
+				attacker.name + " Damage " + 
+				damage + " - " + 
+				protection + " (" + gdr + "%) = " + 
+				(damage - protection)
+			);
+		}
+		
+		// apply damage protection
+		damage -= protection;
+		return damage;
+	}
+
+
+	private List<Armour> GetArmourParts (Creature defender) {
+		Dictionary<string, CreatureInventoryItem> equipment = defender.inventory.equipment;
+
+		List<Armour> armours = new List<Armour>();
+
+		if (equipment["Armour"] != null) { armours.Add((Armour)equipment["Armour"].item); }
+		if (equipment["Hat"] != null) { armours.Add((Armour)equipment["Hat"].item); }
+		if (equipment["Gloves"] != null) { armours.Add((Armour)equipment["Gloves"].item); }
+		if (equipment["Boots"] != null) { armours.Add((Armour)equipment["Boots"].item); }
+		if (equipment["Cloak"] != null) { armours.Add((Armour)equipment["Cloak"].item); }
+
+		return armours;
+	}
+
+
+	private int GetArmourGdr (List<Armour> armours) {
+		int gdr = 0;
+
+		foreach (Armour armour in armours) {
+			gdr += armour.gdr;
+		}
+
+		return gdr;
+	}
+
+	
 	// =====================================================
 	// Shoot
 	// =====================================================

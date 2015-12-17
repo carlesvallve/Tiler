@@ -38,10 +38,12 @@ public class Monster : Creature {
 		stats.adjective = data.adjective;
 
 		stats.level = data.level;
+		stats.hp = data.hp; stats.hpMax = data.hp;
 		stats.energy = data.movement; stats.energyBase = data.movement; stats.energyRate = data.movement;
 		stats.attack = data.attack; stats.attackBase = data.attack;
 		stats.defense = data.defense; stats.defenseBase = data.defense;
 		stats.damage = data.damage; stats.damageBase = data.damage;
+		stats.gdr = data.gdr;
 		stats.vision = data.vision;
 
 		// set asset
