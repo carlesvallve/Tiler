@@ -22,22 +22,26 @@ public class CreatureCombat : CreatureModule {
 		def = Dice.Roll("1d100");
 
 		// attacker missed
-		if (atk > attacker.stats.attack + 25) { // 25% extra accuracy
+		int totalAttack = GetTotalAttack(attacker);
+		if (atk > totalAttack) {
 			Miss(attacker, defender);
 			return false;
 		}
 
 		// defender missed
-		if (def > defender.stats.defense) {
+		int totalDefense = GetTotalDefense(defender);
+		//if (defender is Player) { Debug.Log("totalDefense: " + def + " / " + totalDefense); }
+		if (def > totalDefense) {
 			return Damage(attacker, defender);
 		}
 
 		// both succeed, so get difference
-		int attack = (attacker.stats.attack - atk);
-		int defense = (defender.stats.defense - def);
+		int attack = (totalAttack - atk);
+		int defense = (totalDefense - def);
 		int diff = attack - defense;
-		//Debug.Log (attack + "/" + defense + " -> " + diff);
-
+		
+		//Debug.Log ("Attack: " + attack + " / Defense: " + defense + " -> " + diff);
+		
 		if (diff > 0) {
 			// attacker wins
 			return Damage(attacker, defender);
@@ -100,8 +104,27 @@ public class CreatureCombat : CreatureModule {
 
 
 	// =====================================================
-	// Damage Calculations
+	// Attack / Defense / Damage / Armour Gdr Calculations
 	// =====================================================
+
+	private int GetTotalAttack (Creature attacker) {
+		// 25% extra accuracy, so we dont miss so often, and to compensate for defense bonuses
+		int attack = attacker.stats.attack + 25;
+
+		Dictionary<string, CreatureInventoryItem> equipment = attacker.inventory.equipment;
+		if (equipment["Weapon"] != null) { attack += ((Weapon)equipment["Weapon"].item).attack; }
+
+		return attack;
+	}
+
+	private int GetTotalDefense (Creature defender) {
+		int defense = defender.stats.defense;
+
+		Dictionary<string, CreatureInventoryItem> equipment = defender.inventory.equipment;
+		if (equipment["Shield"] != null) { defense += ((Shield)equipment["Shield"].item).defense; }
+
+		return defense;
+	}
 
 	private int GetTotalDamage (Creature attacker, Creature defender, bool debug = false) {
 		int damage = attacker.stats.str;

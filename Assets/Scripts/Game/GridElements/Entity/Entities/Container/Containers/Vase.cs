@@ -26,7 +26,7 @@ public class Vase : Container {
 		return Dice.GetRandomTypeFromDict(new Dictionary<System.Type, double>() {
 			{ typeof(Armour), 		100 },
 			{ typeof(Weapon), 		100 },
-			{ typeof(Shield), 		10 },
+			{ typeof(Shield), 		100 },
 			
 			{ typeof(Treasure), 	20 },
 			{ typeof(Book), 		10 },

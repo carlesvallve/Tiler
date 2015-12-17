@@ -24,7 +24,7 @@ public class ItemGenerator : DungeonFeatureGenerator {
 				System.Type itemType = Dice.GetRandomTypeFromDict(new Dictionary<System.Type, double>() {
 					{ typeof(Armour), 		100 },
 					{ typeof(Weapon), 		100 },
-					{ typeof(Shield), 		5 },
+					{ typeof(Shield), 		100 },
 
 					{ typeof(Treasure), 	20 },
 					{ typeof(Book), 		10 },
@@ -38,6 +38,8 @@ public class ItemGenerator : DungeonFeatureGenerator {
 					id = GameData.weapons.ElementAt( Random.Range(0, GameData.weapons.Count)).Key;
 				} else if (itemType == typeof(Armour)) {
 					id = GameData.armours.ElementAt(Random.Range(0, GameData.armours.Count)).Key;
+				} else if (itemType == typeof(Shield)) {
+					id = GameData.shields.ElementAt(Random.Range(0, GameData.shields.Count)).Key;
 				}
 
 				// create item

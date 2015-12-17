@@ -14,6 +14,7 @@ public class GameData {
 	public void LoadAll () {
 		LoadMonsters();
 		LoadWeapons();
+		LoadShields();
 		LoadArmours();
 	}
 
@@ -111,14 +112,13 @@ public class GameData {
 			shield.adjective = 	table[y, 3];
 			shield.rarity = 	int.Parse(table[y, 4]);
 			shield.defense = 	int.Parse(table[y, 5]);
-			shield.weight = 	int.Parse(table[y, 9]);
+			shield.weight = 	int.Parse(table[y, 6]);
 
 			shields.Add(id, shield);
 		}
 
 		// debug a single shield
 		//shields["ShieldKite"].Log();
-		
 	}
 
 
