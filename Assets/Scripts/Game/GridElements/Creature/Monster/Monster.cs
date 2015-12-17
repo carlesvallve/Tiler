@@ -36,6 +36,7 @@ public class Monster : Creature {
 		stats.race = data.race;
 		stats.type = data.type;
 		stats.adjective = data.adjective;
+		stats.rarity = data.rarity;
 
 		stats.level = data.level;
 		stats.hp = data.hp; stats.hpMax = data.hp;

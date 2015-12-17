@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class WeaponData {
+public class ShieldData {
 	public string id;
 	public string[] assets;
 
@@ -8,10 +8,7 @@ public class WeaponData {
 	public string adjective;
 	public int rarity;
 
-	public int attack;
-	public string damage;
-	public int range;
-	public int hands;
+	public int defense;
 	public int weight;
 
 	public void Log () {
@@ -20,10 +17,7 @@ public class WeaponData {
 			"\nType: " + this.type + 
 			"\nAdjective: " + this.adjective + 
 			"\nRarity: " + this.rarity + 
-			"\nattack: " + this.attack + 
-			"\ndamage: "  + this.damage + 
-			"\nrange: " + this.range + 
-			"\nhands: " + this.hands + 
+			"\ndefense: " + this.defense + 
 			"\nweight: " + this.weight
 		);
 	}

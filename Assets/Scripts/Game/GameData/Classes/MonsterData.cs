@@ -7,6 +7,7 @@ public class MonsterData {
 	public string race;
 	public string type;
 	public string adjective;
+	public int rarity;
 
 	public int level;
 	public int hp;
@@ -24,6 +25,7 @@ public class MonsterData {
 			"\nRace: " + this.race + 
 			"\nType: " + this.type + 
 			"\nAdjective: " + this.adjective + 
+			"\nRarity: " + this.rarity + 
 			"\nLevel: " + this.level + 
 			"\nHp: "  + this.hp + 
 			"\nMovement: "  + this.movement + 

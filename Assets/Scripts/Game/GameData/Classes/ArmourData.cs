@@ -6,6 +6,7 @@ public class ArmourData {
 
 	public string type;
 	public string adjective;
+	public int rarity;
 
 	public int ac;
 	public int gdr;
@@ -19,6 +20,7 @@ public class ArmourData {
 			"\nassets: " + this.assets.Length + 
 			"\nType: " + this.type + 
 			"\nAdjective: " + this.adjective + 
+			"\nRarity: " + this.rarity + 
 			"\nac: " + this.ac + 
 			"\ngdr: "  + this.gdr + 
 			"\nsh: " + this.sh + 

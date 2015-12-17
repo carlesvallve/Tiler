@@ -11,6 +11,7 @@ public class CreatureStats {
 	public string race;
 	public string type;
 	public string adjective;
+	public int rarity;
 
 	// xp
 	public int level = 1;

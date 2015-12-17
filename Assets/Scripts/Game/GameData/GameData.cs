@@ -7,6 +7,7 @@ public class GameData {
 
 	public static Dictionary<string, MonsterData> monsters;
 	public static Dictionary<string, WeaponData> weapons;
+	public static Dictionary<string, ShieldData> shields;
 	public static Dictionary<string, ArmourData> armours;
 
 
@@ -39,14 +40,15 @@ public class GameData {
 			monster.type = 		table[y, 2];
 			monster.race = 		table[y, 3];
 			monster.adjective = table[y, 4];
-			monster.level = 	int.Parse(table[y, 5]);
-			monster.hp = 		int.Parse(table[y, 6]);
-			monster.movement = 	float.Parse(table[y, 7]);
-			monster.attack = 	int.Parse(table[y, 8]);
-			monster.defense = 	int.Parse(table[y, 9]);
-			monster.damage = 	int.Parse(table[y, 10]);
-			monster.gdr = 		int.Parse(table[y, 11]);
-			monster.vision = 	int.Parse(table[y, 12]);
+			monster.rarity = 	int.Parse(table[y, 5]);
+			monster.level = 	int.Parse(table[y, 6]);
+			monster.hp = 		int.Parse(table[y, 7]);
+			monster.movement = 	float.Parse(table[y, 8]);
+			monster.attack = 	int.Parse(table[y, 9]);
+			monster.defense = 	int.Parse(table[y, 10]);
+			monster.damage = 	int.Parse(table[y, 11]);
+			monster.gdr = 		int.Parse(table[y, 12]);
+			monster.vision = 	int.Parse(table[y, 13]);
 
 			monsters.Add(id, monster);
 		}
@@ -74,17 +76,48 @@ public class GameData {
 			weapon.assets = 	table[y, 1].Split(arraySeparator);
 			weapon.type = 		table[y, 2];
 			weapon.adjective = 	table[y, 3];
-			weapon.hit = 		int.Parse(table[y, 4]);
-			weapon.damage = 	table[y, 5];
-			weapon.range = 		int.Parse(table[y, 6]);
-			weapon.hands = 		int.Parse(table[y, 7]);
-			weapon.weight = 	int.Parse(table[y, 8]);
+			weapon.rarity = 	int.Parse(table[y, 4]);
+			weapon.attack = 	int.Parse(table[y, 5]);
+			weapon.damage = 	table[y, 6];
+			weapon.range = 		int.Parse(table[y, 7]);
+			weapon.hands = 		int.Parse(table[y, 8]);
+			weapon.weight = 	int.Parse(table[y, 9]);
 
 			weapons.Add(id, weapon);
 		}
 
 		// debug a single weapon
 		//weapons["LongSword"].Log();
+		
+	}
+
+
+	private void LoadShields () {
+		// load csv and generate a bidimensional table from it
+		string [,] table = LoadCsv("Data/GameData/Spreadsheet - Shields");
+
+		// set a dictionary with all shields
+		shields = new Dictionary<string, ShieldData>();
+
+		// fill each weaponData object with data from csv table
+		for (int y = 0; y < table.GetLength(0); y++) {
+			string id = table[y, 0];
+			if (id == "") { continue; }
+
+			ShieldData shield = new ShieldData();
+			shield.id = 		table[y, 0];
+			shield.assets = 	table[y, 1].Split(arraySeparator);
+			shield.type = 		table[y, 2];
+			shield.adjective = 	table[y, 3];
+			shield.rarity = 	int.Parse(table[y, 4]);
+			shield.defense = 	int.Parse(table[y, 5]);
+			shield.weight = 	int.Parse(table[y, 9]);
+
+			shields.Add(id, shield);
+		}
+
+		// debug a single shield
+		//shields["ShieldKite"].Log();
 		
 	}
 
@@ -106,12 +139,13 @@ public class GameData {
 			armour.assets = 		table[y, 1].Split(arraySeparator);
 			armour.type = 			table[y, 2];
 			armour.adjective = 		table[y, 3];
-			armour.ac = 			int.Parse(table[y, 4]);
-			armour.gdr = 			int.Parse(table[y, 5]);
-			armour.sh = 			int.Parse(table[y, 6]);
-			armour.ev = 			int.Parse(table[y, 7]);
-			armour.encumberness = 	int.Parse(table[y, 8]);
-			armour.weight = 		int.Parse(table[y, 9]);
+			armour.rarity = 		int.Parse(table[y, 4]);
+			armour.ac = 			int.Parse(table[y, 5]);
+			armour.gdr = 			int.Parse(table[y, 6]);
+			armour.sh = 			int.Parse(table[y, 7]);
+			armour.ev = 			int.Parse(table[y, 8]);
+			armour.encumberness = 	int.Parse(table[y, 9]);
+			armour.weight = 		int.Parse(table[y, 10]);
 
 			armours.Add(id, armour);
 		}

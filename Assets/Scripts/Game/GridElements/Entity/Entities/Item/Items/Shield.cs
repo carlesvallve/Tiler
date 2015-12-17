@@ -4,33 +4,41 @@ using System.Collections;
 
 public class Shield : Item {
 
-	public string defense = "1d4";
+	public int defense;
+	public int weight;
 
 
 	public override void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null, string id = null) {
-		string path = "Tilesets/Item/Shield/" + GetRandomAssetName();
-		asset = Resources.Load<Sprite>(path);
-		if (asset == null) { Debug.LogError(path); }
-
 		base.Init(grid, x, y, scale, asset);
-		walkable = true;
-
 		SetImages(scale, Vector3.zero, 0.04f);
 
-		stackable = false;
-		equipmentSlot = "Shield";
+		InitializeStats(id);
 	}
 
 
-	protected override string GetRandomAssetName () {
-		string[] arr = new string[] { 
-			"buckler-1", "buckler-2", "buckler-3", 
-			"shield-elven", "shield-indestructible", "shield-kite", 
-			"shield-large-1", "shield-large-2", "shield-large-3", 
-			"shield-reflection", "shield-round", "shield-spriggan"
-		};
+	public void InitializeStats (string id) {
+		// assign props from csv
+		ShieldData data = GameData.shields[id];
 
-		return arr[Random.Range(0, arr.Length)];
+		this.id = data.id;
+		this.type = data.type;
+		this.adjective = data.adjective;
+		this.rarity = data.rarity;
+
+		this.defense = data.defense;
+		this.weight = data.weight;
+
+		// set asset
+		string fileName = data.assets[Random.Range(0, data.assets.Length)];
+		string path = "Tilesets/Item/Shield/" + fileName;
+		this.asset = Resources.Load<Sprite>(path);
+		if (asset == null) { Debug.LogError(path); }
+		SetAsset(asset);
+
+		// extra props
+		this.walkable = true;
+		this.stackable = false;
+		this.equipmentSlot = "Shield";
 	}
 
 
@@ -38,9 +46,4 @@ public class Shield : Item {
 		sfx.Play("Audio/Sfx/Item/weapon", 0.6f, Random.Range(0.8f, 1.2f));
 	}
 
-
-	private void SetStats (string assetName) {
-		defense = "1d4";
-	}
-	
 }

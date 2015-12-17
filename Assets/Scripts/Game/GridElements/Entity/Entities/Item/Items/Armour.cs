@@ -26,6 +26,7 @@ public class Armour : Item {
 		this.id = data.id;
 		this.type = data.type;
 		this.adjective = data.adjective;
+		this.rarity = data.rarity;
 
 		this.ac = data.ac;
 		this.gdr = data.gdr;

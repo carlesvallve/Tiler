@@ -7,6 +7,8 @@ public class Item : Entity {
 	public string id;
 	public string type;
 	public string adjective;
+	public int rarity;
+
 
 	public int ammount = 1;
 	public bool stackable = true;

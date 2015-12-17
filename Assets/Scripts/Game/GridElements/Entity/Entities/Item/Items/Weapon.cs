@@ -4,12 +4,7 @@ using System.Collections;
 
 public class Weapon : Item {
 
-	//public string attack = "1d6";
-	//public string damage = "1d4";
-	//public int range = 1;
-	//public int speed = 1;
-
-	public int hit;
+	public int attack;
 	public string damage;
 	public int range;
 	public int hands;
@@ -31,8 +26,9 @@ public class Weapon : Item {
 		this.id = data.id;
 		this.type = data.type;
 		this.adjective = data.adjective;
+		this.rarity = data.rarity;
 
-		this.hit = data.hit;
+		this.attack = data.attack;
 		this.damage = data.damage;
 		this.range = data.range;
 		this.hands = data.hands;
