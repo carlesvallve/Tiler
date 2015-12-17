@@ -36,12 +36,9 @@ public class GameData {
 			MonsterData monster = new MonsterData();
 			monster.id = 		table[y, 0];
 			monster.assets = 	table[y, 1].Split(arraySeparator);
-			
-			
 			monster.type = 		table[y, 2];
 			monster.race = 		table[y, 3];
 			monster.adjective = table[y, 4];
-			
 			monster.level = 	int.Parse(table[y, 5]);
 			monster.hp = 		int.Parse(table[y, 6]);
 			monster.movement = 	float.Parse(table[y, 7]);
@@ -75,10 +72,8 @@ public class GameData {
 			WeaponData weapon = new WeaponData();
 			weapon.id = 		table[y, 0];
 			weapon.assets = 	table[y, 1].Split(arraySeparator);
-			
 			weapon.type = 		table[y, 2];
 			weapon.adjective = 	table[y, 3];
-			
 			weapon.hit = 		int.Parse(table[y, 4]);
 			weapon.damage = 	table[y, 5];
 			weapon.range = 		int.Parse(table[y, 6]);
@@ -88,7 +83,7 @@ public class GameData {
 			weapons.Add(id, weapon);
 		}
 
-		// debug a single monster
+		// debug a single weapon
 		//weapons["LongSword"].Log();
 		
 	}
@@ -109,10 +104,8 @@ public class GameData {
 			ArmourData armour = new ArmourData();
 			armour.id = 			table[y, 0];
 			armour.assets = 		table[y, 1].Split(arraySeparator);
-			
 			armour.type = 			table[y, 2];
 			armour.adjective = 		table[y, 3];
-			
 			armour.ac = 			int.Parse(table[y, 4]);
 			armour.gdr = 			int.Parse(table[y, 5]);
 			armour.sh = 			int.Parse(table[y, 6]);
@@ -123,9 +116,8 @@ public class GameData {
 			armours.Add(id, armour);
 		}
 
-		// debug a single monster
+		// debug a single armour
 		//armours["LeatherArmour"].Log();
-		
 	}
 
 
@@ -172,17 +164,7 @@ public class GameData {
 		
 		return table;
 	}
-
 }
-
-
-
-
-
-
-
-
-
 
 
 

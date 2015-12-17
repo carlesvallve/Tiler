@@ -152,11 +152,7 @@ public class CreatureCombat : CreatureModule {
 
 	private int GetArmourGdr (List<Armour> armours) {
 		int gdr = 0;
-
-		foreach (Armour armour in armours) {
-			gdr += armour.gdr;
-		}
-
+		foreach (Armour armour in armours) { gdr += armour.gdr; }
 		return gdr;
 	}
 
