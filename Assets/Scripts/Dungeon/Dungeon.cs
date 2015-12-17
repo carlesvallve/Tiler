@@ -14,7 +14,7 @@ public class Dungeon : MonoSingleton <Dungeon> {
 	private DungeonGenerator dungeonGenerator;
 
 	public List<int> dungeonSeeds = new List<int>();
-	public int currentDungeonLevel = 0;
+	public int currentDungeonLevel;
 
 
 	void Awake () {
@@ -23,6 +23,9 @@ public class Dungeon : MonoSingleton <Dungeon> {
 		game = Game.instance;
 		grid = Grid.instance;
 		dungeonGenerator = DungeonGenerator.instance;
+
+		// set initial dungeon level
+		currentDungeonLevel = 0; // 0;
 	}
 
 

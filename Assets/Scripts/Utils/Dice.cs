@@ -59,6 +59,24 @@ public class Dice {
 	// Probability Methods
 	// =====================================================
 
+	// returns a string key from a dictionary of weighted values
+
+	public static string GetRandomStringFromDict (Dictionary<string, double> dict) {
+		// generate a list of keys from our dictionary keys
+		List<string> keys = new List<string>(dict.Keys);
+
+		// generate a list of weights from our dictionary values
+		List<double> values = new List<double>(dict.Values);
+
+		// spin the roulette, passing an array of double values
+		int index = SpinRoulette(values.ToArray());
+
+		//Debug.Log (">>> " + index + " " + keys[index]);
+
+		// get our type at index
+		return keys[index];
+	}
+
 	// returns a class type from a dictionary of weighted class types
 
 	public static System.Type GetRandomTypeFromDict (Dictionary<System.Type, double> dict) {
