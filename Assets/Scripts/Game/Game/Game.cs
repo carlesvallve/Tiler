@@ -12,8 +12,8 @@ using System.Collections.Generic;
 	- right clicking on inventory item should display item info
 
 - ai:
-	- monsters should turn afraid when hp bar is red
-	- afraid monsters should turn to fight if they have no other option
+	- monsters should turn afraid when hp bar is red -> OK
+	- afraid monsters should turn to fight if they have no other option -> OK
 	- monsters should use collected potions and food when hp is low
 	- monsters should equip collected equipment if is better than current
 	- intelligent monsters should have a chance to break containers and open chests

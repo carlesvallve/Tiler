@@ -98,6 +98,12 @@ public class Hud : MonoSingleton <Hud> {
 				// equipment slots
 				Transform container = equipmentContainer.Find(invItem.item.equipmentSlot);
 				CreateInventorySlot(container, invItem);
+				
+				// display 2 handed weapons in bot weapon and shield slots
+				if (invItem.item.equipmentSlot == "Weapon" && ((Equipment)invItem.item).hands == 2) {
+					Transform shieldContainer = equipmentContainer.Find("Shield");
+					CreateInventorySlot(shieldContainer, invItem);
+				}
 			} else {
 				// inventory slots
 				inventorySlots.Add(CreateInventorySlot(inventoryContainer, invItem));
@@ -149,6 +155,22 @@ public class Hud : MonoSingleton <Hud> {
 
 		// equip/unequip item
 		if (invItem.item.equipmentSlot != null) {
+
+			// if 2h and carrying a shield, remove shield
+			if (((Equipment)invItem.item).hands == 2) {
+				CreatureInventoryItem shield = Grid.instance.player.inventory.equipment["Shield"];
+				if (shield != null) { Grid.instance.player.inventory.EquipItem(shield); }
+			}
+
+			// if shield and eauipping 2 hand weapon, remove 2h weapon
+			if (invItem.item.equipmentSlot == "Shield") {
+				CreatureInventoryItem weapon = Grid.instance.player.inventory.equipment["Weapon"];
+				if (weapon != null && ((Equipment)weapon.item).hands == 2) {
+					Grid.instance.player.inventory.EquipItem(weapon);
+				}
+			}
+
+			// equip/unequip given equipment item
 			Grid.instance.player.inventory.EquipItem(invItem);
 			DisplayInventory(true);
 			sfx.Play("Audio/Sfx/Item/armour", 0.9f, Random.Range(0.8f, 1.2f));
