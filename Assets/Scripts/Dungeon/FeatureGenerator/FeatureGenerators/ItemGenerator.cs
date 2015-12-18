@@ -25,11 +25,11 @@ public class ItemGenerator : DungeonFeatureGenerator {
 
 				// Pick a weighted random item type
 				System.Type itemType = Dice.GetRandomTypeFromDict(new Dictionary<System.Type, double>() {
-					{ typeof(Equipment), 	50 },
-					{ typeof(Treasure), 	50 },
+					{ typeof(Equipment), 	5 },
+					{ typeof(Treasure), 	80 },
 					{ typeof(Food), 		40 },
 					{ typeof(Potion), 		5 },
-					{ typeof(Book), 		3 },
+					{ typeof(Book), 		5 },
 				});
 				
 				// get equipment id

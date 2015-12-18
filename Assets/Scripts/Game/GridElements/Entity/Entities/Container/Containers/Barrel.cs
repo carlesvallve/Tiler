@@ -29,7 +29,7 @@ public class Barrel : Container {
 	protected override System.Type GetRandomItemType () {
 		// Pick a weighted random item type
 		return Dice.GetRandomTypeFromDict(new Dictionary<System.Type, double>() {
-			{ typeof(Equipment), 	100 },
+			{ typeof(Equipment), 	80 },
 			{ typeof(Treasure), 	20 },
 			{ typeof(Food), 		10 },
 			{ typeof(Potion), 		5 },

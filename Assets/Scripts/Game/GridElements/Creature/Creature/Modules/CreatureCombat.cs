@@ -86,14 +86,16 @@ public class CreatureCombat : CreatureModule {
 			string[] arr = new string[] { "painA", "painB", "painC", "painD" };
 			sfx.Play("Audio/Sfx/Combat/" + arr[Random.Range(0, arr.Length)], 0.1f, Random.Range(0.6f, 1.8f));
 			sfx.Play("Audio/Sfx/Combat/hitB", 0.5f, Random.Range(0.8f, 1.2f));
-			defender.Speak("-" + damage, Color.red);
-
+			
 			// create blood
 			grid.CreateBlood(defender.transform.position, damage, Color.red);
 			
 			// set isDead to true
 			if (defender.stats.hp == 0) {
+				defender.Speak("-" + damage, Color.red, 0.25f);
 				return true;
+			} else {
+				defender.Speak("-" + damage, Color.red, 0);
 			}
 		}
 
@@ -360,7 +362,9 @@ public class CreatureCombat : CreatureModule {
 		sfx.Play("Audio/Sfx/Combat/hitB", 0.6f, Random.Range(0.5f, 2.0f));
 		grid.CreateBlood(me.transform.localPosition, 16, Color.red);
 
+		
 		// update attacker xp
+		me.Speak("+" + me.stats.xpValue + "xp", Color.yellow, 0); //0.25f);
 		attacker.UpdateXp(me.stats.xpValue);
 
 		yield return null;

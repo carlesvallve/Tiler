@@ -65,10 +65,10 @@ public class Creature : Tile {
 	}
 
 
-	void Update () {
+	/*void Update () {
 		string energy = (Mathf.Round(stats.energy * 100f) / 100f).ToString();
 		SetInfo(energy, Color.yellow);
-	}
+	}*/
 
 	
 
@@ -92,10 +92,10 @@ public class Creature : Tile {
 	}
 
 
-	public virtual bool UpdateEnergy () {
+	/*public virtual bool UpdateEnergy () {
 		//SetInfo(stats.energy.ToString(), Color.cyan);
 
-		if (stats.energy < 1) {// stats.energyRate
+		if (stats.energy < 1) {
 			stats.energy += stats.energyRate;
 			//stats.energy = Mathf.Round(stats.energy * 100f) / 100f;
 			return false;
@@ -103,11 +103,12 @@ public class Creature : Tile {
 
 		stats.energy -= 1;
 		return true;
-	}
+	}*/
+
 
 	public virtual void UpdateXp (int ammount) {
 		stats.xp += ammount; 
-		Speak("+" + ammount + "xp", Color.yellow, 0.25f);
+		//Speak("+" + ammount + "xp", Color.yellow, 0.25f);
 
 		// level up
 		if (stats.xp >= stats.xpMax) { 
@@ -117,25 +118,45 @@ public class Creature : Tile {
 
 
 	protected void LevelUp () {
+		// increase level
 		stats.level += 1;
-
 		stats.xp = stats.xp - stats.xpMax; 
-		
 		stats.xpMax = 100 * stats.level;
 		stats.xpValue = 20 * stats.level;
+		Speak("Level Up", Color.green, 0.25f);
 
 		// increase hp
 		int hpIncrease = Random.Range(1, 5);
-		stats.hpMax = ammount > 0 ? stats.hpMax + hpIncrease : stats.hpMax - hpIncrease;
+		stats.hpMax = stats.hpMax + hpIncrease;
 		if (stats.hp > stats.hpMax) { stats.hp = stats.hpMax; }
 		bar.UpdateHp();
+		Speak ("HP +" + hpIncrease, Color.cyan, 0.5f);
+
+		// increase random stat
+		UpdateRandomStat(1);
 
 		// play levelup sound
 		if (this is Player) {
 			sfx.Play("Audio/Sfx/Stats/trumpets", 0.25f, Random.Range(0.8f, 1.2f));
 		}
+	}
 
-		Speak("Level Up", Color.green, 0.5f);
+
+	private void UpdateRandomStat (int ammount) {
+		string[] statNames = new string[] { "str", "dex", "con", "int", "atk", "def" };
+		string statName = statNames[Random.Range(0, statNames.Length)];
+
+		switch (statName) {
+			case "str": ammount *= 1; stats.str += ammount; break;
+			case "dex": ammount *= 1; stats.str += ammount; break;
+			case "con": ammount *= 1; stats.str += ammount; break;
+			case "int": ammount *= 1; stats.str += ammount; break;
+			case "atk": ammount *= 3; stats.str += ammount; break;
+			case "def": ammount *= 3; stats.str += ammount; break;
+		}
+
+		Speak (statName + " +" + ammount, Color.cyan, 0.75f);
+		
 	}
 
 
