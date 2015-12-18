@@ -123,7 +123,7 @@ public class Creature : Tile {
 		stats.xp = stats.xp - stats.xpMax; 
 		stats.xpMax = 100 * stats.level;
 		stats.xpValue = 20 * stats.level;
-		Speak("Level Up", Color.green, 0.25f);
+		Speak("Level-Up", Color.green, 0.25f);
 
 		// increase hp
 		int hpIncrease = Random.Range(1, 5);
@@ -143,16 +143,16 @@ public class Creature : Tile {
 
 
 	private void UpdateRandomStat (int ammount) {
-		string[] statNames = new string[] { "str", "dex", "con", "int", "atk", "def" };
+		string[] statNames = new string[] { "STR", "DEX", "CON", "INT", "ATK", "DEF" };
 		string statName = statNames[Random.Range(0, statNames.Length)];
 
 		switch (statName) {
-			case "str": ammount *= 1; stats.str += ammount; break;
-			case "dex": ammount *= 1; stats.str += ammount; break;
-			case "con": ammount *= 1; stats.str += ammount; break;
-			case "int": ammount *= 1; stats.str += ammount; break;
-			case "atk": ammount *= 3; stats.str += ammount; break;
-			case "def": ammount *= 3; stats.str += ammount; break;
+			case "STR": ammount *= 1; stats.str += ammount; break;
+			case "DEX": ammount *= 1; stats.dex += ammount; break;
+			case "CON": ammount *= 1; stats.con += ammount; break;
+			case "INT": ammount *= 1; stats.intel += ammount; break;
+			case "ATK": ammount *= 3; stats.attack += ammount; break;
+			case "DEF": ammount *= 3; stats.defense += ammount; break;
 		}
 
 		Speak (statName + " +" + ammount, Color.cyan, 0.75f);

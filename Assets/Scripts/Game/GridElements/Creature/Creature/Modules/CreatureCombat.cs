@@ -364,7 +364,7 @@ public class CreatureCombat : CreatureModule {
 
 		
 		// update attacker xp
-		me.Speak("+" + me.stats.xpValue + "xp", Color.yellow, 0); //0.25f);
+		me.Speak("XP +" + me.stats.xpValue, Color.yellow, 0);
 		attacker.UpdateXp(me.stats.xpValue);
 
 		yield return null;
