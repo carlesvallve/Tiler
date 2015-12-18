@@ -267,8 +267,9 @@ public class CreatureCombat : CreatureModule {
 
 		// move towards target
 		float t = 0;
-		Vector3 startPos = me.transform.localPosition;
-		Vector3 endPos = startPos + (target.transform.position - me.transform.position).normalized / advanceDiv;
+		Vector3 startPos = new Vector3(me.x, me.y, 0); //me.transform.localPosition;
+		Vector3 targetPos = new Vector3(target.x, target.y, 0);
+		Vector3 endPos = startPos + (targetPos - startPos).normalized / advanceDiv;
 		while (t <= 1) {
 			t += Time.deltaTime / duration;
 			me.transform.localPosition = Vector3.Lerp(startPos, endPos, Mathf.SmoothStep(0f, 1f, t));

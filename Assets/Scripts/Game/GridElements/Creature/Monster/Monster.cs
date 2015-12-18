@@ -131,10 +131,10 @@ public class Monster : Creature {
 		state = CreatureStates.Idle;
 
 		// update energy and escape if we dont have enough to move
-		bool enoughEnergy = UpdateEnergy();
+		/*bool enoughEnergy = UpdateEnergy();
 		if (!enoughEnergy) {
 			return;
-		}
+		}*/
 		
 		
 		//if monster is not aware of the player, just freeze and do nothing
