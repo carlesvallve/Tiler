@@ -345,14 +345,7 @@ public class CreatureCombat : CreatureModule {
 		me.state = CreatureStates.Dying;
 		me.StartCoroutine(DeathAnimation(attacker, delay));
 
-		// get a list of all items carried by the creature
-		List<Item> allItems = new List<Item>();
-		foreach (CreatureInventoryItem invItem in me.inventory.items) {
-			allItems.Add(invItem.item);
-		}
-
-		// spawn all the items carried by the creature
-		me.SpawnItemsFromInventory(allItems);
+		
 	}
 
 
@@ -371,6 +364,15 @@ public class CreatureCombat : CreatureModule {
 		// destroy creature
 		grid.SetCreature(me.x, me.y, null);
 		me.Destroy();
+
+		// get a list of all items carried by the creature
+		List<Item> allItems = new List<Item>();
+		foreach (CreatureInventoryItem invItem in me.inventory.items) {
+			allItems.Add(invItem.item);
+		}
+
+		// spawn all the items carried by the creature
+		me.SpawnItemsFromInventory(allItems);
 
 		// if player died, emit gameover event
 		if (me is Player) {

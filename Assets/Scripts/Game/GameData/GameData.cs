@@ -62,7 +62,7 @@ public class GameData {
 		// iterate Gamedata.monsters dictionary and add key/rarity pairs
 		foreach (KeyValuePair<string, MonsterData> entry in GameData.monsters) {
 			// use entry.Value.rarity once we setup final monster spreadsheet
-			// for now rariry depends on monster overall dangerousness
+			// for now rarity depends on monster overall dangerousness
 			
 			int dlevel = Dungeon.instance.currentDungeonLevel;
 			int rarity = 100 + (dlevel * 3) - ((entry.Value.hp + entry.Value.armour) * 2);

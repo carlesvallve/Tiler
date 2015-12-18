@@ -47,6 +47,8 @@ public class Monster : Creature {
 		stats.armour = data.armour; stats.armourBase = data.armour;
 		stats.vision = data.vision;
 
+		stats.xpValue = Mathf.RoundToInt((stats.hp + stats.armour) * stats.energy);
+
 		// set asset
 		string fileName = data.assets[Random.Range(0, data.assets.Length)];
 		string path = "Tilesets/Monster/" + data.type + "/" + data.id + "/" + fileName;

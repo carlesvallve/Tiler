@@ -65,10 +65,11 @@ public class Creature : Tile {
 	}
 
 
-	/*void Update () {
-		string energy = (Mathf.Round(stats.energy * 100f) / 100f).ToString();
-		SetInfo(energy, Color.yellow);
-	}*/
+	void Update () {
+		//string energy = (Mathf.Round(stats.energy * 100f) / 100f).ToString();
+		//SetInfo(energy, Color.yellow);
+		SetInfo(stats.xpValue.ToString(), Color.yellow);
+	}
 
 	
 
@@ -126,7 +127,7 @@ public class Creature : Tile {
 		Speak("Level-Up", Color.green, 0.25f);
 
 		// increase hp
-		int hpIncrease = Random.Range(1, 5);
+		int hpIncrease = Dice.Roll("1d6");
 		stats.hpMax = stats.hpMax + hpIncrease;
 		if (stats.hp > stats.hpMax) { stats.hp = stats.hpMax; }
 		bar.UpdateHp();
@@ -151,8 +152,8 @@ public class Creature : Tile {
 			case "DEX": ammount *= 1; stats.dex += ammount; break;
 			case "CON": ammount *= 1; stats.con += ammount; break;
 			case "INT": ammount *= 1; stats.intel += ammount; break;
-			case "ATK": ammount *= 3; stats.attack += ammount; break;
-			case "DEF": ammount *= 3; stats.defense += ammount; break;
+			case "ATK": ammount *= Dice.Roll("1d6"); stats.attack += ammount; break;
+			case "DEF": ammount *= Dice.Roll("1d6"); stats.defense += ammount; break;
 		}
 
 		Speak (statName + " +" + ammount, Color.cyan, 0.75f);
