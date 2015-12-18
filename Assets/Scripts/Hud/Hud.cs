@@ -144,6 +144,19 @@ public class Hud : MonoSingleton <Hud> {
  			ApplyItem(obj);
  		});
 
+		// we can create a script instead, and attach it to the button prefab to detect right clicks
+		/*public class ClickableObject : MonoBehaviour, IPointerClickHandler {
+			button.OnPointerClick.AddListener(() => { 
+				if (eventData.button == PointerEventData.InputButton.Left) {
+					Debug.Log("Left click");
+				} else if (eventData.button == PointerEventData.InputButton.Middle) {
+					Debug.Log("Middle click");
+				} else if (eventData.button == PointerEventData.InputButton.Right) {
+					Debug.Log("Right click");
+				}
+			});
+		}*/
+
 		return obj;
 	}
 
