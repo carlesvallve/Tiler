@@ -188,10 +188,6 @@ public class Game : MonoSingleton <Game> {
 		}
 	}
 
-
-
-	
-
 }
 
 

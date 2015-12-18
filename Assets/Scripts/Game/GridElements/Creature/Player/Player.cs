@@ -50,9 +50,9 @@ public class Player : Creature {
 		stats.hpMax = 20; 
 		stats.hp = stats.hpMax;
 		stats.vision = 6;
-		stats.attack = 50;
-		stats.defense = 50;
-		stats.str = 2;
+		stats.attack = 80;
+		stats.defense = 60;
+		stats.str = 6;
 		stats.attackRange = 1;
 
 		SetEnergy(1f);
@@ -82,6 +82,8 @@ public class Player : Creature {
 
 	protected void LogPlayerInfo () {
 		string info = "";
+
+		//print (stats.xp);
 
 		info = "LEVEL " + stats.level;
 		info += "   XP: " + stats.xp + " / " + stats.xpMax;
@@ -177,7 +179,7 @@ public class Player : Creature {
 		}
 
 		StopMoving();
-		Speak("!", Color.white, true);
+		Speak("!", Color.white); //, true);
 
 		string str = "";
 		string punctuation = "";

@@ -308,7 +308,7 @@ public class CreatureCombat : CreatureModule {
 
 		bool isDead = ResolveCombatOutcome(attacker, me);
 		if (isDead) {
-			Die(me);
+			Die(attacker);
 			yield break;
 		}
 
@@ -358,14 +358,15 @@ public class CreatureCombat : CreatureModule {
 		string[] arr = new string[] { "painA", "painB", "painC", "painD" };
 		sfx.Play("Audio/Sfx/Combat/" + arr[Random.Range(0, arr.Length)], 0.3f, Random.Range(0.6f, 1.8f));
 		sfx.Play("Audio/Sfx/Combat/hitB", 0.6f, Random.Range(0.5f, 2.0f));
-
 		grid.CreateBlood(me.transform.localPosition, 16, Color.red);
-
-		grid.SetCreature(me.x, me.y, null);
-		me.Destroy();
 
 		// update attacker xp
 		attacker.UpdateXp(me.stats.xpValue);
+
+		yield return null;
+		// destroy creature
+		grid.SetCreature(me.x, me.y, null);
+		me.Destroy();
 
 		// if player died, emit gameover event
 		if (me is Player) {

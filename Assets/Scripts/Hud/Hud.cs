@@ -329,7 +329,7 @@ public class Hud : MonoSingleton <Hud> {
 			yield return null;
 		}
 		
-		group.alpha = 1;	
+		group.alpha = 1;
 	}
 
 
@@ -339,7 +339,7 @@ public class Hud : MonoSingleton <Hud> {
 
 	// TODO:  We probably want to create a 'Label' class to handle all these
 	
-	public void CreateLabel (Tile tile, string str, Color color, bool stick = false, float duration = 1f, float startY = 32) {
+	public void CreateLabel (Tile tile, string str, Color color, float delay = 0, bool stick = false, float duration = 1f, float startY = 24) {
 		GameObject obj = (GameObject)Instantiate(labelPrefab);
 		obj.transform.SetParent(world, false);
 		obj.name = "Label";
@@ -348,13 +348,18 @@ public class Hud : MonoSingleton <Hud> {
 		text.color = color;
 		text.text = str;
 
-		StartCoroutine(AnimateLabel(tile, obj, stick, duration, startY));
-		StartCoroutine(FadeLabel(tile, obj, duration));
+		obj.SetActive(false);
+
+		StartCoroutine(AnimateLabel(tile, obj, stick, duration, delay, startY));
+		StartCoroutine(FadeLabel(tile, obj, duration, delay));
 	} 
 
 	
-	private IEnumerator AnimateLabel(Tile tile, GameObject obj, bool stick, float duration, float startY) {
-		Vector3 startPos = tile.transform.position;
+	private IEnumerator AnimateLabel(Tile tile, GameObject obj, bool stick, float duration, float delay, float startY) {
+		yield return new WaitForSeconds(delay);
+		obj.SetActive(true);
+
+		Vector3 startPos = new Vector3(tile.x, tile.y, 0); //tile.transform.position;
 		float endY = startY + 32;
 		float t = 0;
 		
@@ -374,7 +379,10 @@ public class Hud : MonoSingleton <Hud> {
 	}
 
 
-	private IEnumerator FadeLabel(Tile tile, GameObject obj, float duration) {
+	private IEnumerator FadeLabel(Tile tile, GameObject obj, float duration, float delay) {
+		yield return new WaitForSeconds(delay);
+		obj.SetActive(true);
+
 		CanvasGroup group = obj.GetComponent<CanvasGroup>();
 
 		float t = 0;

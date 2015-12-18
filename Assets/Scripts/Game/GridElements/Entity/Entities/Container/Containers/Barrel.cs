@@ -31,9 +31,9 @@ public class Barrel : Container {
 		return Dice.GetRandomTypeFromDict(new Dictionary<System.Type, double>() {
 			{ typeof(Equipment), 	100 },
 			{ typeof(Treasure), 	20 },
-			{ typeof(Book), 		10 },
 			{ typeof(Food), 		10 },
-			{ typeof(Potion), 		10 },
+			{ typeof(Potion), 		5 },
+			{ typeof(Book), 		3 },
 		});
 	}
 

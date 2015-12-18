@@ -107,18 +107,19 @@ public class Creature : Tile {
 
 	public virtual void UpdateXp (int ammount) {
 		stats.xp += ammount; 
+		Speak("+" + ammount + "xp", Color.yellow, 0.25f);
 
 		// level up
-		if (stats.xp >= stats.xpMax) { LevelUp(1); }
-		if (stats.xp < 0) { LevelUp(-1); }
+		if (stats.xp >= stats.xpMax) { 
+			LevelUp();
+		}
 	}
 
 
-	protected void LevelUp (int ammount) {
-		stats.level += ammount;
+	protected void LevelUp () {
+		stats.level += 1;
 
-		if (ammount > 0) { stats.xp = stats.xp - stats.xpMax; }
-		if (ammount < 0) { stats.xp = stats.xpMax - stats.xp; } // check if this is correct (?)
+		stats.xp = stats.xp - stats.xpMax; 
 		
 		stats.xpMax = 100 * stats.level;
 		stats.xpValue = 20 * stats.level;
@@ -133,6 +134,8 @@ public class Creature : Tile {
 		if (this is Player) {
 			sfx.Play("Audio/Sfx/Stats/trumpets", 0.25f, Random.Range(0.8f, 1.2f));
 		}
+
+		Speak("Level Up", Color.green, 0.5f);
 	}
 
 
