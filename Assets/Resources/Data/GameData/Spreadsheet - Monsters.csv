@@ -18,7 +18,7 @@ Snakeman,snakeman-1$snakeman-2$snakeman-3$snakeman-4$snakeman-5$snakeman-6,Human
 Troll,troll-1$troll-2,Humanoid,Monster,,0,1,25,1,50,50,5,25,5,100
 Vampire,vampire-1$vampire-2$vampire-3,Humanoid,Undead,,0,1,25,1,50,50,5,5,5,100
 Viking,viking-1$viking-2$viking-3$viking-4$viking-5$viking-6$viking-7$viking-8$viking-9$viking-10,Humanoid,Human,,0,1,20,1,50,50,5,0,5,100
-Zombie,zombie-1$zombie-2$zombie-3$zombie-4$zombie-5$zombie-6$zombie-7$zombie-8$zombie-9$zombie-10,Humanoid,Undead,,0,1,15,1,50,50,5,0,5,100
+Zombie,zombie-1$zombie-2$zombie-3$zombie-4$zombie-5$zombie-6$zombie-7$zombie-8$zombie-9$zombie-10,Humanoid,Undead,,0,1,15,0.5,50,50,5,0,5,100
 ,,,,,,,,,,,,,,
 Bat,bat-1$bat-2,Animal,Rodent,,0,1,10,1,50,50,5,0,5,100
 Bear,bear-1$bear-2,Animal,Canine,,0,1,30,1.5,50,50,5,5,5,100

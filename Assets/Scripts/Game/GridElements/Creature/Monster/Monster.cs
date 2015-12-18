@@ -128,32 +128,30 @@ public class Monster : Creature {
 			return;
 		}*/
 
-		state = CreatureStates.Idle;
-
-		// update energy and escape if we dont have enough to move
-		/*bool enoughEnergy = UpdateEnergy();
-		if (!enoughEnergy) {
-			return;
-		}*/
-		
-		
 		//if monster is not aware of the player, just freeze and do nothing
 		/*if (!IsAware()) {
 			return;
 		}*/
 
-		// TODO: this should not be a boolean state, but rather a degree of agressivity
-		if (IsAfraid()) {
-			//SetInfo("Flee", Color.yellow);
-			Flee();
+		state = CreatureStates.Idle;
 
-			if (path.Count > 0) {
-				// move again if we have action points left
-				MoveAgain();
-				return;
-			}
-			
+		// check if we have enough energy left to do something
+		if (stats.energy <= 0) {
+			stats.energy += stats.energyRate;
+			return;
+		} else {
+			stats.energy -= 1;
 		}
+		
+		// flee if we are afraid
+		if (IsAfraid()) {
+			bool success = Flee();
+			if (!success ) { ChaseAndFollow(1); }
+
+			MoveAgain();
+			return;
+		}
+
 
 		// if we are not agresive, we are not interested on the player
 		stats.interest[typeof(Player)] = IsAgressive() ? 100 : 0;
@@ -174,17 +172,14 @@ public class Monster : Creature {
 		if (targetTile is Player) {
 			if (IsAtShootRange(targetTile)) {
 				// shoot the player if in range
-				//SetInfo("Shoot", Color.yellow);
 				combat.Shoot((Player)targetTile);
 			} else {
 				// use chase and follow algorithm
-				//SetInfo("Kill", Color.yellow);
 				ChaseAndFollow();
 			}
 			
 		} else {
 			// use astar pathfinding
-			//SetInfo(this.targetTile.name, Color.yellow);
 			GotoTargetTile(this.targetTile); 
 		}
 
@@ -328,12 +323,12 @@ public class Monster : Creature {
 	// ChaseAndFollow / Flee behaviours
 	// =====================================================
 
-	protected virtual void Flee () {
-		ChaseAndFollow(-1);
+	protected virtual bool Flee () {
+		return ChaseAndFollow(-1);
 	}
 
 
-	protected virtual void ChaseAndFollow (int direction = 1) { 
+	protected virtual bool ChaseAndFollow (int direction = 1) { 
 		// if we are a monster in attacking mood, set player as walkable so we can hit him
 		grid.player.walkable = true; 
 
@@ -341,14 +336,26 @@ public class Monster : Creature {
 		// monsters can't follow LOS marks more than some number of (say 5?) rounds old.
 		// (if we set it to 0, monster will only chase the player if they see him)
 		Tile tile = GetTileWithBestFov(this.x, this.y, 5, direction);
-		if (tile == null) { return; }
+		if (tile == null) { return false; }
+
+		// return false in case we didnt find a better tile that the one we aer currently in
+		// (used to turn to fight if we are fleeing)
+		if (tile.x == this.x && tile.y == this.y) { 
+			if (Vector2.Distance(new Vector2(grid.player.x, grid.player.y), new Vector2(this.x, this.y)) < 1.5f) {
+				return false;
+			}
+		}
 
 		// move to selected neighbour tile
 		path = new List<Vector2>() { new Vector2(tile.x, tile.y) };
+		if (path.Count == 0) { return false; }
+
 		StartCoroutine(FollowPath());
 
 		// restore player to unwalkable after this monster's action
 		grid.player.walkable = false;
+
+		return true;
 	}
 
 

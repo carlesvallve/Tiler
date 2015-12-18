@@ -65,10 +65,10 @@ public class Creature : Tile {
 	}
 
 
-	/*void Update () {
+	void Update () {
 		string energy = (Mathf.Round(stats.energy * 100f) / 100f).ToString();
-		SetInfo(state.ToString() + "\n" + energy, Color.yellow);
-	}*/
+		SetInfo(energy, Color.yellow);
+	}
 
 	
 
