@@ -8,7 +8,7 @@ using System.Collections.Generic;
 	- spawned things should be stronger at higher dungeon levels
 
 - inventory:
-	- 2 handed items should be handled, appear in both inventory slots, etc
+	- 2 handed items should be handled, appear in both inventory slots, etc -> OK
 	- right clicking on inventory item should display item info
 
 - ai:

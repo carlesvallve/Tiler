@@ -25,6 +25,9 @@ public class Hud : MonoSingleton <Hud> {
 	private Transform world;
 	
 	private Transform popupInventory;
+	private Transform inventoryItems;
+	private Transform inventoryInfo;
+
 	private List<GameObject> inventorySlots;
 	
 
@@ -47,9 +50,17 @@ public class Hud : MonoSingleton <Hud> {
 		// footer
 		logText = transform.Find("Footer/Log/Text").GetComponent<Text>();
 
-		// popups
+		// inventory
 		popupInventory = transform.Find("Popups/PopupInventory");
 		popupInventory.gameObject.SetActive(false);
+
+		inventoryItems = popupInventory.Find("Main/Bag/Inventory");
+		inventoryItems.gameObject.SetActive(true);
+
+		inventoryInfo = popupInventory.Find("Main/Bag/Info");
+		inventoryInfo.gameObject.SetActive(false);
+
+		
 
 		// in-game labels
 		overlayGroup = transform.Find("Overlay").GetComponent<CanvasGroup>();

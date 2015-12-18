@@ -116,8 +116,8 @@ public class GameData {
 
 			// debug any special kind of equipment
 			//if (equipment.range > 1) { equipment.rarity = 1000; }
-			if (equipment.defense > 0) { equipment.rarity = 920; }
-			if (equipment.hands > 1) { equipment.rarity = 160; }
+			//if (equipment.defense > 0) { equipment.rarity = 920; }
+			//if (equipment.hands > 1) { equipment.rarity = 160; }
 
 			equipments.Add(id, equipment);
 		}
