@@ -6,21 +6,18 @@ using System.Collections.Generic;
 public class GameData {
 
 	public static Dictionary<string, MonsterData> monsters;
-	public static Dictionary<string, WeaponData> weapons;
-	public static Dictionary<string, ShieldData> shields;
-	public static Dictionary<string, ArmourData> armours;
+	public static Dictionary<string, EquipmentData> equipments;
 
 
 	public void LoadAll () {
 		LoadMonsters();
-		LoadWeapons();
-		LoadShields();
-		LoadArmours();
+		LoadEquipments();
+
 	}
 
 	
 	// =====================================================
-	// Parse Monsters, Weapons, Armour
+	// Monster Data
 	// =====================================================
 
 	private void LoadMonsters () {
@@ -40,7 +37,7 @@ public class GameData {
 			monster.assets = 	table[y, 1].Split(arraySeparator);
 			monster.type = 		table[y, 2];
 			monster.race = 		table[y, 3];
-			monster.adjective = table[y, 4];
+			monster.subtype = table[y, 4];
 			monster.rarity = 	int.Parse(table[y, 5]);
 			monster.level = 	int.Parse(table[y, 6]);
 			monster.hp = 		int.Parse(table[y, 7]);
@@ -48,7 +45,7 @@ public class GameData {
 			monster.attack = 	int.Parse(table[y, 9]);
 			monster.defense = 	int.Parse(table[y, 10]);
 			monster.damage = 	int.Parse(table[y, 11]);
-			monster.gdr = 		int.Parse(table[y, 12]);
+			monster.armour = 		int.Parse(table[y, 12]);
 			monster.vision = 	int.Parse(table[y, 13]);
 
 			monsters.Add(id, monster);
@@ -56,102 +53,83 @@ public class GameData {
 
 		// debug a single monster
 		//monsters["Goblin"].Log();
-		
 	}
 
 
-	private void LoadWeapons () {
+	public static Dictionary<string, double> GenerateMonsterRarityTable () {
+		Dictionary<string, double> rarities = new Dictionary<string, double>();
+
+		// iterate Gamedata.monsters dictionary and add key/rarity pairs
+		foreach (KeyValuePair<string, MonsterData> entry in GameData.monsters) {
+			// use entry.Value.rarity once we setup final monster spreadsheet
+			// for now rariry depends on monster overall dangerousness
+			
+			int dlevel = Dungeon.instance.currentDungeonLevel;
+			int rarity = 100 + (dlevel * 3) - ((entry.Value.hp + entry.Value.armour) * 2);
+
+			// cap rarity so weak monsters dont appear on high dungeon levels
+			int capLevel = 100;
+			if (rarity > capLevel) { rarity = 0; }
+
+			rarities.Add(entry.Key, rarity);
+
+			//Debug.Log (entry.Key + " " + rarity + " / " + capLevel);
+		}
+
+		return rarities;
+	}
+
+
+	// =====================================================
+	// Equipment Data
+	// =====================================================
+
+	private void LoadEquipments () {
 		// load csv and generate a bidimensional table from it
-		string [,] table = LoadCsv("Data/GameData/Spreadsheet - Weapons");
+		string [,] table = LoadCsv("Data/GameData/Spreadsheet - Equipment");
 
 		// set a dictionary with all weapons
-		weapons = new Dictionary<string,WeaponData>();
+		equipments = new Dictionary<string, EquipmentData>();
 
 		// fill each weaponData object with data from csv table
 		for (int y = 0; y < table.GetLength(0); y++) {
 			string id = table[y, 0];
 			if (id == "") { continue; }
 
-			WeaponData weapon = new WeaponData();
-			weapon.id = 		table[y, 0];
-			weapon.assets = 	table[y, 1].Split(arraySeparator);
-			weapon.type = 		table[y, 2];
-			weapon.adjective = 	table[y, 3];
-			weapon.rarity = 	int.Parse(table[y, 4]);
-			weapon.attack = 	int.Parse(table[y, 5]);
-			weapon.damage = 	table[y, 6];
-			weapon.range = 		int.Parse(table[y, 7]);
-			weapon.hands = 		int.Parse(table[y, 8]);
-			weapon.weight = 	int.Parse(table[y, 9]);
+			//Debug.Log(id);
 
-			weapons.Add(id, weapon);
+			EquipmentData equipment = new EquipmentData();
+			equipment.id = 			table[y, 0];
+			equipment.assets = 		table[y, 1].Split(arraySeparator);
+			
+			equipment.type = 		table[y, 2];
+			equipment.subtype = 	table[y, 3];
+			equipment.rarity = 		int.Parse(table[y, 4]);
+			
+			equipment.attack = 		int.Parse(table[y, 5]);
+			equipment.defense = 	int.Parse(table[y, 6]);
+			equipment.damage = 		table[y, 7];
+			equipment.armour = 		int.Parse(table[y, 8]);
+			equipment.range = 		int.Parse(table[y, 9]);
+			equipment.hands = 		int.Parse(table[y, 10]);
+			equipment.weight = 		int.Parse(table[y, 11]);
+
+			equipments.Add(id, equipment);
 		}
 
-		// debug a single weapon
-		//weapons["LongSword"].Log();
+		// debug a single equipment item
+		//equipments["LongSword"].Log();
+	}
+
+	public static Dictionary<string, double> GenerateEquipmentRarityTable () {
+		Dictionary<string, double> rarities = new Dictionary<string, double>();
 		
-	}
-
-
-	private void LoadShields () {
-		// load csv and generate a bidimensional table from it
-		string [,] table = LoadCsv("Data/GameData/Spreadsheet - Shields");
-
-		// set a dictionary with all shields
-		shields = new Dictionary<string, ShieldData>();
-
-		// fill each weaponData object with data from csv table
-		for (int y = 0; y < table.GetLength(0); y++) {
-			string id = table[y, 0];
-			if (id == "") { continue; }
-
-			ShieldData shield = new ShieldData();
-			shield.id = 		table[y, 0];
-			shield.assets = 	table[y, 1].Split(arraySeparator);
-			shield.type = 		table[y, 2];
-			shield.adjective = 	table[y, 3];
-			shield.rarity = 	int.Parse(table[y, 4]);
-			shield.defense = 	int.Parse(table[y, 5]);
-			shield.weight = 	int.Parse(table[y, 6]);
-
-			shields.Add(id, shield);
+		foreach (KeyValuePair<string, EquipmentData> entry in GameData.equipments) {
+			int rarity = entry.Value.rarity;
+			rarities.Add(entry.Key, rarity);
 		}
 
-		// debug a single shield
-		//shields["ShieldKite"].Log();
-	}
-
-
-	private void LoadArmours () {
-		// load csv and generate a bidimensional table from it
-		string [,] table = LoadCsv("Data/GameData/Spreadsheet - Armour");
-
-		// set a dictionary with all monsters
-		armours = new Dictionary<string, ArmourData>();
-
-		// fill each armourData object with data from csv table
-		for (int y = 0; y < table.GetLength(0); y++) {
-			string id = table[y, 0];
-			if (id == "") { continue; }
-
-			ArmourData armour = new ArmourData();
-			armour.id = 			table[y, 0];
-			armour.assets = 		table[y, 1].Split(arraySeparator);
-			armour.type = 			table[y, 2];
-			armour.adjective = 		table[y, 3];
-			armour.rarity = 		int.Parse(table[y, 4]);
-			armour.ac = 			int.Parse(table[y, 5]);
-			armour.gdr = 			int.Parse(table[y, 6]);
-			armour.sh = 			int.Parse(table[y, 7]);
-			armour.ev = 			int.Parse(table[y, 8]);
-			armour.encumberness = 	int.Parse(table[y, 9]);
-			armour.weight = 		int.Parse(table[y, 10]);
-
-			armours.Add(id, armour);
-		}
-
-		// debug a single armour
-		//armours["LeatherArmour"].Log();
+		return rarities;
 	}
 
 
@@ -164,6 +142,8 @@ public class GameData {
 	private static char arraySeparator = '$';
 
 	private string [,] LoadCsv (string path, bool debug = false) {
+		Debug.Log(path);
+
 		TextAsset csvFile = Resources.Load(path) as TextAsset;
 
 		string[] records = csvFile.text.Split (lineSeparator);

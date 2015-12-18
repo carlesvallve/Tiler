@@ -115,24 +115,23 @@ public class Container : Entity {
 	// =====================================================
 
 	public void SetItems () {
+		// generate equipment rarity table dictionary
+		Dictionary<string, double> rarities = GameData.GenerateEquipmentRarityTable();
+
 		for (int i = 0; i < maxItems; i++) {
-			items.Add(CreateRandomItem());
+			items.Add(CreateRandomItem(rarities));
 		}
 	}
 
-	// TODO: We must try to use the item generator for this, passing the random type
-	protected Item CreateRandomItem () {
+
+	protected Item CreateRandomItem (Dictionary<string, double> rarities) {
 		// get item type
 		System.Type itemType = GetRandomItemType();
 
 		// get item id
 		string id = null;
-		if (itemType == typeof(Weapon)) {
-			id = GameData.weapons.ElementAt( Random.Range(0, GameData.weapons.Count)).Key;
-		} else if (itemType == typeof(Armour)) {
-			id = GameData.armours.ElementAt(Random.Range(0, GameData.armours.Count)).Key;
-		} else if (itemType == typeof(Shield)) {
-			id = GameData.shields.ElementAt(Random.Range(0, GameData.shields.Count)).Key;
+		if (itemType == typeof(Equipment)) {
+			id = Dice.GetRandomStringFromDict(rarities);
 		}
 
 		// create item
@@ -150,10 +149,7 @@ public class Container : Entity {
 	protected virtual System.Type GetRandomItemType () {
 		// Pick a weighted random item type
 		return Dice.GetRandomTypeFromDict(new Dictionary<System.Type, double>() {
-			{ typeof(Armour), 		100 },
-			{ typeof(Weapon), 		100 },
-			{ typeof(Shield), 		100 },
-			
+			{ typeof(Equipment), 	100 },
 			{ typeof(Treasure), 	20 },
 			{ typeof(Book), 		10 },
 			{ typeof(Food), 		10 },
@@ -161,7 +157,7 @@ public class Container : Entity {
 		});
 	}
 
-
+	
 	public override void SpawnItemsFromInventory (List<Item> allItems, bool useCenterTile = true) {
 		base.SpawnItemsFromInventory(allItems, useCenterTile);
 		items.Clear();

@@ -6,7 +6,7 @@ public class MonsterData {
 
 	public string race;
 	public string type;
-	public string adjective;
+	public string subtype;
 	public int rarity;
 
 	public int level;
@@ -15,7 +15,7 @@ public class MonsterData {
 	public int attack;
 	public int defense;
 	public int damage;
-	public int gdr;
+	public int armour;
 	public int vision;
 
 
@@ -24,7 +24,7 @@ public class MonsterData {
 			"\nassets: " + this.assets.Length + 
 			"\nRace: " + this.race + 
 			"\nType: " + this.type + 
-			"\nAdjective: " + this.adjective + 
+			"\nSubtype: " + this.subtype + 
 			"\nRarity: " + this.rarity + 
 			"\nLevel: " + this.level + 
 			"\nHp: "  + this.hp + 
@@ -32,7 +32,7 @@ public class MonsterData {
 			"\nAttack: " + this.attack + 
 			"\nDefense: " + this.defense + 
 			"\nDamage: " + this.damage + 
-			"\nGdr: " + this.gdr + 
+			"\nArmour: " + this.armour + 
 			"\nVision: " + this.vision
 		);
 	}

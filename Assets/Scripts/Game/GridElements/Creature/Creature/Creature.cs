@@ -79,20 +79,9 @@ public class Creature : Tile {
 
 
 	public virtual void UpdateEquipmentStats () {
-		stats.weapon = inventory.equipment["Weapon"] != null ? (Weapon)inventory.equipment["Weapon"].item : null;
-		stats.shield = inventory.equipment["Shield"] != null ? (Shield)inventory.equipment["Shield"].item : null;
-
-		/*stats.armour = stats.armourBase;
-		if (inventory.equipment["Armour"] != null) { stats.armour += ((Armour)inventory.equipment["Armour"].item).armour; } 
-
-		if (inventory.equipment["Hat"] != null) { stats.armour += ((Hat)inventory.equipment["Hat"].item).armour; } 
-		if (inventory.equipment["Cloak"] != null) { stats.armour += ((Cloak)inventory.equipment["Cloak"].item).armour; } 
-		if (inventory.equipment["Gloves"] != null) { stats.armour += ((Gloves)inventory.equipment["Gloves"].item).armour; } 
-		if (inventory.equipment["Boots"] != null) { stats.armour += ((Boots)inventory.equipment["Boots"].item).armour; } */
-
-		//stats.defense = stats.defenseBase;
-		//if (inventory.equipment["Shield"] != null) { stats.defense += inventory.equipment["Shield"].defense; } 
- 
+		// TODO: calculate this at runtime on CreatureCombat module
+		stats.weapon = inventory.equipment["Weapon"] != null ? (Equipment)inventory.equipment["Weapon"].item : null;
+		stats.shield = inventory.equipment["Shield"] != null ? (Equipment)inventory.equipment["Shield"].item : null;
 		stats.attackRange = stats.weapon != null ? stats.weapon.range : 1;
 	}
 

@@ -6,7 +6,7 @@ public class Item : Entity {
 
 	public string id;
 	public string type;
-	public string adjective;
+	public string subtype;
 	public int rarity;
 
 

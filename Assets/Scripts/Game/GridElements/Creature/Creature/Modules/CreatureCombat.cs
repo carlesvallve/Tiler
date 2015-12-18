@@ -15,7 +15,8 @@ public class CreatureCombat : CreatureModule {
 	// Combat Outcome
 	// =====================================================
 
-	private bool ResolveCombatOutcome (Creature attacker, Creature defender) { // return isDead
+	// returns if monster is dead
+	private bool ResolveCombatOutcome (Creature attacker, Creature defender) {
 		int atk, def;
 
 		atk = Dice.Roll("1d100");
@@ -30,7 +31,6 @@ public class CreatureCombat : CreatureModule {
 
 		// defender missed
 		int totalDefense = GetTotalDefense(defender);
-		//if (defender is Player) { Debug.Log("totalDefense: " + def + " / " + totalDefense); }
 		if (def > totalDefense) {
 			return Damage(attacker, defender);
 		}
@@ -39,8 +39,6 @@ public class CreatureCombat : CreatureModule {
 		int attack = (totalAttack - atk);
 		int defense = (totalDefense - def);
 		int diff = attack - defense;
-		
-		//Debug.Log ("Attack: " + attack + " / Defense: " + defense + " -> " + diff);
 		
 		if (diff > 0) {
 			// attacker wins
@@ -54,7 +52,7 @@ public class CreatureCombat : CreatureModule {
 
 
 	// =====================================================
-	// Outcomes
+	// Outcome Actions
 	// =====================================================
 
 	private void Miss (Creature attacker, Creature defender) {
@@ -104,7 +102,7 @@ public class CreatureCombat : CreatureModule {
 
 
 	// =====================================================
-	// Attack / Defense / Damage / Armour Gdr Calculations
+	// Total [Attack/Defense/Damage/Armour] Calculations
 	// =====================================================
 
 	private int GetTotalAttack (Creature attacker) {
@@ -112,7 +110,7 @@ public class CreatureCombat : CreatureModule {
 		int attack = attacker.stats.attack + 25;
 
 		Dictionary<string, CreatureInventoryItem> equipment = attacker.inventory.equipment;
-		if (equipment["Weapon"] != null) { attack += ((Weapon)equipment["Weapon"].item).attack; }
+		if (equipment["Weapon"] != null) { attack += ((Equipment)equipment["Weapon"].item).attack; }
 
 		return attack;
 	}
@@ -121,7 +119,7 @@ public class CreatureCombat : CreatureModule {
 		int defense = defender.stats.defense;
 
 		Dictionary<string, CreatureInventoryItem> equipment = defender.inventory.equipment;
-		if (equipment["Shield"] != null) { defense += ((Shield)equipment["Shield"].item).defense; }
+		if (equipment["Shield"] != null) { defense += ((Equipment)equipment["Shield"].item).defense; }
 
 		return defense;
 	}
@@ -136,18 +134,17 @@ public class CreatureCombat : CreatureModule {
 			damage += Dice.Roll("1d4-1");
 		}
 
-		// get total gdr (garanteed damage reduction %)
-		List<Armour> armours = GetArmourParts(defender);
-		int gdr = GetArmourGdr(armours);
+		// get total armour (garanteed damage reduction %)
+		int armour = GetTotalArmour(defender);
 
 		// get damage protection (how many points will be discounted from damage)
-		int protection = Mathf.RoundToInt(gdr * damage / 100f);
+		int protection = Mathf.RoundToInt(armour * damage / 100f);
 
 		if (debug) {
 			Debug.Log(
 				attacker.name + " Damage " + 
 				damage + " - " + 
-				protection + " (" + gdr + "%) = " + 
+				protection + " (" + armour + "%) = " + 
 				(damage - protection)
 			);
 		}
@@ -158,25 +155,29 @@ public class CreatureCombat : CreatureModule {
 	}
 
 
-	private List<Armour> GetArmourParts (Creature defender) {
-		Dictionary<string, CreatureInventoryItem> equipment = defender.inventory.equipment;
+	private int GetTotalArmour (Creature defender) {
+		int totalArmour = defender.stats.armour;
 
-		List<Armour> armours = new List<Armour>();
+		List<Equipment> armours = GetArmourParts(defender);
+		foreach (Equipment armour in armours) { 
+			totalArmour += armour.armour; 
+		}
 
-		if (equipment["Armour"] != null) { armours.Add((Armour)equipment["Armour"].item); }
-		if (equipment["Hat"] != null) { armours.Add((Armour)equipment["Hat"].item); }
-		if (equipment["Gloves"] != null) { armours.Add((Armour)equipment["Gloves"].item); }
-		if (equipment["Boots"] != null) { armours.Add((Armour)equipment["Boots"].item); }
-		if (equipment["Cloak"] != null) { armours.Add((Armour)equipment["Cloak"].item); }
-
-		return armours;
+		return totalArmour;
 	}
 
+	private List<Equipment> GetArmourParts (Creature defender) {
+		Dictionary<string, CreatureInventoryItem> equipment = defender.inventory.equipment;
 
-	private int GetArmourGdr (List<Armour> armours) {
-		int gdr = 0;
-		foreach (Armour armour in armours) { gdr += armour.gdr; }
-		return gdr;
+		List<Equipment> armours = new List<Equipment>();
+
+		if (equipment["Armour"] != null) { armours.Add((Equipment)equipment["Armour"].item); }
+		if (equipment["Hat"] != null) { armours.Add((Equipment)equipment["Hat"].item); }
+		if (equipment["Gloves"] != null) { armours.Add((Equipment)equipment["Gloves"].item); }
+		if (equipment["Boots"] != null) { armours.Add((Equipment)equipment["Boots"].item); }
+		if (equipment["Cloak"] != null) { armours.Add((Equipment)equipment["Cloak"].item); }
+
+		return armours;
 	}
 
 	

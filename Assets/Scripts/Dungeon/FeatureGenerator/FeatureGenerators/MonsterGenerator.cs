@@ -30,8 +30,8 @@ public class MonsterGenerator : DungeonFeatureGenerator {
 
 
 	public override void Generate () {
-		// generate dictionary with monster rarities
-		Dictionary<string, double> rarities = GenerateRarityTable();
+		// generate monster rarity table dictionary
+		Dictionary<string, double> rarities = GameData.GenerateMonsterRarityTable();
 
 		// for each room in the dungeon
 		for (int n = 0; n < dungeonGenerator.rooms.Count; n++) {
@@ -41,8 +41,8 @@ public class MonsterGenerator : DungeonFeatureGenerator {
 			// get max monsters, relative to max number of tiles in the room
 			int maxMonsters = 0;
 			int r = Random.Range(1, 100);
-			if (r <= 50) {
-				int maxTiles = Mathf.RoundToInt(room.tiles.Count * 0.15f);
+			if (r <= 40) {
+				int maxTiles = Mathf.RoundToInt(room.tiles.Count * 0.1f);
 				maxMonsters = Random.Range(1, maxTiles);
 			}
 
@@ -60,29 +60,5 @@ public class MonsterGenerator : DungeonFeatureGenerator {
 				grid.CreateCreature(typeof(Monster), tile.x, tile.y, 0.7f, null, id);
 			}
 		}
-	}
-
-
-	private Dictionary<string, double> GenerateRarityTable () {
-		Dictionary<string, double> rarities = new Dictionary<string, double>();
-
-		// iterate Gamedata.monsters dictionary and add key/rarity pairs
-		foreach (KeyValuePair<string, MonsterData> entry in GameData.monsters) {
-			// use entry.Value.rarity once we setup final monster spreadsheet
-			// for now rariry depends on monster overall dangerousness
-			
-			int dlevel = Dungeon.instance.currentDungeonLevel;
-			int rarity = 100 + (dlevel * 3) - ((entry.Value.hp + entry.Value.gdr) * 2);
-
-			// cap rarity so weak monsters dont appear on high dungeon levels
-			int capLevel = 100;
-			if (rarity > capLevel) { rarity = 0; }
-
-			rarities.Add(entry.Key, rarity);
-
-			Debug.Log (entry.Key + " " + rarity + " / " + capLevel);
-		}
-
-		return rarities;
 	}
 }

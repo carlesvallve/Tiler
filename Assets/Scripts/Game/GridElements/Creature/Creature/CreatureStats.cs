@@ -10,7 +10,7 @@ public class CreatureStats {
 	// misc
 	public string race;
 	public string type;
-	public string adjective;
+	public string subtype;
 	public int rarity;
 
 	// xp
@@ -35,8 +35,7 @@ public class CreatureStats {
 	public int damageBase, damage;
 
 	// armour
-	//public int armourBase, armour;
-	public int gdr;
+	public int armourBase, armour;
 
 	// vision
 	public int visionBase, vision;
@@ -52,25 +51,18 @@ public class CreatureStats {
 	public int cha = 1;
 
 	// equipment
-	public Weapon weapon = null;
-	public Shield shield = null;
+	public Equipment weapon = null;
+	public Equipment shield = null;
 	public int attackRange = 1;
 
 	// gold
 	public int gold = 0;
 
-	
-
-	// refactor
-	//public int armour = 0;
-
 	// ai interest
-
 	public Dictionary<System.Type, int> interest = new Dictionary<System.Type, int>();
 	public Dictionary<System.Type, int> baseInterest = new Dictionary<System.Type, int>() {
 		// greed for items
-		{ typeof(Armour), 10 },
-		{ typeof(Weapon), 10 },
+		{ typeof(Equipment), 10 },
 		{ typeof(Book), 10 },
 		{ typeof(Food), 10 },
 		{ typeof(Potion), 10 },

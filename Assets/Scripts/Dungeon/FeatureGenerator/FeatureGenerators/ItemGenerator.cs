@@ -11,6 +11,9 @@ public class ItemGenerator : DungeonFeatureGenerator {
 	// =====================================================
 
 	public override void Generate () {
+		// generate equipment rarity table dictionary
+		Dictionary<string, double> rarities = GameData.GenerateEquipmentRarityTable();
+
 		for (int n = 0; n < dungeonGenerator.rooms.Count; n++) {
 
 			DungeonRoom room = dungeonGenerator.rooms[n];
@@ -22,24 +25,18 @@ public class ItemGenerator : DungeonFeatureGenerator {
 
 				// Pick a weighted random item type
 				System.Type itemType = Dice.GetRandomTypeFromDict(new Dictionary<System.Type, double>() {
-					{ typeof(Armour), 		100 },
-					{ typeof(Weapon), 		100 },
-					{ typeof(Shield), 		100 },
-
+					{ typeof(Equipment), 	1 },
 					{ typeof(Treasure), 	20 },
 					{ typeof(Book), 		10 },
 					{ typeof(Food), 		10 },
 					{ typeof(Potion), 		10 },
 				});
 				
-				// get item id
+				// get equipment id
 				string id = null;
-				if (itemType == typeof(Weapon)) {
-					id = GameData.weapons.ElementAt( Random.Range(0, GameData.weapons.Count)).Key;
-				} else if (itemType == typeof(Armour)) {
-					id = GameData.armours.ElementAt(Random.Range(0, GameData.armours.Count)).Key;
-				} else if (itemType == typeof(Shield)) {
-					id = GameData.shields.ElementAt(Random.Range(0, GameData.shields.Count)).Key;
+				
+				if (itemType == typeof(Equipment)) {
+					id = Dice.GetRandomStringFromDict(rarities);
 				}
 
 				// create item
@@ -47,5 +44,4 @@ public class ItemGenerator : DungeonFeatureGenerator {
 			}
 		}
 	}
-
 }

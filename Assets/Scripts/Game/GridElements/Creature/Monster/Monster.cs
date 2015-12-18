@@ -35,7 +35,7 @@ public class Monster : Creature {
 		stats.id = data.id;
 		stats.race = data.race;
 		stats.type = data.type;
-		stats.adjective = data.adjective;
+		stats.subtype = data.subtype;
 		stats.rarity = data.rarity;
 
 		stats.level = data.level;
@@ -44,7 +44,7 @@ public class Monster : Creature {
 		stats.attack = data.attack; stats.attackBase = data.attack;
 		stats.defense = data.defense; stats.defenseBase = data.defense;
 		stats.damage = data.damage; stats.damageBase = data.damage;
-		stats.gdr = data.gdr;
+		stats.armour = data.armour; stats.armourBase = data.armour;
 		stats.vision = data.vision;
 
 		// set asset
