@@ -83,25 +83,25 @@ public class Controls : MonoBehaviour {
 
 		Creature creature = grid.GetCreature(x, y);
 		if (creature != null) {
-			Hud.instance.Log("You see " + GetTileName(creature));
+			Hud.instance.Log("You see " + GetTileDescription(creature));
 			return;
 		}
 
 		Entity entity = grid.GetEntity(x, y);
 		if (entity != null) {
-			Hud.instance.Log("You see " + GetTileName(entity));
+			Hud.instance.Log("You see " + GetTileDescription(entity));
 			return;
 		}
 
 		Tile tile = grid.GetTile(x, y);
 		if (tile != null) {
-			Hud.instance.Log("You see " + GetTileName(tile));
+			Hud.instance.Log("You see " + GetTileDescription(tile));
 			return;
 		}
 	}
 
 
-	private string GetTileName (Tile tile) {
+	private string GetTileDescription (Tile tile) {
 		string[] arr = tile.asset.name.Split('-');
 		string desc = arr[0];
 
@@ -112,18 +112,34 @@ public class Controls : MonoBehaviour {
 			}
 		}
 
-		string last = desc.Substring(desc.Length -1, 1);
-		if (last == "s" || last == "gold") {
+		if (IsPlural(desc)) {
 			desc = "some " + desc;
 		} else {
-			string first = desc.Substring(0, 1);
-			if (first == "a" || first == "e" || first == "i" || first == "o" || first == "u") {
-				desc = "an " + desc;
-			} else {
-				desc = "a " + desc;
-			}
+			desc = StartsWithVowel(desc) ? "an " + desc : "a " + desc;
 		}
 
 		return desc;
+	}
+
+
+	private bool IsPlural (string desc) {
+		string[] plurals = new string[] { "gold", "bread", "meat", "water" };
+		foreach (string plural in plurals) {
+			if (desc == plural) { return true; }
+		}
+
+		string last = desc.Substring(desc.Length -1, 1);
+		if (last == "s") { return true; }
+
+		return false;
+	}
+
+	private bool StartsWithVowel (string desc) {
+		string first = desc.Substring(0, 1);
+		if (first == "a" || first == "e" || first == "i" || first == "o" || first == "u") {
+			return true;
+		}
+
+		return false;
 	}
 }

@@ -7,8 +7,9 @@ using System.Collections.Generic;
 	- implement final spawning algorithm for monsters and items
 	- spawned things should be stronger at higher dungeon levels
 
-- equipment:
+- inventory:
 	- 2 handed items should be handled, appear in both inventory slots, etc
+	- right clicking on inventory item should display item info
 
 - ai:
 	- monsters should turn afraid when hp bar is red
