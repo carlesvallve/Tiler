@@ -2,6 +2,22 @@
 using System.Collections;
 using System.Collections.Generic;
 
+/*
+- spawning:
+	- implement final spawning algorithm for monsters and items
+	- spawned things should be stronger at higher dungeon levels
+
+- equipment:
+	- 2 handed items should be handled, appear in both inventory slots, etc
+
+- ai:
+	- monsters should turn afraid when hp bar is red
+	- afraid monsters should turn to fight if they have no other option
+	- monsters should use collected potions and food when hp is low
+	- monsters should equip collected equipment if is better than current
+	- intelligent monsters should have a chance to break containers and open chests
+*/
+
 
 public class Game : MonoSingleton <Game> {
 	private Navigator navigator;
