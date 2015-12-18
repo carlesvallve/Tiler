@@ -210,7 +210,7 @@ public class Creature : Tile {
 
 
 	protected bool IsAfraid () {
-		if (stats.hp < stats.hpMax * 0.5f) {
+		if (stats.hp <= stats.hpMax * 0.25f) {
 			return true;
 		}
 
