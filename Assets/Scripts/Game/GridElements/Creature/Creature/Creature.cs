@@ -55,7 +55,8 @@ public class Creature : Tile {
 		LocateAtCoords(x, y);
 
 		// initialize energy
-		SetEnergy(stats.energyRate);
+		//SetEnergy(stats.energyRate);
+		//stats.energy =
 
 		// initialize xp
 		stats.xp = 0;
@@ -69,9 +70,9 @@ public class Creature : Tile {
 
 
 	void Update () {
-		//string energy = (Mathf.Round(stats.energy * 100f) / 100f).ToString();
-		//SetInfo(energy, Color.yellow);
-		SetInfo(stats.xpValue.ToString(), Color.yellow);
+		string energy = (Mathf.Round(stats.energy * 100f) / 100f).ToString();
+		SetInfo(energy, Color.yellow);
+		//SetInfo(stats.xpValue.ToString(), Color.yellow);
 	}
 
 	
@@ -81,38 +82,11 @@ public class Creature : Tile {
 	// Stats
 	// =====================================================
 
-
-	public virtual void UpdateEquipmentStats () {
-		// TODO: calculate this at runtime on CreatureCombat module
-		stats.weapon = inventory.equipment["Weapon"] != null ? (Equipment)inventory.equipment["Weapon"].item : null;
-		stats.shield = inventory.equipment["Shield"] != null ? (Equipment)inventory.equipment["Shield"].item : null;
-		stats.attackRange = stats.weapon != null ? stats.weapon.range : 1;
-	}
-
-
-	public virtual void SetEnergy (float rate) {
-		stats.energyRate = rate;
-		stats.energy = Mathf.Max(1f, stats.energyRate);
-	}
-
-
-	/*public virtual bool UpdateEnergy () {
-		//SetInfo(stats.energy.ToString(), Color.cyan);
-
-		if (stats.energy < 1) {
-			stats.energy += stats.energyRate;
-			//stats.energy = Mathf.Round(stats.energy * 100f) / 100f;
-			return false;
-		}
-
-		stats.energy -= 1;
-		return true;
-	}*/
-
+	
+	// Experience
 
 	public virtual void UpdateXp (int ammount) {
 		stats.xp += ammount; 
-		//Speak("+" + ammount + "xp", Color.yellow, 0.25f);
 
 		// level up
 		if (stats.xp >= stats.xpMax) { 
@@ -164,6 +138,8 @@ public class Creature : Tile {
 	}
 
 
+	// Health
+
 	public virtual void UpdateHp (int ammount) {
 		stats.hp += ammount; 
 
@@ -183,14 +159,13 @@ public class Creature : Tile {
 	}
 
 
-	public virtual void UpdateAlert (int ammount) {
-		// only alerted monsters are able to chase the player
-		// alert decreases each turn, when it reaches 0, 
-		// monsters will be surprised by the player and wont move the turn they see him
-		stats.alert += ammount; 
+	// Equipment
 
-		if (stats.alert > stats.alertMax) { stats.alert = stats.alertMax; }
-		if (stats.alert < 0) { stats.alert = 0; }
+	public virtual void UpdateEquipmentStats () {
+		// TODO: calculate this at runtime on CreatureCombat module
+		stats.weapon = inventory.equipment["Weapon"] != null ? (Equipment)inventory.equipment["Weapon"].item : null;
+		stats.shield = inventory.equipment["Shield"] != null ? (Equipment)inventory.equipment["Shield"].item : null;
+		stats.attackRange = stats.weapon != null ? stats.weapon.range : 1;
 	}
 
 
@@ -215,6 +190,17 @@ public class Creature : Tile {
 		if (visible) {
 			tile.explored = true;
 		}
+	}
+	
+
+	public virtual void UpdateAlert (int ammount) {
+		// only alerted monsters are able to chase the player
+		// alert decreases each turn, when it reaches 0, 
+		// monsters will be surprised by the player and wont move the turn they see him
+		stats.alert += ammount; 
+
+		if (stats.alert > stats.alertMax) { stats.alert = stats.alertMax; }
+		if (stats.alert < 0) { stats.alert = 0; }
 	}
 
 
@@ -353,7 +339,7 @@ public class Creature : Tile {
 
 	protected virtual IEnumerator FollowPathStep (int x, int y) {
 		// adjust speed to energy rate
-		speedMove = Mathf.Min(0.15f / stats.energyRate, 0.15f);
+		speedMove = Mathf.Min(0.15f / stats.energyBase, 0.15f);
 
 		if (state != CreatureStates.Moving) { 
 			yield break; 

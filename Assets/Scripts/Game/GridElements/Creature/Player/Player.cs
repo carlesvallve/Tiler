@@ -55,7 +55,7 @@ public class Player : Creature {
 		stats.str = 2;
 		stats.attackRange = 1;
 
-		SetEnergy(1f);
+		//SetEnergy(1f);
 	}
 
 

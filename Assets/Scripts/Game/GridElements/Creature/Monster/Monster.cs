@@ -40,7 +40,7 @@ public class Monster : Creature {
 
 		stats.level = data.level;
 		stats.hp = data.hp; stats.hpMax = data.hp;
-		stats.energy = data.movement; stats.energyBase = data.movement; stats.energyRate = data.movement;
+		stats.energy = data.movement; stats.energyBase = data.movement;
 		stats.attack = data.attack; stats.attackBase = data.attack;
 		stats.defense = data.defense; stats.defenseBase = data.defense;
 		stats.damage = data.damage; stats.damageBase = data.damage;
@@ -139,7 +139,7 @@ public class Monster : Creature {
 
 		// check if we have enough energy left to do something
 		if (stats.energy <= 0) {
-			stats.energy += stats.energyRate;
+			stats.energy += stats.energyBase;
 			return;
 		} else {
 			stats.energy -= 1;

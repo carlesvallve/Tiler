@@ -27,7 +27,6 @@ public class CreatureStats {
 
 	// energy
 	public float energyBase, energy;
-	public float energyRate;
 
 	// combat
 	public int attackBase, attack;
