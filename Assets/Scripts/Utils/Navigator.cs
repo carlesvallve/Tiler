@@ -5,7 +5,7 @@ using System.Collections;
 public class Navigator : MonoSingleton<Navigator> {
 	
 	public Color color = Color.black;
-	public float Duration = 1f;
+	public float Duration = 0.5f;
 	public short SortOrder = short.MaxValue;
 
 	private Canvas canvas;

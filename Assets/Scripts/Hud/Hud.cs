@@ -74,6 +74,11 @@ public class Hud : MonoSingleton <Hud> {
 			DisplayInventory(value);
 			if (value) { sfx.Play("Audio/Sfx/Item/book", 0.15f, Random.Range(0.8f, 1.2f)); }
 		}
+
+		if (Input.GetKeyDown(KeyCode.Q)) {
+			Navigator.instance.Open("Home");
+		}
+
 	}
 
 	// ==============================================================
