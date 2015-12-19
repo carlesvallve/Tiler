@@ -55,19 +55,17 @@ public class Dice {
 	}
 
 
-	public static in GetMaxValue (string dice) {
+	public static int GetMaxValue (string rpg) {
 		char[] delimiters = new char[] { '+', '-', 'd' };
 		string[] arr = rpg.Split(delimiters);
 
-		int min = 1;
 		int max = IntParseFast(arr[1]);
 		int maxDices = IntParseFast(arr[0]);
 
 		int modifier = arr.Length > 2 ? IntParseFast(arr[2]) : 0;
 		if (rpg.IndexOf("-") > -1) { modifier = -modifier; }
 
-		int max = max * maxDices + modifier;
-		return max;
+		return max * maxDices + modifier;
 	}
 
 

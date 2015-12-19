@@ -32,6 +32,9 @@ public class Creature : Tile {
 	public CreatureCombat combat;
 	public CreatureInventory inventory;
 
+
+	public bool markedToStop = false;
+
 	
 	// =====================================================
 	// Initialization
@@ -337,6 +340,10 @@ public class Creature : Tile {
 			int y = (int)p.y;
 
 			yield return StartCoroutine (FollowPathStep(x, y));
+
+			if ((this is Player) && markedToStop) {
+				break;
+			}
 		}
 
 		// stop moving once we reach the goal

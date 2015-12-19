@@ -29,6 +29,9 @@ public class Controls : MonoBehaviour {
 
 	private void TapAtPos (Vector3 pos) {
 		if (!CanTap()) {
+			if (grid.player.state == CreatureStates.Moving) {
+				grid.player.markedToStop = true;
+			}
 			return;
 		}
 
@@ -45,6 +48,7 @@ public class Controls : MonoBehaviour {
 		}
 
 		// tell player to look for an astar path and follow it
+		grid.player.markedToStop = false;
 		grid.player.SetPath(x, y);
 	}
 
