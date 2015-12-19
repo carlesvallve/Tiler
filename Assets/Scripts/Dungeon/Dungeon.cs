@@ -25,7 +25,7 @@ public class Dungeon : MonoSingleton <Dungeon> {
 		dungeonGenerator = DungeonGenerator.instance;
 
 		// set initial dungeon level
-		currentDungeonLevel = 15; // 0;
+		currentDungeonLevel = 0; // 0;
 	}
 
 
