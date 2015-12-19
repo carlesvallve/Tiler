@@ -35,7 +35,6 @@ public class Item : Entity {
 		// play item sound
 		if (creature.visible) {
 			PlaySoundPickup();
-			//sfx.Play("Audio/Sfx/Item/item-pick-drop", 0.6f, Random.Range(0.8f, 1.2f));
 		}
 
 		// spawn glow particles
@@ -63,10 +62,6 @@ public class Item : Entity {
 		transform.SetParent(grid.container.Find("Entities"), false);
 		transform.localPosition = new Vector3(tile.x, tile.y, 0);
 		gameObject.SetActive(true);
-
-		//sfx.Play("Audio/Sfx/Item/armour", 0.6f, Random.Range(0.8f, 1.2f));
-		
-		PlaySoundDrop();
 
 		// Animate items interpolating them form chest position to x,y
 		StartCoroutine(DropAnimation(x, y, 0.1f));
@@ -96,6 +91,10 @@ public class Item : Entity {
 		// set item in grid array
 		LocateAtCoords(x, y);
 
+		// play drop sound
+		PlaySoundDrop();
+
+		// and update visibility
 		UpdateVisibility();
 	}
 
@@ -112,7 +111,7 @@ public class Item : Entity {
 	}
 
 	public virtual void PlaySoundDrop () {
-		sfx.Play("Audio/Sfx/Item/item-drop", 1f, Random.Range(0.8f, 1.2f));
+		sfx.Play("Audio/Sfx/Item/item-drop", 0.8f, Random.Range(0.8f, 1.2f));
 	}
 
 	public virtual void PlaySoundUse () {

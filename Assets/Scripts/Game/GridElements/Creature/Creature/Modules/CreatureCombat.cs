@@ -380,6 +380,7 @@ public class CreatureCombat : CreatureModule {
 		}
 
 		// destroy creature
+		me.StopAllCoroutines();
 		me.Destroy(1f);
 		me.gameObject.SetActive(false);
 		yield break;

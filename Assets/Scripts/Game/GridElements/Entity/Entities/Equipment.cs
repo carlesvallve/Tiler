@@ -22,7 +22,7 @@ public class Equipment : Item {
 
 
 	public void InitializeStats (string id) {
-		//Debug.Log(">>> " + id);
+		Debug.Log(">>> " + id); // TODO: There is a key that is not found
 
 		// assign props from csv
 		EquipmentData data = GameData.equipments[id];

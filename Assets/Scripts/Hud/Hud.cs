@@ -187,7 +187,10 @@ public class Hud : MonoSingleton <Hud> {
 			// equip/unequip given equipment item
 			Grid.instance.player.inventory.EquipItem(invItem);
 			DisplayInventory(true);
-			sfx.Play("Audio/Sfx/Item/armour", 0.9f, Random.Range(0.8f, 1.2f));
+
+
+			invItem.item.PlaySoundUse();
+			//sfx.Play("Audio/Sfx/Item/item-drop", 0.9f, Random.Range(0.8f, 1.2f));
 			return;
 		}
 	}

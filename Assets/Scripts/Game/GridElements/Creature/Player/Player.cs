@@ -227,7 +227,7 @@ public class Player : Creature {
 				if (i == newVisibleMonsters.Count - 1) { punctuation = " and "; }
 			}
 
-			string desc = newVisibleMonsters[i].GetType().ToString();
+			string desc = newVisibleMonsters[i].GetType().ToString(); // GetTileDescription();
 			str += punctuation + Utils.GetStringPrepositions(desc) + " " + desc;
 		}
 
