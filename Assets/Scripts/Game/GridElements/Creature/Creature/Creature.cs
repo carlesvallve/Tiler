@@ -632,7 +632,7 @@ public class Creature : Tile {
 			
 		} else {
 			// equip item if is better thatn what we own already
-			if (inventory.IsBestItem(invItem)) {
+			if (inventory.IsBestEquipment(invItem)) {
 				inventory.EquipItem(invItem);
 
 				if (visible) {

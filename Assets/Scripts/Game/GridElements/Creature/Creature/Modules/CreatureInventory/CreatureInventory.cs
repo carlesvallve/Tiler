@@ -137,7 +137,8 @@ public class CreatureInventory  {
 	}
 
 
-	public bool IsBestItem (CreatureInventoryItem invItem) {
+	public bool IsBestEquipment (CreatureInventoryItem invItem) {
+		// escape if item is not equippable
 		if (!(invItem.item is Equipment)) {
 			return false;
 		}
@@ -151,33 +152,24 @@ public class CreatureInventory  {
 			return true;
 		}
 
-		// iterate all items
-		foreach (CreatureInventoryItem invItm in this.items) {
-			if (invItem == invItm) { continue; }
-			if (!(invItm.item is Equipment)) { continue; }
+		// get currently equipped item in the item's slot 
+		Equipment itm = (Equipment)equipment[slot].item;
 
-			// compare only with items of same slot type
-			Equipment itm = (Equipment)invItm.item;
-			if (slot != itm.equipmentSlot) { continue; }
-
-			//Debug.Log (item.name + " " + item.armour + " / " + itm.name + " " + itm.armour);
-			
-			// better weapon
-			if (item.damage != "" && Dice.GetMaxValue(item.damage) > Dice.GetMaxValue(itm.damage)) { 
-				return true; 
-			}
-			
-			// better armour
-			if (item.armour > 0 && item.armour > itm.armour) { 
-				return true; 
-			}
-
-			// better shield
-			if (item.defense > 0 && item.defense > itm.defense) { 
-				return true; 
-			}
+		// check if item is a better weapon
+		if (item.damage != "" && Dice.GetMaxValue(item.damage) > Dice.GetMaxValue(itm.damage)) { 
+			return true; 
 		}
 		
+		// check if item is a better armour
+		if (item.armour > 0 && item.armour > itm.armour) { 
+			return true; 
+		}
+
+		// check if item is a better shield
+		if (item.defense > 0 && item.defense > itm.defense) { 
+			return true; 
+		}
+
 		return false;
 	}
 
