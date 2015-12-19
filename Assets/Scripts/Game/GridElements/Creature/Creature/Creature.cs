@@ -65,18 +65,16 @@ public class Creature : Tile {
 	}
 
 
-	void Update () {
+	//void Update () {
 		//string energy = (Mathf.Round(stats.energy * 100f) / 100f).ToString();
 		//SetInfo(energy, Color.yellow);
 
 		//SetInfo(stats.xpValue.ToString(), Color.yellow);
 
-		/*if (stats.weapon != null) {
-			SetInfo((stats.weapon).id, Color.yellow);
-		}*/
+		//if (stats.weapon != null) { SetInfo((stats.weapon).id, Color.yellow); }
 
-		SetInfo(stats.attack + "/" + stats.defense, Color.yellow);
-	}
+		//SetInfo(stats.attack + "/" + stats.defense, Color.yellow);
+	//}
 
 	
 
@@ -648,8 +646,6 @@ public class Creature : Tile {
 	public void UpdateEquipmentStats () {
 		stats.weapon = inventory.equipment["Weapon"] != null ? (Equipment)inventory.equipment["Weapon"].item : null;
 		stats.shield = inventory.equipment["Shield"] != null ? (Equipment)inventory.equipment["Shield"].item : null;
-	
-
 	}
 
 
