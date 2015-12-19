@@ -115,9 +115,11 @@ public class GameData {
 			equipment.weight = 	int.Parse(table[y, 11]);
 
 			// debug any special kind of equipment
-			if (equipment.range > 1) { equipment.rarity *= 2; }
-			if (equipment.defense > 0) { equipment.rarity *= 3; }
-			//if (equipment.hands > 1) { equipment.rarity = 160; }
+			//if (equipment.damage != "") { equipment.rarity *= 2; }
+			//if (equipment.range > 1) { equipment.rarity *= 2; }
+			if (equipment.defense > 0) { equipment.rarity *= 10; }
+			if (equipment.hands > 1) { equipment.rarity *= 10; } //1060; }
+			//if (equipment.armour > 0) { equipment.rarity *= 1000; }
 
 			equipments.Add(id, equipment);
 		}

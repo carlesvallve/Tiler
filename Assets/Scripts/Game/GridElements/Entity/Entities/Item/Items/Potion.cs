@@ -31,7 +31,7 @@ public class Potion : Item {
 
 
 	public override void Use (Creature creature) {
-		// food heals 2d6 hp for now
+		// potion heals 2d6 hp
 		int hp = Dice.Roll("2d6");
 		creature.UpdateHp(hp);
 		 

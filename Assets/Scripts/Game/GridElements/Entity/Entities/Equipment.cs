@@ -4,19 +4,6 @@ using System.Collections;
 
 public class Equipment : Item {
 
-	/*public int attack;
-	public string damage;
-	public int range;
-	public int hands;
-	public int weight;*/
-
-	//public string id;
-	//public string[] assets;
-
-	//public string type;
-	//public string subtype;
-	//public int rarity;
-
 	public int attack;
 	public int defense;
 	public string damage;
@@ -63,12 +50,17 @@ public class Equipment : Item {
 		// extra props
 		this.walkable = true;
 		this.stackable = false;
-		this.equipmentSlot = this.type; //"Weapon";
+		this.equipmentSlot = this.type;
 	}
 
 
 	public override void PlaySound () {
-		sfx.Play("Audio/Sfx/Item/weapon", 0.6f, Random.Range(0.8f, 1.2f));
+		if (equipmentSlot == "Weapon" || equipmentSlot == "Shield") {
+			sfx.Play("Audio/Sfx/Item/weapon", 0.4f, Random.Range(0.8f, 1.2f));
+		} else {
+			sfx.Play("Audio/Sfx/Item/armour", 0.6f, Random.Range(0.8f, 1.2f));
+		}
+		
 	}
 
 }

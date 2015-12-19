@@ -31,7 +31,7 @@ public class Item : Entity {
 
 	// Pickup
 
-	public virtual void Pickup (Creature creature) {
+	public virtual CreatureInventoryItem Pickup (Creature creature) {
 		// play item sound
 		if (creature.visible) {
 			PlaySound();
@@ -43,7 +43,7 @@ public class Item : Entity {
 		}
 
 		// add to creature's inventory
-		creature.inventory.AddItem(this);
+		CreatureInventoryItem invItem = creature.inventory.AddItem(this);
 
 		// reparent item to creature
 		transform.SetParent(creature.transform, false);
@@ -51,6 +51,8 @@ public class Item : Entity {
 		gameObject.SetActive(false);
 
 		grid.SetEntity(x, y, null);
+
+		return invItem;
 	}
 
 

@@ -24,14 +24,14 @@ public class Treasure : Item {
 		return arr[Random.Range(0, arr.Length)];
 	}
 
-	public override void Pickup(Creature creature) {
+	public override CreatureInventoryItem Pickup(Creature creature) {
 		creature.stats.gold += ammount;
 
 		if (creature.visible) {
 			Speak("+" + ammount, Color.yellow);
 		}
 
-		base.Pickup(creature);
+		return base.Pickup(creature);
 	}
 
 

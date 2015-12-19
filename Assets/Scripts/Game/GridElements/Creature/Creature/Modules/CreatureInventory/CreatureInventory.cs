@@ -28,19 +28,22 @@ public class CreatureInventory  {
 	}
 
 
-	public void AddItem (Item item) {
+	public CreatureInventoryItem AddItem (Item item) {
 		Sprite sprite = item.transform.Find("Sprites/Sprite").GetComponent<SpriteRenderer>().sprite;
 
 		if (item.stackable) {
-			foreach (CreatureInventoryItem invItem in items) {
-				if (sprite.name == invItem.id) {
-					invItem.ammount += item.ammount;
-					return;
+			foreach (CreatureInventoryItem invItm in items) {
+				if (sprite.name == invItm.id) {
+					invItm.ammount += item.ammount;
+					return invItm;
 				}
 			}
 		}
 		
-		items.Add(new CreatureInventoryItem(item, sprite));
+		CreatureInventoryItem invItem = new CreatureInventoryItem(item, sprite);
+		items.Add(invItem);
+
+		return invItem;
 	}
 
 
@@ -104,10 +107,78 @@ public class CreatureInventory  {
 		if (!invItem.equipped) {
 			equipment[item.equipmentSlot] = invItem;
 			invItem.equipped = true;
-
-			creature.UpdateEquipmentStats();
-			return;
 		}
+
+		// handle special cases
+		Equipment eq = (Equipment)invItem.item;
+
+		// equipping a 2 hand weapon and removes equipped shield
+		if (eq.hands == 2) {
+			if (equipment["Shield"] != null) {
+				equipment["Shield"].equipped = false;
+				equipment["Shield"] = null;
+			}
+			
+		// equipping a shield removes equipped 2 hand weapon
+		} else if (eq.equipmentSlot == "Shield") {
+			if (equipment["Weapon"] != null && ((Equipment)equipment["Weapon"].item).hands == 2) {
+				equipment["Weapon"].equipped = false;
+				equipment["Weapon"] = null;
+			}
+		}
+
+		// update creature's equipment stats
+		creature.UpdateEquipmentStats();
+	}
+
+
+	public void UnequipItem (CreatureInventoryItem invItem) {
+
+	}
+
+
+	public bool IsBestItem (CreatureInventoryItem invItem) {
+		if (!(invItem.item is Equipment)) {
+			return false;
+		}
+
+		// get equippable item and slot
+		Equipment item = (Equipment)invItem.item;
+		string slot = item.equipmentSlot;
+
+		// automatically equip if we are wearing nothing on item's slot
+		if (this.equipment[slot] == null) {
+			return true;
+		}
+
+		// iterate all items
+		foreach (CreatureInventoryItem invItm in this.items) {
+			if (invItem == invItm) { continue; }
+			if (!(invItm.item is Equipment)) { continue; }
+
+			// compare only with items of same slot type
+			Equipment itm = (Equipment)invItm.item;
+			if (slot != itm.equipmentSlot) { continue; }
+
+			//Debug.Log (item.name + " " + item.armour + " / " + itm.name + " " + itm.armour);
+			
+			// better weapon
+			if (item.damage != "" && Dice.GetMaxValue(item.damage) > Dice.GetMaxValue(itm.damage)) { 
+				return true; 
+			}
+			
+			// better armour
+			if (item.armour > 0 && item.armour > itm.armour) { 
+				return true; 
+			}
+
+			// better shield
+			if (item.defense > 0 && item.defense > itm.defense) { 
+				return true; 
+			}
+		}
+		
+		return false;
 	}
 
 }

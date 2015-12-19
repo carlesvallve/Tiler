@@ -179,21 +179,6 @@ public class Hud : MonoSingleton <Hud> {
 
 		// equip/unequip item
 		if (invItem.item.equipmentSlot != null) {
-
-			// if 2h and carrying a shield, remove shield
-			if (((Equipment)invItem.item).hands == 2) {
-				CreatureInventoryItem shield = Grid.instance.player.inventory.equipment["Shield"];
-				if (shield != null) { Grid.instance.player.inventory.EquipItem(shield); }
-			}
-
-			// if shield and eauipping 2 hand weapon, remove 2h weapon
-			if (invItem.item.equipmentSlot == "Shield") {
-				CreatureInventoryItem weapon = Grid.instance.player.inventory.equipment["Weapon"];
-				if (weapon != null && ((Equipment)weapon.item).hands == 2) {
-					Grid.instance.player.inventory.EquipItem(weapon);
-				}
-			}
-
 			// equip/unequip given equipment item
 			Grid.instance.player.inventory.EquipItem(invItem);
 			DisplayInventory(true);
@@ -359,7 +344,8 @@ public class Hud : MonoSingleton <Hud> {
 		yield return new WaitForSeconds(delay);
 		obj.SetActive(true);
 
-		Vector3 startPos = new Vector3(tile.x, tile.y, 0); //tile.transform.position;
+		// we need to use position because tile does not update coords once reparented to a creature
+		Vector3 startPos = tile.transform.position; // new Vector3(tile.x, tile.y, 0); //
 		float endY = startY + 32;
 		float t = 0;
 		

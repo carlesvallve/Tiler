@@ -54,10 +54,6 @@ public class Creature : Tile {
 
 		LocateAtCoords(x, y);
 
-		// initialize energy
-		//SetEnergy(stats.energyRate);
-		//stats.energy =
-
 		// initialize xp
 		stats.xp = 0;
 		stats.xpMax = 100 * stats.level;
@@ -66,13 +62,21 @@ public class Creature : Tile {
 		// initialize creature modules
 		combat = new CreatureCombat(this);
 		inventory = new CreatureInventory(this);
+
+		// set initial items
+		SetInitialItems(Random.Range(0, 4));
 	}
 
 
 	void Update () {
-		string energy = (Mathf.Round(stats.energy * 100f) / 100f).ToString();
-		SetInfo(energy, Color.yellow);
+		//string energy = (Mathf.Round(stats.energy * 100f) / 100f).ToString();
+		//SetInfo(energy, Color.yellow);
+
 		//SetInfo(stats.xpValue.ToString(), Color.yellow);
+
+		if (stats.weapon != null) {
+			SetInfo((stats.weapon).id, Color.yellow);
+		}
 	}
 
 	
@@ -159,16 +163,6 @@ public class Creature : Tile {
 	}
 
 
-	// Equipment
-
-	public virtual void UpdateEquipmentStats () {
-		// TODO: calculate this at runtime on CreatureCombat module
-		stats.weapon = inventory.equipment["Weapon"] != null ? (Equipment)inventory.equipment["Weapon"].item : null;
-		stats.shield = inventory.equipment["Shield"] != null ? (Equipment)inventory.equipment["Shield"].item : null;
-		stats.attackRange = stats.weapon != null ? stats.weapon.range : 1;
-	}
-
-
 	// =====================================================
 	// Visibility
 	// =====================================================
@@ -191,7 +185,7 @@ public class Creature : Tile {
 			tile.explored = true;
 		}
 	}
-	
+
 
 	public virtual void UpdateAlert (int ammount) {
 		// only alerted monsters are able to chase the player
@@ -568,7 +562,7 @@ public class Creature : Tile {
 
 			// pickup items
 			if (entity is Item) {
-				((Item)entity).Pickup(this);
+				Pickup((Item)entity);
 			}
 
 			// check stairs at goal
@@ -589,6 +583,65 @@ public class Creature : Tile {
 		}
 
 		return false;
+	}
+
+
+	// =====================================================
+	// Inventory / Equipment
+	// =====================================================
+
+	protected void Pickup (Item item) {
+		// tell the item to be picked up
+		CreatureInventoryItem invItem = item.Pickup(this);
+
+		// auto-use or auto-equip item if conditions are favourable
+		ApplyItem(invItem);
+	}
+
+
+	protected void ApplyItem (CreatureInventoryItem invItem) {
+		if (invItem.item.consumable) {
+			// use consumable if we are low on hp
+			if (stats.hp <= stats.hpMax) {
+				inventory.UseItem(invItem);
+			}
+			
+		} else {
+			// equip item if is better thatn what we own already
+			if (inventory.IsBestItem(invItem)) {
+				inventory.EquipItem(invItem);
+			}
+		}
+	}
+
+
+	public void UpdateEquipmentStats () {
+		// TODO: calculate this at runtime on CreatureCombat module
+		stats.weapon = inventory.equipment["Weapon"] != null ? (Equipment)inventory.equipment["Weapon"].item : null;
+		stats.shield = inventory.equipment["Shield"] != null ? (Equipment)inventory.equipment["Shield"].item : null;
+		stats.attackRange = stats.weapon != null ? stats.weapon.range : 1;
+	}
+
+
+	public void SetInitialItems (int maxItems) {
+		ItemGenerator generator = new ItemGenerator();
+		generator.GenerateInCreature(this, maxItems);
+
+		foreach(CreatureInventoryItem invItem in inventory.items) {
+			ApplyItem(invItem);
+		}
+	}
+
+
+	public virtual System.Type GetRandomItemType () {
+		// Pick a weighted random item type
+		return Dice.GetRandomTypeFromDict(new Dictionary<System.Type, double>() {
+			{ typeof(Equipment), 	80 },
+			{ typeof(Treasure), 	20 },
+			{ typeof(Food), 		10 },
+			{ typeof(Potion), 		5 },
+			{ typeof(Book), 		3 },
+		});
 	}
 
 	

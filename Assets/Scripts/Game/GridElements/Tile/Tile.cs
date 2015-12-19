@@ -96,6 +96,8 @@ public class Tile : MonoBehaviour {
 	// =====================================================
 
 	public virtual void Speak (string str, Color color, float delay = 0, bool stick = false) {
+		//if (!visible) { return; }
+
 		Hud.instance.CreateLabel(this, str, color, delay, stick);
 	}
 

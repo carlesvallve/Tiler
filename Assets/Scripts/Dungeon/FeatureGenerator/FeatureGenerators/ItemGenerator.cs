@@ -25,7 +25,7 @@ public class ItemGenerator : DungeonFeatureGenerator {
 
 				// Pick a weighted random item type
 				System.Type itemType = Dice.GetRandomTypeFromDict(new Dictionary<System.Type, double>() {
-					{ typeof(Equipment), 	5 },
+					{ typeof(Equipment), 	20 },
 					{ typeof(Treasure), 	80 },
 					{ typeof(Food), 		40 },
 					{ typeof(Potion), 		5 },
@@ -72,7 +72,7 @@ public class ItemGenerator : DungeonFeatureGenerator {
 	}
 
 
-	/*public void GenerateInCreature (Creature creature, int maxItems) {
+	public void GenerateInCreature (Creature creature, int maxItems) {
 		// generate equipment rarity table dictionary
 		Dictionary<string, double> rarities = GameData.GenerateEquipmentRarityTable();
 
@@ -93,7 +93,10 @@ public class ItemGenerator : DungeonFeatureGenerator {
 			item.transform.localPosition = Vector3.zero;
 			item.gameObject.SetActive(false);
 
+			// add to creature's inventory
+			creature.inventory.AddItem(item); // CreatureInventoryItem invItem = 
+
 			//creature.items.Add(item);
 		}
-	}*/
+	}
 }
