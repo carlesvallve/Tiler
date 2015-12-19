@@ -132,6 +132,10 @@ public class Dice {
 	// Casino Roulette, 
 	// returns a random index number from an array of weighted probabilities
 
+	// TODO: We are using System.Random here, 
+	// so it will not respect the Random.Seed that we set for the dungeon level 
+	// using UnityEngine.Random
+
 	public static int SpinRoulette (double[] n) {
 
 		System.Random random = new System.Random();
