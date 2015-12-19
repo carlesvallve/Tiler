@@ -62,9 +62,6 @@ public class Creature : Tile {
 		// initialize creature modules
 		combat = new CreatureCombat(this);
 		inventory = new CreatureInventory(this);
-
-		// set initial items
-		SetInitialItems(Random.Range(0, 4));
 	}
 
 
@@ -74,9 +71,11 @@ public class Creature : Tile {
 
 		//SetInfo(stats.xpValue.ToString(), Color.yellow);
 
-		if (stats.weapon != null) {
+		/*if (stats.weapon != null) {
 			SetInfo((stats.weapon).id, Color.yellow);
-		}
+		}*/
+
+		SetInfo(stats.attack + "/" + stats.defense, Color.yellow);
 	}
 
 	
@@ -226,19 +225,24 @@ public class Creature : Tile {
 	}
 
 
-	protected bool IsRangedAttack () {
-		return stats.attackRange > 1;
+	protected int GetAttackRange () {
+		return stats.weapon != null ? Mathf.Min(stats.weapon.range, stats.vision) : 1;
 	}
 
 
 	protected bool IsAtShootRange (Tile target) {
 		float distance = Vector2.Distance(new Vector2(this.x, this.y), new Vector2(target.x, target.y));
-		if (IsRangedAttack() && distance  >= 2 && distance <= stats.attackRange && distance <= stats.vision) {
+		int range = GetAttackRange();
+
+		if (range > 1 && distance <= range) {
 			return true;
 		}
 
 		return false;
 	}
+
+
+
 
 
 	// =====================================================
@@ -590,6 +594,28 @@ public class Creature : Tile {
 	// Inventory / Equipment
 	// =====================================================
 
+	public virtual void SetInitialItems (int maxItems = 0, int minRarity = 100) {
+		ItemGenerator generator = new ItemGenerator();
+		generator.Generate(this, maxItems, minRarity);
+
+		// apply each generated item
+		foreach(CreatureInventoryItem invItem in inventory.items) {
+			ApplyItem(invItem);
+		}
+	}
+
+
+	public override System.Type GetRandomItemType () {
+		// Pick a weighted random item type
+		return Dice.GetRandomTypeFromDict(new Dictionary<System.Type, double>() {
+			{ typeof(Equipment), 	80 },
+			{ typeof(Treasure), 	20 },
+			{ typeof(Food), 		10 },
+			{ typeof(Potion), 		5 },
+			{ typeof(Book), 		3 },
+		});
+	}
+
 	protected void Pickup (Item item) {
 		// tell the item to be picked up
 		CreatureInventoryItem invItem = item.Pickup(this);
@@ -616,35 +642,11 @@ public class Creature : Tile {
 
 
 	public void UpdateEquipmentStats () {
-		// TODO: calculate this at runtime on CreatureCombat module
 		stats.weapon = inventory.equipment["Weapon"] != null ? (Equipment)inventory.equipment["Weapon"].item : null;
 		stats.shield = inventory.equipment["Shield"] != null ? (Equipment)inventory.equipment["Shield"].item : null;
-		stats.attackRange = stats.weapon != null ? stats.weapon.range : 1;
 	}
 
 
-	public void SetInitialItems (int maxItems) {
-		ItemGenerator generator = new ItemGenerator();
-		generator.GenerateInCreature(this, maxItems);
-
-		foreach(CreatureInventoryItem invItem in inventory.items) {
-			ApplyItem(invItem);
-		}
-	}
-
-
-	public virtual System.Type GetRandomItemType () {
-		// Pick a weighted random item type
-		return Dice.GetRandomTypeFromDict(new Dictionary<System.Type, double>() {
-			{ typeof(Equipment), 	80 },
-			{ typeof(Treasure), 	20 },
-			{ typeof(Food), 		10 },
-			{ typeof(Potion), 		5 },
-			{ typeof(Book), 		3 },
-		});
-	}
-
-	
 	// =====================================================
 	// Functions overriden by Player or Monster class
 	// =====================================================

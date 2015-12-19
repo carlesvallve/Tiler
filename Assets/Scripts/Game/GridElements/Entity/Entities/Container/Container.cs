@@ -116,11 +116,12 @@ public class Container : Entity {
 
 	public void SetItems () {
 		ItemGenerator generator = new ItemGenerator();
-		generator.GenerateInContainer(this, maxItems);
+		int minRarity = 80 - Dungeon.instance.currentDungeonLevel * 2;
+		generator.Generate(this, maxItems, minRarity);
 	}
 
 
-	public virtual System.Type GetRandomItemType () {
+	public override System.Type GetRandomItemType () {
 		// Pick a weighted random item type
 		return Dice.GetRandomTypeFromDict(new Dictionary<System.Type, double>() {
 			{ typeof(Equipment), 	80 },

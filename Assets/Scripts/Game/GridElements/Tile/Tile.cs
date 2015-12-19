@@ -301,4 +301,8 @@ public class Tile : MonoBehaviour {
 	}
 	
 
+	public virtual System.Type GetRandomItemType () {
+		return null;
+	}
+
 }

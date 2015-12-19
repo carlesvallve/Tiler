@@ -12,7 +12,8 @@ public class ItemGenerator : DungeonFeatureGenerator {
 
 	public override void Generate () {
 		// generate equipment rarity table dictionary
-		Dictionary<string, double> rarities = GameData.GenerateEquipmentRarityTable();
+		int minRarity = 80 - Dungeon.instance.currentDungeonLevel * 2;
+		Dictionary<string, double> rarities = GameData.GenerateEquipmentRarityTable(minRarity);
 
 		for (int n = 0; n < dungeonGenerator.rooms.Count; n++) {
 
@@ -46,9 +47,10 @@ public class ItemGenerator : DungeonFeatureGenerator {
 	}
 
 
-	public void GenerateInContainer (Container container, int maxItems) {
+	/*public void GenerateInContainer (Container container, int maxItems) {
 		// generate equipment rarity table dictionary
-		Dictionary<string, double> rarities = GameData.GenerateEquipmentRarityTable();
+		int minRarity = 80 - Dungeon.instance.currentDungeonLevel * 2;
+		Dictionary<string, double> rarities = GameData.GenerateEquipmentRarityTable(minRarity);
 
 		for (int i = 0; i < maxItems; i++) {
 			System.Type itemType = container.GetRandomItemType();
@@ -69,15 +71,16 @@ public class ItemGenerator : DungeonFeatureGenerator {
 
 			container.items.Add(item);
 		}
-	}
+	}*/
 
 
-	public void GenerateInCreature (Creature creature, int maxItems) {
+	public override void Generate (Tile tile, int maxItems, int minRarity = 100) {
 		// generate equipment rarity table dictionary
-		Dictionary<string, double> rarities = GameData.GenerateEquipmentRarityTable();
+		//int minRarity = 80 - Dungeon.instance.currentDungeonLevel * 2;
+		Dictionary<string, double> rarities = GameData.GenerateEquipmentRarityTable(minRarity);
 
 		for (int i = 0; i < maxItems; i++) {
-			System.Type itemType = creature.GetRandomItemType();
+			System.Type itemType = tile.GetRandomItemType();
 
 			// get item id
 			string id = null;
@@ -85,18 +88,32 @@ public class ItemGenerator : DungeonFeatureGenerator {
 				id = Dice.GetRandomStringFromDict(rarities);
 			}
 
-			// create item
-			Item item = (Item)grid.CreateEntity(itemType, 0, 0, 0.8f, null, id, false) as Item;
-			
-			// put the item inside the container
-			item.transform.SetParent(creature.transform, false);
-			item.transform.localPosition = Vector3.zero;
-			item.gameObject.SetActive(false);
-
-			// add to creature's inventory
-			creature.inventory.AddItem(item); // CreatureInventoryItem invItem = 
-
-			//creature.items.Add(item);
+			GenerateSingle(tile, itemType, id);
 		}
+	}
+
+
+	public Item GenerateSingle (Tile tile, System.Type type, string id) {
+		// create item
+		Item item = (Item)grid.CreateEntity(type, 0, 0, 0.8f, null, id, false) as Item;
+		
+		// put the item inside the container
+		item.transform.SetParent(tile.transform, false);
+		item.transform.localPosition = Vector3.zero;
+		item.gameObject.SetActive(false);
+
+		// add to container's item list
+		if (tile is Container) {
+			((Container)tile).items.Add(item);
+			return item;
+		}
+
+		// add to creature's inventory
+		if (tile is Creature) {
+			((Creature)tile).inventory.AddItem(item);
+			return item;
+		}
+
+		return item;
 	}
 }

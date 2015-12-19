@@ -19,9 +19,15 @@ public class DungeonFeatureGenerator {
 	public virtual void Generate () {
 	}
 
+	public virtual void Generate (Tile tile, int maxItems, int minRarity = 100) {
+	}
+
 
 	public virtual void GenerateAtPos (int x, int y) {
 	}
+
+	/*public virtual void GenerateAtTile<T> (T tile, int maxItems) where T : Tile {
+	}*/
 
 
 	// =====================================================

@@ -22,6 +22,8 @@ public class Equipment : Item {
 
 
 	public void InitializeStats (string id) {
+		//Debug.Log(">>> " + id);
+		
 		// assign props from csv
 		EquipmentData data = GameData.equipments[id];
 

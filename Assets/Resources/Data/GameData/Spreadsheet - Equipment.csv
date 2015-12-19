@@ -1,6 +1,6 @@
 Id,Assets,Type,Subtype,Rarity,Attack,Defense,Damage,Armour,Range,Hands,Weight
-LeatherArmour,armour-leather-1$armour-leather-2$armour-leather-3,Armour,,80,0,0,1d0,5,0,0,0
-LeatherArmourPlus,armour-leather-decorated$armour-leather-elven$armour-leather-studded,Armour,,60,0,0,1d0,8,0,0,0
+LeatherArmour,armour-leather-1$armour-leather-orc$armour-leather-elven,Armour,,80,0,0,1d0,5,0,0,0
+LeatherArmourPlus,armour-leather-plus$armour-leather-decorated$armour-leather-studded,Armour,,60,0,0,1d0,8,0,0,0
 ,,,,,,,1d0,,,,
 ChainMail,mail-chain-1$mail-chain-2$mail-chain-3,Armour,,50,0,0,1d0,10,0,0,0
 ScaleMail,mail-scale$mail-scale-elven,Armour,,40,0,0,1d0,15,0,0,0
@@ -47,6 +47,10 @@ GreatAxe,axe-great,Weapon,Axe,30,0,0,2d6,0,0,2,0
 Club,club,Weapon,Mace,80,0,0,1d6,0,0,1,0
 Mace,mace,Weapon,Mace,50,0,0,1d8,0,0,1,0
 GreatMace,mace-great,Weapon,Mace,30,0,0,2d6,0,0,2,0
+,,,,,,,,,,,
+ShortSpear,spear-short,Weapon,Spear,80,0,0,1d6,0,0,1,0
+LongSpear,spear-long,Weapon,Spear,50,0,0,1d8,0,0,1,0
+GreatSpear,spear-great,Weapon,Spear,30,0,0,2d6,0,0,2,0
 ,,,,,,,,,,,
 Sabre,sabre,Weapon,Sword,40,0,0,1d6,0,0,1,0
 Scimitar,scimitar,Weapon,Sword,30,0,0,1d8,0,0,1,0

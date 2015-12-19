@@ -46,16 +46,54 @@ public class Player : Creature {
 		base.Init(grid, x, y, scale, asset);
 		walkable = false;
 
+		InitializeStats();
+	}
+
+
+	public void InitializeStats () {
 		// init stats
-		stats.hpMax = 10; 
+		stats.hpMax = 20; 
 		stats.hp = stats.hpMax;
 		stats.vision = 6;
-		stats.attack = 60;
+		stats.attack = 80;
 		stats.defense = 60;
 		stats.str = 2;
-		stats.attackRange = 1;
 
-		//SetEnergy(1f);
+		// set initial items
+		SetInitialItems();
+	}
+
+
+	public override void SetInitialItems (int maxItems = 0, int minRarity = 100) {
+		ItemGenerator generator = new ItemGenerator();
+
+		if (playerClass == "guard") {
+			// guard -> spear and buckler
+			generator.GenerateSingle (this, typeof(Equipment), "ShortSpear");
+			generator.GenerateSingle (this, typeof(Equipment), "Buckler");
+		} else if (playerClass == "warrior") {
+			// warrior -> sword and buckler
+			generator.GenerateSingle (this, typeof(Equipment), playerRace == "dwarf" ? "ShortAxe" : "ShortSword");
+			generator.GenerateSingle (this, typeof(Equipment), "Buckler");
+		} else if (playerClass == "ranger") {
+			// ranger -> bow
+			generator.GenerateSingle (this, typeof(Equipment), playerRace == "dwarf" ? "LighCrossbow" : "ShortBow");
+		} else if (playerClass == "mage" || playerClass == "priest") {
+			// mage or priest -> book and staff
+			generator.GenerateSingle (this, typeof(Book), null);
+			generator.GenerateSingle (this, typeof(Equipment), "Quarterstaff");
+		} else if (playerClass == "monk") {
+			// monk -> book and potions
+			generator.GenerateSingle (this, typeof(Book), null);
+			for (int i = 1; i <=3; i++) {
+				generator.GenerateSingle (this, typeof(Potion), null);
+			}
+		}
+
+		// apply each generated item
+		foreach(CreatureInventoryItem invItem in inventory.items) {
+			ApplyItem(invItem);
+		}
 	}
 
 

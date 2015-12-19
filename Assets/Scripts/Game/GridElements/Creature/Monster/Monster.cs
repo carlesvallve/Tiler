@@ -56,6 +56,10 @@ public class Monster : Creature {
 		if (asset == null) { Debug.LogError(path); }
 
 		SetAsset(asset);
+
+		// set initial items
+		int minRarity = 80 - Dungeon.instance.currentDungeonLevel * 2;
+		SetInitialItems(Random.Range(0, 4), minRarity);
 	}
 
 

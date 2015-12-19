@@ -52,7 +52,6 @@ public class CreatureStats {
 	// equipment
 	public Equipment weapon = null;
 	public Equipment shield = null;
-	public int attackRange = 1;
 
 	// gold
 	public int gold = 0;

@@ -108,8 +108,8 @@ public class CreatureCombat : CreatureModule {
 	// =====================================================
 
 	private int GetTotalAttack (Creature attacker) {
-		// 25% extra accuracy, so we dont miss so often, and to compensate for defense bonuses
-		int attack = attacker.stats.attack + 25;
+		// 0% extra accuracy, so we dont miss so often, and to compensate for defense bonuses
+		int attack = attacker.stats.attack + 0;
 
 		Dictionary<string, CreatureInventoryItem> equipment = attacker.inventory.equipment;
 		if (equipment["Weapon"] != null) { attack += ((Equipment)equipment["Weapon"].item).attack; }

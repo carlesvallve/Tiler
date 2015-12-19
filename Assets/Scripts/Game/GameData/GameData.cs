@@ -52,9 +52,6 @@ public class GameData {
 
 			monsters.Add(id, monster);
 		}
-
-		// debug a single monster
-		//monsters["Goblin"].Log();
 	}
 
 
@@ -117,22 +114,23 @@ public class GameData {
 			// debug any special kind of equipment
 			//if (equipment.damage != "") { equipment.rarity *= 2; }
 			//if (equipment.range > 1) { equipment.rarity *= 2; }
-			if (equipment.defense > 0) { equipment.rarity *= 10; }
-			if (equipment.hands > 1) { equipment.rarity *= 10; } //1060; }
+			//if (equipment.defense > 0) { equipment.rarity *= 10; }
+			//if (equipment.hands > 1) { equipment.rarity *= 10; } //1060; }
 			//if (equipment.armour > 0) { equipment.rarity *= 1000; }
 
 			equipments.Add(id, equipment);
 		}
-
-		// debug a single equipment item
-		//equipments["LongSword"].Log();
 	}
 
-	public static Dictionary<string, double> GenerateEquipmentRarityTable () {
+
+	public static Dictionary<string, double> GenerateEquipmentRarityTable (int minRarity = 0) {
 		Dictionary<string, double> rarities = new Dictionary<string, double>();
 		
 		foreach (KeyValuePair<string, EquipmentData> entry in GameData.equipments) {
 			int rarity = entry.Value.rarity;
+			if (rarity < minRarity) {
+				rarity = 0;
+			}
 			rarities.Add(entry.Key, rarity);
 		}
 
