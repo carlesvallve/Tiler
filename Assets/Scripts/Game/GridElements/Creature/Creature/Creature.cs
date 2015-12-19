@@ -233,7 +233,7 @@ public class Creature : Tile {
 
 	protected bool IsAtShootRange (Tile target) {
 		float distance = Vector2.Distance(new Vector2(this.x, this.y), new Vector2(target.x, target.y));
-		if (IsRangedAttack() && distance  >= 2 && distance <= stats.attackRange) {
+		if (IsRangedAttack() && distance  >= 2 && distance <= stats.attackRange && distance <= stats.vision) {
 			return true;
 		}
 

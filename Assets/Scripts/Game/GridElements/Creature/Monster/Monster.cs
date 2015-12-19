@@ -172,7 +172,7 @@ public class Monster : Creature {
 
 		// chase target tile
 		if (targetTile is Player) {
-			if (IsAtShootRange(targetTile)) {
+			if (IsAtShootRange(targetTile) && visible) {
 				// shoot the player if in range
 				combat.Shoot((Player)targetTile);
 			} else {
