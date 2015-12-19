@@ -22,7 +22,11 @@ public class Equipment : Item {
 
 
 	public void InitializeStats (string id) {
-		Debug.Log(">>> " + id); // TODO: There is a key that is not found
+		//Debug.Log(">>> " + id); // TODO: There is a key that is not found
+
+		if (!GameData.equipments.ContainsKey(id)) {
+			Debug.LogError(id + " key not present in GameData.equipments dictionary!");
+		}
 
 		// assign props from csv
 		EquipmentData data = GameData.equipments[id];
@@ -60,7 +64,7 @@ public class Equipment : Item {
 		if (equipmentSlot == "Weapon" || equipmentSlot == "Shield") {
 			sfx.Play("Audio/Sfx/Item/weapon", 0.4f, Random.Range(0.8f, 1.2f));
 		} else {
-			sfx.Play("Audio/Sfx/Item/armour-equip", 0.6f, Random.Range(0.8f, 1.2f));
+			sfx.Play("Audio/Sfx/Item/armour-equip", 0.8f, Random.Range(0.8f, 1.2f));
 		}
 		
 	}

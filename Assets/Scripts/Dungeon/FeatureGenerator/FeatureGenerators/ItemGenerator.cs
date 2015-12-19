@@ -10,9 +10,11 @@ public class ItemGenerator : DungeonFeatureGenerator {
 	// Item generation
 	// =====================================================
 
+	// generate random items in dungeon level
+
 	public override void Generate () {
 		// generate equipment rarity table dictionary
-		int minRarity = 80 - Dungeon.instance.currentDungeonLevel * 2;
+		int minRarity = GameData.GetDefaultEquipmentMinRarity();
 		Dictionary<string, double> rarities = GameData.GenerateEquipmentRarityTable(minRarity);
 
 		for (int n = 0; n < dungeonGenerator.rooms.Count; n++) {
@@ -47,36 +49,10 @@ public class ItemGenerator : DungeonFeatureGenerator {
 	}
 
 
-	/*public void GenerateInContainer (Container container, int maxItems) {
-		// generate equipment rarity table dictionary
-		int minRarity = 80 - Dungeon.instance.currentDungeonLevel * 2;
-		Dictionary<string, double> rarities = GameData.GenerateEquipmentRarityTable(minRarity);
-
-		for (int i = 0; i < maxItems; i++) {
-			System.Type itemType = container.GetRandomItemType();
-
-			// get item id
-			string id = null;
-			if (itemType == typeof(Equipment)) {
-				id = Dice.GetRandomStringFromDict(rarities);
-			}
-
-			// create item
-			Item item = (Item)grid.CreateEntity(itemType, 0, 0, 0.8f, null, id, false) as Item;
-			
-			// put the item inside the container
-			item.transform.SetParent(container.transform, false);
-			item.transform.localPosition = Vector3.zero;
-			item.gameObject.SetActive(false);
-
-			container.items.Add(item);
-		}
-	}*/
-
+	// generate maxItems inside given container or creature
 
 	public override void Generate (Tile tile, int maxItems, int minRarity = 100) {
 		// generate equipment rarity table dictionary
-		//int minRarity = 80 - Dungeon.instance.currentDungeonLevel * 2;
 		Dictionary<string, double> rarities = GameData.GenerateEquipmentRarityTable(minRarity);
 
 		for (int i = 0; i < maxItems; i++) {

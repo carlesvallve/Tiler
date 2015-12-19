@@ -138,6 +138,11 @@ public class GameData {
 	}
 
 
+	public static int GetDefaultEquipmentMinRarity () {
+		return 80 - Dungeon.instance.currentDungeonLevel * 3;
+	}
+
+
 	// =====================================================
 	// Load Csv
 	// =====================================================

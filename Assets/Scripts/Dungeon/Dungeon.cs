@@ -25,7 +25,7 @@ public class Dungeon : MonoSingleton <Dungeon> {
 		dungeonGenerator = DungeonGenerator.instance;
 
 		// set initial dungeon level
-		currentDungeonLevel = 0; // 0;
+		currentDungeonLevel = 15; // 0;
 	}
 
 
@@ -109,7 +109,7 @@ public class Dungeon : MonoSingleton <Dungeon> {
 
 		// Generate monsters
 		MonsterGenerator monsters = new MonsterGenerator();
-		monsters.Generate();
+		//monsters.Generate();
 		//monsters.GenerateSingle("Zombie");
 		//monsters.GenerateSingle("Centaur");
 

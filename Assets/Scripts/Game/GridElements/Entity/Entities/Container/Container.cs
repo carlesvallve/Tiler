@@ -116,7 +116,7 @@ public class Container : Entity {
 
 	public void SetItems () {
 		ItemGenerator generator = new ItemGenerator();
-		int minRarity = 80 - Dungeon.instance.currentDungeonLevel * 2;
+		int minRarity = GameData.GetDefaultEquipmentMinRarity();
 		generator.Generate(this, maxItems, minRarity);
 	}
 
