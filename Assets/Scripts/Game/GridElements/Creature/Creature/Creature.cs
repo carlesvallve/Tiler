@@ -395,8 +395,8 @@ public class Creature : Tile {
 		}
 
 		// clear path color at tile
-		Tile tile = grid.GetTile(x, y);
-		tile.SetColor(tile.color);
+		//Tile tile = grid.GetTile(x, y);
+		//ile.SetColor(tile.color);
 
 		// play step sound (player only)
 		if (this is Player) {

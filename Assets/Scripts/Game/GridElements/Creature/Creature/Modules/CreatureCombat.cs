@@ -350,20 +350,21 @@ public class CreatureCombat : CreatureModule {
 
 
 	protected IEnumerator DeathAnimation (Creature attacker, float delay = 0) {
+		// generate death fx
 		string[] arr = new string[] { "painA", "painB", "painC", "painD" };
 		sfx.Play("Audio/Sfx/Combat/" + arr[Random.Range(0, arr.Length)], 0.3f, Random.Range(0.6f, 1.8f));
 		sfx.Play("Audio/Sfx/Combat/hitB", 0.6f, Random.Range(0.5f, 2.0f));
 		grid.CreateBlood(me.transform.localPosition, 16, Color.red);
-
 		
 		// update attacker xp
-		me.Speak("XP +" + me.stats.xpValue, Color.yellow, 0);
-		attacker.UpdateXp(me.stats.xpValue);
+		if (!(me is Player)) {
+			me.Speak("XP +" + me.stats.xpValue, Color.yellow, 0);
+			attacker.UpdateXp(me.stats.xpValue);
+		}
 
-		yield return null;
-		// destroy creature
+		// unset creature in grid
 		grid.SetCreature(me.x, me.y, null);
-		me.Destroy();
+		yield return null;
 
 		// get a list of all items carried by the creature
 		List<Item> allItems = new List<Item>();
@@ -378,7 +379,8 @@ public class CreatureCombat : CreatureModule {
 		if (me is Player) {
 			me.GameOver();
 		}
-		
-		yield break;
+
+		// destroy creature
+		me.Destroy();
 	}
 }

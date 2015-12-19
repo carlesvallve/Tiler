@@ -35,17 +35,19 @@ public class GameData {
 			MonsterData monster = new MonsterData();
 			monster.id = 		table[y, 0];
 			monster.assets = 	table[y, 1].Split(arraySeparator);
+			
 			monster.type = 		table[y, 2];
 			monster.race = 		table[y, 3];
-			monster.subtype = table[y, 4];
+			monster.subtype = 	table[y, 4];
 			monster.rarity = 	int.Parse(table[y, 5]);
+			
 			monster.level = 	int.Parse(table[y, 6]);
 			monster.hp = 		int.Parse(table[y, 7]);
 			monster.movement = 	float.Parse(table[y, 8]);
 			monster.attack = 	int.Parse(table[y, 9]);
 			monster.defense = 	int.Parse(table[y, 10]);
 			monster.damage = 	int.Parse(table[y, 11]);
-			monster.armour = 		int.Parse(table[y, 12]);
+			monster.armour = 	int.Parse(table[y, 12]);
 			monster.vision = 	int.Parse(table[y, 13]);
 
 			monsters.Add(id, monster);
@@ -91,32 +93,30 @@ public class GameData {
 		// set a dictionary with all weapons
 		equipments = new Dictionary<string, EquipmentData>();
 
-		// fill each weaponData object with data from csv table
+		// fill each equipmentData object with data from csv table
 		for (int y = 0; y < table.GetLength(0); y++) {
 			string id = table[y, 0];
 			if (id == "") { continue; }
 
-			//Debug.Log(id);
-
 			EquipmentData equipment = new EquipmentData();
-			equipment.id = 			table[y, 0];
-			equipment.assets = 		table[y, 1].Split(arraySeparator);
+			equipment.id = 		table[y, 0];
+			equipment.assets = 	table[y, 1].Split(arraySeparator);
 			
-			equipment.type = 		table[y, 2];
-			equipment.subtype = 	table[y, 3];
-			equipment.rarity = 		int.Parse(table[y, 4]);
+			equipment.type = 	table[y, 2];
+			equipment.subtype = table[y, 3];
+			equipment.rarity = 	int.Parse(table[y, 4]);
 			
-			equipment.attack = 		int.Parse(table[y, 5]);
-			equipment.defense = 	int.Parse(table[y, 6]);
-			equipment.damage = 		table[y, 7];
-			equipment.armour = 		int.Parse(table[y, 8]);
-			equipment.range = 		int.Parse(table[y, 9]);
-			equipment.hands = 		int.Parse(table[y, 10]);
-			equipment.weight = 		int.Parse(table[y, 11]);
+			equipment.attack = 	int.Parse(table[y, 5]);
+			equipment.defense = int.Parse(table[y, 6]);
+			equipment.damage = 	table[y, 7];
+			equipment.armour = 	int.Parse(table[y, 8]);
+			equipment.range = 	int.Parse(table[y, 9]);
+			equipment.hands = 	int.Parse(table[y, 10]);
+			equipment.weight = 	int.Parse(table[y, 11]);
 
 			// debug any special kind of equipment
-			//if (equipment.range > 1) { equipment.rarity = 1000; }
-			//if (equipment.defense > 0) { equipment.rarity = 920; }
+			if (equipment.range > 1) { equipment.rarity *= 2; }
+			if (equipment.defense > 0) { equipment.rarity *= 3; }
 			//if (equipment.hands > 1) { equipment.rarity = 160; }
 
 			equipments.Add(id, equipment);

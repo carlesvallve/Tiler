@@ -19,10 +19,10 @@ public class Dice {
 		string[] arr = rpg.Split(delimiters);
 
 		int min = 1;
-		int max = IntParseFast(arr[1]);
-		int maxDices = IntParseFast(arr[0]);
+		int max = IntParseFast(arr[1]); // max value of a single dice
+		int maxDices = IntParseFast(arr[0]); // max dices to use
 
-		int modifier = arr.Length > 2 ? IntParseFast(arr[2]) : 0;
+		int modifier = arr.Length > 2 ? IntParseFast(arr[2]) : 0; // value of the modifier
 		if (rpg.IndexOf("-") > -1) { modifier = -modifier; }
 
 		//Debug.Log (maxDices + " dices from " + min + " to " + max + " with modifier " + modifier);
@@ -52,6 +52,22 @@ public class Dice {
 			result = 10 * result + (letter - 48);
 		}
 		return result;
+	}
+
+
+	public static in GetMaxValue (string dice) {
+		char[] delimiters = new char[] { '+', '-', 'd' };
+		string[] arr = rpg.Split(delimiters);
+
+		int min = 1;
+		int max = IntParseFast(arr[1]);
+		int maxDices = IntParseFast(arr[0]);
+
+		int modifier = arr.Length > 2 ? IntParseFast(arr[2]) : 0;
+		if (rpg.IndexOf("-") > -1) { modifier = -modifier; }
+
+		int max = max * maxDices + modifier;
+		return max;
 	}
 
 
