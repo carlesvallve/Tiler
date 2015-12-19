@@ -35,7 +35,11 @@ public class Treasure : Item {
 	}
 
 
-	public override void PlaySound () {
+	public override void PlaySoundPickup () {
+		sfx.Play("Audio/Sfx/Item/treasure", 0.15f, Random.Range(0.5f, 1.0f));
+	}
+
+	public override void PlaySoundUse () {
 		sfx.Play("Audio/Sfx/Item/treasure", 0.15f, Random.Range(0.5f, 1.0f));
 	}
 	

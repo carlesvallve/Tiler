@@ -628,7 +628,7 @@ public class Creature : Tile {
 	protected void ApplyItem (CreatureInventoryItem invItem) {
 		if (invItem.item.consumable) {
 			// use consumable if we are low on hp
-			if (stats.hp <= stats.hpMax) {
+			if (stats.hp <= stats.hpMax * 0.5f) {
 				inventory.UseItem(invItem);
 			}
 			
@@ -636,6 +636,10 @@ public class Creature : Tile {
 			// equip item if is better thatn what we own already
 			if (inventory.IsBestItem(invItem)) {
 				inventory.EquipItem(invItem);
+
+				if (visible) {
+					invItem.item.PlaySoundUse();
+				}
 			}
 		}
 	}
@@ -644,6 +648,8 @@ public class Creature : Tile {
 	public void UpdateEquipmentStats () {
 		stats.weapon = inventory.equipment["Weapon"] != null ? (Equipment)inventory.equipment["Weapon"].item : null;
 		stats.shield = inventory.equipment["Shield"] != null ? (Equipment)inventory.equipment["Shield"].item : null;
+	
+
 	}
 
 

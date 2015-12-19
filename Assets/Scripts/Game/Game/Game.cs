@@ -4,19 +4,19 @@ using System.Collections.Generic;
 
 /*
 - spawning:
-	- implement final spawning algorithm for monsters and items
-	- spawned things should be stronger at higher dungeon levels
+	- implement final spawning algorithm for monsters and items -> we got something kinda working...
+	- spawned things should be stronger at higher dungeon levels -> we got something kinda working...
 
 - inventory:
 	- 2 handed items should be handled, appear in both inventory slots, etc -> OK
 	- right clicking on inventory item should display item info
-	- we should be able to pre-equip creatures with default equipment
+	- we should be able to pre-equip creatures with default equipment -> OK
 
 - ai:
 	- monsters should turn afraid when hp bar is red -> OK
 	- afraid monsters should turn to fight if they have no other option -> OK
 	- monsters should use collected potions and food when hp is low
-	- monsters should equip collected equipment if is better than current
+	- monsters should equip collected equipment if is better than current -> OK
 	- intelligent monsters should have a chance to break containers and open chests
 */
 

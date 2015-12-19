@@ -36,7 +36,7 @@ public class Potion : Item {
 		creature.UpdateHp(hp);
 		 
 		if (creature.visible) {
-			PlaySound();
+			PlaySoundUse();
 			Speak("+" + hp, Color.cyan);
 		} 
 	}
@@ -52,7 +52,7 @@ public class Potion : Item {
 	}
 
 
-	public override void PlaySound () {
+	public override void PlaySoundUse () {
 		sfx.Play("Audio/Sfx/Item/potion", 0.4f, Random.Range(0.8f, 1.2f));
 	}
 

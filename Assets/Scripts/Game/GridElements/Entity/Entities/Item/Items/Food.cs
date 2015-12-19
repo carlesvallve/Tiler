@@ -49,7 +49,7 @@ public class Food : Item {
 	}
 
 
-	public override void PlaySound () {
+	public override void PlaySoundUse () {
 		sfx.Play("Audio/Sfx/Item/food", 0.5f, Random.Range(0.8f, 1.2f));
 	}
 

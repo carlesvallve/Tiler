@@ -29,7 +29,11 @@ public class Book : Item {
 	}
 
 
-	public override void PlaySound () {
+	public override void PlaySoundPickup () {
+		sfx.Play("Audio/Sfx/Item/book", 0.15f, Random.Range(0.8f, 1.2f));
+	}
+
+	public override void PlaySoundUse () {
 		sfx.Play("Audio/Sfx/Item/book", 0.15f, Random.Range(0.8f, 1.2f));
 	}
 	

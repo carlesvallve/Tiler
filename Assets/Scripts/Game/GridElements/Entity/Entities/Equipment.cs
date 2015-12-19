@@ -23,7 +23,7 @@ public class Equipment : Item {
 
 	public void InitializeStats (string id) {
 		//Debug.Log(">>> " + id);
-		
+
 		// assign props from csv
 		EquipmentData data = GameData.equipments[id];
 
@@ -56,11 +56,11 @@ public class Equipment : Item {
 	}
 
 
-	public override void PlaySound () {
+	public override void PlaySoundUse () {
 		if (equipmentSlot == "Weapon" || equipmentSlot == "Shield") {
 			sfx.Play("Audio/Sfx/Item/weapon", 0.4f, Random.Range(0.8f, 1.2f));
 		} else {
-			sfx.Play("Audio/Sfx/Item/armour", 0.6f, Random.Range(0.8f, 1.2f));
+			sfx.Play("Audio/Sfx/Item/armour-equip", 0.6f, Random.Range(0.8f, 1.2f));
 		}
 		
 	}
