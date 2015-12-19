@@ -342,6 +342,8 @@ public class Hud : MonoSingleton <Hud> {
 	
 	private IEnumerator AnimateLabel(Tile tile, GameObject obj, bool stick, float duration, float delay, float startY) {
 		yield return new WaitForSeconds(delay);
+		//if (tile == null) { yield break; }
+
 		obj.SetActive(true);
 
 		// we need to use position because tile does not update coords once reparented to a creature
@@ -367,6 +369,8 @@ public class Hud : MonoSingleton <Hud> {
 
 	private IEnumerator FadeLabel(Tile tile, GameObject obj, float duration, float delay) {
 		yield return new WaitForSeconds(delay);
+		//if (tile == null) { yield break; }
+
 		obj.SetActive(true);
 
 		CanvasGroup group = obj.GetComponent<CanvasGroup>();

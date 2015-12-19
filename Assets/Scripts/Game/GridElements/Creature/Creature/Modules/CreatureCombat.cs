@@ -364,7 +364,6 @@ public class CreatureCombat : CreatureModule {
 
 		// unset creature in grid
 		grid.SetCreature(me.x, me.y, null);
-		yield return null;
 
 		// get a list of all items carried by the creature
 		List<Item> allItems = new List<Item>();
@@ -381,6 +380,8 @@ public class CreatureCombat : CreatureModule {
 		}
 
 		// destroy creature
-		me.Destroy();
+		me.Destroy(1f);
+		me.gameObject.SetActive(false);
+		yield break;
 	}
 }

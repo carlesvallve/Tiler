@@ -280,11 +280,10 @@ public class Tile : MonoBehaviour {
 
 		Item item = null;
 
-		// spawn first item always on creature's tile (except if occupied by a an entity)
-		// the goal here is not to spawn an entity where another one already exists (i,e: over stairs)
+		// spawn first item always on creature's tile (which will be clear of entities for sure)
 		if (useCenterTile) {
 			Tile tile = grid.GetTile(x, y);
-			if (tile != null && !tile.IsOccupied()) {
+			if (tile != null) {
 				item = allItems[0];
 				item.Drop(this, this.x, this.y);
 				allItems.RemoveAt(0);

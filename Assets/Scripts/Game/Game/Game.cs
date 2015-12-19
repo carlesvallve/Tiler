@@ -96,7 +96,7 @@ public class Game : MonoSingleton <Game> {
 
 
 	public IEnumerator GameOver () {
-		yield return new WaitForSeconds(0.5f);
+		yield return new WaitForSeconds(1.0f);
 
 		if (bgm1 != null) { sfx.Fade(bgm1, 0, 0.5f); }
 		if (bgm2 != null) { sfx.Fade(bgm2, 0, 0.5f); }
