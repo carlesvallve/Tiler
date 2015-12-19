@@ -115,38 +115,12 @@ public class Container : Entity {
 	// =====================================================
 
 	public void SetItems () {
-		// generate equipment rarity table dictionary
-		Dictionary<string, double> rarities = GameData.GenerateEquipmentRarityTable();
-
-		for (int i = 0; i < maxItems; i++) {
-			items.Add(CreateRandomItem(rarities));
-		}
+		ItemGenerator generator = new ItemGenerator();
+		generator.GenerateInContainer(this, maxItems);
 	}
 
 
-	protected Item CreateRandomItem (Dictionary<string, double> rarities) {
-		// get item type
-		System.Type itemType = GetRandomItemType();
-
-		// get item id
-		string id = null;
-		if (itemType == typeof(Equipment)) {
-			id = Dice.GetRandomStringFromDict(rarities);
-		}
-
-		// create item
-		Item item = (Item)grid.CreateEntity(itemType, 0, 0, 0.8f, null, id, false) as Item;
-		
-		// put the item inside the container
-		item.transform.SetParent(transform, false);
-		item.transform.localPosition = Vector3.zero;
-		item.gameObject.SetActive(false);
-
-		return item;
-	}
-
-
-	protected virtual System.Type GetRandomItemType () {
+	public virtual System.Type GetRandomItemType () {
 		// Pick a weighted random item type
 		return Dice.GetRandomTypeFromDict(new Dictionary<System.Type, double>() {
 			{ typeof(Equipment), 	80 },

@@ -44,4 +44,56 @@ public class ItemGenerator : DungeonFeatureGenerator {
 			}
 		}
 	}
+
+
+	public void GenerateInContainer (Container container, int maxItems) {
+		// generate equipment rarity table dictionary
+		Dictionary<string, double> rarities = GameData.GenerateEquipmentRarityTable();
+
+		for (int i = 0; i < maxItems; i++) {
+			System.Type itemType = container.GetRandomItemType();
+
+			// get item id
+			string id = null;
+			if (itemType == typeof(Equipment)) {
+				id = Dice.GetRandomStringFromDict(rarities);
+			}
+
+			// create item
+			Item item = (Item)grid.CreateEntity(itemType, 0, 0, 0.8f, null, id, false) as Item;
+			
+			// put the item inside the container
+			item.transform.SetParent(container.transform, false);
+			item.transform.localPosition = Vector3.zero;
+			item.gameObject.SetActive(false);
+
+			container.items.Add(item);
+		}
+	}
+
+
+	/*public void GenerateInCreature (Creature creature, int maxItems) {
+		// generate equipment rarity table dictionary
+		Dictionary<string, double> rarities = GameData.GenerateEquipmentRarityTable();
+
+		for (int i = 0; i < maxItems; i++) {
+			System.Type itemType = creature.GetRandomItemType();
+
+			// get item id
+			string id = null;
+			if (itemType == typeof(Equipment)) {
+				id = Dice.GetRandomStringFromDict(rarities);
+			}
+
+			// create item
+			Item item = (Item)grid.CreateEntity(itemType, 0, 0, 0.8f, null, id, false) as Item;
+			
+			// put the item inside the container
+			item.transform.SetParent(creature.transform, false);
+			item.transform.localPosition = Vector3.zero;
+			item.gameObject.SetActive(false);
+
+			//creature.items.Add(item);
+		}
+	}*/
 }

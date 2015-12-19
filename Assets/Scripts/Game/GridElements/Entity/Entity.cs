@@ -7,8 +7,7 @@ public class Entity: Tile {
 
 	public EntityStates state { get; set; }
 
-	protected List<Item> items = new List<Item>();
-
+	public List<Item> items = new List<Item>();
 	public bool breakable = false;
 
 
