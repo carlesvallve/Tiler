@@ -77,7 +77,7 @@ public class Player : Creature {
 			generator.GenerateSingle (this, typeof(Equipment), "Buckler");
 		} else if (playerClass == "ranger") {
 			// ranger -> bow
-			generator.GenerateSingle (this, typeof(Equipment), playerRace == "dwarf" ? "LighCrossbow" : "ShortBow");
+			generator.GenerateSingle (this, typeof(Equipment), playerRace == "dwarf" ? "LightCrossbow" : "ShortBow");
 		} else if (playerClass == "mage" || playerClass == "priest") {
 			// mage or priest -> book and staff
 			generator.GenerateSingle (this, typeof(Book), null);
@@ -113,7 +113,7 @@ public class Player : Creature {
 
 
 	protected void SetPlayerClass () {
-		string[] classes = new string[] { "guard", "warrior", "ranger", "mage", "monk", "priest" }; // "normal", 
+		string[] classes = new string[] { "guard", "warrior", "ranger", "mage", "monk", "priest" };
 		playerClass = classes[Random.Range(0, classes.Length)];
 	}
 
