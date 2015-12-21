@@ -26,9 +26,6 @@ public class DungeonFeatureGenerator {
 	public virtual void GenerateAtPos (int x, int y) {
 	}
 
-	/*public virtual void GenerateAtTile<T> (T tile, int maxItems) where T : Tile {
-	}*/
-
 
 	// =====================================================
 	// Feature generation Helpers

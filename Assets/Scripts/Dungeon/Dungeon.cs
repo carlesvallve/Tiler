@@ -27,7 +27,7 @@ public class Dungeon : MonoSingleton <Dungeon> {
 		dungeonGenerator = DungeonGenerator.instance;
 
 		// set initial dungeon level
-		currentDungeonLevel = 0; // 0;
+		currentDungeonLevel = 0;
 	}
 
 
@@ -43,12 +43,10 @@ public class Dungeon : MonoSingleton <Dungeon> {
 		if (currentDungeonLevel > dungeonSeeds.Count - 1) {
 			// Set a random seed if we are entering a new dungeon level
 			seed = System.DateTime.Now.Millisecond * 1000 + System.DateTime.Now.Minute * 100;
-			print ("New seed for new level " +  currentDungeonLevel + ": " + seed);
 			dungeonSeeds.Add(seed);
 		} else {
 			// Recover a previously stored seed on current dungeon level
 			seed = dungeonSeeds[currentDungeonLevel];
-			print ("Recovered seed for existing level " +  currentDungeonLevel + ": " + seed);
 		}
 
 		// set new random seed
@@ -110,24 +108,20 @@ public class Dungeon : MonoSingleton <Dungeon> {
 		player.GenerateAtPos(stair.x, stair.y);
 
 		// Generate furniture
-		//Random.seed = seed;
 		FurnitureGenerator furniture = new FurnitureGenerator();
 		furniture.Generate();
 
 		// Generate monsters
-		//Random.seed = seed;
 		MonsterGenerator monsters = new MonsterGenerator();
 		monsters.Generate();
 		//monsters.GenerateSingle("Zombie");
 		//monsters.GenerateSingle("Centaur");
 
 		// Generate containers
-		//Random.seed = seed;
 		ContainerGenerator containers = new ContainerGenerator();
 		containers.Generate();
 
 		// Generate items
-		//Random.seed = seed;
 		ItemGenerator items = new ItemGenerator();
 		items.Generate();
 	}

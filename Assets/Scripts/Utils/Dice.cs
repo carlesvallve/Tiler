@@ -7,7 +7,7 @@ using System.Linq;
 public class Dice {
 
 	// =====================================================
-	// Rpg dice roll ( i,e: 3d20+1 or 10d4-3 or 1d6)
+	// Rpg Dice (i,e: 3d20+1 or 10d4-3 or 1d6)
 	// =====================================================
 
 	public static int Roll (string rpg) {
