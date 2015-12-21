@@ -51,6 +51,8 @@ public class Player : Creature {
 
 
 	public void InitializeStats () {
+		stats.type = "Humanoid";
+		
 		// init stats
 		stats.hpMax = 20; 
 		stats.hp = stats.hpMax;

@@ -615,6 +615,9 @@ public class Creature : Tile {
 	}
 
 	protected void Pickup (Item item) {
+		// only humanoids can pickup items
+		if (stats.type != "Humanoid") { return; }
+
 		// tell the item to be picked up
 		CreatureInventoryItem invItem = item.Pickup(this);
 

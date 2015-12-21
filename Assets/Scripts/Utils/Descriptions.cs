@@ -32,13 +32,11 @@ public class Descriptions : MonoBehaviour {
 		for (int i = 0; i < values.Count; i++) {
 			CreatureInventoryItem invItem = values[i];
 			if (invItem == null) { continue; }
-			Debug.Log(invItem.item.type);
 			if (str == "") { 
 				str += invItem.item.type == "Weapon" || invItem.item.type == "Shield" ? "(wielding " : "(wearing "; 
 			}
 			str += GetTileDescription(invItem.item) + ", ";
 		}
-
 		str = str.Length > 0 ? str.Substring(0, str.Length - 2) + ")" : "";
 
 		return str;
