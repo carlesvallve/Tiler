@@ -52,7 +52,7 @@ public class Player : Creature {
 
 	public void InitializeStats () {
 		stats.type = "Humanoid";
-		
+
 		// init stats
 		stats.hpMax = 20; 
 		stats.hp = stats.hpMax;
@@ -126,17 +126,17 @@ public class Player : Creature {
 		//print (stats.xp);
 
 		info = "LEVEL " + stats.level;
-		info += "   XP: " + stats.xp + " / " + stats.xpMax;
-		info += "   HP: " + stats.hp + " / " + stats.hpMax;
+		info += "    XP: " + stats.xp + " / " + stats.xpMax;
+		info += "    HP: " + stats.hp + " / " + stats.hpMax;
 
 		info += "  " +
-		" <color='#ff0000'>STR " + stats.str + "</color>" +  
-		" <color='#00ff00'>DEX " + stats.dex + "</color>" +  
-		" <color='#00ffff'>CON " + stats.con + "</color>" +  
-		" <color='#ffff00'>INT " + stats.intel + "</color>";
+		"  <color='#ff0000'>STR " + stats.str + "</color>" +  
+		"  <color='#00ff00'>DEX " + stats.dex + "</color>" +  
+		"  <color='#00ffff'>CON " + stats.con + "</color>" +  
+		"  <color='#ffff00'>INT " + stats.intel + "</color>";
 
-		info += "   Combat: " + stats.attack + " / " + stats.defense;
-		info += "   Gold: " + stats.gold;
+		info += "    Combat: " + stats.attack + " / " + stats.defense;
+		info += "    Gold: " + stats.gold;
 
 		Hud.instance.LogPlayerInfo(info);
 	}
