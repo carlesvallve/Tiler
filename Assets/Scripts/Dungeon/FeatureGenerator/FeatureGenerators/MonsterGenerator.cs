@@ -15,6 +15,8 @@ public class MonsterGenerator : DungeonFeatureGenerator {
 	// Monsters should be spawned by affinity groups, relative to the dungeon level 
 	
 	public void GenerateSingle (string id) {
+		Random.seed = Dungeon.seed;
+		
 		int roomId = Grid.instance.GetTile(Grid.instance.player.x, Grid.instance.player.y).roomId;
 		DungeonRoom room = dungeonGenerator.rooms[roomId];
 
@@ -30,6 +32,8 @@ public class MonsterGenerator : DungeonFeatureGenerator {
 
 
 	public override void Generate () {
+		Random.seed = Dungeon.seed;
+
 		// generate monster rarity table dictionary
 		Dictionary<string, double> rarities = GameData.GenerateMonsterRarityTable();
 

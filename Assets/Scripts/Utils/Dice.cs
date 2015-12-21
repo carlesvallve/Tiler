@@ -132,13 +132,7 @@ public class Dice {
 	// Casino Roulette, 
 	// returns a random index number from an array of weighted probabilities
 
-	// TODO: We are using System.Random here, 
-	// so it will not respect the Random.Seed that we set for the dungeon level 
-	// using UnityEngine.Random
-
 	public static int SpinRoulette (double[] n) {
-
-		//System.Random random = new System.Random();
 		double total = 0;
 		double[] c = new double[n.Length + 1];
 		
@@ -150,7 +144,7 @@ public class Dice {
 		}
 
 		// Create a random number between 0 and 1 and times by the total we calculated earlier.
-		double r = Random.value * total; //Random.Range(0, total + 1); //random.NextDouble() * total;   
+		double r = Random.value * total;
 
 		// Don't use this - it's slower than the binary search below.  
 		//int j; for (j = 0; j < c.Length; j++) if (c[j] > r) break; return j-1; 

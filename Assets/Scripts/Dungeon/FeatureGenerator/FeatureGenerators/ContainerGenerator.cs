@@ -10,6 +10,8 @@ public class ContainerGenerator : DungeonFeatureGenerator {
 	// =====================================================
 
 	public override void Generate () {
+		Random.seed = Dungeon.seed;
+		
 		for (int n = 0; n < dungeonGenerator.rooms.Count; n++) {
 
 			DungeonRoom room = dungeonGenerator.rooms[n];

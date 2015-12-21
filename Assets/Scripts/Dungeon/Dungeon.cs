@@ -16,6 +16,8 @@ public class Dungeon : MonoSingleton <Dungeon> {
 	public List<int> dungeonSeeds = new List<int>();
 	public int currentDungeonLevel;
 
+	public static int seed;
+
 
 	void Awake () {
 		sfx = AudioManager.instance;
@@ -38,14 +40,15 @@ public class Dungeon : MonoSingleton <Dungeon> {
 		currentDungeonLevel += direction;
 
 		// Generate a new random seed, or get it from previously stored
-		int seed;
 		if (currentDungeonLevel > dungeonSeeds.Count - 1) {
 			// Set a random seed if we are entering a new dungeon level
 			seed = System.DateTime.Now.Millisecond * 1000 + System.DateTime.Now.Minute * 100;
+			print ("New seed for new level " +  currentDungeonLevel + ": " + seed);
 			dungeonSeeds.Add(seed);
 		} else {
 			// Recover a previously stored seed on current dungeon level
 			seed = dungeonSeeds[currentDungeonLevel];
+			print ("Recovered seed for existing level " +  currentDungeonLevel + ": " + seed);
 		}
 
 		// set new random seed
@@ -107,20 +110,24 @@ public class Dungeon : MonoSingleton <Dungeon> {
 		player.GenerateAtPos(stair.x, stair.y);
 
 		// Generate furniture
+		//Random.seed = seed;
 		FurnitureGenerator furniture = new FurnitureGenerator();
 		furniture.Generate();
 
 		// Generate monsters
+		//Random.seed = seed;
 		MonsterGenerator monsters = new MonsterGenerator();
-		//monsters.Generate();
+		monsters.Generate();
 		//monsters.GenerateSingle("Zombie");
 		//monsters.GenerateSingle("Centaur");
 
 		// Generate containers
+		//Random.seed = seed;
 		ContainerGenerator containers = new ContainerGenerator();
 		containers.Generate();
 
 		// Generate items
+		//Random.seed = seed;
 		ItemGenerator items = new ItemGenerator();
 		items.Generate();
 	}

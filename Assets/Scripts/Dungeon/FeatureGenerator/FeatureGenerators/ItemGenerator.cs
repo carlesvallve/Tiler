@@ -13,6 +13,8 @@ public class ItemGenerator : DungeonFeatureGenerator {
 	// generate random items in dungeon level
 
 	public override void Generate () {
+		Random.seed = Dungeon.seed;
+		
 		// generate equipment rarity table dictionary
 		int minRarity = GameData.GetDefaultEquipmentMinRarity();
 		Dictionary<string, double> rarities = GameData.GenerateEquipmentRarityTable(minRarity);
