@@ -22,8 +22,6 @@ public class Equipment : Item {
 
 
 	public void InitializeStats (string id) {
-		//Debug.Log(">>> " + id); // TODO: There is a key that is not found
-
 		if (!GameData.equipments.ContainsKey(id)) {
 			Debug.LogError(id + " key not present in GameData.equipments dictionary!");
 		}

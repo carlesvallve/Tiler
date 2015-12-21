@@ -2,6 +2,7 @@
 using System.Collections;
 using UnityEngine.EventSystems;
 
+
 public class Controls : MonoBehaviour {
 
 	private Grid grid;
@@ -87,63 +88,24 @@ public class Controls : MonoBehaviour {
 
 		Creature creature = grid.GetCreature(x, y);
 		if (creature != null) {
-			Hud.instance.Log("You see " + GetTileDescription(creature));
+			Hud.instance.Log("You see " + 
+				Descriptions.GetTileDescription(creature) + " " + 
+				Descriptions.GetEquipmentDescription(creature)
+			);
 			return;
 		}
 
 		Entity entity = grid.GetEntity(x, y);
 		if (entity != null) {
-			Hud.instance.Log("You see " + GetTileDescription(entity));
+			Hud.instance.Log("You see " + Descriptions.GetTileDescription(entity));
 			return;
 		}
 
 		Tile tile = grid.GetTile(x, y);
 		if (tile != null) {
-			Hud.instance.Log("You see " + GetTileDescription(tile));
+			Hud.instance.Log("You see " + Descriptions.GetTileDescription(tile));
 			return;
 		}
 	}
 
-
-	private string GetTileDescription (Tile tile) {
-		string[] arr = tile.asset.name.Split('-');
-		string desc = arr[0];
-
-		if (arr.Length > 1) {
-			int n = 0;
-			if (arr[1].Length > 1 && !System.Int32.TryParse(arr[1], out n)) { 
-				desc = arr[1] + " " + arr[0]; 
-			}
-		}
-
-		if (IsPlural(desc)) {
-			desc = "some " + desc;
-		} else {
-			desc = StartsWithVowel(desc) ? "an " + desc : "a " + desc;
-		}
-
-		return desc;
-	}
-
-
-	private bool IsPlural (string desc) {
-		string[] plurals = new string[] { "gold", "bread", "meat", "water" };
-		foreach (string plural in plurals) {
-			if (desc == plural) { return true; }
-		}
-
-		string last = desc.Substring(desc.Length -1, 1);
-		if (last == "s") { return true; }
-
-		return false;
-	}
-
-	private bool StartsWithVowel (string desc) {
-		string first = desc.Substring(0, 1);
-		if (first == "a" || first == "e" || first == "i" || first == "o" || first == "u") {
-			return true;
-		}
-
-		return false;
-	}
 }

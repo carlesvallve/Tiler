@@ -126,6 +126,13 @@ public class Player : Creature {
 		info = "LEVEL " + stats.level;
 		info += "   XP: " + stats.xp + " / " + stats.xpMax;
 		info += "   HP: " + stats.hp + " / " + stats.hpMax;
+
+		info += "  " +
+		" <color='#ff0000'>STR " + stats.str + "</color>" +  
+		" <color='#00ff00'>DEX " + stats.dex + "</color>" +  
+		" <color='#00ffff'>CON " + stats.con + "</color>" +  
+		" <color='#ffff00'>INT " + stats.intel + "</color>";
+
 		info += "   Combat: " + stats.attack + " / " + stats.defense;
 		info += "   Gold: " + stats.gold;
 
@@ -219,26 +226,29 @@ public class Player : Creature {
 		StopMoving();
 		Speak("!", Color.white); //, true);
 
-		string str = "";
+		/*string str = "";
 		string punctuation = "";
 		for (int i = 0; i < newVisibleMonsters.Count; i++) {
 			if (newVisibleMonsters.Count > 1) {
 				if (i > 0 && i < newVisibleMonsters.Count - 1) { punctuation = ", "; }
 				if (i == newVisibleMonsters.Count - 1) { punctuation = " and "; }
 			}
-
-			string desc = newVisibleMonsters[i].GetType().ToString(); // GetTileDescription();
-			str += punctuation + Utils.GetStringPrepositions(desc) + " " + desc;
+			string desc = newVisibleMonsters[i].GetType().ToString(); 
+			str += punctuation + Utils.GetStringPrepositions(desc) + " " + desc; 
 		}
-
 		Hud.instance.Log("You see " + str);
-		//Utils.DebugList(newVisibleMonsters);
+		Utils.DebugList(newVisibleMonsters);*/
 
 		// pick a random monster from the list and move camera to center pint between him and us
 		Creature creature = newVisibleMonsters[Random.Range(0, newVisibleMonsters.Count)];
 		Vector2 point = transform.localPosition + 
 		(creature.transform.localPosition - transform.localPosition) / 2;
 		MoveCameraTo((int)point.x, (int)point.y);
+
+		Hud.instance.Log("You see " + 
+			Descriptions.GetTileDescription(creature) + " " + 
+			Descriptions.GetEquipmentDescription(creature)
+		);
 	}
 	
 
@@ -306,8 +316,8 @@ public class Player : Creature {
 			for (int x = 0; x < grid.width; x++) {
 				// render tiles
 				Tile tile = grid.GetTile(x, y);
+
 				if (tile != null) {
-					
 					// render tiles (and record fov info)
 					float distance = Mathf.Round(Vector2.Distance(new Vector2(px, py), new Vector2(x, y)) * 10) / 10;
 					tile.SetFovInfo(Game.instance.turn, distance);
