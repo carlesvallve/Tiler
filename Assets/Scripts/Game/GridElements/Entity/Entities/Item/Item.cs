@@ -4,6 +4,8 @@ using System.Collections;
 
 public class Item : Entity {
 
+	public Creature creature;
+
 	public string id;
 	public string type;
 	public string subtype;
@@ -50,7 +52,11 @@ public class Item : Entity {
 		transform.localPosition = Vector3.zero;
 		gameObject.SetActive(false);
 
+		// deassign in grid
 		grid.SetEntity(x, y, null);
+
+		// assign to creature
+		this.creature = creature;
 
 		return invItem;
 	}
@@ -62,6 +68,9 @@ public class Item : Entity {
 		transform.SetParent(grid.container.Find("Entities"), false);
 		transform.localPosition = new Vector3(tile.x, tile.y, 0);
 		gameObject.SetActive(true);
+
+		// deassing to creature
+		this.creature = null;
 
 		// Animate items interpolating them form chest position to x,y
 		StartCoroutine(DropAnimation(x, y, 0.1f));

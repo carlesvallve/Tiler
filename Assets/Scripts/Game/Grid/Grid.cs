@@ -54,7 +54,17 @@ public class Grid : MonoSingleton <Grid> {
 		Tile[] tilesToDestroy = container.GetComponentsInChildren<Tile>();
 		foreach (Tile tile in tilesToDestroy) {
 			// player must persist through all dungeon levels
-			if (tile is Player) { continue; } 
+			if (tile is Player) { 
+				continue; 
+			} 
+
+			// player items must persist too
+			if ((tile is Item)) {
+				Item item = (Item)tile;
+				if (item.creature != null && (item.creature is Player)) {
+					continue;
+				}
+			}
 
 			tile.StopAllCoroutines();
 			Destroy(tile.gameObject);
