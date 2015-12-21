@@ -138,7 +138,7 @@ public class Dice {
 
 	public static int SpinRoulette (double[] n) {
 
-		System.Random random = new System.Random();
+		//System.Random random = new System.Random();
 		double total = 0;
 		double[] c = new double[n.Length + 1];
 		
@@ -150,7 +150,7 @@ public class Dice {
 		}
 
 		// Create a random number between 0 and 1 and times by the total we calculated earlier.
-		double r = random.NextDouble() * total;   
+		double r = Random.value * total; //Random.Range(0, total + 1); //random.NextDouble() * total;   
 
 		// Don't use this - it's slower than the binary search below.  
 		//int j; for (j = 0; j < c.Length; j++) if (c[j] > r) break; return j-1; 

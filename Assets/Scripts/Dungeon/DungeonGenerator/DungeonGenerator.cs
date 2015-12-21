@@ -88,7 +88,6 @@ public class DungeonGenerator : MonoSingleton <DungeonGenerator> {
 	public void GenerateDungeon(int seed) {
 		// set and store random seed
 		this.seed = seed;
-		Random.seed = seed;
 
 		// set random dungeon size
 		// TODO: For some reason setting astar walkability fails with random sizes
