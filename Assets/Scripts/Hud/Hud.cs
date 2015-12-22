@@ -88,8 +88,13 @@ public class Hud : MonoSingleton <Hud> {
 	public void DisplayInventory (bool value) {
 		// display popup, and escape if it was closed
 		popupInventory.gameObject.SetActive(value);
-		if (!value) { 
-			sfx.Play("Audio/Sfx/Item/book", 0.15f, Random.Range(0.8f, 1.2f));
+		
+		if (!value) {
+			if (inventoryInfo.gameObject.activeSelf) {
+				CloseItemInfo();
+			}  else {
+				sfx.Play("Audio/Sfx/Item/book", 0.15f, Random.Range(0.8f, 1.2f));
+			}
 			return; 
 		}
 
