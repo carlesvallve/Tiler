@@ -143,30 +143,19 @@ public class Hud : MonoSingleton <Hud> {
 		Text text = obj.transform.Find("Text").GetComponent<Text>();
 		text.text = invItem.ammount > 1 ? invItem.ammount.ToString() : "";
 
+		// slot interaction is triggered by Slot class attached to obj
+
 		// set button
-		Button button = obj.GetComponent<Button>();
+		/*Button button = obj.GetComponent<Button>();
  		button.onClick.AddListener(() => { 
  			ApplyItem(obj);
- 		});
-
-		// we can create a script instead, and attach it to the button prefab to detect right clicks
-		/*public class ClickableObject : MonoBehaviour, IPointerClickHandler {
-			button.OnPointerClick.AddListener(() => { 
-				if (eventData.button == PointerEventData.InputButton.Left) {
-					Debug.Log("Left click");
-				} else if (eventData.button == PointerEventData.InputButton.Middle) {
-					Debug.Log("Middle click");
-				} else if (eventData.button == PointerEventData.InputButton.Right) {
-					Debug.Log("Right click");
-				}
-			});
-		}*/
+ 		});*/
 
 		return obj;
 	}
 
 
-	private void ApplyItem (GameObject obj) {
+	public void ApplyItem (GameObject obj) {
 		string id = obj.name;
 		CreatureInventoryItem invItem = Grid.instance.player.inventory.GetInventoryItemById(id);
 
@@ -190,6 +179,44 @@ public class Hud : MonoSingleton <Hud> {
 			DisplayInventory(true);
 			return;
 		}
+	}
+
+
+	public void OpenItemInfo (GameObject obj) {
+		string id = obj.name;
+		CreatureInventoryItem invItem = Grid.instance.player.inventory.GetInventoryItemById(id);
+
+		Item item = invItem.item;
+
+		inventoryInfo.Find("Container/Image/Image").GetComponent<Image>().sprite = item.asset;
+		inventoryInfo.Find("Container/Name").GetComponent<Text>().text = item.id;
+		Text info = inventoryInfo.Find("Container/Stats").GetComponent<Text>();
+
+		info.text = 
+		item.type + " | " + item.subtype + " | " +
+		"rarity: " + item.rarity + "\n\n";
+
+		if (item is Equipment) {
+			Equipment equipment = (Equipment)item;
+			info.text +=
+			"attack: " + equipment.attack + "\n" +
+			"defense: " + equipment.defense + "\n" +
+			"damage: " + equipment.damage + "\n" +
+			"armour: " + equipment.armour + "\n" +
+			"range: " + equipment.range + "\n" +
+			"hands: " + equipment.hands + "\n" +
+			"weight: " + equipment.weight + "\n";
+		}
+
+
+		inventoryItems.gameObject.SetActive(false);
+		inventoryInfo.gameObject.SetActive(true);
+	}
+
+
+	public void CloseItemInfo () {
+		inventoryInfo.gameObject.SetActive(false);
+		inventoryItems.gameObject.SetActive(true);
 	}
 
 

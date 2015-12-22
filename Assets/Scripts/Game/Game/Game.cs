@@ -9,15 +9,31 @@ using System.Collections.Generic;
 
 - inventory:
 	- 2 handed items should be handled, appear in both inventory slots, etc -> OK
-	- right clicking on inventory item should display item info
 	- we should be able to pre-equip creatures with default equipment -> OK
+
+	- right clicking on inventory item should display item info
 
 - ai:
 	- monsters should turn afraid when hp bar is red -> OK
 	- afraid monsters should turn to fight if they have no other option -> OK
-	- monsters should use collected potions and food when hp is low
 	- monsters should equip collected equipment if is better than current -> OK
+
+	- monsters should use collected potions and food when hp is low
 	- intelligent monsters should have a chance to break containers and open chests
+	
+	- monsters should elaborate more when evaluating objectives:
+		- target player if agressivity roll is passed
+			- agresivity will raise a lot if monster is attacked by the player
+			- agressivity will decrease a lot if monster is severy injured
+		- flee if agressivity is less than 0
+			- check for potions or food around in paths not adjacent to the player
+			- otherwise, flee
+		- agressivity should be compared to attraction for some item
+			- injured monsters are attracted to potions and food
+			- animals are atracted by food
+			- physical humanoids are attracted to better armour and weapons
+			- magical humanoids are attracted to books
+
 */
 
 
