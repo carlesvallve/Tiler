@@ -95,7 +95,7 @@ public class Hud : MonoSingleton <Hud> {
 			}  else {
 				sfx.Play("Audio/Sfx/Item/book", 0.15f, Random.Range(0.8f, 1.2f));
 			}
-			return; 
+			return;
 		}
 
 		// destroy all inventory slots
