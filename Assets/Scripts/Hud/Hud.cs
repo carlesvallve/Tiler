@@ -211,12 +211,14 @@ public class Hud : MonoSingleton <Hud> {
 
 		inventoryItems.gameObject.SetActive(false);
 		inventoryInfo.gameObject.SetActive(true);
+		sfx.Play("Audio/Sfx/Item/book", 0.15f, Random.Range(0.8f, 1.2f));
 	}
 
 
 	public void CloseItemInfo () {
 		inventoryInfo.gameObject.SetActive(false);
 		inventoryItems.gameObject.SetActive(true);
+		sfx.Play("Audio/Sfx/Item/book", 0.15f, Random.Range(0.8f, 1.2f));
 	}
 
 

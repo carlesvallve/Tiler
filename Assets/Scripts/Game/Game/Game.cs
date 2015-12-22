@@ -10,8 +10,7 @@ using System.Collections.Generic;
 - inventory:
 	- 2 handed items should be handled, appear in both inventory slots, etc -> OK
 	- we should be able to pre-equip creatures with default equipment -> OK
-
-	- right clicking on inventory item should display item info
+	- right clicking on inventory item should display item info -> OK
 
 - ai:
 	- monsters should turn afraid when hp bar is red -> OK
