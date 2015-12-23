@@ -283,7 +283,7 @@ public class Tile : MonoBehaviour {
 		// spawn first item always on creature's tile (which will be clear of entities for sure)
 		if (useCenterTile) {
 			Tile tile = grid.GetTile(x, y);
-			if (tile != null) {
+			if (tile != null && !tile.IsOccupied()) {
 				item = allItems[0];
 				item.Drop(this, this.x, this.y);
 				allItems.RemoveAt(0);
