@@ -72,6 +72,9 @@ public class Item : Entity {
 		// deassing to creature
 		this.creature = null;
 
+		// assign to grid
+		grid.SetEntity(x, y, this);
+
 		// Animate items interpolating them form chest position to x,y
 		StartCoroutine(DropAnimation(x, y, 0.1f));
 

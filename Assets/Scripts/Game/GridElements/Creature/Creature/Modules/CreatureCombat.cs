@@ -90,12 +90,14 @@ public class CreatureCombat : CreatureModule {
 			// create blood
 			grid.CreateBlood(defender.transform.position, damage, Color.red);
 			
+			defender.Speak("-" + damage, Color.red, 0);
+
 			// set isDead to true
 			if (defender.stats.hp == 0) {
-				defender.Speak("-" + damage, Color.red, 0.25f);
+				//defender.Speak("-" + damage, Color.red, 0.25f);
 				return true;
 			} else {
-				defender.Speak("-" + damage, Color.red, 0);
+				//defender.Speak("-" + damage, Color.red, 0);
 			}
 		}
 
@@ -358,12 +360,13 @@ public class CreatureCombat : CreatureModule {
 		
 		// update attacker xp
 		if (!(me is Player)) {
-			me.Speak("XP +" + me.stats.xpValue, Color.yellow, 0);
+			me.Speak("XP +" + me.stats.xpValue, Color.yellow, 0.25f);
 			attacker.UpdateXp(me.stats.xpValue);
 		}
 
 		// unset creature in grid
 		grid.SetCreature(me.x, me.y, null);
+		yield return null;
 
 		// get a list of all items carried by the creature
 		List<Item> allItems = new List<Item>();
@@ -380,6 +383,7 @@ public class CreatureCombat : CreatureModule {
 		}
 
 		// destroy creature
+		yield return null;
 		me.StopAllCoroutines();
 		me.Destroy(1f);
 		me.gameObject.SetActive(false);

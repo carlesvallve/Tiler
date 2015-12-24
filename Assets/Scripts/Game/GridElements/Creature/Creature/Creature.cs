@@ -87,7 +87,9 @@ public class Creature : Tile {
 	// Experience
 
 	public virtual void UpdateXp (int ammount) {
-		stats.xp += ammount; 
+		stats.xp += ammount * 2; 
+
+		//Speak("XP +" + ammount, Color.yellow, 0, true);
 
 		// level up
 		if (stats.xp >= stats.xpMax) { 
@@ -102,14 +104,14 @@ public class Creature : Tile {
 		stats.xp = stats.xp - stats.xpMax; 
 		stats.xpMax = 100 * stats.level;
 		stats.xpValue = 20 * stats.level;
-		Speak("Level-Up", Color.green, 0.25f);
+		Speak("LEVEL-UP", Color.green, 0.25f, true);
 
 		// increase hp
 		int hpIncrease = Dice.Roll("1d6");
 		stats.hpMax = stats.hpMax + hpIncrease;
-		if (stats.hp > stats.hpMax) { stats.hp = stats.hpMax; }
+		stats.hp = stats.hpMax;
 		bar.UpdateHp();
-		Speak ("HP +" + hpIncrease, Color.cyan, 0.5f);
+		Speak ("HP +" + hpIncrease, Color.cyan, 0.75f, true);
 
 		// increase random stat
 		UpdateRandomStat(1);
@@ -130,11 +132,11 @@ public class Creature : Tile {
 			case "DEX": ammount *= 1; stats.dex += ammount; break;
 			case "CON": ammount *= 1; stats.con += ammount; break;
 			case "INT": ammount *= 1; stats.intel += ammount; break;
-			case "ATK": ammount *= Dice.Roll("1d6"); stats.attack += ammount; break;
-			case "DEF": ammount *= Dice.Roll("1d6"); stats.defense += ammount; break;
+			case "ATK": ammount *= Dice.Roll("2d4"); stats.attack += ammount; break;
+			case "DEF": ammount *= Dice.Roll("2d4"); stats.defense += ammount; break;
 		}
 
-		Speak (statName + " +" + ammount, Color.cyan, 0.75f);
+		Speak (statName + " +" + ammount, Color.cyan, 1.25f, true);
 		
 	}
 
