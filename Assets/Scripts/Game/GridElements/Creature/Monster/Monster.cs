@@ -196,6 +196,7 @@ public class Monster : Creature {
 		// move again if we have action points left
 		MoveAgain();
 	}
+	
 
 	protected void MoveAgain () {
 		// tell game to wait until we finished our action, then think again
