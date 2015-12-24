@@ -19,7 +19,7 @@ public class Tile : MonoBehaviour {
 	public Sprite asset { get; set; }
 	public Color color;
 
-	protected int zIndex = 0;
+	public int zIndex = 0;
 
 	protected Transform container;
 	protected SpriteRenderer shadow;
@@ -121,7 +121,7 @@ public class Tile : MonoBehaviour {
 	}
 
 
-	protected void SetImages (float scale, Vector3 pos, float outlineDistance = 0f) {
+	public void SetImages (float scale, Vector3 pos, float outlineDistance = 0f) {
 		outline.transform.localPosition = pos + new Vector3(outlineDistance, -outlineDistance, 0);
 		outline.transform.localScale = new Vector3(scale, scale, 1);
 		outline.gameObject.SetActive(outlineDistance != 0);
@@ -134,10 +134,10 @@ public class Tile : MonoBehaviour {
 	}
 
 
-	protected virtual void SetSortingOrder () {
+	public virtual void SetSortingOrder () {
 		//this.zIndex = zIndex;
 
-		zIndex += grid.height - this.y;
+		//zIndex += grid.height - this.y;
 		outline.sortingOrder = zIndex;
 		img.sortingOrder = zIndex + 1;
 		shadow.sortingOrder = zIndex + 2;

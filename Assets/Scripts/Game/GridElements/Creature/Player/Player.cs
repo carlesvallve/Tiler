@@ -38,7 +38,8 @@ public class Player : Creature {
 		);
 
 		// set asset
-		string path = "Tilesets/Monster/Humanoid/Hero/" + playerRace + "-" + playerClass;
+		//string path = "Tilesets/Monster/Humanoid/Hero/" + playerRace + "-" + playerClass;
+		string path = "Tilesets/Basic/" + playerRace;
 		asset = Resources.Load<Sprite>(path);
 		if (asset == null) { Debug.LogError(path); }
 
@@ -47,6 +48,15 @@ public class Player : Creature {
 		walkable = false;
 
 		InitializeStats();
+
+		// set equipment tiles
+		print (playerRace);
+		GenerateEquipmentTile("shoes", scale, 0);
+		GenerateEquipmentTile("pants", scale, 1);
+		GenerateEquipmentTile("armour", scale, 2);
+		GenerateEquipmentTile("gloves", scale, 3);
+		GenerateEquipmentTile("hair", scale, 4);
+		GenerateEquipmentTile("beard", scale, 5);
 	}
 
 
@@ -96,6 +106,79 @@ public class Player : Creature {
 		foreach(CreatureInventoryItem invItem in inventory.items) {
 			ApplyItem(invItem);
 		}
+	}
+
+
+	private Tile GenerateEquipmentTile (string id, float scale, int zIndexPlus) {
+		Transform parent = transform; //container.Find("Sprite");
+
+		string type = GetEquipmentAssetType(id);
+		print (id + " -> " + type);
+
+		if (type == "none") {
+			return null;
+		}
+
+		string path = "Tilesets/Basic/" + playerRace + "-" + type;
+		Sprite asset = Resources.Load<Sprite>(path);
+		if (asset == null) {
+			Debug.LogError(path + " not found");
+		}
+
+		GameObject obj = (GameObject)Instantiate(grid.tilePrefab);
+		obj.transform.SetParent(parent, false);
+		//obj.transform.localScale = new Vector3(1, 1, 1);
+		obj.name = id;
+
+		Tile tile = obj.AddComponent<Tile>();
+		tile.Init(grid, x, y, scale, asset, null);
+
+		obj.transform.localPosition = Vector3.zero;
+
+		tile.zIndex = zIndex + zIndexPlus + 10;
+		tile.SetSortingOrder();
+
+		SpriteRenderer img = tile.transform.Find("Sprites/Sprite").GetComponent<SpriteRenderer>();
+		img.color = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0, 1));
+		img.transform.localPosition = new Vector3(-0.035f, 0.135f, 0);
+
+		return tile;
+	}
+
+
+	private string GetEquipmentAssetType (string id) {
+		string[] types;
+
+		string type = id;
+
+		switch (id) {
+			case "armour":
+				types = new string[] { "none", "vest", "shirt", "tunic", "skin" };
+				type = types[Random.Range(0, types.Length)];
+				break;
+			case "shoes":
+				types = new string[] { "none", "shoes", "boots" };
+				type = types[Random.Range(0, types.Length)];
+				break;
+			case "pants":
+				types = new string[] { "none", "pants" };
+				type = types[Random.Range(0, types.Length)];
+				break;
+			case "hair":
+				types = new string[] { "none", "hair" };
+				type = types[Random.Range(0, types.Length)];
+				break;
+			case "beard":
+				types = new string[] { "none", "hair" };
+				type = types[Random.Range(0, types.Length)];
+				break;
+			case "gloves":
+				types = new string[] { "none", "gloves" };
+				type = types[Random.Range(0, types.Length)];
+				break;
+		}
+
+		return type;
 	}
 
 
