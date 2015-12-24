@@ -628,6 +628,9 @@ public class Creature : Tile {
 	}
 
 
+	protected virtual void RenderEquipment () {}
+
+
 	protected void ApplyItem (CreatureInventoryItem invItem) {
 		if (invItem.item.consumable) {
 			// use consumable if we are low on hp
@@ -651,6 +654,8 @@ public class Creature : Tile {
 	public void UpdateEquipmentStats () {
 		stats.weapon = inventory.equipment["Weapon"] != null ? (Equipment)inventory.equipment["Weapon"].item : null;
 		stats.shield = inventory.equipment["Shield"] != null ? (Equipment)inventory.equipment["Shield"].item : null;
+
+		RenderEquipment();
 	}
 
 

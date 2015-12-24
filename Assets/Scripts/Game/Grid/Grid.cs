@@ -58,13 +58,20 @@ public class Grid : MonoSingleton <Grid> {
 				continue; 
 			} 
 
+			if (tile.transform.parent != null) {
+				Player p = tile.transform.parent.GetComponent<Player>();
+				if (p != null) {
+					continue;
+				}
+			}
+
 			// player items must persist too
-			if ((tile is Item)) {
+			/*if ((tile is Item)) {
 				Item item = (Item)tile;
 				if (item.creature != null && (item.creature is Player)) {
 					continue;
 				}
-			}
+			}*/
 
 			tile.StopAllCoroutines();
 			Destroy(tile.gameObject);

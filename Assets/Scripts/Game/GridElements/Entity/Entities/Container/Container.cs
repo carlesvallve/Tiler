@@ -124,7 +124,7 @@ public class Container : Entity {
 	public override System.Type GetRandomItemType () {
 		// Pick a weighted random item type
 		return Dice.GetRandomTypeFromDict(new Dictionary<System.Type, double>() {
-			{ typeof(Equipment), 	80 },
+			{ typeof(Equipment), 	1280 },
 			{ typeof(Treasure), 	20 },
 			{ typeof(Food), 		10 },
 			{ typeof(Potion), 		5 },

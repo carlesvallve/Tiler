@@ -47,16 +47,17 @@ public class Player : Creature {
 		base.Init(grid, x, y, scale, asset);
 		walkable = false;
 
-		InitializeStats();
+		
 
 		// set equipment tiles
-		print (playerRace);
-		GenerateEquipmentTile("shoes", scale, 0);
-		GenerateEquipmentTile("pants", scale, 1);
-		GenerateEquipmentTile("armour", scale, 2);
-		GenerateEquipmentTile("gloves", scale, 3);
-		GenerateEquipmentTile("hair", scale, 4);
-		GenerateEquipmentTile("beard", scale, 5);
+		InitializeEquipment (scale);
+
+		//GenerateEquipmentTile("Hat", "none", scale, -22);
+		//GenerateEquipmentTile("Weapon", "none", scale, 6);
+		//GenerateEquipmentTile("Shield", "none", scale, 7);
+
+		// initialize stats and equipment
+		InitializeStats();
 	}
 
 
@@ -74,6 +75,11 @@ public class Player : Creature {
 		// set initial items
 		SetInitialItems();
 	}
+
+
+	// =====================================================
+	// Equipment
+	// =====================================================
 
 
 	public override void SetInitialItems (int maxItems = 0, int minRarity = 100) {
@@ -109,25 +115,45 @@ public class Player : Creature {
 	}
 
 
-	private Tile GenerateEquipmentTile (string id, float scale, int zIndexPlus) {
-		Transform parent = transform; //container.Find("Sprite");
+	private void InitializeEquipment (float scale) {
+		GenerateEquipmentTile("Boots", "none", scale, 0, GetRandomColor());
+		GenerateEquipmentTile("Pants", "pants", scale, 1, GetRandomColor());
+		GenerateEquipmentTile("Armour", "none", scale, 2, GetRandomColor());
+		GenerateEquipmentTile("Gloves", "none", scale, 3, GetRandomColor());
 
-		string type = GetEquipmentAssetType(id);
-		print (id + " -> " + type);
+		// hair
+		Color[] colors = new Color[] {
+			new Color(1, 1, 0), new Color(0, 0, 0), new Color(1, 0.5f, 0.5f), new Color(1,1,1), new Color (0.5f,0.5f,0.5f)
+		};
+		Color color = colors[Random.Range(0, colors.Length)];
+		GenerateEquipmentTile("Hair", "hair", scale, 4, color);
 
-		if (type == "none") {
-			return null;
+		// beard
+		string[] arr =new string[] { "none", "beard" };
+		string beard = playerRace == "elf" ? "none" : arr[Random.Range(0, arr.Length)];
+		GenerateEquipmentTile("Beard", beard, scale, 5, color);
+	}
+
+
+	private Color GetRandomColor () {
+		return new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0, 1));
+	}
+
+
+	private Tile GenerateEquipmentTile (string id, string type, float scale, int zIndexPlus, Color color) {
+		Transform parent = transform;
+
+		Sprite asset = null;
+		if (type != "none") {
+			string path = "Tilesets/Basic/" + playerRace + "-" + type;
+			asset = Resources.Load<Sprite>(path);
+			if (asset == null) {
+				Debug.LogError(path + " not found");
+			}
 		}
-
-		string path = "Tilesets/Basic/" + playerRace + "-" + type;
-		Sprite asset = Resources.Load<Sprite>(path);
-		if (asset == null) {
-			Debug.LogError(path + " not found");
-		}
-
+		
 		GameObject obj = (GameObject)Instantiate(grid.tilePrefab);
 		obj.transform.SetParent(parent, false);
-		//obj.transform.localScale = new Vector3(1, 1, 1);
 		obj.name = id;
 
 		Tile tile = obj.AddComponent<Tile>();
@@ -135,50 +161,93 @@ public class Player : Creature {
 
 		obj.transform.localPosition = Vector3.zero;
 
-		tile.zIndex = zIndex + zIndexPlus + 10;
+		tile.zIndex = zIndex + zIndexPlus; // + 10;
 		tile.SetSortingOrder();
 
 		SpriteRenderer img = tile.transform.Find("Sprites/Sprite").GetComponent<SpriteRenderer>();
-		img.color = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0, 1));
+		img.color = color;
 		img.transform.localPosition = new Vector3(-0.035f, 0.135f, 0);
 
 		return tile;
 	}
 
 
-	private string GetEquipmentAssetType (string id) {
-		string[] types;
+	protected override void RenderEquipment () {
+		print ("Rendering equipment...");
+		List<string> keys = new List<string>(inventory.equipment.Keys);
+		List<CreatureInventoryItem> values = new List<CreatureInventoryItem>(inventory.equipment.Values);
 
-		string type = id;
+		for (int i = 0; i < keys.Count; i++) {
+			string key = keys[i];
+			CreatureInventoryItem invItem = values[i];
 
-		switch (id) {
-			case "armour":
-				types = new string[] { "none", "vest", "shirt", "tunic", "skin" };
-				type = types[Random.Range(0, types.Length)];
-				break;
-			case "shoes":
-				types = new string[] { "none", "shoes", "boots" };
-				type = types[Random.Range(0, types.Length)];
-				break;
-			case "pants":
-				types = new string[] { "none", "pants" };
-				type = types[Random.Range(0, types.Length)];
-				break;
-			case "hair":
-				types = new string[] { "none", "hair" };
-				type = types[Random.Range(0, types.Length)];
-				break;
-			case "beard":
-				types = new string[] { "none", "hair" };
-				type = types[Random.Range(0, types.Length)];
-				break;
-			case "gloves":
-				types = new string[] { "none", "gloves" };
-				type = types[Random.Range(0, types.Length)];
-				break;
+
+			Transform tr = transform.Find(key);
+			if (tr == null) { continue; }
+			Tile tile = tr.GetComponent<Tile>();
+			
+			SpriteRenderer img = tile.img;
+
+			if (invItem == null) { 
+				img.sprite = null;
+				img.color = Color.white;
+				continue; 
+			}
+
+			Equipment item = (Equipment)invItem.item;
+
+			string id = key;
+			string type = item.subtype;
+
+			if (id == "Weapon" || id == "Shield" || id == "Hat") {
+				item.gameObject.SetActive(true);
+				item.zIndex = zIndex + 20;
+				
+				
+				if (id == "Hat") { 
+					item.transform.localPosition = new Vector3(0.01f, 0.41f, 0); 
+					item.transform.localScale = new Vector3(0.65f, 0.65f, 1);
+					item.transform.Find("Sprites/Outline").gameObject.SetActive(false);
+					if (playerRace == "hobbit") { item.transform.localPosition = new Vector3(0.01f, 0.325f, 0); }
+					//int z = (item.id == "Cap") ? -20 : 20;
+					//item.zIndex = zIndex + z;
+				}
+
+				if (id == "Weapon") {
+					item.transform.localPosition = new Vector3(-0.5f,  0.25f, 0); 
+					item.transform.localScale = new Vector3(-0.8f, 0.8f, 1);
+
+					if (item.range > 1) {
+						item.transform.localScale = new Vector3(0.8f, 0.8f, 1);
+					}
+				}
+				if (id == "Shield") { 
+					item.transform.localPosition = new Vector3(0.25f,  0.05f, 0); 
+					item.transform.localScale = new Vector3(0.8f, 0.8f, 1);
+				}
+
+				if (playerRace == "hobbit") {
+					item.transform.localPosition = new Vector3(
+						item.transform.localPosition.x * 0.8f, item.transform.localPosition.y * 0.8f, 0
+					);
+				}
+
+				item.SetSortingOrder();
+
+				//item.img.color = Color.white;
+
+				continue;
+			}
+
+			string path = "Tilesets/Basic/" + playerRace + "-" + type;
+			Sprite asset = Resources.Load<Sprite>(path);
+			if (asset == null) {
+				Debug.LogError(path + " not found");
+			}
+
+			img.sprite = asset;
+			img.color = item.color;
 		}
-
-		return type;
 	}
 
 

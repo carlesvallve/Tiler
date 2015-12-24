@@ -12,10 +12,16 @@ public class Equipment : Item {
 	public int hands;
 	public int weight;
 
+	public string tileType;
+
+
 
 	public override void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null, string id = null) {
 		base.Init(grid, x, y, scale, asset);
 		SetImages(scale, Vector3.zero, 0.04f);
+
+		this.color = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f));
+		//this.img.color = color;
 
 		InitializeStats(id);
 	}
@@ -32,7 +38,7 @@ public class Equipment : Item {
 		this.id = data.id;
 		this.type = data.type;
 		this.subtype = data.subtype;
-		this.rarity = data.rarity;
+		this.rarity = 100; //data.rarity;
 
 		this.attack = data.attack;
 		this.defense = data.defense;
@@ -55,6 +61,8 @@ public class Equipment : Item {
 		this.walkable = true;
 		this.stackable = false;
 		this.equipmentSlot = this.type;
+
+		this.name = this.type;
 	}
 
 

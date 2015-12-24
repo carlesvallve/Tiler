@@ -127,11 +127,12 @@ public class GameData {
 		Dictionary<string, double> rarities = new Dictionary<string, double>();
 		
 		foreach (KeyValuePair<string, EquipmentData> entry in GameData.equipments) {
-			int rarity = entry.Value.rarity;
+			/*int rarity = entry.Value.rarity;
 			if (rarity < minRarity) {
 				rarity = 0;
 			}
-			rarities.Add(entry.Key, rarity);
+			rarities.Add(entry.Key, rarity);*/
+			rarities.Add(entry.Key, entry.Value.armour > 0 ? 100 : 50);
 		}
 
 		return rarities;

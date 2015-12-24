@@ -94,10 +94,20 @@ public class CreatureInventory  {
 		// unequipped equipped item
 		if (equipment[item.equipmentSlot] != null) {
 			bool wasEquipped = invItem.equipped;
-			equipment[item.equipmentSlot].equipped = false;
-			equipment[item.equipmentSlot] = null;
 
-			if (wasEquipped) { 
+			UnequipItem(equipment[item.equipmentSlot]);
+
+			/*Item itm = equipment[item.equipmentSlot].item;
+
+			Debug.Log ("Unequipping item >>> " + itm);
+			itm.transform.localScale = new Vector3(1, 1, 1);
+			itm.transform.localPosition = Vector3.zero;
+			itm.gameObject.SetActive(false);
+
+			equipment[item.equipmentSlot].equipped = false;
+			equipment[item.equipmentSlot] = null;*/
+
+			if (wasEquipped) {
 				creature.UpdateEquipmentStats();
 				return; 
 			}
@@ -115,15 +125,17 @@ public class CreatureInventory  {
 		// equipping a 2 hand weapon and removes equipped shield
 		if (eq.hands == 2) {
 			if (equipment["Shield"] != null) {
-				equipment["Shield"].equipped = false;
-				equipment["Shield"] = null;
+				UnequipItem(equipment["Shield"]);
+				//equipment["Shield"].equipped = false;
+				//equipment["Shield"] = null;
 			}
 			
 		// equipping a shield removes equipped 2 hand weapon
 		} else if (eq.equipmentSlot == "Shield") {
 			if (equipment["Weapon"] != null && ((Equipment)equipment["Weapon"].item).hands == 2) {
-				equipment["Weapon"].equipped = false;
-				equipment["Weapon"] = null;
+				UnequipItem(equipment["Weapon"]);
+				//equipment["Weapon"].equipped = false;
+				//equipment["Weapon"] = null;
 			}
 		}
 
@@ -133,7 +145,18 @@ public class CreatureInventory  {
 
 
 	public void UnequipItem (CreatureInventoryItem invItem) {
+		Item item = invItem.item;
+		if (item.equipmentSlot == null) { return; }
 
+		Item itm = equipment[item.equipmentSlot].item;
+
+		Debug.Log ("Unequipping item >>> " + itm);
+		itm.transform.localScale = new Vector3(1, 1, 1);
+		itm.transform.localPosition = Vector3.zero;
+		itm.gameObject.SetActive(false);
+
+		equipment[item.equipmentSlot].equipped = false;
+		equipment[item.equipmentSlot] = null;
 	}
 
 
