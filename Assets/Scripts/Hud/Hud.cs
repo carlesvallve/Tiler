@@ -76,7 +76,7 @@ public class Hud : MonoSingleton <Hud> {
 		}
 
 		if (Input.GetKeyDown(KeyCode.Q)) {
-			Navigator.instance.Open("Home");
+			Navigator.instance.Open("Game");
 		}
 
 	}

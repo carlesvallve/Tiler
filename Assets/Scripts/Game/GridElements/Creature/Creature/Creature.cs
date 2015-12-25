@@ -625,6 +625,8 @@ public class Creature : Tile {
 
 		// auto-use or auto-equip item if conditions are favourable
 		ApplyItem(invItem);
+
+		RenderEquipment();
 	}
 
 
@@ -655,7 +657,7 @@ public class Creature : Tile {
 		stats.weapon = inventory.equipment["Weapon"] != null ? (Equipment)inventory.equipment["Weapon"].item : null;
 		stats.shield = inventory.equipment["Shield"] != null ? (Equipment)inventory.equipment["Shield"].item : null;
 
-		RenderEquipment();
+		//RenderEquipment();
 	}
 
 
