@@ -1,22 +1,16 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class CreatureModule {
+public class CreatureModule : MonoBehaviour {
 
-	protected Grid grid;
 	protected AudioManager sfx;
-
+	protected Grid grid;
 	protected Creature me;
 
 
-	public CreatureModule () {
-		
-	}
-
-
-	protected void Init(Creature creature) {
-		this.grid = Grid.instance;
+	public virtual void Init (Creature creature) {
 		this.sfx = AudioManager.instance;
+		this.grid = Grid.instance;
 		this.me = creature;
 	}
 }

@@ -3,14 +3,21 @@ using System.Collections;
 using System.Collections.Generic;
 
 
-// TODO; this class is beginning to be huge. We need to think a way of splitting it into modules:
+// TODO; this class is begining to be huge. We need to think a way of splitting it into modules:
 // - movement
 // - encounters
 // - combat
 // - etc...
 
 
+[RequireComponent (typeof (CreatureCombat))]
+[RequireComponent (typeof (CreatureEquipment))]
+
 public class Creature : Tile {
+
+	// basic
+	public string race = "none";
+	public string clase = "none";
 
 	// movement
 	protected List<Vector2> path;
@@ -31,6 +38,7 @@ public class Creature : Tile {
 	// modules
 	public CreatureCombat combat;
 	public CreatureInventory inventory;
+	public CreatureEquipment equipment;
 
 
 	public bool markedToStop = false;
@@ -60,8 +68,15 @@ public class Creature : Tile {
 		stats.xpValue = 20 * stats.level;
 
 		// initialize creature modules
-		combat = new CreatureCombat(this);
+		//combat = new CreatureCombat(this);
 		inventory = new CreatureInventory(this);
+		//equipment = new CreatureEquipment(this);
+
+		combat = GetComponent<CreatureCombat>();
+		combat.Init(this);
+
+		equipment = GetComponent<CreatureEquipment>();
+		equipment.Init(this);
 	}
 
 
@@ -626,11 +641,11 @@ public class Creature : Tile {
 		// auto-use or auto-equip item if conditions are favourable
 		ApplyItem(invItem);
 
-		RenderEquipment();
+		equipment.Render();
 	}
 
 
-	protected virtual void RenderEquipment () {}
+	//protected virtual void RenderEquipment () {}
 
 
 	protected void ApplyItem (CreatureInventoryItem invItem) {

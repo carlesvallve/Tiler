@@ -20,6 +20,7 @@ public class Tile : MonoBehaviour {
 	public Color color;
 
 	public int zIndex = 0;
+	public float scale = 1;
 
 	protected Transform container;
 	protected SpriteRenderer shadow;
@@ -57,6 +58,7 @@ public class Tile : MonoBehaviour {
 		this.x = x;
 		this.y = y;
 		this.asset = asset;
+		this.scale = scale;
 
 		this.walkable = true;
 
@@ -139,8 +141,8 @@ public class Tile : MonoBehaviour {
 
 		//zIndex += grid.height - this.y;
 		outline.sortingOrder = zIndex;
-		img.sortingOrder = zIndex + 1;
-		shadow.sortingOrder = zIndex + 2;
+		img.sortingOrder = zIndex + 2;
+		shadow.sortingOrder = zIndex + 3;
 		//label.offsetZ = -1; //zIndex + 2;
 	}
 

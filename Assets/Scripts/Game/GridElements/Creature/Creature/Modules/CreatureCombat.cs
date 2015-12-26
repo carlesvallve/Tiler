@@ -5,12 +5,6 @@ using System.Collections.Generic;
 
 public class CreatureCombat : CreatureModule {
 
-
-	public CreatureCombat (Creature creature) {
-		Init(creature);
-	}
-
-
 	// =====================================================
 	// Combat Outcome
 	// =====================================================
