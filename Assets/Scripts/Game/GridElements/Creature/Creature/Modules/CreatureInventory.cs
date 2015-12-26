@@ -3,9 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 
 
-public class CreatureInventory  {
+public class CreatureInventory : CreatureModule  {
 	
-	protected Creature creature;
+	//protected Creature creature;
 
 	public List<CreatureInventoryItem> items;
 
@@ -21,9 +21,9 @@ public class CreatureInventory  {
 		{ "Boots",  null },
 	};
 
-	
-	public CreatureInventory (Creature creature) {
-		this.creature = creature;
+
+	public override void Init (Creature creature) {
+		base.Init(creature);
 		items = new List<CreatureInventoryItem>();
 	}
 
@@ -77,8 +77,8 @@ public class CreatureInventory  {
 	public bool UseItem (CreatureInventoryItem invItem) {
 		Item item = invItem.item;
 
-		if (item.CanUse(creature)) {
-			item.Use(creature);
+		if (item.CanUse(me)) {
+			item.Use(me);
 			RemoveItem(item);
 			return true;
 		} 
@@ -98,7 +98,7 @@ public class CreatureInventory  {
 			UnequipItem(equipment[item.equipmentSlot]);
 
 			if (wasEquipped) {
-				creature.UpdateEquipmentStats();
+				me.UpdateEquipmentStats();
 				return; 
 			}
 		}
@@ -126,7 +126,7 @@ public class CreatureInventory  {
 		}
 
 		// update creature's equipment stats
-		creature.UpdateEquipmentStats();
+		me.UpdateEquipmentStats();
 	}
 
 

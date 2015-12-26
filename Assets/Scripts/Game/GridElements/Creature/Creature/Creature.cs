@@ -2,16 +2,11 @@
 using System.Collections;
 using System.Collections.Generic;
 
-
-// TODO; this class is begining to be huge. We need to think a way of splitting it into modules:
-// - movement
-// - encounters
-// - combat
-// - etc...
-
-
+// require necessary creature modules
+[RequireComponent (typeof (CreatureInventory))]
 [RequireComponent (typeof (CreatureCombat))]
 [RequireComponent (typeof (CreatureEquipment))]
+
 
 public class Creature : Tile {
 
@@ -68,13 +63,16 @@ public class Creature : Tile {
 		stats.xpValue = 20 * stats.level;
 
 		// initialize creature modules
-		//combat = new CreatureCombat(this);
-		inventory = new CreatureInventory(this);
-		//equipment = new CreatureEquipment(this);
 
+		// combat module (manages creature's combat logic and actions)
 		combat = GetComponent<CreatureCombat>();
 		combat.Init(this);
 
+		// inventory module (manages inventory items and equipment)
+		inventory = GetComponent<CreatureInventory>();
+		inventory.Init(this);
+
+		// equipment module (manages rendering equipment in creature's tile)
 		equipment = GetComponent<CreatureEquipment>();
 		equipment.Init(this);
 	}
@@ -92,8 +90,6 @@ public class Creature : Tile {
 	//}
 
 	
-
-
 	// =====================================================
 	// Stats
 	// =====================================================
@@ -103,8 +99,6 @@ public class Creature : Tile {
 
 	public virtual void UpdateXp (int ammount) {
 		stats.xp += ammount * 2; 
-
-		//Speak("XP +" + ammount, Color.yellow, 0, true);
 
 		// level up
 		if (stats.xp >= stats.xpMax) { 
@@ -255,9 +249,6 @@ public class Creature : Tile {
 
 		return false;
 	}
-
-
-
 
 
 	// =====================================================

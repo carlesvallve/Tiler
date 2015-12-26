@@ -139,7 +139,7 @@ public class CreatureCombat : CreatureModule {
 		int protection = Mathf.RoundToInt(armour * damage / 100f);
 
 		if (debug) {
-			Debug.Log(
+			print(
 				attacker.name + " Damage " + 
 				damage + " - " + 
 				protection + " (" + armour + "%) = " + 
