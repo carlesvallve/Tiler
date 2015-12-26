@@ -35,6 +35,74 @@ using System.Collections.Generic;
 
 */
 
+/*
+New equipment system:
+
+equipment general classes:
+	Weapons:
+		None
+		Daggers
+		Swords
+		Axes
+		Maces
+		Spears
+		2Handed
+		Bows
+		Crossbows
+		Throwing
+		Shield
+
+	Armour
+		None
+		Light
+		Medium
+		Heavy
+
+equipment single items
+	Id: name of the object
+	Type: general equipment type
+	Assets: list of assets to choose from 
+	Effect: special effect the item may have
+		- special damage type (poison, fire, ice, ...) -> poison+3$fire+2
+		- special damage resistance (poison, fire, ice, ...) -> fire+2$ice-2
+		- special stat boost (str, dex, int, attack, defense, sneak, speed...) ->dex+1$sneak+3
+
+
+character Skills:
+	Skills (Rogue)
+		-Swords: 5
+		-LightArmour: 6
+		-Sneak: 2
+		-Traps: 1
+		-Picklock: 2
+		-FireMagic: 1
+
+	Skills (Berserk)
+		- 2Handed: 6
+		- MagicResistance: 4
+		- LightArmour: 2
+		- 
+
+	Skills (Protector)
+		- Spears: 3
+		- Shield: 3
+		- HeavyArmour: 5
+
+	Skills (Mage)
+		- FireMagic: 3
+		- BloodMagic: 2
+		- Divination : 1
+		- Healing; 2
+		- Staff: 2
+
+	Skills (Monk)
+		- Healing: 5
+		- Divination: 3
+		- Unarmed: 2
+		- Potions: 2
+
+*/
+
 
 public class Game : MonoSingleton <Game> {
 	private Navigator navigator;
