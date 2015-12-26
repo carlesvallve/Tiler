@@ -18,6 +18,7 @@ public class Creature : Tile {
 	protected List<Vector2> path;
 	public float speed = 0.15f;
 	public float speedMove = 0.15f;
+	public bool markedToStop = false;
 
 	// stats
 	public CreatureStats stats;
@@ -31,12 +32,9 @@ public class Creature : Tile {
 	public bool isAgressive = true;
 
 	// modules
-	public CreatureCombat combat;
-	public CreatureInventory inventory;
-	public CreatureEquipment equipment;
-
-
-	public bool markedToStop = false;
+	public CreatureCombat combatModule;
+	public CreatureInventory inventoryModule;
+	public CreatureEquipment equipmentModule;
 
 	
 	// =====================================================
@@ -62,19 +60,17 @@ public class Creature : Tile {
 		stats.xpMax = 100 * stats.level;
 		stats.xpValue = 20 * stats.level;
 
-		// initialize creature modules
-
 		// combat module (manages creature's combat logic and actions)
-		combat = GetComponent<CreatureCombat>();
-		combat.Init(this);
+		combatModule = GetComponent<CreatureCombat>();
+		combatModule.Init(this);
 
 		// inventory module (manages inventory items and equipment)
-		inventory = GetComponent<CreatureInventory>();
-		inventory.Init(this);
+		inventoryModule = GetComponent<CreatureInventory>();
+		inventoryModule.Init(this);
 
 		// equipment module (manages rendering equipment in creature's tile)
-		equipment = GetComponent<CreatureEquipment>();
-		equipment.Init(this);
+		equipmentModule = GetComponent<CreatureEquipment>();
+		equipmentModule.Init(this);
 	}
 
 
@@ -146,7 +142,6 @@ public class Creature : Tile {
 		}
 
 		Speak (statName + " +" + ammount, Color.cyan, 1.25f, true);
-		
 	}
 
 
@@ -458,7 +453,7 @@ public class Creature : Tile {
 				// if we have a ranged attack and we are in range, shoot the target
 				if (target.visible) {
 					if (IsAtShootRange(target)) {
-						combat.Shoot(target);
+						combatModule.Shoot(target);
 						return true;
 					}
 				}
@@ -474,7 +469,7 @@ public class Creature : Tile {
 				// if we have a ranged attack and we are in range, shoot the target
 				if (targetEntity.breakable && targetEntity.visible) {
 					if (IsAtShootRange(targetEntity)) {
-						combat.ShootToBreak(targetEntity);
+						combatModule.ShootToBreak(targetEntity);
 						return true;
 					}
 				}
@@ -561,7 +556,7 @@ public class Creature : Tile {
 		// if next tile is a creature, attack it
 		Creature creature = grid.GetCreature(x, y);
 		if (creature != null && creature != this) {
-			combat.Attack(creature, 0);
+			combatModule.Attack(creature, 0);
 		}
 	}
 
@@ -605,7 +600,7 @@ public class Creature : Tile {
 		generator.Generate(this, maxItems, minRarity);
 
 		// apply each generated item
-		foreach(CreatureInventoryItem invItem in inventory.items) {
+		foreach(CreatureInventoryItem invItem in inventoryModule.items) {
 			ApplyItem(invItem);
 		}
 	}
@@ -632,24 +627,21 @@ public class Creature : Tile {
 		// auto-use or auto-equip item if conditions are favourable
 		ApplyItem(invItem);
 
-		equipment.Render();
+		equipmentModule.Render();
 	}
-
-
-	//protected virtual void RenderEquipment () {}
 
 
 	protected void ApplyItem (CreatureInventoryItem invItem) {
 		if (invItem.item.consumable) {
 			// use consumable if we are low on hp
 			if (stats.hp <= stats.hpMax * 0.5f) {
-				inventory.UseItem(invItem);
+				inventoryModule.UseItem(invItem);
 			}
 			
 		} else {
 			// equip item if is better thatn what we own already
-			if (inventory.IsBestEquipment(invItem)) {
-				inventory.EquipItem(invItem);
+			if (inventoryModule.IsBestEquipment(invItem)) {
+				inventoryModule.EquipItem(invItem);
 
 				if (visible) {
 					invItem.item.PlaySoundUse();
@@ -660,10 +652,10 @@ public class Creature : Tile {
 
 
 	public void UpdateEquipmentStats () {
-		stats.weapon = inventory.equipment["Weapon"] != null ? (Equipment)inventory.equipment["Weapon"].item : null;
-		stats.shield = inventory.equipment["Shield"] != null ? (Equipment)inventory.equipment["Shield"].item : null;
+		stats.weapon = inventoryModule.equipment["Weapon"] != null ? (Equipment)inventoryModule.equipment["Weapon"].item : null;
+		stats.shield = inventoryModule.equipment["Shield"] != null ? (Equipment)inventoryModule.equipment["Shield"].item : null;
 
-		//RenderEquipment();
+		//equipmentModule.Render();
 	}
 
 

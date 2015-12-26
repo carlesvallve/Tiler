@@ -107,7 +107,7 @@ public class CreatureCombat : CreatureModule {
 		// 0% extra accuracy, so we dont miss so often, and to compensate for defense bonuses
 		int attack = attacker.stats.attack + 0;
 
-		Dictionary<string, CreatureInventoryItem> equipment = attacker.inventory.equipment;
+		Dictionary<string, CreatureInventoryItem> equipment = attacker.inventoryModule.equipment;
 		if (equipment["Weapon"] != null) { attack += ((Equipment)equipment["Weapon"].item).attack; }
 
 		return attack;
@@ -116,7 +116,7 @@ public class CreatureCombat : CreatureModule {
 	private int GetTotalDefense (Creature defender) {
 		int defense = defender.stats.defense;
 
-		Dictionary<string, CreatureInventoryItem> equipment = defender.inventory.equipment;
+		Dictionary<string, CreatureInventoryItem> equipment = defender.inventoryModule.equipment;
 		if (equipment["Shield"] != null) { defense += ((Equipment)equipment["Shield"].item).defense; }
 
 		return defense;
@@ -165,7 +165,7 @@ public class CreatureCombat : CreatureModule {
 	}
 
 	private List<Equipment> GetArmourParts (Creature defender) {
-		Dictionary<string, CreatureInventoryItem> equipment = defender.inventory.equipment;
+		Dictionary<string, CreatureInventoryItem> equipment = defender.inventoryModule.equipment;
 
 		List<Equipment> armours = new List<Equipment>();
 
@@ -235,7 +235,7 @@ public class CreatureCombat : CreatureModule {
 		if (target is Creature) {
 			// play both attack and defend animations
 			me.StartCoroutine(AttackAnimation((Creature)target, delay, 3));
-			yield return target.StartCoroutine(((Creature)target).combat.DefendAnimation(me, delay, 8));
+			yield return target.StartCoroutine(((Creature)target).combatModule.DefendAnimation(me, delay, 8));
 		} else {
 			yield return me.StartCoroutine(AttackAnimation(target, delay, 3));
 		}
@@ -364,7 +364,7 @@ public class CreatureCombat : CreatureModule {
 
 		// get a list of all items carried by the creature
 		List<Item> allItems = new List<Item>();
-		foreach (CreatureInventoryItem invItem in me.inventory.items) {
+		foreach (CreatureInventoryItem invItem in me.inventoryModule.items) {
 			allItems.Add(invItem.item);
 		}
 

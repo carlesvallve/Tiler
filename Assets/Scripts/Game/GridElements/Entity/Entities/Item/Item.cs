@@ -45,7 +45,7 @@ public class Item : Entity {
 		}
 
 		// add to creature's inventory
-		CreatureInventoryItem invItem = creature.inventory.AddItem(this);
+		CreatureInventoryItem invItem = creature.inventoryModule.AddItem(this);
 
 		// reparent item to creature
 		transform.SetParent(creature.transform, false);
@@ -83,7 +83,7 @@ public class Item : Entity {
 		// remove from creature's inventory dictionary
 		if (tile is Creature) {
 			Creature creature = (Creature)tile;
-			creature.inventory.RemoveItem(this);
+			creature.inventoryModule.RemoveItem(this);
 		}
 	}
 

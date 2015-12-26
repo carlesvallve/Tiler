@@ -80,8 +80,8 @@ public class CreatureEquipment : CreatureModule {
 			return;
 		}
 
-		List<string> keys = new List<string>(me.inventory.equipment.Keys);
-		List<CreatureInventoryItem> values = new List<CreatureInventoryItem>(me.inventory.equipment.Values);
+		List<string> keys = new List<string>(me.inventoryModule.equipment.Keys);
+		List<CreatureInventoryItem> values = new List<CreatureInventoryItem>(me.inventoryModule.equipment.Values);
 
 		for (int i = 0; i < keys.Count; i++) {
 			string key = keys[i];

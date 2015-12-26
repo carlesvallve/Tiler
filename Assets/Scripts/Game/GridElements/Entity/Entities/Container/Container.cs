@@ -52,7 +52,7 @@ public class Container : Entity {
 
 	public IEnumerator Open (Creature creature, bool hasBeenUnlocked = false) {
 		if (breakable) {
-			creature.combat.AttackToBreak(this);
+			creature.combatModule.AttackToBreak(this);
 		}
 
 		yield return new WaitForSeconds(creature.speed / 2);

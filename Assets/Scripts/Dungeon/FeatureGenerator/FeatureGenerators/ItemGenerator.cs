@@ -88,7 +88,7 @@ public class ItemGenerator : DungeonFeatureGenerator {
 
 		// add to creature's inventory
 		if (tile is Creature) {
-			((Creature)tile).inventory.AddItem(item);
+			((Creature)tile).inventoryModule.AddItem(item);
 			return item;
 		}
 

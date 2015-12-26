@@ -122,7 +122,7 @@ public class Monster : Creature {
 				grid.player.monsterQueue.Add(this);
 
 				// execute attack
-				combat.Attack(creature, delay);
+				combatModule.Attack(creature, delay);
 			}
 		}
 	}
@@ -182,7 +182,7 @@ public class Monster : Creature {
 		if (targetTile is Player) {
 			if (IsAtShootRange(targetTile) && visible) {
 				// shoot the player if in range
-				combat.Shoot((Player)targetTile);
+				combatModule.Shoot((Player)targetTile);
 			} else {
 				// use chase and follow algorithm
 				ChaseAndFollow();

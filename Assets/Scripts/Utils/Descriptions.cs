@@ -26,7 +26,7 @@ public class Descriptions : MonoBehaviour {
 
 
 	public static string GetEquipmentDescription (Creature creature) {
-		List<CreatureInventoryItem> values = new List<CreatureInventoryItem>(creature.inventory.equipment.Values);
+		List<CreatureInventoryItem> values = new List<CreatureInventoryItem>(creature.inventoryModule.equipment.Values);
 
 		string str = "";
 		for (int i = 0; i < values.Count; i++) {

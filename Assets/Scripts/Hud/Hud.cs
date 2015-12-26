@@ -114,7 +114,7 @@ public class Hud : MonoSingleton <Hud> {
 
 		// generate inventory slots from player's CreatureInventory items
 		inventorySlots = new List<GameObject>();
-		foreach(CreatureInventoryItem invItem in Grid.instance.player.inventory.items) {
+		foreach(CreatureInventoryItem invItem in Grid.instance.player.inventoryModule.items) {
 			if (invItem.equipped) {
 				// equipment slots
 				Transform container = equipmentContainer.Find(invItem.item.equipmentSlot);
@@ -162,7 +162,7 @@ public class Hud : MonoSingleton <Hud> {
 
 	public void ApplyItem (GameObject obj) {
 		string id = obj.name;
-		CreatureInventoryItem invItem = Grid.instance.player.inventory.GetInventoryItemById(id);
+		CreatureInventoryItem invItem = Grid.instance.player.inventoryModule.GetInventoryItemById(id);
 
 		if (invItem == null) {
 			Debug.LogError("No item was found by id: " + id);
@@ -171,7 +171,7 @@ public class Hud : MonoSingleton <Hud> {
 
 		// use item
 		if (invItem.item.consumable) {
-			Grid.instance.player.inventory.UseItem(invItem);
+			Grid.instance.player.inventoryModule.UseItem(invItem);
 			DisplayInventory(false);
 			return;
 		}
@@ -179,7 +179,7 @@ public class Hud : MonoSingleton <Hud> {
 		// equip/unequip item
 		if (invItem.item.equipmentSlot != null) {
 			// equip/unequip given equipment item
-			Grid.instance.player.inventory.EquipItem(invItem);
+			Grid.instance.player.inventoryModule.EquipItem(invItem);
 			invItem.item.PlaySoundUse();
 			DisplayInventory(true);
 			return;
@@ -189,7 +189,7 @@ public class Hud : MonoSingleton <Hud> {
 
 	public void OpenItemInfo (GameObject obj) {
 		string id = obj.name;
-		CreatureInventoryItem invItem = Grid.instance.player.inventory.GetInventoryItemById(id);
+		CreatureInventoryItem invItem = Grid.instance.player.inventoryModule.GetInventoryItemById(id);
 
 		Item item = invItem.item;
 
