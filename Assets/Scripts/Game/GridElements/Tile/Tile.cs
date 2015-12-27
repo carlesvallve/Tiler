@@ -24,7 +24,7 @@ public class Tile : MonoBehaviour {
 
 	protected Transform container;
 	protected SpriteRenderer shadow;
-	protected SpriteRenderer outline;
+	public SpriteRenderer outline { get; private set; }
 	public SpriteRenderer img { get; private set; }
 	protected TextMesh label;
 	protected TextMesh labelShadow;
@@ -114,7 +114,7 @@ public class Tile : MonoBehaviour {
 	}
 
 
-	protected void SetAsset (Sprite asset) {
+	public void SetAsset (Sprite asset) {
 		this.asset = asset;
 		
 		outline.sprite = asset;
@@ -124,15 +124,20 @@ public class Tile : MonoBehaviour {
 
 
 	public void SetImages (float scale, Vector3 pos, float outlineDistance = 0f) {
+		SetImages(new Vector3(scale, scale, 1), pos, outlineDistance);
+	}
+
+
+	public void SetImages (Vector3 scale, Vector3 pos, float outlineDistance = 0f) {
 		outline.transform.localPosition = pos + new Vector3(outlineDistance, -outlineDistance, 0);
-		outline.transform.localScale = new Vector3(scale, scale, 1);
+		outline.transform.localScale = new Vector3(scale.x, scale.y, 1);
 		outline.gameObject.SetActive(outlineDistance != 0);
 		
 		img.transform.localPosition = pos + new Vector3(-outlineDistance, outlineDistance, 0);
-		img.transform.localScale = new Vector3(scale, scale, 1); 
+		img.transform.localScale = new Vector3(scale.x, scale.y, 1); 
 
 		shadow.transform.localPosition = pos + new Vector3(-outlineDistance, outlineDistance, 0);
-		shadow.transform.localScale = new Vector3(scale, scale, 1);
+		shadow.transform.localScale = new Vector3(scale.x, scale.y, 1);
 	}
 
 

@@ -5,6 +5,8 @@ using System.Collections.Generic;
 
 public class CreatureEquipment : CreatureModule {
 
+	private bool verbose = false;
+
 	/*public Dictionary <string, string[]> bodyParts = new Dictionary <string, string[]>() {
 		{ "Body", null },
 		{ "Beard", null },
@@ -84,8 +86,11 @@ public class CreatureEquipment : CreatureModule {
 			string[] arr = GetFileNamesAtFolder("Tilesets/Wear/" + part + "/" + key);
 			dict[key] = arr;
 
-			print("====== " + key + " (" + arr.Length + ") ======");
-			print(ArrToString(arr));
+			if (verbose) {
+				print("====== " + key + " (" + arr.Length + ") ======");
+				print(ArrToString(arr));
+			}
+			
 		}
 	}
 
@@ -153,28 +158,28 @@ public class CreatureEquipment : CreatureModule {
 		}
 
 		// Pants / boots / gloves
-		GenerateEquipmentTile("Pants", "pants", 0, new Color(0.2f, 0.2f, 0.2f));
-		GenerateEquipmentTile("Boots", "none", 1, Color.white);
-		GenerateEquipmentTile("Gloves", "none", 2,  Color.white);
+		GenerateEquipmentTile("Pants", "pants", 1, new Color(0.2f, 0.2f, 0.2f));
+		GenerateEquipmentTile("Boots", "none", 2, Color.white);
+		GenerateEquipmentTile("Gloves", "none", 3,  Color.white);
 
 		// hair
 		string[] colors = new string[] { "#000000", "#ffff00", "#ff9900", "#ffffff", "#333333", "#A06400FF", "644600FF" };
 		string hex = colors[Random.Range(0, colors.Length)];
 		Color color;
 		ColorUtility.TryParseHtmlString (hex, out color);
-		GenerateEquipmentTile("Hair", "hair", 3, color);
+		GenerateEquipmentTile("Hair", "hair", 4, color);
 
 		// beard
 		string[] arr =new string[] { "none", "beard" };
 		string beard = me.race == "elf" ? "none" : arr[Random.Range(0, arr.Length)];
-		GenerateEquipmentTile("Beard", beard, 4, color);
+		GenerateEquipmentTile("Beard", beard, 5, color);
 
 		// equipment
-		GenerateEquipmentTile("Armour", "none", 5, Color.white);
-		GenerateEquipmentTile("Hat", "none", 6, Color.white);
-		GenerateEquipmentTile("Weapon", "none", 7, Color.white);
-		GenerateEquipmentTile("Shield", "none", 8, Color.white);
-		GenerateEquipmentTile("Cloak", "none", -1, Color.white);
+		GenerateEquipmentTile("Armour", "none", 6, Color.white);
+		GenerateEquipmentTile("Hat", "none", 7, Color.white);
+		GenerateEquipmentTile("Weapon", "none", 8, Color.white);
+		GenerateEquipmentTile("Shield", "none", 9, Color.white);
+		GenerateEquipmentTile("Cloak", "none", -2, Color.white);
 	}
 
 
@@ -230,11 +235,17 @@ public class CreatureEquipment : CreatureModule {
 			if (tr == null) { continue; }
 			Tile tile = tr.GetComponent<Tile>();
 			
-			SpriteRenderer img = tile.img;
+			//SpriteRenderer img = tile.img;
+			//SpriteRenderer outline = tile.outline;
+
+			Vector3 pos = Vector3.zero;
+			Vector3 scale = tile.img.transform.localScale;
+			float outlineDistance = 0.01f;
 
 			if (invItem == null) { 
-				img.sprite = null;
-				img.color = Color.white;
+				tile.outline.sprite = null;
+				tile.img.sprite = null;
+				tile.img.color = Color.white;
 				continue; 
 			}
 
@@ -243,7 +254,7 @@ public class CreatureEquipment : CreatureModule {
 			string id = key;
 			string type = item.subtype;
 
-			// Gloves, Boots, Pants, Hair, Beard
+			// Body parts: Gloves, Boots, Pants, Hair, Beard
 			if (id == "Hair" || id == "Beard" || id == "Pants" || id == "Gloves" || id == "Boots" || id == "Shoes") {
 				string path = "Tilesets/Wear/Body/" + me.race + "-" + type;
 				Sprite asset = Resources.Load<Sprite>(path);
@@ -251,95 +262,104 @@ public class CreatureEquipment : CreatureModule {
 					Debug.LogError(path + " not found");
 				}
 
-				img.sprite = asset;
-				img.color = item.color;
+				tile.img.sprite = asset;
+				tile.img.color = item.color;
 			}
 
 
 			if (id == "Hat") {
-				img.sprite = LoadRandomEquipmentPart("Head", headParts);
-
 				if (me.race == "human" || me.race == "elf") {
-					img.transform.localPosition = new Vector3(0.015f, 0.0075f, 0);
+					pos = new Vector3(0.015f, 0.007f, 0);
 				} else if (me.race == "dwarf") {
-					img.transform.localPosition = new Vector3(0.015f, -0.075f, 0);
+					pos = new Vector3(-0.015f, -0.07f, 0);
 				} else if (me.race == "hobbit") {
-					img.transform.localPosition = new Vector3(0.015f, -0.165f, 0);
+					pos = new Vector3(0.015f, -0.165f, 0);
 				}
 
+				pos += new Vector3(outlineDistance / 2, outlineDistance / 2, 0);
+
+				tile.SetAsset(LoadRandomEquipmentPart("Head", headParts));
+				tile.SetImages(scale, pos, outlineDistance);
 				continue;
 			}
 
 
 			if (id == "Weapon") {
-				img.sprite = LoadRandomEquipmentPart("Hand1", hand1Parts);
-				
 				if (me.race == "human" || me.race == "elf") {
-					img.transform.localPosition = new Vector3(-0.075f, 0.225f, 0);
+					pos = new Vector3(-0.075f, 0.225f, 0);
 				} else if (me.race == "dwarf") {
-					img.transform.localPosition = new Vector3(-0.05f, 0.125f, 0);
+					pos = new Vector3(-0.05f, 0.125f, 0);
 				} else if (me.race == "hobbit") {
-					img.transform.localPosition = new Vector3(0.025f, 0.2f, 0);
+					pos = new Vector3(0.025f, 0.2f, 0);
 				}
 
+				pos += new Vector3(outlineDistance / 2, outlineDistance / 2, 0);
+
+				tile.SetAsset(LoadRandomEquipmentPart("Hand1", hand1Parts));
+				tile.SetImages(scale, pos, outlineDistance);
 				continue;
 			}
 
 
 			if (id == "Shield") {
-				img.sprite = LoadRandomEquipmentPart("Hand2", hand2Parts);
-				
-
 				if (me.race == "human" || me.race == "elf") {
-					img.transform.localPosition = new Vector3(0f, 0.175f, 0);
+					pos = new Vector3(0f, 0.175f, 0);
 				} else if (me.race == "dwarf") {
-					img.transform.localPosition = new Vector3(0f, 0.05f, 0);
+					pos = new Vector3(0f, 0.05f, 0);
 				} else if (me.race == "hobbit") {
-					img.transform.localPosition = new Vector3(-0.05f, 0f, 0);
+					pos = new Vector3(-0.05f, 0f, 0);
 				}
 
+				pos += new Vector3(outlineDistance / 2, outlineDistance / 2, 0);
+
+				tile.SetAsset(LoadRandomEquipmentPart("Hand2", hand2Parts));
+				tile.SetImages(scale, pos, outlineDistance);
 				continue;
 			}
 
 
 			if (id == "Armour") {
-				img.sprite = LoadRandomEquipmentPart("Armour", armourParts);
-
 				if (me.race == "human") {
-					img.transform.localPosition = new Vector3(0.01f, 0.1f, 0);
-					img.transform.localScale = new Vector3(0.9f, 0.65f, 1);
+					pos = new Vector3(0.015f, 0.075f, 0);
+					scale = new Vector3(0.9f, 0.65f, 1);
 				} else if (me.race == "elf") {
-					img.transform.localPosition = new Vector3(0.01f, 0.1f, 0);
-					img.transform.localScale = new Vector3(0.9f, 0.65f, 1);
+					pos = new Vector3(0.015f, 0.06f, 0);
+					scale = new Vector3(0.9f, 0.65f, 1);
 				} else if (me.race == "dwarf") {
-					img.transform.localPosition = new Vector3(-0.015f, 0.05f, 0);
-					img.transform.localScale = new Vector3(1.2f, 0.6f, 1);
+					pos = new Vector3(-0.025f, 0.03f, 0);
+					scale = new Vector3(1.1f, 0.6f, 1);
 				} else if (me.race == "hobbit") {
-					img.transform.localPosition = new Vector3(0.02f, -0.025f, 0);
-					img.transform.localScale = new Vector3(0.8f, 0.55f, 1);
+					pos = new Vector3(0.02f, -0.025f, 0);
+					scale = new Vector3(0.8f, 0.55f, 1);
 				}
+
+				pos += new Vector3(outlineDistance / 2, outlineDistance / 2, 0);
 				
+				tile.SetAsset(LoadRandomEquipmentPart("Armour", armourParts));
+				tile.SetImages(scale, pos, outlineDistance);
 				continue;
 			}
 
 			if (id == "Cloak") {
-				img.sprite = LoadRandomEquipmentPart("Cloak", cloakParts);
-				img.color = item.color;
-				
 				if (me.race == "human") {
-					img.transform.localPosition = new Vector3(0.01f, 0.125f + 0.025f, 0);
-					img.transform.localScale = new Vector3(0.9f, 0.55f, 1);
+					pos = new Vector3(0.01f, 0.125f + 0.025f, 0);
+					scale = new Vector3(0.9f, 0.55f, 1);
 				} else if (me.race == "elf") {
-					img.transform.localPosition = new Vector3(0.01f, 0.125f + 0.025f, 0);
-					img.transform.localScale = new Vector3(0.9f, 0.55f, 1);
+					pos = new Vector3(0.01f, 0.125f + 0.025f, 0);
+					scale = new Vector3(0.9f, 0.55f, 1);
 				} else if (me.race == "dwarf") {
-					img.transform.localPosition = new Vector3(-0.015f, 0.05f + 0.05f, 0);
-					img.transform.localScale = new Vector3(1.0f, 0.45f, 1);
+					pos = new Vector3(-0.015f, 0.05f + 0.05f, 0);
+					scale = new Vector3(1.0f, 0.45f, 1);
 				} else if (me.race == "hobbit") {
-					img.transform.localPosition = new Vector3(0.02f, -0.025f + 0.05f, 0);
-					img.transform.localScale = new Vector3(0.8f, 0.35f, 1);
+					pos = new Vector3(0.02f, -0.025f + 0.05f, 0);
+					scale = new Vector3(0.8f, 0.35f, 1);
 				}
+
+				pos += new Vector3(outlineDistance / 2, outlineDistance / 2, 0);
 				
+				tile.SetAsset(LoadRandomEquipmentPart("Cloak", cloakParts));
+				tile.SetImages(scale, pos, outlineDistance);
+				tile.img.color = item.color;
 				continue;
 			}
 
