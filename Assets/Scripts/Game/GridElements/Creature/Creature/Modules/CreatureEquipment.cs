@@ -5,7 +5,27 @@ using System.Collections.Generic;
 
 public class CreatureEquipment : CreatureModule {
 
-	private bool verbose = true;
+	private bool verbose = false;
+
+	// this dictionary holds the tiles used to render each equipment part on a creature
+
+	public Dictionary<string, Tile> parts = new Dictionary<string, Tile>() {
+		{ "Hair", null },
+		{ "Beard", null },
+
+		{ "Pants", null },
+		{ "Boots", null },
+		{ "Gloves", null },
+
+		{ "Armour", null },
+		{ "Head", null },
+		{ "Hand1", null },
+		{ "Hand2", null },
+		{ "Cloak", null },
+	};
+
+	// This dictionaries hold an array of equipment asset names in each category
+	// TODO: we should move these to a static class and fill them only once, maybe with sprites instead of names
 
 	public Dictionary <string, string[]> armourParts = new Dictionary <string, string[]>() {
 		{ "Belt", null },
@@ -60,11 +80,11 @@ public class CreatureEquipment : CreatureModule {
 		base.Init(creature);
 
 		// TODO: This should be done only once (?)
-		SetParts("Armour", armourParts);
-		SetParts("Head", headParts);
-		SetParts("Hand1", hand1Parts);
-		SetParts("Hand2", hand2Parts);
-		SetParts("Cloak", cloakParts);
+		SetAssetNames("Armour", armourParts);
+		SetAssetNames("Head", headParts);
+		SetAssetNames("Hand1", hand1Parts);
+		SetAssetNames("Hand2", hand2Parts);
+		SetAssetNames("Cloak", cloakParts);
 
 		GenerateBodyParts();
 		GenerateEquipmentParts();
@@ -75,14 +95,14 @@ public class CreatureEquipment : CreatureModule {
 
 		// Pants
 		if (me is Player) {
-			GenerateEquipmentTile("Pants", "pants", 1, new Color(0.2f, 0.2f, 0.2f));
+			parts["Pants"] = GenerateEquipmentTile("Pants", "pants", 1, new Color(0.2f, 0.2f, 0.2f));
 		}
 		
 		// Boots
-		GenerateEquipmentTile("Boots", "none", 2, Color.white);
+		parts["Boots"] = GenerateEquipmentTile("Boots", "none", 2, Color.white);
 
 		// Gloves
-		GenerateEquipmentTile("Gloves", "none", 3,  Color.white);
+		parts["Gloves"] = GenerateEquipmentTile("Gloves", "none", 3,  Color.white);
 
 		if (me is Player) {
 			// hair
@@ -90,12 +110,12 @@ public class CreatureEquipment : CreatureModule {
 			string hex = colors[Random.Range(0, colors.Length)];
 			Color color;
 			ColorUtility.TryParseHtmlString (hex, out color);
-			GenerateEquipmentTile("Hair", "hair", 4, color);
+			parts["Hair"] = GenerateEquipmentTile("Hair", "hair", 4, color);
 
 			// beard
 			string[] arr =new string[] { "none", "beard" };
 			string beard = me.race == "elf" ? "none" : arr[Random.Range(0, arr.Length)];
-			GenerateEquipmentTile("Beard", beard, 5, color);
+			parts["Beard"] = GenerateEquipmentTile("Beard", beard, 5, color);
 		}
 	}
 
@@ -104,11 +124,11 @@ public class CreatureEquipment : CreatureModule {
 		if (me.race == "none") { return; }
 
 		// equipment
-		GenerateEquipmentTile("Armour", "none", 6, Color.white);
-		GenerateEquipmentTile("Hat", "none", 7, Color.white);
-		GenerateEquipmentTile("Weapon", "none", 8, Color.white);
-		GenerateEquipmentTile("Shield", "none", 9, Color.white);
-		GenerateEquipmentTile("Cloak", "none", -2, Color.white);
+		parts["Armour"] = GenerateEquipmentTile("Armour", "none", 6, Color.white);
+		parts["Head"] = GenerateEquipmentTile("Hat", "none", 7, Color.white);
+		parts["Hand1"] = GenerateEquipmentTile("Weapon", "none", 8, Color.white);
+		parts["Hand2"] = GenerateEquipmentTile("Shield", "none", 9, Color.white);
+		parts["Cloak"] = GenerateEquipmentTile("Cloak", "none", -2, Color.white);
 	}
 
 
@@ -148,7 +168,7 @@ public class CreatureEquipment : CreatureModule {
 	// Get Equipment Parts FileNames
 	// =====================================================
 
-	private void SetParts (string part, Dictionary <string, string[]> dict) {
+	private void SetAssetNames (string part, Dictionary <string, string[]> dict) {
 		List<string> keys = new List<string> (dict.Keys);
 
 		foreach (string key in keys) {
@@ -235,9 +255,6 @@ public class CreatureEquipment : CreatureModule {
 			Transform tr = me.transform.Find(key);
 			if (tr == null) { continue; }
 			Tile tile = tr.GetComponent<Tile>();
-			
-			//SpriteRenderer img = tile.img;
-			//SpriteRenderer outline = tile.outline;
 
 			Vector3 pos = Vector3.zero;
 			Vector3 scale = tile.img.transform.localScale;

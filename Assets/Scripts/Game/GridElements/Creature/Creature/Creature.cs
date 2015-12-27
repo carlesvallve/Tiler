@@ -85,7 +85,7 @@ public class Creature : Tile {
 		if (id == null) {
 			return;
 		}
-		
+
 		// assign props from csv
 		MonsterData data = GameData.monsters[id];
 
@@ -228,6 +228,21 @@ public class Creature : Tile {
 		// apply shadow
 		SetShadow(visible ? shadowValue : 1);
 		if (!visible && tile.explored) { SetShadow(0.6f); }
+
+		// iterate on all rendered equipment and set shadow too
+		if (equipmentModule != null) {
+			foreach (KeyValuePair<string, Tile> part in equipmentModule.parts) {
+				if (part.Value == null) { continue; }
+
+				part.Value.visible = visible; 
+				part.Value.container.gameObject.SetActive(visible);
+
+				part.Value.SetShadow(visible ? shadowValue : 1);
+				if (!visible && tile.explored) { part.Value.SetShadow(0.6f); }
+			};
+		}
+		
+
 
 		// apply hpBar shadow
 		bar.SetShadow(visible ? shadowValue : 1);

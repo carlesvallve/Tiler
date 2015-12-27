@@ -22,7 +22,7 @@ public class Tile : MonoBehaviour {
 	public int zIndex = 0;
 	public float scale = 1;
 
-	protected Transform container;
+	public Transform container;
 	protected SpriteRenderer shadow;
 	public SpriteRenderer outline { get; private set; }
 	public SpriteRenderer img { get; private set; }
