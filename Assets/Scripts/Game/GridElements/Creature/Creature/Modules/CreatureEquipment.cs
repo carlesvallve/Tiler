@@ -5,17 +5,7 @@ using System.Collections.Generic;
 
 public class CreatureEquipment : CreatureModule {
 
-	private bool verbose = false;
-
-	/*public Dictionary <string, string[]> bodyParts = new Dictionary <string, string[]>() {
-		{ "Body", null },
-		{ "Beard", null },
-		{ "Boots", null },
-		{ "Gloves", null },
-		{ "Hair", null },
-		{ "Pants", null },
-		{ "Shoes", null }
-	};*/
+	private bool verbose = true;
 
 	public Dictionary <string, string[]> armourParts = new Dictionary <string, string[]>() {
 		{ "Belt", null },
@@ -62,16 +52,95 @@ public class CreatureEquipment : CreatureModule {
 	};
 
 
+	// =====================================================
+	// Initialize Equipment Parts on Creature
+	// =====================================================
+
 	public override void Init (Creature creature) {
 		base.Init(creature);
 
+		// TODO: This should be done only once (?)
 		SetParts("Armour", armourParts);
 		SetParts("Head", headParts);
 		SetParts("Hand1", hand1Parts);
 		SetParts("Hand2", hand2Parts);
 		SetParts("Cloak", cloakParts);
 
-		Initialize();
+		GenerateBodyParts();
+		GenerateEquipmentParts();
+	}
+
+	private void GenerateBodyParts () {
+		if (me.race == "none") { return; }
+
+		// Pants
+		if (me is Player) {
+			GenerateEquipmentTile("Pants", "pants", 1, new Color(0.2f, 0.2f, 0.2f));
+		}
+		
+		// Boots
+		GenerateEquipmentTile("Boots", "none", 2, Color.white);
+
+		// Gloves
+		GenerateEquipmentTile("Gloves", "none", 3,  Color.white);
+
+		if (me is Player) {
+			// hair
+			string[] colors = new string[] { "#000000", "#ffff00", "#ff9900", "#ffffff", "#333333", "#A06400FF", "644600FF" };
+			string hex = colors[Random.Range(0, colors.Length)];
+			Color color;
+			ColorUtility.TryParseHtmlString (hex, out color);
+			GenerateEquipmentTile("Hair", "hair", 4, color);
+
+			// beard
+			string[] arr =new string[] { "none", "beard" };
+			string beard = me.race == "elf" ? "none" : arr[Random.Range(0, arr.Length)];
+			GenerateEquipmentTile("Beard", beard, 5, color);
+		}
+	}
+
+
+	private void GenerateEquipmentParts () {
+		if (me.race == "none") { return; }
+
+		// equipment
+		GenerateEquipmentTile("Armour", "none", 6, Color.white);
+		GenerateEquipmentTile("Hat", "none", 7, Color.white);
+		GenerateEquipmentTile("Weapon", "none", 8, Color.white);
+		GenerateEquipmentTile("Shield", "none", 9, Color.white);
+		GenerateEquipmentTile("Cloak", "none", -2, Color.white);
+	}
+
+
+	private Tile GenerateEquipmentTile (string id, string type, int zIndexPlus, Color color) {
+		Transform parent = me.transform;
+
+		Sprite asset = null;
+		if (type != "none") {
+			string path = "Tilesets/Wear/Body/" + me.race + "-" + type;
+			asset = Resources.Load<Sprite>(path);
+			if (asset == null) {
+				Debug.LogError(path + " not found");
+			}
+		}
+		
+		GameObject obj = (GameObject)Instantiate(grid.tilePrefab);
+		obj.transform.SetParent(parent, false);
+		obj.name = id;
+
+		Tile tile = obj.AddComponent<Tile>();
+		tile.Init(grid, me.x, me.y, me.scale, asset, null);
+
+		obj.transform.localPosition = Vector3.zero;
+
+		tile.zIndex = me.zIndex + zIndexPlus;
+		tile.SetSortingOrder();
+
+		SpriteRenderer img = tile.transform.Find("Sprites/Sprite").GetComponent<SpriteRenderer>();
+		img.color = color;
+		img.transform.localPosition = new Vector3(-0.035f, 0.135f, 0);
+
+		return tile;
 	}
 
 
@@ -144,74 +213,6 @@ public class CreatureEquipment : CreatureModule {
 		// return sprite
 		// print (path + " -> " + asset.name);
 		return asset;
-	}
-
-
-	// =====================================================
-	// Initialize Equipment Parts on Creature
-	// =====================================================
-
-
-	private void Initialize () {
-		if (me.race == "none") {
-			return;
-		}
-
-		// Pants / boots / gloves
-		GenerateEquipmentTile("Pants", "pants", 1, new Color(0.2f, 0.2f, 0.2f));
-		GenerateEquipmentTile("Boots", "none", 2, Color.white);
-		GenerateEquipmentTile("Gloves", "none", 3,  Color.white);
-
-		// hair
-		string[] colors = new string[] { "#000000", "#ffff00", "#ff9900", "#ffffff", "#333333", "#A06400FF", "644600FF" };
-		string hex = colors[Random.Range(0, colors.Length)];
-		Color color;
-		ColorUtility.TryParseHtmlString (hex, out color);
-		GenerateEquipmentTile("Hair", "hair", 4, color);
-
-		// beard
-		string[] arr =new string[] { "none", "beard" };
-		string beard = me.race == "elf" ? "none" : arr[Random.Range(0, arr.Length)];
-		GenerateEquipmentTile("Beard", beard, 5, color);
-
-		// equipment
-		GenerateEquipmentTile("Armour", "none", 6, Color.white);
-		GenerateEquipmentTile("Hat", "none", 7, Color.white);
-		GenerateEquipmentTile("Weapon", "none", 8, Color.white);
-		GenerateEquipmentTile("Shield", "none", 9, Color.white);
-		GenerateEquipmentTile("Cloak", "none", -2, Color.white);
-	}
-
-
-	private Tile GenerateEquipmentTile (string id, string type, int zIndexPlus, Color color) {
-		Transform parent = me.transform;
-
-		Sprite asset = null;
-		if (type != "none") {
-			string path = "Tilesets/Wear/Body/" + me.race + "-" + type;
-			asset = Resources.Load<Sprite>(path);
-			if (asset == null) {
-				Debug.LogError(path + " not found");
-			}
-		}
-		
-		GameObject obj = (GameObject)Instantiate(grid.tilePrefab);
-		obj.transform.SetParent(parent, false);
-		obj.name = id;
-
-		Tile tile = obj.AddComponent<Tile>();
-		tile.Init(grid, me.x, me.y, me.scale, asset, null);
-
-		obj.transform.localPosition = Vector3.zero;
-
-		tile.zIndex = me.zIndex + zIndexPlus;
-		tile.SetSortingOrder();
-
-		SpriteRenderer img = tile.transform.Find("Sprites/Sprite").GetComponent<SpriteRenderer>();
-		img.color = color;
-		img.transform.localPosition = new Vector3(-0.035f, 0.135f, 0);
-
-		return tile;
 	}
 
 

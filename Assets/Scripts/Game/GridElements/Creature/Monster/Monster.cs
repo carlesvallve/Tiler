@@ -9,8 +9,10 @@ public class Monster : Creature {
 
 
 	public override void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null, string id = null) {
+		
 		base.Init(grid, x, y, scale, asset, id);
-		InitializeStats(id);
+		//InitializeStats(id);
+
 
 		// Each monster will evaluate what to do on each game turn update
 		grid.player.OnGameTurnUpdate += () => {
@@ -28,7 +30,7 @@ public class Monster : Creature {
 	}
 
 
-	public void InitializeStats (string id) {
+	/*public void InitializeStats (string id) {
 		// assign props from csv
 		MonsterData data = GameData.monsters[id];
 
@@ -64,7 +66,7 @@ public class Monster : Creature {
 			SetInitialItems(Random.Range(0, 4), minRarity);
 		} 
 		
-	}
+	}*/
 
 
 	// =====================================================
