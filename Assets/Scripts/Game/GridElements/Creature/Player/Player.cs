@@ -36,7 +36,7 @@ public class Player : Creature {
 		);
 
 		// set asset
-		string path = "Tilesets/Basic/" + race;
+		string path = "Tilesets/Wear/Body/" + race;
 		asset = Resources.Load<Sprite>(path);
 		if (asset == null) { Debug.LogError(path); }
 
