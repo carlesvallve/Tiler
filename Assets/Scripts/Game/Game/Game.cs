@@ -3,6 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 
 /*
+- generate equipment items using assetManager asset references
+- place inventory intems inside inventory container
+- render equipment using the items we have equipped instead of random ones
+- use alternative assets for boots and gloves
+
+*/
+
+/*
 - spawning:
 	- implement final spawning algorithm for monsters and items -> we got something kinda working...
 	- spawned things should be stronger at higher dungeon levels -> we got something kinda working...
