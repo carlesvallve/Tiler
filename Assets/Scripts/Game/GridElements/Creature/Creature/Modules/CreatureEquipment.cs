@@ -166,7 +166,7 @@ public class CreatureEquipment : CreatureModule {
 					pos = new Vector3(0.015f, -0.165f, 0);
 				}
 
-				pos += new Vector3(outlineDistance / 2, outlineDistance / 2, 0);
+				pos += new Vector3(outlineDistance / 1, outlineDistance / 1, 0);
 
 				tile.SetAsset(item.img.sprite);
 				tile.SetImages(scale, pos, outlineDistance);
@@ -183,7 +183,7 @@ public class CreatureEquipment : CreatureModule {
 					pos = new Vector3(0.025f, 0.2f, 0);
 				}
 
-				pos += new Vector3(outlineDistance / 2, outlineDistance / 2, 0);
+				pos += new Vector3(outlineDistance / 1, outlineDistance / 1, 0);
 
 				tile.SetAsset(item.img.sprite);
 				tile.SetImages(scale, pos, outlineDistance);
@@ -200,7 +200,7 @@ public class CreatureEquipment : CreatureModule {
 					pos = new Vector3(-0.05f, 0f, 0);
 				}
 
-				pos += new Vector3(outlineDistance / 2, outlineDistance / 2, 0);
+				pos += new Vector3(outlineDistance / 1, outlineDistance / 1, 0);
 
 				tile.SetAsset(item.img.sprite);
 				tile.SetImages(scale, pos, outlineDistance);
@@ -229,7 +229,7 @@ public class CreatureEquipment : CreatureModule {
 					if (me.race == "dwarf" || me.race == "hobbit") { pos -= Vector3.up * 0.04f; }
 				}
 
-				pos += new Vector3(outlineDistance / 2, outlineDistance / 2, 0);
+				pos += new Vector3(outlineDistance / 1, outlineDistance / 1, 0);
 				
 				tile.SetAsset(item.img.sprite);
 				tile.SetImages(scale, pos, outlineDistance);
@@ -251,7 +251,7 @@ public class CreatureEquipment : CreatureModule {
 					scale = new Vector3(0.8f, 0.35f, 1);
 				}
 
-				pos += new Vector3(outlineDistance / 2, outlineDistance / 2, 0);
+				pos += new Vector3(outlineDistance / 1, outlineDistance / 1, 0);
 
 				// special case for loading the cloak
 				string path = "Tilesets/Wear/Cloak/Cloak/" + AssetManager.cloakParts["Cloak"][0];

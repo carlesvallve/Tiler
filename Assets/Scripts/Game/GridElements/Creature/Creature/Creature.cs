@@ -115,10 +115,10 @@ public class Creature : Tile {
 
 		// set initial items (only for humanoids)
 		// TODO: We should define in the csv what equipment each monster is able to wear
-		if (stats.type == "Humanoid") {
+		/*if (stats.type == "Humanoid") {
 			int minRarity = GameData.GetDefaultEquipmentMinRarity();
 			SetInitialItems(Random.Range(0, 4), minRarity);
-		} 
+		} */
 		
 	}
 

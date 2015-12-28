@@ -103,7 +103,7 @@ public class CreatureCombat : CreatureModule {
 	// Total [Attack/Defense/Damage/Armour] Calculations
 	// =====================================================
 
-	private int GetTotalAttack (Creature attacker) {
+	public int GetTotalAttack (Creature attacker) {
 		// 0% extra accuracy, so we dont miss so often, and to compensate for defense bonuses
 		int attack = attacker.stats.attack + 0;
 
@@ -113,7 +113,7 @@ public class CreatureCombat : CreatureModule {
 		return attack;
 	}
 
-	private int GetTotalDefense (Creature defender) {
+	public int GetTotalDefense (Creature defender) {
 		int defense = defender.stats.defense;
 
 		Dictionary<string, CreatureInventoryItem> equipment = defender.inventoryModule.equipment;
@@ -122,7 +122,7 @@ public class CreatureCombat : CreatureModule {
 		return defense;
 	}
 
-	private int GetTotalDamage (Creature attacker, Creature defender, bool debug = false) {
+	public int GetTotalDamage (Creature attacker, Creature defender, bool debug = false) {
 		int damage = attacker.stats.str;
 
 		// get weapon adittional damage
@@ -153,7 +153,7 @@ public class CreatureCombat : CreatureModule {
 	}
 
 
-	private int GetTotalArmour (Creature defender) {
+	public int GetTotalArmour (Creature defender) {
 		int totalArmour = defender.stats.armour;
 
 		List<Equipment> armours = GetArmourParts(defender);

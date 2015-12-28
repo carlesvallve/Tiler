@@ -28,7 +28,7 @@ public class Hud : MonoSingleton <Hud> {
 	private Transform inventoryItems;
 	private Transform inventoryInfo;
 
-	private List<GameObject> inventorySlots;
+	private List<Slot> inventorySlots;
 	
 
 	void Awake () {
@@ -113,7 +113,7 @@ public class Hud : MonoSingleton <Hud> {
 		}
 
 		// generate inventory slots from player's CreatureInventory items
-		inventorySlots = new List<GameObject>();
+		inventorySlots = new List<Slot>();
 		foreach(CreatureInventoryItem invItem in Grid.instance.player.inventoryModule.items) {
 			if (invItem.equipped) {
 				// equipment slots
@@ -133,63 +133,23 @@ public class Hud : MonoSingleton <Hud> {
 	}
 
 
-	private GameObject CreateInventorySlot (Transform parent, CreatureInventoryItem invItem) {
+	private Slot CreateInventorySlot (Transform parent, CreatureInventoryItem invItem) {
 		// instantiate slot prefab
 		GameObject obj = (GameObject)Instantiate(slotPrefab);
 		obj.transform.SetParent(parent, false);
 		obj.transform.localPosition = Vector3.zero;
 		obj.name = invItem.sprite.name;
 
-		// set image
-		Image image = obj.transform.Find("Image").GetComponent<Image>();
-		image.sprite = invItem.sprite;
+		Slot slot = obj.GetComponent<Slot>();
+		slot.Init(invItem);
 
-		// adjust image aspect on slot
-		AdjustSlotAspect(invItem, image);
-
-		// set text
-		Text text = obj.transform.Find("Text").GetComponent<Text>();
-		text.text = invItem.ammount > 1 ? invItem.ammount.ToString() : "";
-
-		return obj;
+		return slot;
 	}
 
-	private void AdjustSlotAspect (CreatureInventoryItem invItem, Image image) {
-		string type = invItem.item.type;
-		string subtype = invItem.item.subtype;
-
-		Vector3 scale = new Vector3(0.6f, 0.6f, 1f);
-		Vector3 pos = Vector3.zero;
-
-		switch (type) {
-			case "Armour":
-				scale = new Vector3(1.5f, 1.5f, 1);
-				if (subtype == "Robe") { scale = new Vector3(scale.x, scale.y * 0.75f, scale.z); }
-				pos = new Vector3(0, 0, 0);
-				break;
-			case "Weapon":
-				scale = new Vector3(1.25f, 1.25f, 1);
-				pos = new Vector3(12f, 0, 0);
-				break;
-			case "Shield":
-				scale = new Vector3(1.25f, 1.25f, 1);
-				pos = new Vector3(-12f, 0, 0);
-				break;
-			case "Head":
-				scale = new Vector3(1.75f, 1.75f, 1);
-				pos = new Vector3(0, -16f, 0);
-				break;
-		}
-
-		image.transform.localScale = scale; 
-		image.transform.localPosition = pos;
-	}
 	
-
-
-	public void ApplyItem (GameObject obj) {
-		string id = obj.name;
-		CreatureInventoryItem invItem = Grid.instance.player.inventoryModule.GetInventoryItemById(id);
+	public void ApplyItem (Slot slot) {
+		string id = slot.name;
+		CreatureInventoryItem invItem = slot.invItem; //Grid.instance.player.inventoryModule.GetInventoryItemById(id);
 
 		if (invItem == null) {
 			Debug.LogError("No item was found by id: " + id);
@@ -214,14 +174,16 @@ public class Hud : MonoSingleton <Hud> {
 	}
 
 
-	public void OpenItemInfo (GameObject obj) {
-		string id = obj.name;
-		CreatureInventoryItem invItem = Grid.instance.player.inventoryModule.GetInventoryItemById(id);
+	public void OpenItemInfo (Slot slot) {
+		Item item = slot.invItem.item;
 
-		Item item = invItem.item;
+		Image image = inventoryInfo.Find("Container/Image/Image").GetComponent<Image>();
+		image.sprite = item.asset;
 
-		inventoryInfo.Find("Container/Image/Image").GetComponent<Image>().sprite = item.asset;
-		inventoryInfo.Find("Container/Name").GetComponent<Text>().text = item.asset.name; //id;
+		image.transform.localScale = slot.image.transform.localScale;
+		image.transform.localPosition = slot.image.transform.localPosition + new Vector3(24, -24, 0);
+
+		inventoryInfo.Find("Container/Name").GetComponent<Text>().text = slot.name;
 		Text info = inventoryInfo.Find("Container/Stats").GetComponent<Text>();
 
 		info.text = 

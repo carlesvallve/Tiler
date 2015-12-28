@@ -150,7 +150,8 @@ public class Player : Creature {
 		"  <color='#00ffff'>CON " + stats.con + "</color>" +  
 		"  <color='#ffff00'>INT " + stats.intel + "</color>";
 
-		info += "    Combat: " + stats.attack + " / " + stats.defense;
+		info += "    Combat: " + combatModule.GetTotalAttack(this) + " / " + combatModule.GetTotalDefense(this);
+		info += "    Armour: " + combatModule.GetTotalArmour(this);
 		info += "    Gold: " + stats.gold;
 
 		Hud.instance.LogPlayerInfo(info);
@@ -259,6 +260,8 @@ public class Player : Creature {
 
 		// pick a random monster from the list and move camera to center pint between him and us
 		Creature creature = newVisibleMonsters[Random.Range(0, newVisibleMonsters.Count)];
+		if (creature == null) { return; }
+		
 		Vector2 point = transform.localPosition + 
 		(creature.transform.localPosition - transform.localPosition) / 2;
 		MoveCameraTo((int)point.x, (int)point.y);
