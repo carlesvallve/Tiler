@@ -130,7 +130,7 @@ public class CreatureEquipment : CreatureModule {
 
 			Vector3 pos = Vector3.zero;
 			Vector3 scale = tile.img.transform.localScale;
-			float outlineDistance = 0.035f;
+			float outlineDistance = 0.02f;
 
 			if (invItem == null) { 
 				tile.outline.sprite = null;
@@ -225,7 +225,8 @@ public class CreatureEquipment : CreatureModule {
 
 				if (item.subtype == "Robe") {
 					scale = new Vector3(scale.x, scale.y * 0.75f, scale.z); 
-					pos += Vector3.up * 0.035f;
+					pos += Vector3.up * 0.07f; //((me.race == "human" || me.race == "elf") ? 0.05f : 0.03f);
+					if (me.race == "dwarf" || me.race == "hobbit") { pos -= Vector3.up * 0.04f; }
 				}
 
 				pos += new Vector3(outlineDistance / 2, outlineDistance / 2, 0);

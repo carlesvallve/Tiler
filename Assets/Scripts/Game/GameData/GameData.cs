@@ -85,7 +85,7 @@ public class GameData {
 
 	private void LoadEquipments () {
 		// load csv and generate a bidimensional table from it
-		string [,] table = LoadCsv("Data/GameData/Spreadsheet - Wear");
+		string [,] table = LoadCsv("Data/GameData/Spreadsheet - Equipment");
 
 		// set a dictionary with all weapons
 		equipments = new Dictionary<string, EquipmentData>();

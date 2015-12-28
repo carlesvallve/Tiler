@@ -12,8 +12,7 @@ public class Equipment : Item {
 	public int hands;
 	public int weight;
 
-	public string tileType;
-
+	//public string tileType;
 
 
 	public override void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null, string id = null) {
@@ -79,16 +78,6 @@ public class Equipment : Item {
 	}
 
 
-	public override void PlaySoundUse () {
-		if (equipmentSlot == "Weapon" || equipmentSlot == "Shield") {
-			sfx.Play("Audio/Sfx/Item/weapon", 0.4f, Random.Range(0.8f, 1.2f));
-		} else {
-			sfx.Play("Audio/Sfx/Item/armour-equip", 0.8f, Random.Range(0.8f, 1.2f));
-		}
-		
-	}
-
-
 	private void AdjustAspect () {
 		Vector3 scale = img.transform.localScale;
 		Vector3 pos = Vector3.zero;
@@ -98,7 +87,7 @@ public class Equipment : Item {
 				pos = new Vector3(0, -0.1f, 0);
 				if (subtype == "Robe") { 
 					scale = new Vector3(scale.x, scale.y * 0.75f, scale.z); 
-					pos = new Vector3(0, 0.15f, 0);
+					pos = new Vector3(0, 0.05f, 0);
 				}
 				break;
 			case "Weapon":
@@ -115,5 +104,13 @@ public class Equipment : Item {
 		SetImages(scale, pos, 0.035f);
 	}
 
+
+	public override void PlaySoundUse () {
+		if (equipmentSlot == "Weapon" || equipmentSlot == "Shield") {
+			sfx.Play("Audio/Sfx/Item/weapon", 0.4f, Random.Range(0.8f, 1.2f));
+		} else {
+			sfx.Play("Audio/Sfx/Item/armour-equip", 0.8f, Random.Range(0.8f, 1.2f));
+		}
+	}
 }
 
