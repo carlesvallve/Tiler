@@ -3,6 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 
 /*
+
+KNOWN BUGS
+- sometimes, when monsters spawn items after dying, an item cannot be picked up
+- sometimes, we attack a monster before he arrived to our adjacent tile
+- when carrying a ranged weapon and shooting a monster, monsters dont react until some time has passed
+
+
 NEW EQUIPMENT SYSTEM
 - generate new speadsheet -> OK
 - generate equipment items using assetManager asset references -> OK
@@ -10,75 +17,60 @@ NEW EQUIPMENT SYSTEM
 - render equipment using the items we have equipped instead of random ones -> OK
 - use alternative assets for boots and gloves -> OK
 - pre-equip creatures with default equipment
-*/
-
-/*
-- spawning:
-	- implement final spawning algorithm for monsters and items -> we got something kinda working...
-	- spawned things should be stronger at higher dungeon levels -> we got something kinda working...
-
-- inventory:
-	- 2 handed items should be handled, appear in both inventory slots, etc -> OK
-	- we should be able to pre-equip creatures with default equipment -> OK
-	- right clicking on inventory item should display item info -> OK
-
-- ai:
-	- monsters should turn afraid when hp bar is red -> OK
-	- afraid monsters should turn to fight if they have no other option -> OK
-	- monsters should equip collected equipment if is better than current -> OK
-
-	- monsters should use collected potions and food when hp is low
-	- intelligent monsters should have a chance to break containers and open chests
-	
-	- monsters should elaborate more when evaluating objectives:
-		- target player if agressivity roll is passed
-			- agresivity will raise a lot if monster is attacked by the player
-			- agressivity will decrease a lot if monster is severy injured
-		- flee if agressivity is less than 0
-			- check for potions or food around in paths not adjacent to the player
-			- otherwise, flee
-		- agressivity should be compared to attraction for some item
-			- injured monsters are attracted to potions and food
-			- animals are atracted by food
-			- physical humanoids are attracted to better armour and weapons
-			- magical humanoids are attracted to books
-
-*/
-
-/*
-New equipment system:
-
-equipment general classes:
-	Weapons:
-		None
-		Daggers
-		Swords
-		Axes
-		Maces
-		Spears
-		2Handed
-		Bows
-		Crossbows
-		Throwing
-		Shield
-
-	Armour
-		None
-		Light
-		Medium
-		Heavy
-
-equipment single items
-	Id: name of the object
-	Type: general equipment type
-	Assets: list of assets to choose from 
-	Effect: special effect the item may have
-		- special damage type (poison, fire, ice, ...) -> poison+3$fire+2
-		- special damage resistance (poison, fire, ice, ...) -> fire+2$ice-2
-		- special stat boost (str, dex, int, attack, defense, sneak, speed...) ->dex+1$sneak+3
 
 
-character Skills:
+CSV
+- generate full list of monsters with more details and gradation of dangerousness and rarity
+- generate full list of items with more details, gradation, and special effects
+- generate some Randart generation to make some items magical artifacts
+- generate list of spells and what they do exactly. Assign them to books.
+
+
+AI
+- monsters should turn afraid when hp bar is red -> OK
+- afraid monsters should turn to fight if they have no other option -> OK
+- monsters should equip collected equipment if is better than current -> OK
+
+- monsters should use collected potions and food when hp is low
+- intelligent monsters should have a chance to break containers and open chests
+
+- monsters should elaborate more when evaluating objectives:
+	- target player if agressivity roll is passed
+		- agresivity will raise a lot if monster is attacked by the player
+		- agressivity will decrease a lot if monster is severy injured
+	- flee if agressivity is less than 0
+		- check for potions or food around in paths not adjacent to the player
+		- otherwise, flee
+	- agressivity should be compared to attraction for some item
+		- injured monsters are attracted to potions and food
+		- animals are atracted by food
+		- physical humanoids are attracted to better armour and weapons
+		- magical humanoids are attracted to books
+
+
+SPELLS
+- generate list of spells
+	- Red magic (Fire, destruction)
+	- Blue Magic (Water, ilusion, changes)
+	- Green magic (Eath, poison, body)
+	- White magic (Healing, divination, cure)
+	- Black magic (Necromancy, control, decadence)
+
+
+SKILLS
+- implement player skills
+	- armour
+	- weapon 
+	- shield
+	- magic
+	- resistance
+	- herbalism (potions)
+	- sneaking
+	- picklocking
+	- traps
+
+
+SKILL EXAMPLES
 	Skills (Rogue)
 		-Swords: 5
 		-LightArmour: 6
@@ -112,6 +104,7 @@ character Skills:
 		- Potions: 2
 
 */
+
 
 
 public class Game : MonoSingleton <Game> {
