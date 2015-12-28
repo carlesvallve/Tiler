@@ -85,7 +85,7 @@ public class GameData {
 
 	private void LoadEquipments () {
 		// load csv and generate a bidimensional table from it
-		string [,] table = LoadCsv("Data/GameData/Spreadsheet - Equipment");
+		string [,] table = LoadCsv("Data/GameData/Spreadsheet - Wear");
 
 		// set a dictionary with all weapons
 		equipments = new Dictionary<string, EquipmentData>();
@@ -100,7 +100,7 @@ public class GameData {
 			equipment.assets = 	table[y, 1].Split(arraySeparator);
 			
 			equipment.type = 	table[y, 2];
-			equipment.subtype = table[y, 3];
+			equipment.subtype = equipment.type == "Armour" ? "Robe" : table[y, 3];
 			equipment.rarity = 	int.Parse(table[y, 4]);
 			
 			equipment.attack = 	int.Parse(table[y, 5]);

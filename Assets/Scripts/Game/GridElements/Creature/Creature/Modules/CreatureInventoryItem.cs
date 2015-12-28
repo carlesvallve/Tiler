@@ -9,6 +9,7 @@ public class CreatureInventoryItem {
 	public int ammount;
 	public bool equipped = false;
 
+
 	public CreatureInventoryItem (Item item, Sprite sprite) {
 		if (sprite == null) {
 			Debug.Log ("Item does not have a sprite! " + item + " " + item.GetType());
@@ -21,4 +22,5 @@ public class CreatureInventoryItem {
 		this.ammount = item.ammount;
 		this.equipped = false;
 	}
+
 }

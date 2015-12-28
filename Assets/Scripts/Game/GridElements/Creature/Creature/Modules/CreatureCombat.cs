@@ -170,7 +170,7 @@ public class CreatureCombat : CreatureModule {
 		List<Equipment> armours = new List<Equipment>();
 
 		if (equipment["Armour"] != null) { armours.Add((Equipment)equipment["Armour"].item); }
-		if (equipment["Hat"] != null) { armours.Add((Equipment)equipment["Hat"].item); }
+		if (equipment["Head"] != null) { armours.Add((Equipment)equipment["Head"].item); }
 		if (equipment["Gloves"] != null) { armours.Add((Equipment)equipment["Gloves"].item); }
 		if (equipment["Boots"] != null) { armours.Add((Equipment)equipment["Boots"].item); }
 		if (equipment["Cloak"] != null) { armours.Add((Equipment)equipment["Cloak"].item); }

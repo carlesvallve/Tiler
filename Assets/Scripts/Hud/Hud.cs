@@ -144,20 +144,47 @@ public class Hud : MonoSingleton <Hud> {
 		Image image = obj.transform.Find("Image").GetComponent<Image>();
 		image.sprite = invItem.sprite;
 
+		// adjust image aspect on slot
+		AdjustSlotAspect(invItem, image);
+
 		// set text
 		Text text = obj.transform.Find("Text").GetComponent<Text>();
 		text.text = invItem.ammount > 1 ? invItem.ammount.ToString() : "";
 
-		// slot interaction is triggered by Slot class attached to obj
-
-		// set button
-		/*Button button = obj.GetComponent<Button>();
- 		button.onClick.AddListener(() => { 
- 			ApplyItem(obj);
- 		});*/
-
 		return obj;
 	}
+
+	private void AdjustSlotAspect (CreatureInventoryItem invItem, Image image) {
+		string type = invItem.item.type;
+		string subtype = invItem.item.subtype;
+
+		Vector3 scale = new Vector3(0.6f, 0.6f, 1f);
+		Vector3 pos = Vector3.zero;
+
+		switch (type) {
+			case "Armour":
+				scale = new Vector3(1.5f, 1.5f, 1);
+				if (subtype == "Robe") { scale = new Vector3(scale.x, scale.y * 0.75f, scale.z); }
+				pos = new Vector3(0, 0, 0);
+				break;
+			case "Weapon":
+				scale = new Vector3(1.25f, 1.25f, 1);
+				pos = new Vector3(12f, 0, 0);
+				break;
+			case "Shield":
+				scale = new Vector3(1.25f, 1.25f, 1);
+				pos = new Vector3(-12f, 0, 0);
+				break;
+			case "Head":
+				scale = new Vector3(1.75f, 1.75f, 1);
+				pos = new Vector3(0, -16f, 0);
+				break;
+		}
+
+		image.transform.localScale = scale; 
+		image.transform.localPosition = pos;
+	}
+	
 
 
 	public void ApplyItem (GameObject obj) {
@@ -194,7 +221,7 @@ public class Hud : MonoSingleton <Hud> {
 		Item item = invItem.item;
 
 		inventoryInfo.Find("Container/Image/Image").GetComponent<Image>().sprite = item.asset;
-		inventoryInfo.Find("Container/Name").GetComponent<Text>().text = item.id;
+		inventoryInfo.Find("Container/Name").GetComponent<Text>().text = item.asset.name; //id;
 		Text info = inventoryInfo.Find("Container/Stats").GetComponent<Text>();
 
 		info.text = 

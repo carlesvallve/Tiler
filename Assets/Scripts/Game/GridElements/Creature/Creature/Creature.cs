@@ -55,6 +55,12 @@ public class Creature : Tile {
 
 		LocateAtCoords(x, y);
 
+		// initialize stats
+		InitializeStats(id);
+		if (stats.type == "Humanoid") {
+			race = "human";
+		}
+
 		// initialize xp
 		stats.xp = 0;
 		stats.xpMax = 100 * stats.level;
@@ -68,16 +74,9 @@ public class Creature : Tile {
 		inventoryModule = GetComponent<CreatureInventory>();
 		inventoryModule.Init(this);
 
-		InitializeStats(id);
-		if (stats.type == "Humanoid") {
-			race = "human";
-		}
-
 		// equipment module (manages rendering equipment in creature's tile)
 		equipmentModule = GetComponent<CreatureEquipment>();
 		equipmentModule.Init(this);
-
-
 	}
 
 
@@ -691,8 +690,6 @@ public class Creature : Tile {
 
 		// auto-use or auto-equip item if conditions are favourable
 		ApplyItem(invItem);
-
-		equipmentModule.Render();
 	}
 
 
@@ -719,8 +716,6 @@ public class Creature : Tile {
 	public void UpdateEquipmentStats () {
 		stats.weapon = inventoryModule.equipment["Weapon"] != null ? (Equipment)inventoryModule.equipment["Weapon"].item : null;
 		stats.shield = inventoryModule.equipment["Shield"] != null ? (Equipment)inventoryModule.equipment["Shield"].item : null;
-
-		//equipmentModule.Render();
 	}
 
 

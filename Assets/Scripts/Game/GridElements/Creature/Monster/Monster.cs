@@ -9,10 +9,7 @@ public class Monster : Creature {
 
 
 	public override void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null, string id = null) {
-		
 		base.Init(grid, x, y, scale, asset, id);
-		//InitializeStats(id);
-
 
 		// Each monster will evaluate what to do on each game turn update
 		grid.player.OnGameTurnUpdate += () => {
@@ -28,45 +25,6 @@ public class Monster : Creature {
 			Think();
 		};
 	}
-
-
-	/*public void InitializeStats (string id) {
-		// assign props from csv
-		MonsterData data = GameData.monsters[id];
-
-		stats.id = data.id;
-		stats.race = data.race;
-		stats.type = data.type;
-		stats.subtype = data.subtype;
-		stats.rarity = data.rarity;
-
-		stats.level = data.level;
-		stats.hp = data.hp; stats.hpMax = data.hp;
-		stats.energy = data.movement; stats.energyBase = data.movement;
-		stats.attack = data.attack; stats.attackBase = data.attack;
-		stats.defense = data.defense; stats.defenseBase = data.defense;
-		stats.damage = data.damage; stats.damageBase = data.damage;
-		stats.armour = data.armour; stats.armourBase = data.armour;
-		stats.vision = data.vision;
-
-		stats.xpValue = Mathf.RoundToInt((stats.hp + stats.armour) * stats.energy);
-
-		// set asset
-		string fileName = data.assets[Random.Range(0, data.assets.Length)];
-		string path = "Tilesets/Monster/" + data.type + "/" + data.id + "/" + fileName;
-		this.asset = Resources.Load<Sprite>(path);
-		if (asset == null) { Debug.LogError(path); }
-
-		SetAsset(asset);
-
-		// set initial items (only for humanoids)
-		// TODO: We should define in the csv what equipment each monster is able to wear
-		if (stats.type == "Humanoid") {
-			int minRarity = GameData.GetDefaultEquipmentMinRarity();
-			SetInitialItems(Random.Range(0, 4), minRarity);
-		} 
-		
-	}*/
 
 
 	// =====================================================

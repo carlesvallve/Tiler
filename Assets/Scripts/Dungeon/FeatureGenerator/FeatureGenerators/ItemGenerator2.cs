@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 
-public class ItemGenerator : DungeonFeatureGenerator {
+public class ItemGenerator2 : DungeonFeatureGenerator {
 
 	// =====================================================
 	// Item generation
@@ -14,7 +14,7 @@ public class ItemGenerator : DungeonFeatureGenerator {
 
 	public override void Generate () {
 		Random.seed = Dungeon.seed;
-
+		
 		// generate equipment rarity table dictionary
 		int minRarity = GameData.GetDefaultEquipmentMinRarity();
 		Dictionary<string, double> rarities = GameData.GenerateEquipmentRarityTable(minRarity);
@@ -30,16 +30,20 @@ public class ItemGenerator : DungeonFeatureGenerator {
 
 				// Pick a weighted random item type
 				System.Type itemType = Dice.GetRandomTypeFromDict(new Dictionary<System.Type, double>() {
-					{ typeof(Equipment), 	80 },
+					{ typeof(Equipment), 	1220 },
 					{ typeof(Treasure), 	80 },
 					{ typeof(Food), 		40 },
-					{ typeof(Potion), 		40 },
-					{ typeof(Book), 		40 },
+					{ typeof(Potion), 		5 },
+					{ typeof(Book), 		5 },
 				});
-
-				// pick a random id
-				string id = Dice.GetRandomStringFromDict(rarities);
 				
+				// get equipment id
+				string id = null;
+				
+				if (itemType == typeof(Equipment)) {
+					id = Dice.GetRandomStringFromDict(rarities);
+				}
+
 				// create item
 				grid.CreateEntity(itemType, tile.x, tile.y, 0.8f, null, id);
 			}
@@ -56,10 +60,12 @@ public class ItemGenerator : DungeonFeatureGenerator {
 		for (int i = 0; i < maxItems; i++) {
 			System.Type itemType = tile.GetRandomItemType();
 
-			// pick a random id
-			string id = Dice.GetRandomStringFromDict(rarities);
-				
-			// create item
+			// get item id
+			string id = null;
+			if (itemType == typeof(Equipment)) {
+				id = Dice.GetRandomStringFromDict(rarities);
+			}
+
 			GenerateSingle(tile, itemType, id);
 		}
 	}

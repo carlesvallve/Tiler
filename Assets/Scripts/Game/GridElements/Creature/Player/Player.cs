@@ -61,7 +61,7 @@ public class Player : Creature {
 		stats.str = 2;
 
 		// set initial items
-		SetInitialItems();
+		//SetInitialItems();
 	}
 
 
@@ -93,6 +93,8 @@ public class Player : Creature {
 	// =====================================================
 	// Initial Equipment
 	// =====================================================
+
+	// TODO: Refactor to use new equipment system
 
 	public override void SetInitialItems (int maxItems = 0, int minRarity = 100) {
 		ItemGenerator generator = new ItemGenerator();

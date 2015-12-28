@@ -69,7 +69,7 @@ public class CreatureEquipment : CreatureModule {
 
 		// equipment
 		parts["Armour"] = GenerateEquipmentTile("Armour", "none", 6, Color.white);
-		parts["Head"] = GenerateEquipmentTile("Hat", "none", 7, Color.white);
+		parts["Head"] = GenerateEquipmentTile("Head", "none", 7, Color.white);
 		parts["Hand1"] = GenerateEquipmentTile("Weapon", "none", 8, Color.white);
 		parts["Hand2"] = GenerateEquipmentTile("Shield", "none", 9, Color.white);
 		parts["Cloak"] = GenerateEquipmentTile("Cloak", "none", -2, Color.white);
@@ -130,7 +130,7 @@ public class CreatureEquipment : CreatureModule {
 
 			Vector3 pos = Vector3.zero;
 			Vector3 scale = tile.img.transform.localScale;
-			float outlineDistance = 0.01f;
+			float outlineDistance = 0.035f;
 
 			if (invItem == null) { 
 				tile.outline.sprite = null;
@@ -157,7 +157,7 @@ public class CreatureEquipment : CreatureModule {
 			}
 
 
-			if (id == "Hat") {
+			if (id == "Head") {
 				if (me.race == "human" || me.race == "elf") {
 					pos = new Vector3(0.015f, 0.007f, 0);
 				} else if (me.race == "dwarf") {
@@ -168,7 +168,7 @@ public class CreatureEquipment : CreatureModule {
 
 				pos += new Vector3(outlineDistance / 2, outlineDistance / 2, 0);
 
-				tile.SetAsset(AssetManager.LoadRandomEquipmentPart("Head", AssetManager.headParts));
+				tile.SetAsset(item.img.sprite);
 				tile.SetImages(scale, pos, outlineDistance);
 				continue;
 			}
@@ -185,7 +185,7 @@ public class CreatureEquipment : CreatureModule {
 
 				pos += new Vector3(outlineDistance / 2, outlineDistance / 2, 0);
 
-				tile.SetAsset(AssetManager.LoadRandomEquipmentPart("Hand1", AssetManager.hand1Parts));
+				tile.SetAsset(item.img.sprite);
 				tile.SetImages(scale, pos, outlineDistance);
 				continue;
 			}
@@ -202,7 +202,7 @@ public class CreatureEquipment : CreatureModule {
 
 				pos += new Vector3(outlineDistance / 2, outlineDistance / 2, 0);
 
-				tile.SetAsset(AssetManager.LoadRandomEquipmentPart("Hand2", AssetManager.hand2Parts));
+				tile.SetAsset(item.img.sprite);
 				tile.SetImages(scale, pos, outlineDistance);
 				continue;
 			}
@@ -223,9 +223,14 @@ public class CreatureEquipment : CreatureModule {
 					scale = new Vector3(0.8f, 0.55f, 1);
 				}
 
+				if (item.subtype == "Robe") {
+					scale = new Vector3(scale.x, scale.y * 0.75f, scale.z); 
+					pos += Vector3.up * 0.035f;
+				}
+
 				pos += new Vector3(outlineDistance / 2, outlineDistance / 2, 0);
 				
-				tile.SetAsset(AssetManager.LoadRandomEquipmentPart("Armour", AssetManager.armourParts));
+				tile.SetAsset(item.img.sprite);
 				tile.SetImages(scale, pos, outlineDistance);
 				continue;
 			}
@@ -246,8 +251,15 @@ public class CreatureEquipment : CreatureModule {
 				}
 
 				pos += new Vector3(outlineDistance / 2, outlineDistance / 2, 0);
+
+				// special case for loading the cloak
+				string path = "Tilesets/Wear/Cloak/Cloak/" + AssetManager.cloakParts["Cloak"][0];
+				Sprite asset = Resources.Load<Sprite>(path);
+				if (asset == null) {
+					Debug.LogError(path + " not found");
+				}
 				
-				tile.SetAsset(AssetManager.LoadRandomEquipmentPart("Cloak", AssetManager.cloakParts));
+				tile.SetAsset(asset);
 				tile.SetImages(scale, pos, outlineDistance);
 				tile.img.color = item.color;
 				continue;

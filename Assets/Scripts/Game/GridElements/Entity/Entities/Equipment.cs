@@ -24,6 +24,8 @@ public class Equipment : Item {
 		//this.img.color = color;
 
 		InitializeStats(id);
+
+		AdjustAspect();
 	}
 
 
@@ -38,7 +40,7 @@ public class Equipment : Item {
 		this.id = data.id;
 		this.type = data.type;
 		this.subtype = data.subtype;
-		this.rarity = 100; //data.rarity;
+		this.rarity = data.rarity;
 
 		this.attack = data.attack;
 		this.defense = data.defense;
@@ -49,13 +51,8 @@ public class Equipment : Item {
 		this.weight = data.weight;
 
 		// set asset
-		//string str = ""; foreach(string myasset in data.assets) { str += myasset + " "; }; Debug.Log(str);
-
-		string fileName = data.assets[Random.Range(0, data.assets.Length)];
-		string path = "Tilesets/Equipment/" + this.type + "/" + fileName;
-		this.asset = Resources.Load<Sprite>(path);
-		if (asset == null) { Debug.LogError(path); }
-		SetAsset(asset);
+		this.asset = LoadAsset(data);
+		SetAsset(this.asset);
 
 		// extra props
 		this.walkable = true;
@@ -66,6 +63,22 @@ public class Equipment : Item {
 	}
 
 
+	private Sprite LoadAsset (EquipmentData data) {
+		// set asset with alternative old way (boots / gloves / cloak)
+		if (type == "Boots" || type == "Gloves" || type == "Cloak") {
+			string fileName = data.assets[Random.Range(0, data.assets.Length)];
+			string path = "Tilesets/Equipment/" + this.type + "/" + fileName;
+			
+			Sprite asset = Resources.Load<Sprite>(path);
+			if (asset == null) { Debug.LogError(path); }
+			return asset;
+		}
+
+		// set asset form AssetManager
+		return AssetManager.LoadEquipmentPart(type, subtype);
+	}
+
+
 	public override void PlaySoundUse () {
 		if (equipmentSlot == "Weapon" || equipmentSlot == "Shield") {
 			sfx.Play("Audio/Sfx/Item/weapon", 0.4f, Random.Range(0.8f, 1.2f));
@@ -73,6 +86,33 @@ public class Equipment : Item {
 			sfx.Play("Audio/Sfx/Item/armour-equip", 0.8f, Random.Range(0.8f, 1.2f));
 		}
 		
+	}
+
+
+	private void AdjustAspect () {
+		Vector3 scale = img.transform.localScale;
+		Vector3 pos = Vector3.zero;
+
+		switch (type) {
+			case "Armour":
+				pos = new Vector3(0, -0.1f, 0);
+				if (subtype == "Robe") { 
+					scale = new Vector3(scale.x, scale.y * 0.75f, scale.z); 
+					pos = new Vector3(0, 0.15f, 0);
+				}
+				break;
+			case "Weapon":
+				pos = new Vector3(0.25f, 0, 0);
+				break;
+			case "Shield":
+				pos = new Vector3(-0.25f, 0, 0);
+				break;
+			case "Head":
+				pos = new Vector3(0, -0.5f, 0);
+				break;
+		}
+
+		SetImages(scale, pos, 0.035f);
 	}
 
 }

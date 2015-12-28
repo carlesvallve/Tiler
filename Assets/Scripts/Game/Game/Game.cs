@@ -3,11 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 
 /*
-- generate equipment items using assetManager asset references
-- place inventory intems inside inventory container
-- render equipment using the items we have equipped instead of random ones
-- use alternative assets for boots and gloves
-
+NEW EQUIPMENT SYSTEM
+- generate new speadsheet -> OK
+- generate equipment items using assetManager asset references -> OK
+- place inventory items inside inventory container -> OK
+- render equipment using the items we have equipped instead of random ones -> OK
+- use alternative assets for boots and gloves -> OK
+- pre-equip creatures with default equipment
 */
 
 /*

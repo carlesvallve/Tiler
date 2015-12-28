@@ -5,13 +5,11 @@ using System.Collections.Generic;
 
 public class CreatureInventory : CreatureModule  {
 	
-	//protected Creature creature;
-
 	public List<CreatureInventoryItem> items;
 
 	public Dictionary<string, CreatureInventoryItem> equipment = 
 	new Dictionary<string, CreatureInventoryItem>() {
-		{ "Hat",  	null },
+		{ "Head",  	null },
 		{ "Cloak",  null },
 		{ "Gloves", null },
 		{ "Armour", null },
@@ -127,6 +125,8 @@ public class CreatureInventory : CreatureModule  {
 
 		// update creature's equipment stats
 		me.UpdateEquipmentStats();
+
+		me.equipmentModule.Render();
 	}
 
 
@@ -142,10 +142,15 @@ public class CreatureInventory : CreatureModule  {
 
 		equipment[item.equipmentSlot].equipped = false;
 		equipment[item.equipmentSlot] = null;
+
+		me.equipmentModule.Render();
 	}
 
 
 	public bool IsBestEquipment (CreatureInventoryItem invItem) {
+		// debug purposes
+		return true;
+
 		// escape if item is not equippable
 		if (!(invItem.item is Equipment)) {
 			return false;

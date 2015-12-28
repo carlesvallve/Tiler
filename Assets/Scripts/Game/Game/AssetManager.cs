@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class AssetManager : MonoBehaviour {
 
-	private static bool verbose = true;
+	private static bool verbose = false;
 
 	// This dictionaries hold an array of equipment asset names in each category
 
@@ -30,7 +30,7 @@ public class AssetManager : MonoBehaviour {
 		{ "Wizard", null }
 	};
 
-	public static Dictionary <string, string[]> hand1Parts = new Dictionary <string, string[]>() {
+	public static Dictionary <string, string[]> weaponParts = new Dictionary <string, string[]>() {
 		{ "Axe", null },
 		{ "Dagger", null },
 		{ "Mace", null },
@@ -41,7 +41,7 @@ public class AssetManager : MonoBehaviour {
 		{ "Sword", null }
 	};
 
-	public static Dictionary <string, string[]> hand2Parts = new Dictionary <string, string[]>() {
+	public static Dictionary <string, string[]> shieldParts = new Dictionary <string, string[]>() {
 		{ "Buckler", null },
 		{ "Kite", null },
 		{ "Large", null },
@@ -58,15 +58,17 @@ public class AssetManager : MonoBehaviour {
 	// =====================================================
 
 	public static void SetEquipmentAssets () {
-		SetAssetNames("Armour", armourParts);
-		SetAssetNames("Head", headParts);
-		SetAssetNames("Hand1", hand1Parts);
-		SetAssetNames("Hand2", hand2Parts);
-		SetAssetNames("Cloak", cloakParts);
+		SetAssetNames("Armour");
+		SetAssetNames("Head");
+		SetAssetNames("Weapon");
+		SetAssetNames("Shield");
+		SetAssetNames("Cloak");
 	}
 
 
-	private static void SetAssetNames (string part, Dictionary <string, string[]> dict) {
+	private static void SetAssetNames (string part) {
+		// get dictionary keys corresponding to given part type
+		Dictionary <string, string[]> dict = GetDictionaryByType(part);
 		List<string> keys = new List<string> (dict.Keys);
 
 		foreach (string key in keys) {
@@ -104,15 +106,42 @@ public class AssetManager : MonoBehaviour {
 	}
 
 
-	private static string GetRandomEquipmentCategoryKey (Dictionary <string, string[]> dict) {
-		List<string> keys = new List<string> (dict.Keys);
-		string key = keys[Random.Range(0, keys.Count)];
+	public static Sprite LoadEquipmentPart (string part, string key) {
+		// get dictionary corresponding to given part type
+		Dictionary <string, string[]> dict = GetDictionaryByType(part);
 
-		return key;
+		if (dict == null) {
+			Debug.LogError("No dictionary was found by " + part);
+			return null;
+		}
+
+		// get path to fileName by given part key
+		string[] fileNames = dict[key];
+		string fileName = fileNames[Random.Range(0, fileNames.Length)];
+		string path = "Tilesets/Wear/" + part + "/" + key + "/" + fileName;
+
+		// load sprite
+		Sprite asset = Resources.Load<Sprite>(path);
+		if (asset == null) {
+			Debug.LogError(path + " not found");
+		}
+
+		// return sprite
+		// print (path + " -> " + asset.name);
+		return asset;
 	}
 
 
-	public static Sprite LoadRandomEquipmentPart (string part, Dictionary <string, string[]> dict) {
+	// for debug purposes
+	public static Sprite LoadRandomEquipmentPart (string part) {
+		// get dictionary corresponding to given part type
+		Dictionary <string, string[]> dict = GetDictionaryByType(part);
+
+		if (dict == null) {
+			Debug.LogError("No dictionary was found by " + part);
+			return null;
+		}
+
 		// get filenames in category
 		string key = GetRandomEquipmentCategoryKey(dict);
 		string[] fileNames = dict[key];
@@ -130,5 +159,31 @@ public class AssetManager : MonoBehaviour {
 		// return sprite
 		// print (path + " -> " + asset.name);
 		return asset;
+	}
+
+
+	private static string GetRandomEquipmentCategoryKey (Dictionary <string, string[]> dict) {
+		List<string> keys = new List<string> (dict.Keys);
+		string key = keys[Random.Range(0, keys.Count)];
+
+		return key;
+	}
+
+
+	public static Dictionary <string, string[]> GetDictionaryByType (string type) {
+		switch (type) {
+		case "Armour":
+			return armourParts;
+		case "Head":
+			return headParts;
+		case "Weapon":
+			return weaponParts;
+		case "Shield":
+			return shieldParts;
+		case "Cloak":
+			return cloakParts;
+		}
+
+		return null;
 	}
 }

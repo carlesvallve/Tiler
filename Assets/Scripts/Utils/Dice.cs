@@ -56,6 +56,11 @@ public class Dice {
 
 
 	public static int GetMaxValue (string rpg) {
+		//Debug.Log (">>> " + IntParseFast(rpg));
+		if (IntParseFast(rpg) == 0) {
+			return 0;
+		}
+
 		char[] delimiters = new char[] { '+', '-', 'd' };
 		string[] arr = rpg.Split(delimiters);
 
