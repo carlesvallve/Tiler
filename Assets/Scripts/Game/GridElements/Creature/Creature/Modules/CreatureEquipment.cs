@@ -5,8 +5,6 @@ using System.Collections.Generic;
 
 public class CreatureEquipment : CreatureModule {
 
-	private bool verbose = false;
-
 	// this dictionary holds the tiles used to render each equipment part on a creature
 
 	public Dictionary<string, Tile> parts = new Dictionary<string, Tile>() {
@@ -24,53 +22,6 @@ public class CreatureEquipment : CreatureModule {
 		{ "Cloak", null },
 	};
 
-	// This dictionaries hold an array of equipment asset names in each category
-	// TODO: we should move these to a static class and fill them only once, maybe with sprites instead of names
-
-	public Dictionary <string, string[]> armourParts = new Dictionary <string, string[]>() {
-		{ "Belt", null },
-		{ "Chain", null },
-		{ "Cloth", null },
-		{ "HalfPlate", null },
-		{ "Leather", null },
-		{ "LeatherPlus", null },
-		{ "Plate", null },
-		{ "Robe", null }
-	};
-
-	public Dictionary <string, string[]> headParts = new Dictionary <string, string[]>() {
-		{ "Band", null },
-		{ "Cap", null },
-		{ "Crown", null },
-		{ "Hat", null },
-		{ "Helm", null },
-		{ "Hood", null },
-		{ "Horns", null },
-		{ "Wizard", null }
-	};
-
-	public Dictionary <string, string[]> hand1Parts = new Dictionary <string, string[]>() {
-		{ "Axe", null },
-		{ "Dagger", null },
-		{ "Mace", null },
-		{ "Ranged", null },
-		{ "Rod", null },
-		{ "Spear", null },
-		{ "Staff", null },
-		{ "Sword", null }
-	};
-
-	public Dictionary <string, string[]> hand2Parts = new Dictionary <string, string[]>() {
-		{ "Buckler", null },
-		{ "Kite", null },
-		{ "Large", null },
-		{ "Round", null }
-	};
-
-	public Dictionary <string, string[]> cloakParts = new Dictionary <string, string[]>() {
-		{ "Cloak", null }
-	};
-
 
 	// =====================================================
 	// Initialize Equipment Parts on Creature
@@ -78,13 +29,6 @@ public class CreatureEquipment : CreatureModule {
 
 	public override void Init (Creature creature) {
 		base.Init(creature);
-
-		// TODO: This should be done only once (?)
-		SetAssetNames("Armour", armourParts);
-		SetAssetNames("Head", headParts);
-		SetAssetNames("Hand1", hand1Parts);
-		SetAssetNames("Hand2", hand2Parts);
-		SetAssetNames("Cloak", cloakParts);
 
 		GenerateBodyParts();
 		GenerateEquipmentParts();
@@ -165,78 +109,6 @@ public class CreatureEquipment : CreatureModule {
 
 
 	// =====================================================
-	// Get Equipment Parts FileNames
-	// =====================================================
-
-	private void SetAssetNames (string part, Dictionary <string, string[]> dict) {
-		List<string> keys = new List<string> (dict.Keys);
-
-		foreach (string key in keys) {
-			string[] arr = GetFileNamesAtFolder("Tilesets/Wear/" + part + "/" + key);
-			dict[key] = arr;
-
-			if (verbose) {
-				print("====== " + key + " (" + arr.Length + ") ======");
-				print(ArrToString(arr));
-			}
-			
-		}
-	}
-
-
-	private string[] GetFileNamesAtFolder (string path) {
-		Sprite[] sprites = Resources.LoadAll<Sprite>(path);
-
-		string[] fileNames = new string[sprites.Length];
-		for (int i = 0; i < sprites.Length; i++) {
-			fileNames[i] = sprites[i].name;
-		}
-
-		return fileNames;
-	}
-
-
-	private string ArrToString (string[] arr) {
-		string str = "";
-		for (int i = 0; i < arr.Length; i++) {
-			str += arr[i];
-			if (i < arr.Length - 1) { str += ", "; }
-		}
-
-		return str;
-	}
-
-
-	private string GetRandomEquipmentCategoryKey (Dictionary <string, string[]> dict) {
-		List<string> keys = new List<string> (dict.Keys);
-		string key = keys[Random.Range(0, keys.Count)];
-
-		return key;
-	}
-
-
-	private Sprite LoadRandomEquipmentPart (string part, Dictionary <string, string[]> dict) {
-		// get filenames in category
-		string key = GetRandomEquipmentCategoryKey(dict);
-		string[] fileNames = dict[key];
-		
-		// get path to random fileName
-		string fileName = fileNames[Random.Range(0, fileNames.Length)];
-		string path = "Tilesets/Wear/" + part + "/" + key + "/" + fileName;
-
-		// load sprite
-		Sprite asset = Resources.Load<Sprite>(path);
-		if (asset == null) {
-			Debug.LogError(path + " not found");
-		}
-
-		// return sprite
-		// print (path + " -> " + asset.name);
-		return asset;
-	}
-
-
-	// =====================================================
 	// Render Equipment Parts on Creature
 	// =====================================================
 
@@ -296,7 +168,7 @@ public class CreatureEquipment : CreatureModule {
 
 				pos += new Vector3(outlineDistance / 2, outlineDistance / 2, 0);
 
-				tile.SetAsset(LoadRandomEquipmentPart("Head", headParts));
+				tile.SetAsset(AssetManager.LoadRandomEquipmentPart("Head", AssetManager.headParts));
 				tile.SetImages(scale, pos, outlineDistance);
 				continue;
 			}
@@ -313,7 +185,7 @@ public class CreatureEquipment : CreatureModule {
 
 				pos += new Vector3(outlineDistance / 2, outlineDistance / 2, 0);
 
-				tile.SetAsset(LoadRandomEquipmentPart("Hand1", hand1Parts));
+				tile.SetAsset(AssetManager.LoadRandomEquipmentPart("Hand1", AssetManager.hand1Parts));
 				tile.SetImages(scale, pos, outlineDistance);
 				continue;
 			}
@@ -330,7 +202,7 @@ public class CreatureEquipment : CreatureModule {
 
 				pos += new Vector3(outlineDistance / 2, outlineDistance / 2, 0);
 
-				tile.SetAsset(LoadRandomEquipmentPart("Hand2", hand2Parts));
+				tile.SetAsset(AssetManager.LoadRandomEquipmentPart("Hand2", AssetManager.hand2Parts));
 				tile.SetImages(scale, pos, outlineDistance);
 				continue;
 			}
@@ -353,7 +225,7 @@ public class CreatureEquipment : CreatureModule {
 
 				pos += new Vector3(outlineDistance / 2, outlineDistance / 2, 0);
 				
-				tile.SetAsset(LoadRandomEquipmentPart("Armour", armourParts));
+				tile.SetAsset(AssetManager.LoadRandomEquipmentPart("Armour", AssetManager.armourParts));
 				tile.SetImages(scale, pos, outlineDistance);
 				continue;
 			}
@@ -375,7 +247,7 @@ public class CreatureEquipment : CreatureModule {
 
 				pos += new Vector3(outlineDistance / 2, outlineDistance / 2, 0);
 				
-				tile.SetAsset(LoadRandomEquipmentPart("Cloak", cloakParts));
+				tile.SetAsset(AssetManager.LoadRandomEquipmentPart("Cloak", AssetManager.cloakParts));
 				tile.SetImages(scale, pos, outlineDistance);
 				tile.img.color = item.color;
 				continue;
