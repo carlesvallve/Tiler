@@ -225,7 +225,7 @@ public class CreatureEquipment : CreatureModule {
 
 				if (item.subtype == "Robe") {
 					scale = new Vector3(scale.x, scale.y * 0.75f, scale.z); 
-					pos += Vector3.up * 0.07f; //((me.race == "human" || me.race == "elf") ? 0.05f : 0.03f);
+					pos += Vector3.up * 0.07f;
 					if (me.race == "dwarf" || me.race == "hobbit") { pos -= Vector3.up * 0.04f; }
 				}
 

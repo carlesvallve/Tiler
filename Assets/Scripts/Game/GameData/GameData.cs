@@ -100,7 +100,7 @@ public class GameData {
 			equipment.assets = 	table[y, 1].Split(arraySeparator);
 			
 			equipment.type = 	table[y, 2];
-			equipment.subtype = equipment.type == "Armour" ? "Robe" : table[y, 3];
+			equipment.subtype = table[y, 3]; // equipment.type == "Armour" ? "Robe" : 
 			equipment.rarity = 	int.Parse(table[y, 4]);
 			
 			equipment.attack = 	int.Parse(table[y, 5]);
