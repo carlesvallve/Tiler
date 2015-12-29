@@ -42,12 +42,20 @@ public class MonsterGenerator : DungeonFeatureGenerator {
 			// decide how many monsters of a type are in the room
 			DungeonRoom room = dungeonGenerator.rooms[n];
 
-			// get max monsters, relative to max number of tiles in the room
+			// get max monsters in level
 			int maxMonsters = 0;
-			int r = Random.Range(1, 100);
-			if (r <= 40) {
-				int maxTiles = Mathf.RoundToInt(room.tiles.Count * 0.1f);
-				maxMonsters = Random.Range(1, maxTiles);
+
+			if (dungeonGenerator.rooms.Count == 1) {
+				// calculate max monsters for single room levels
+				int maxTiles = Mathf.RoundToInt(room.tiles.Count * 0.05f);
+				maxMonsters = Random.Range(maxTiles / 2, maxTiles);
+			} else {
+				// calculate max monsters relative to max number of tiles in each room
+				int r = Random.Range(1, 100);
+				if (r <= 40) {
+					int maxTiles = Mathf.RoundToInt(room.tiles.Count * 0.1f);
+					maxMonsters = Random.Range(1, maxTiles);
+				}
 			}
 
 			// continue if this room has no monsters

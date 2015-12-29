@@ -35,8 +35,8 @@ public class QuadTree {
 
 	public int id;
 	public Color color = Color.white;
-	public Material materialFloor;
-	public Material materialWall;
+	//public Material materialFloor;
+	//public Material materialWall;
 	
 	// Constructor
 
@@ -52,16 +52,16 @@ public class QuadTree {
 
 		this.color = new Color(Random.Range(0.2f, 1f), Random.Range(0.2f, 1f), Random.Range(0.2f, 1f));
 		
-		this.materialFloor = new Material (Shader.Find(" Diffuse"));
+		/*this.materialFloor = new Material (Shader.Find(" Diffuse"));
 		this.materialFloor.color = this.color;
 		this.materialFloor.mainTexture = Resources.Load("dungeon/Textures/grid") as Texture2D;
-		this.materialFloor.SetTextureScale("_MainTex", new Vector2(0.333f,0.333f));
+		this.materialFloor.SetTextureScale("_MainTex", new Vector2(0.333f,0.333f));*/
 		//this.materialFloor.SetTextureOffset("_MainTex", new Vector2(0.333f * Random.Range(0, 3) ,0.333f * Random.Range(0, 3)));
 	
-		this.materialWall = new Material (Shader.Find(" Diffuse"));
+		/*this.materialWall = new Material (Shader.Find(" Diffuse"));
 		this.materialWall.color = new Color(color.r * 0.75f, color.g * 0.75f, color.b * 0.75f);
 		this.materialWall.mainTexture = this.materialFloor.mainTexture;
-		this.materialWall.SetTextureScale("_MainTex", new Vector2(0.333f,0.333f));
+		this.materialWall.SetTextureScale("_MainTex", new Vector2(0.333f,0.333f));*/
 
 	}
 	

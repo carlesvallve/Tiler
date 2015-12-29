@@ -17,6 +17,13 @@ public class DungeonRoom {
 	public List<DungeonTile> tiles;
 
 
+	public DungeonRoom (int id) {
+		this.id = id;
+		this.color = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f));
+		this.tiles = new List<DungeonTile>();
+	}
+	
+
 	public DungeonRoom (int id, AABB b) {
 		boundary = b;
 

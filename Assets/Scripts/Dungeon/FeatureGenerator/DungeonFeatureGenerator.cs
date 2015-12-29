@@ -19,6 +19,11 @@ public class DungeonFeatureGenerator {
 	public virtual void Generate () {
 	}
 
+	
+	public virtual void Generate (float ratioPerFreeTiles) {
+	}
+
+
 	public virtual void Generate (Tile tile, int maxItems, int minRarity = 100) {
 	}
 
@@ -81,7 +86,7 @@ public class DungeonFeatureGenerator {
 			c++; if (c == 1000) { break; }
 		}
 
-		//Debug.LogWarning("No free tile available in grid. Escaping...");
+		Debug.LogWarning("No free tile available in grid. Escaping...");
 		return null;
 	}
 
@@ -98,6 +103,7 @@ public class DungeonFeatureGenerator {
 		// if any tile inside given radius is occupied, tile is not free
 		List<Tile> tiles = grid.GetNeighboursInsideRadius(tile.x, tile.y, radius);
 		foreach (Tile neighbour in tiles) {
+			if (neighbour == null) { return false; }
 			if (neighbour.IsOccupied()) { return false; }
 		}
 

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
+
 [RequireComponent (typeof (DungeonGenerator))]
 [RequireComponent (typeof (Grid))]
 
@@ -12,11 +13,15 @@ public class Dungeon : MonoSingleton <Dungeon> {
 	private Hud hud;
 	private Grid grid;
 	private DungeonGenerator dungeonGenerator;
+	private CaveGenerator caveGenerator;
+	private DungeonType dungeonType;
 
 	public List<int> dungeonSeeds = new List<int>();
 	public int currentDungeonLevel;
 
 	public static int seed;
+
+	private int generationTries = 0;
 
 
 	void Awake () {
@@ -25,6 +30,7 @@ public class Dungeon : MonoSingleton <Dungeon> {
 		game = Game.instance;
 		grid = Grid.instance;
 		dungeonGenerator = DungeonGenerator.instance;
+		caveGenerator = CaveGenerator.instance;
 
 		// set initial dungeon level
 		currentDungeonLevel = 0;
@@ -52,8 +58,18 @@ public class Dungeon : MonoSingleton <Dungeon> {
 		// set new random seed
 		Random.seed = seed;
 
-		// Generate dungeon data
-		dungeonGenerator.GenerateDungeon(seed);
+		// choose between dungeon or cave
+		int r = 100;//Random.Range(1, 100);
+
+		if (r <= 50) {
+			// Generate dungeon data
+			dungeonType = DungeonType.Dungeon;
+			dungeonGenerator.Generate(seed);
+		} else {
+			// Generate cave data
+			dungeonType = DungeonType.Cave;
+			caveGenerator.Generate(seed, Random.Range(3, 7));
+		}
 
 		// Render dungeon on grid
 		RenderDungeon(direction);
@@ -65,6 +81,7 @@ public class Dungeon : MonoSingleton <Dungeon> {
 	// =====================================================
 	// Generate Dungeon Features
 	// =====================================================
+
 
 	public void RenderDungeon (int direction) {
 		// init grid
@@ -89,18 +106,28 @@ public class Dungeon : MonoSingleton <Dungeon> {
 	private void GenerateDungeonFeatures (int direction) {
 		// Generate architecture for each tree quad recursively
 		ArchitectureGenerator architecture = new ArchitectureGenerator();
-		architecture.GenerateArchitecture(dungeonGenerator.quadTree);
+		if (dungeonType == DungeonType.Dungeon) {
+			architecture.GenerateArchitecture(dungeonGenerator.quadTree);
+		} else {
+			architecture.GenerateCaveArchitecture();
+		}
 
 		// Generate stairs
 		StairGenerator stairs = new StairGenerator();
 		stairs.Generate();
 
 		// If we cannot solve the level, we need to generate a different one
-		if (!LevelIsSolvable()) {
-			Debug.LogError("Dungeon level cannot be solved. Genrating again...");
+		/*if (!LevelIsSolvable()) {
+			generationTries++;
+			if (generationTries == 100) {
+				Debug.LogError("Dungeon unsolvable after 100 iterations. Escaping application...");
+				return;
+			}
+			Debug.LogError("Dungeon level cannot be solved. Generating again...");
 			GenerateDungeon(direction);
+
 			return;
-		}
+		}*/
 
 		// Generate player 
 		PlayerGenerator player = new PlayerGenerator();
@@ -109,21 +136,21 @@ public class Dungeon : MonoSingleton <Dungeon> {
 
 		// Generate furniture
 		FurnitureGenerator furniture = new FurnitureGenerator();
-		furniture.Generate();
+		//furniture.Generate(dungeonType == DungeonType.Dungeon ? 0.3f : 0.1f);
 
 		// Generate monsters
 		MonsterGenerator monsters = new MonsterGenerator();
-		monsters.Generate();
+		//monsters.Generate();
 		//monsters.GenerateSingle("Zombie");
 		//monsters.GenerateSingle("Centaur");
 
 		// Generate containers
 		ContainerGenerator containers = new ContainerGenerator();
-		containers.Generate();
+		//containers.Generate();
 
 		// Generate items
 		ItemGenerator items = new ItemGenerator();
-		items.Generate();
+		//items.Generate();
 	}
 
 
@@ -137,7 +164,8 @@ public class Dungeon : MonoSingleton <Dungeon> {
 		List<Vector2> path = Astar.instance.SearchPath(
 			grid.stairUp.x, grid.stairUp.y, grid.stairDown.x, grid.stairDown.y
 		);
-		if (path.Count == 0) {
+
+		if (path == null || path.Count == 0) {
 			return false;
 		}
 
@@ -164,6 +192,7 @@ public class Dungeon : MonoSingleton <Dungeon> {
 		
 		// generate next dungeon level
 		if (currentDungeonLevel + direction >= 0) {
+			generationTries = 0;
 			GenerateDungeon(direction);
 		} else {
 			grid.ResetGrid();
