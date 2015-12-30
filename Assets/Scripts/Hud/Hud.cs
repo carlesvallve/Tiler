@@ -79,6 +79,11 @@ public class Hud : MonoSingleton <Hud> {
 			Navigator.instance.Open("Game");
 		}
 
+
+		if (Input.GetKeyDown(KeyCode.V)) {
+			Grid.instance.player.SeeAll(Grid.instance.player.x, Grid.instance.player.y);
+		}
+
 	}
 
 	// ==============================================================

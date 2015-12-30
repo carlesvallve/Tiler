@@ -8,7 +8,7 @@ public class Camera2D : MonoBehaviour {
 	public static Camera2D instance;
 
 	// resolution
-	int pixelsPerUnit = 16; //32; //40;
+	int pixelsPerUnit = 28; //32; //32; //40;
 	
 	// zoom
 	//private float zoomSpeed = 0.5f;

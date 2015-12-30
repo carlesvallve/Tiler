@@ -9,13 +9,13 @@ public class ContainerGenerator : DungeonFeatureGenerator {
 	// Container generation
 	// =====================================================
 
-	public override void Generate () {
+	public override void Generate (int chancePerRoom, float ratioPerFreeTile) {
 		Random.seed = Dungeon.seed;
 		
 		for (int n = 0; n < dungeonGenerator.rooms.Count; n++) {
 
 			DungeonRoom room = dungeonGenerator.rooms[n];
-			int maxContainers = Random.Range(0, 100) <= 60 ? Random.Range(1, (int)(room.tiles.Count * 0.1f)) : 0;
+			int maxContainers = Random.Range(0, 100) <= chancePerRoom ? Random.Range(1, (int)(room.tiles.Count * ratioPerFreeTile)) : 0;
 
 			// place furniture in room
 			for (int i = 1; i <= maxContainers; i ++) {

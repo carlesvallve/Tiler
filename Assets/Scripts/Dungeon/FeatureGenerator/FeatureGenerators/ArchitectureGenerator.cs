@@ -29,14 +29,23 @@ public class ArchitectureGenerator : DungeonFeatureGenerator {
 		CaveGenerator cave = CaveGenerator.instance;
 		int[,] Map = cave.Map;
 
-		// set the whole cave as a single dungeon room
+		// set each cave cavern as a dungeon room
 		DungeonGenerator.instance.rooms.Clear();
-		DungeonGenerator.instance.rooms.Add(new DungeonRoom(0));
 
+		for (int i = 0; i < cave.caverns.Count; i++) {
+			DungeonRoom room = new DungeonRoom(i);
+			DungeonGenerator.instance.rooms.Add(room);
+
+			foreach (Point p in cave.caverns[i]) {
+				room.tiles.Add(new DungeonTile(DungeonTileType.ROOM, p.x, p.y));
+			}
+		}
+		
+		// convert cavern to grid
 		for (int y = 0; y <= Map.GetLength(1) - 1; y++) {
 			for (int x = 0; x <= Map.GetLength(0) - 1; x++) {
 				// create floors
-				if (Map[x, y] == 0) {
+				if (Map[x, y] == 0 || Map[x, y] == 2) { // 2 are supposed to be corridors painted in red
 
 					Sprite asset = floorAsset;
 					if (floorAsset == null) {
@@ -44,7 +53,7 @@ public class ArchitectureGenerator : DungeonFeatureGenerator {
 					}
 					
 					Floor floor = (Floor)grid.CreateTile(typeof(Floor), x, y, 1, asset) as Floor;
-					floor.SetColor(floorColor, true);
+					floor.SetColor(Map[x, y] == 3 ? Color.red : floorColor, true);
 					floor.roomId = 0;
 
 					DungeonTile dtile = new DungeonTile(DungeonTileType.ROOM, x, y);

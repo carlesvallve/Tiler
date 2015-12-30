@@ -12,7 +12,7 @@ public class ItemGenerator : DungeonFeatureGenerator {
 
 	// generate random items in dungeon level
 
-	public override void Generate () {
+	public override void Generate (int chancePerRoom, float ratioPerFreeTile) {
 		Random.seed = Dungeon.seed;
 
 		// generate equipment rarity table dictionary
@@ -22,7 +22,9 @@ public class ItemGenerator : DungeonFeatureGenerator {
 		for (int n = 0; n < dungeonGenerator.rooms.Count; n++) {
 
 			DungeonRoom room = dungeonGenerator.rooms[n];
-			int maxItems = Random.Range(0, 100) <= 80 ? Random.Range(1, Mathf.RoundToInt((room.tiles.Count * 0.2f))) : 0;
+			int maxItems = Random.Range(0, 100) <= chancePerRoom ? Random.Range(1, Mathf.RoundToInt((room.tiles.Count * ratioPerFreeTile))) : 0;
+
+			//Debug.Log (">>> " + maxItems + " " + Mathf.RoundToInt((room.tiles.Count * ratioPerFreeTile));
 
 			for (int i = 1; i <= maxItems; i ++) {
 				Tile tile = GetFreeTileOnRoom(room, 0);

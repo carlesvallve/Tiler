@@ -3,8 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 
 
-
-
 public class CaveGenerator : MonoSingleton <CaveGenerator> {
 
 	public int[,] Map;
@@ -12,54 +10,128 @@ public class CaveGenerator : MonoSingleton <CaveGenerator> {
 	public int MapHeight { get; set; }
 	public int PercentAreWalls { get; set; }
 
+	public List<List<Point>> caverns;
+
 
 	public void Generate (int seed) {
 		MapWidth = DungeonGenerator.instance.MAP_WIDTH;
 		MapHeight = DungeonGenerator.instance.MAP_HEIGHT;
-		PercentAreWalls = 50;
+		PercentAreWalls = 35;
  
  		// fill map randomly
 		RandomFillMap();
 
 		// apply algorithm-1
-		for (int i = 1; i <= 3; i++) {
+		for (int i = 1; i <= 5; i++) {
 			MakeCaverns1();
 		}
 
 		// apply algorithm-2
-		for (int i = 1; i <= 4; i++) {
+		for (int i = 1; i <= 3; i++) {
 			MakeCaverns2();
 		}
+
+		// connect isolated areas
+		ConnectAreas();
+
+		//PrintMap();
+	}
+
+
+	// =====================================================
+	// Connect cavern areas
+	// =====================================================
+
+	private void ConnectAreas () {
+		// Get isolated cavern areas by floodfill algorithm
+		FloodFill.Init(Map, 1, 0);
+
+		// connect the areas by digging paths between each area random tile
+		List<List<Point>> areas = FloodFill.areas;
+		caverns = areas;
+
+		if (areas.Count > 0) {
+			for (int i = 0; i < areas.Count; i++) {
+
+				// get a random tile on this area
+				List<Point> area = areas[i];
+				Point p1 = area[Random.Range(0, area.Count)];
+
+				// get a random tile on next area
+				Point p2 = null;
+				if (i < areas.Count -1) {
+					List<Point> nextArea = areas[i + 1];
+					p2 = nextArea[Random.Range(0, nextArea.Count)];
+				} else {
+					List<Point> nextArea = areas[0];
+					p2 = nextArea[Random.Range(0, nextArea.Count)];
+				}
+
+				// dig a random path between the 2 points
+				if (p2 != null) {
+					DigPath(p1, p2);
+				}
+			}
+		}
+	}
+
+
+	private void DigPath(Point p1, Point p2) {
+		int c = 0;
+
+		while (true) {
+			// get a random cardinal direction from current point to goal
+			int dx = (int)Mathf.Sign(p2.x - p1.x);
+			int dy = (int)Mathf.Sign(p2.y - p1.y);
+			int r = Random.Range(0, 100);
+			if (r <= 50) { dx = 0; } else { dy = 0; }
+
+			// dig corridor in direction
+			p1 = new Point (p1.x + dx, p1.y + dy);
+			Map[p1.x, p1.y] = 0;
+
+			// escape if we arrived to goal
+			if (p1.x == p2.x && p1.y == p2.x) {
+				break;
+			}
+
+			// escape if something went wrong
+			c++; if (c == 1000) { 
+				Debug.Log("Problems while digging a path. Escaping...");
+				break; 
+			}
+		}
+	}
+
+
+	// note: not in use
+	// discarded in benefit of connecting areas by digging corridors
+	private void RemoveIsolatedSmallAreas () {
+		
 
 		// Get isolated caver areas by floodfill algorithm
 		FloodFill.Init(Map, 1, 0);
 
+		// Remove biggest area from area list, since we want to keep it
+		int c = 0;
+		List<Point> myArea = null;
+		foreach (List<Point> area in FloodFill.areas) {
+			if (area.Count > c) {
+				myArea = area;
+				c = area.Count;
+			}
+		}
+
+		FloodFill.areas.Remove(myArea);
+		print (FloodFill.areas.Count + " areas to remove. Biggest area of " + myArea.Count + " tiles");
+
 		// remove smallest isolated areas (turn them to walls)
+		// TODO: It may be better if we could dig a corridor from area to area with astar...
 		foreach (List<Point> area in FloodFill.areas) {
 			foreach (Point p in area) {
 				Map[p.x, p.y] = 1;
 			}
 		}
-
-		PrintMap();
-	}
-
-
-
-	private Point GetRandomEmptyPoint () {
-		int c = 0;
-
-		while (true) {
-			int x = Random.Range(0, MapWidth);
-			int y = Random.Range(0, MapHeight);
-			if (Map[x, y] == 0) {
-				return new Point(x, y); //Map[x, y];
-			}
-
-			c++; if (c == 1000) { return null; }
-		}
-
-		return null;
 	}
 
 
@@ -68,7 +140,6 @@ public class CaveGenerator : MonoSingleton <CaveGenerator> {
 	// =====================================================
 
 	public void MakeCaverns1 () {
-		// By initilizing column in the outter loop, its only created ONCE
 		for(int column = 0, row = 0; row <= MapHeight - 1; row++) {
 			for(column = 0; column <= MapWidth - 1; column++) {
 				Map[column,row] = PlaceWallLogic1(column,row);
@@ -87,40 +158,27 @@ public class CaveGenerator : MonoSingleton <CaveGenerator> {
 
 
 	public int PlaceWallLogic1 (int x,int y) {
-
-		// tile will turn to wall if if 
-		// - neighbours in radius 1 are at least 5 
-		// - neighbours in radius 2 are 2 or less
-		// - otherwise, tile will turn to floor
-
+		// 5 neighbours or more in 1 radius, is wall
 		if (GetAdjacentWalls(x, y, 1) >= 5) { 
 			return 1; 
 		} 
 
-		if (GetAdjacentWalls(x, y, 2) <= 2) {
-			return 1;
+		// one neighbour or less in 2 radius, is floor
+		if (GetAdjacentWalls(x, y, 2) <= 1) {
+			return 0;
 		}
 		
-		return 0; //Map[x,y];
+		return Map[x,y];
 	}
 
 
 	public int PlaceWallLogic2 (int x,int y) {
-
-		// tile will turn wall if
-		// - neighbours in radius 1 are at least 5 walls
-		// - neighbours in radius 2 are 5 or less walls
-		// - otherwise, tile will remain what it was before
-
-		if (GetAdjacentWalls(x, y, 1) >= 5) {
-			return 1;
+		// 4 neighbours or less in 2 radius, is floor
+		if (GetAdjacentWalls(x, y, 2) <= 4) {
+			return 0;
 		}
 
-		if (GetAdjacentWalls(x, y, 2) <= 5) {
-			return 1;
-		}
-
-		return Map[x,y];
+		return Map[x, y];
 	}
 
 

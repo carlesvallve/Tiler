@@ -31,7 +31,7 @@ public class MonsterGenerator : DungeonFeatureGenerator {
 	}
 
 
-	public override void Generate () {
+	public override void Generate (int chancePerRoom, float ratioPerFreeTiles) {
 		Random.seed = Dungeon.seed;
 
 		// generate monster rarity table dictionary
@@ -45,19 +45,13 @@ public class MonsterGenerator : DungeonFeatureGenerator {
 			// get max monsters in level
 			int maxMonsters = 0;
 
-			if (dungeonGenerator.rooms.Count == 1) {
-				// calculate max monsters for single room levels
-				int maxTiles = Mathf.RoundToInt(room.tiles.Count * 0.05f);
-				maxMonsters = Random.Range(maxTiles / 2, maxTiles);
-			} else {
-				// calculate max monsters relative to max number of tiles in each room
-				int r = Random.Range(1, 100);
-				if (r <= 40) {
-					int maxTiles = Mathf.RoundToInt(room.tiles.Count * 0.1f);
-					maxMonsters = Random.Range(1, maxTiles);
-				}
+			// calculate max monsters relative to max number of tiles in each room
+			int r = Random.Range(1, 100);
+			if (r <= chancePerRoom) {
+				int maxTiles = Mathf.RoundToInt(room.tiles.Count * ratioPerFreeTiles);
+				maxMonsters = Random.Range(1, maxTiles);
 			}
-
+			
 			// continue if this room has no monsters
 			if (maxMonsters == 0) { continue; }
 

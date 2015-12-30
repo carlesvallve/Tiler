@@ -362,4 +362,38 @@ public class Player : Creature {
 			}
 		}
 	}
+
+
+	public void SeeAll (int px, int py) {
+
+		// iterate grid tiles and render them
+		for (int y = 0; y < grid.height; y++) {
+			for (int x = 0; x < grid.width; x++) {
+				// render tiles
+				Tile tile = grid.GetTile(x, y);
+
+				if (tile != null) {
+					// render tiles (and record fov info)
+					float distance = Mathf.Round(Vector2.Distance(new Vector2(px, py), new Vector2(x, y)) * 10) / 10;
+					tile.SetFovInfo(Game.instance.turn, distance);
+
+					// render tiles
+					float shadowValue = 0; //- 0.1f + Mathf.Min((distance / radius) * 0.6f, 0.6f);
+					tile.SetVisibility(tile, true, shadowValue);
+
+					// render entities
+					Entity entity = grid.GetEntity(x, y);
+					if (entity != null) { 
+						entity.SetVisibility(tile, true, shadowValue); 
+					}
+
+					// render creatures
+					Creature creature = grid.GetCreature(x, y);
+					if (creature != null) {
+						creature.SetVisibility(tile, true, shadowValue);
+					}
+				}
+			}
+		}
+	}
 }

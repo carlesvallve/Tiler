@@ -14,13 +14,13 @@ public class FurnitureGenerator : DungeonFeatureGenerator {
 	// We may want to relate this theme to the dungeon Room or TreeQuad theme
 
 
-	public override void Generate (float ratioPerFreeTiles) {
+	public override void Generate (int chancePerRoom, float ratioPerFreeTiles) {
 		Random.seed = Dungeon.seed;
 
 		for (int n = 0; n < dungeonGenerator.rooms.Count; n++) {
 
 			DungeonRoom room = dungeonGenerator.rooms[n];
-			int maxFurniture = Random.Range(0, 100) <= 100 ? Random.Range(1, (int)(room.tiles.Count * ratioPerFreeTiles)) : 0;
+			int maxFurniture = Random.Range(0, 100) <= chancePerRoom ? Random.Range(1, (int)(room.tiles.Count * ratioPerFreeTiles)) : 0;
 
 			// place furniture in room
 			for (int i = 1; i <= maxFurniture; i ++) {

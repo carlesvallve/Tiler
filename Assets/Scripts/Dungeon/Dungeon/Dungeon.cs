@@ -136,21 +136,21 @@ public class Dungeon : MonoSingleton <Dungeon> {
 
 		// Generate furniture
 		FurnitureGenerator furniture = new FurnitureGenerator();
-		//furniture.Generate(dungeonType == DungeonType.Dungeon ? 0.3f : 0.1f);
+		furniture.Generate(dungeonType == DungeonType.Dungeon ? 50 : 100, dungeonType == DungeonType.Dungeon ? 0.3f : 0.025f);
 
 		// Generate monsters
 		MonsterGenerator monsters = new MonsterGenerator();
-		//monsters.Generate();
+		monsters.Generate(dungeonType == DungeonType.Dungeon ? 50 : 100, dungeonType == DungeonType.Dungeon ? 0.1f : 0.025f);
 		//monsters.GenerateSingle("Zombie");
 		//monsters.GenerateSingle("Centaur");
 
 		// Generate containers
 		ContainerGenerator containers = new ContainerGenerator();
-		//containers.Generate();
+		containers.Generate(dungeonType == DungeonType.Dungeon ? 50 : 100, dungeonType == DungeonType.Dungeon ? 0.3f : 0.025f);
 
 		// Generate items
 		ItemGenerator items = new ItemGenerator();
-		//items.Generate();
+		items.Generate(dungeonType == DungeonType.Dungeon ? 50 : 100, dungeonType == DungeonType.Dungeon ? 0.3f : 0.025f);
 	}
 
 

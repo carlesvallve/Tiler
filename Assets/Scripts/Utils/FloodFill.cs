@@ -10,22 +10,6 @@ public class FloodFill : MonoBehaviour {
 	public static List<List<Point>> areas;
 
 
-	public static void RemoveBiggestAreaFromAreaList () {
-		List<Point> myArea = null;
-		int c = 0;
-
-		foreach (List<Point> area in areas) {
-			if (area.Count > c) {
-				myArea = area;
-				c = area.Count;
-			}
-		}
-
-		areas.Remove(myArea);
-		print (areas.Count + " areas to remove. Biggest area of " + + myArea.Count + " tiles");
-	}
-
-
 	public static void Init (int[,] _map, int newColor, int oldColor) { 
 		areas = new List<List<Point>>();
 		area = new List<Point>();
@@ -45,13 +29,13 @@ public class FloodFill : MonoBehaviour {
 	public static void StartFromNextTile (int newColor, int oldColor) {
 		Point p = GetNextFreeTile ();
 		if (p == null) {
-			RemoveBiggestAreaFromAreaList();
+			//print ("Discovered " + areas.Count + " isolated areas");
 			return;
 		}
 
 		area = new List<Point>();
 		FloodFill8(p.x, p.y, newColor, oldColor);
-		print ("Discovered an area of " + area.Count + " tiles");
+		//print ("Discovered an area of " + area.Count + " tiles");
 		areas.Add(area);
 
 		StartFromNextTile(newColor, oldColor);

@@ -20,7 +20,7 @@ public class DungeonFeatureGenerator {
 	}
 
 	
-	public virtual void Generate (float ratioPerFreeTiles) {
+	public virtual void Generate (int chancePerRoom, float ratioPerFreeTiles) {
 	}
 
 
