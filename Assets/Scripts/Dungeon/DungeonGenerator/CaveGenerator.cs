@@ -19,15 +19,18 @@ public class CaveGenerator : MonoSingleton <CaveGenerator> {
 
 		MapWidth = DungeonGenerator.instance.MAP_WIDTH;
 		MapHeight = DungeonGenerator.instance.MAP_HEIGHT;
-		PercentAreWalls = 40;
+		PercentAreWalls = 45;
  
+ 		// fill map randomly
 		RandomFillMap();
 
-		for (int i = 1; i <= 5; i++) {
+		// apply algorithm-1
+		for (int i = 1; i <= 4; i++) {
 			MakeCaverns1();
 		}
 
-		for (int i = 1; i <= 3; i++) {
+		// apply algorithm-2
+		for (int i = 1; i <= 4; i++) {
 			MakeCaverns2();
 		}
 		
@@ -58,76 +61,49 @@ public class CaveGenerator : MonoSingleton <CaveGenerator> {
 	}
 
 
-	// cellular automata rules: 
-	// a tile becomes a wall if it was a wall and 4 or more of its eight neighbors were walls, or if it was not a wall and 5 or more neighbors were walls
-
- 
 	public int PlaceWallLogic1 (int x,int y) {
-		
-		/*if (Map[x,y] == 1) {
-			return 1;
-		}*/
 
-		if (GetAdjacentWalls(x, y, 1, 1) >= 5) { 
+		// tile will turn to wall if if 
+		// - neighbours in radius 1 are at least 5 
+		// - neighbours in radius 2 are 2 or less
+		// - otherwise, tile will turn to floor
+
+		if (GetAdjacentWalls(x, y, 1) >= 5) { 
 			return 1; 
 		} 
 
-
-		if (GetAdjacentWalls(x, y, 2, 2) <= 2) {
+		if (GetAdjacentWalls(x, y, 2) <= 2) {
 			return 1;
 		}
 		
-		return Map[x,y];
+		return 0;
 	}
 
 
 	public int PlaceWallLogic2 (int x,int y) {
 
-		/*if (Map[x,y] == 1) {
-			return 1;
-		}*/
+		// tile will turn wall if
+		// - neighbours in radius 1 are at least 5 walls
+		// - neighbours in radius 2 are 5 or less walls
+		// - otherwise, tile will remain what it was before
 
-		if (GetAdjacentWalls(x, y, 1, 1) >= 5) {
+		if (GetAdjacentWalls(x, y, 1) >= 5) {
 			return 1;
 		}
 
+		if (GetAdjacentWalls(x, y, 2) <= 5) {
+			return 1;
+		}
 
-		return 0; //Map[x,y];
+		return Map[x,y];
 	}
 
 
-	/*public int PlaceWallLogic (int x,int y, int iteration) {
-
-		int numWalls = GetAdjacentWalls(x,y,1,1);
- 
-		if(Map[x,y]==1) {
-			if (numWalls >= 4) {
-				return 1;
-			}
-
-			if (numWalls < 2) {
-				return 0;
-			}
- 
-		} else {
-
-			if (numWalls >= 5) {
-				return 1;
-			}
-		}
-
-		return 0;
-	}*/
-
-
-	
-
-
-	public int GetAdjacentWalls (int x, int y, int scopeX, int scopeY) {
-		int startX = x - scopeX;
-		int startY = y - scopeY;
-		int endX = x + scopeX;
-		int endY = y + scopeY;
+	public int GetAdjacentWalls (int x, int y, int radius) {
+		int startX = x - radius;
+		int startY = y - radius;
+		int endX = x + radius;
+		int endY = y + radius;
  
 		int iX = startX;
 		int iY = startY;
@@ -135,12 +111,10 @@ public class CaveGenerator : MonoSingleton <CaveGenerator> {
 		int wallCounter = 0;
  
 		for(iY = startY; iY <= endY; iY++) {
-			for(iX = startX; iX <= endX; iX++) {
-				//if(!(iX==x && iY==y)) {
-					if(IsWall(iX,iY)) {
-						wallCounter += 1;
-					}
-				//}
+			for(iX = startX; iX <= endX; iX++) {	
+				if(IsWall(iX,iY)) {
+					wallCounter += 1;
+				}
 			}
 		}
 
@@ -178,13 +152,13 @@ public class CaveGenerator : MonoSingleton <CaveGenerator> {
 	}
 
  
-	public void BlankMap () {
+	/*public void BlankMap () {
 		for(int column = 0,row = 0; row < MapHeight; row++) {
 			for(column = 0; column < MapWidth; column++) {
 				Map[column, row] = 0;
 			}
 		}
-	}
+	}*/
 
 
 	// =====================================================
