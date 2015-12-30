@@ -116,18 +116,7 @@ public class Dungeon : MonoSingleton <Dungeon> {
 		StairGenerator stairs = new StairGenerator();
 		stairs.Generate();
 
-		// If we cannot solve the level, we need to generate a different one
-		/*if (!LevelIsSolvable()) {
-			generationTries++;
-			if (generationTries == 100) {
-				Debug.LogError("Dungeon unsolvable after 100 iterations. Escaping application...");
-				return;
-			}
-			Debug.LogError("Dungeon level cannot be solved. Generating again...");
-			GenerateDungeon(direction);
-
-			return;
-		}*/
+		
 
 		// Generate player 
 		PlayerGenerator player = new PlayerGenerator();
@@ -136,21 +125,34 @@ public class Dungeon : MonoSingleton <Dungeon> {
 
 		// Generate furniture
 		FurnitureGenerator furniture = new FurnitureGenerator();
-		furniture.Generate(dungeonType == DungeonType.Dungeon ? 50 : 100, dungeonType == DungeonType.Dungeon ? 0.3f : 0.025f);
+		furniture.Generate(dungeonType == DungeonType.Dungeon ? 50 : 100, dungeonType == DungeonType.Dungeon ? 0.35f : 0.025f);
 
 		// Generate monsters
 		MonsterGenerator monsters = new MonsterGenerator();
-		monsters.Generate(dungeonType == DungeonType.Dungeon ? 50 : 100, dungeonType == DungeonType.Dungeon ? 0.1f : 0.025f);
+		monsters.Generate(dungeonType == DungeonType.Dungeon ? 50 : 100, dungeonType == DungeonType.Dungeon ? 0.15f : 0.01f);
 		//monsters.GenerateSingle("Zombie");
 		//monsters.GenerateSingle("Centaur");
 
 		// Generate containers
 		ContainerGenerator containers = new ContainerGenerator();
-		containers.Generate(dungeonType == DungeonType.Dungeon ? 50 : 100, dungeonType == DungeonType.Dungeon ? 0.3f : 0.025f);
+		containers.Generate(dungeonType == DungeonType.Dungeon ? 50 : 100, dungeonType == DungeonType.Dungeon ? 0.15f : 0.01f);
 
 		// Generate items
 		ItemGenerator items = new ItemGenerator();
-		items.Generate(dungeonType == DungeonType.Dungeon ? 50 : 100, dungeonType == DungeonType.Dungeon ? 0.3f : 0.025f);
+		items.Generate(dungeonType == DungeonType.Dungeon ? 50 : 100, dungeonType == DungeonType.Dungeon ? 0.15f : 0.01f);
+
+		// If we cannot solve the level, we need to generate a different one
+		if (!LevelIsSolvable()) {
+			generationTries++;
+			if (generationTries == 100) {
+				Debug.LogError("Dungeon unsolvable after 100 iterations. Escaping application...");
+				return;
+			}
+			Debug.LogError("Dungeon level cannot be solved. Generating again...");
+			GenerateDungeon(0);
+
+			return;
+		}
 	}
 
 

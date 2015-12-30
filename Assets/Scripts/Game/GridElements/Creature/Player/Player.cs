@@ -11,7 +11,7 @@ public class Player : Creature {
 	public delegate void GameOverHandler();
 	public event GameOverHandler OnGameOver;
 
-	protected int cameraMargin = 3;
+	protected int cameraMargin = 4;
 
 	protected string playerName;
 
