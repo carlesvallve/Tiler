@@ -68,7 +68,7 @@ public class Dungeon : MonoSingleton <Dungeon> {
 		} else {
 			// Generate cave data
 			dungeonType = DungeonType.Cave;
-			caveGenerator.Generate(seed, Random.Range(3, 7));
+			caveGenerator.Generate(seed);
 		}
 
 		// Render dungeon on grid

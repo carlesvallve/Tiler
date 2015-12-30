@@ -3,29 +3,26 @@ using System.Collections;
 using System.Collections.Generic;
 
 
+
+
 public class CaveGenerator : MonoSingleton <CaveGenerator> {
 
-	public int seed = -1;
-
 	public int[,] Map;
- 
 	public int MapWidth	{ get; set; }
 	public int MapHeight { get; set; }
 	public int PercentAreWalls { get; set; }
 
 
-	public void Generate (int seed, int iterations = 4) {
-		this.seed = seed;
-
+	public void Generate (int seed) {
 		MapWidth = DungeonGenerator.instance.MAP_WIDTH;
 		MapHeight = DungeonGenerator.instance.MAP_HEIGHT;
-		PercentAreWalls = 45;
+		PercentAreWalls = 50;
  
  		// fill map randomly
 		RandomFillMap();
 
 		// apply algorithm-1
-		for (int i = 1; i <= 4; i++) {
+		for (int i = 1; i <= 3; i++) {
 			MakeCaverns1();
 		}
 
@@ -33,8 +30,36 @@ public class CaveGenerator : MonoSingleton <CaveGenerator> {
 		for (int i = 1; i <= 4; i++) {
 			MakeCaverns2();
 		}
-		
+
+		// Get isolated caver areas by floodfill algorithm
+		FloodFill.Init(Map, 1, 0);
+
+		// remove smallest isolated areas (turn them to walls)
+		foreach (List<Point> area in FloodFill.areas) {
+			foreach (Point p in area) {
+				Map[p.x, p.y] = 1;
+			}
+		}
+
 		PrintMap();
+	}
+
+
+
+	private Point GetRandomEmptyPoint () {
+		int c = 0;
+
+		while (true) {
+			int x = Random.Range(0, MapWidth);
+			int y = Random.Range(0, MapHeight);
+			if (Map[x, y] == 0) {
+				return new Point(x, y); //Map[x, y];
+			}
+
+			c++; if (c == 1000) { return null; }
+		}
+
+		return null;
 	}
 
 
@@ -76,7 +101,7 @@ public class CaveGenerator : MonoSingleton <CaveGenerator> {
 			return 1;
 		}
 		
-		return 0;
+		return 0; //Map[x,y];
 	}
 
 
@@ -98,6 +123,10 @@ public class CaveGenerator : MonoSingleton <CaveGenerator> {
 		return Map[x,y];
 	}
 
+
+	// =====================================================
+	// GetWalls
+	// =====================================================
 
 	public int GetAdjacentWalls (int x, int y, int radius) {
 		int startX = x - radius;
@@ -152,15 +181,6 @@ public class CaveGenerator : MonoSingleton <CaveGenerator> {
 	}
 
  
-	/*public void BlankMap () {
-		for(int column = 0,row = 0; row < MapHeight; row++) {
-			for(column = 0; column < MapWidth; column++) {
-				Map[column, row] = 0;
-			}
-		}
-	}*/
-
-
 	// =====================================================
 	// Random Fill Map
 	// =====================================================
@@ -212,7 +232,6 @@ public class CaveGenerator : MonoSingleton <CaveGenerator> {
 	// =====================================================
 
 	public void PrintMap () {
-		Debug.ClearDeveloperConsole();
 		Debug.Log(MapToString());
 	}
 
@@ -225,7 +244,7 @@ public class CaveGenerator : MonoSingleton <CaveGenerator> {
 			MapHeight.ToString(),
 			"\t% Walls:",
 			PercentAreWalls.ToString(),
-			"\n" //Environment.NewLine
+			"\n"
 		};
 
 		string returnString = System.String.Join(" ", arr);
@@ -239,7 +258,7 @@ public class CaveGenerator : MonoSingleton <CaveGenerator> {
 			for (column = 0; column < MapWidth; column++ ) {
 				returnString += mapSymbols[Map[column,row]];
 			}
-			returnString += "\n"; //Environment.NewLine;
+			returnString += "\n";
 		}
 
 		return returnString;
