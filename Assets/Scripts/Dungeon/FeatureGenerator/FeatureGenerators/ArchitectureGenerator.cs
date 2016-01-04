@@ -53,7 +53,7 @@ public class ArchitectureGenerator : DungeonFeatureGenerator {
 					}
 					
 					Floor floor = (Floor)grid.CreateTile(typeof(Floor), x, y, 1, asset) as Floor;
-					floor.SetColor(Map[x, y] == 3 ? Color.red : floorColor, true);
+					floor.SetColor(Map[x, y] == 2 ? Color.red : floorColor, true);
 					floor.roomId = 0;
 
 					DungeonTile dtile = new DungeonTile(DungeonTileType.ROOM, x, y);
@@ -62,7 +62,8 @@ public class ArchitectureGenerator : DungeonFeatureGenerator {
 
 				// create walls
 				if (Map[x, y] == 1) {
-					grid.CreateTile(typeof(Tile), x, y, 1, null); // necessary for visibility
+					Tile tile = grid.CreateTile(typeof(Tile), x, y, 1, null); // necessary for visibility
+					tile.gameObject.name = "WallFloor";
 
 					Sprite asset = wallAsset;
 					if (wallAsset == null) {

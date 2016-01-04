@@ -16,7 +16,7 @@ public class Camera2D : MonoBehaviour {
 	//private float maxZoom = 1024 / 2;
 
 	// panning
-	public float panSpeed = 0.01f;
+	public float panSpeed = 1f;
 	private Vector3 lastMousePos;
 
 
@@ -52,6 +52,7 @@ public class Camera2D : MonoBehaviour {
 			PanOrthoCamera(delta);
 			lastMousePos = Input.mousePosition;
 		}	
+
 
 		// constrain camera to bg bounds
 		//ConstrainToBounds();

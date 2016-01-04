@@ -34,6 +34,9 @@ public class CaveGenerator : MonoSingleton <CaveGenerator> {
 		// connect isolated areas
 		ConnectAreas();
 
+		// remove inner walls
+		RemoveInnerWalls();
+
 		//PrintMap();
 	}
 
@@ -62,10 +65,10 @@ public class CaveGenerator : MonoSingleton <CaveGenerator> {
 				if (i < areas.Count -1) {
 					List<Point> nextArea = areas[i + 1];
 					p2 = nextArea[Random.Range(0, nextArea.Count)];
-				} else {
+				} /*else {
 					List<Point> nextArea = areas[0];
 					p2 = nextArea[Random.Range(0, nextArea.Count)];
-				}
+				}*/
 
 				// dig a random path between the 2 points
 				if (p2 != null) {
@@ -88,7 +91,11 @@ public class CaveGenerator : MonoSingleton <CaveGenerator> {
 
 			// dig corridor in direction
 			p1 = new Point (p1.x + dx, p1.y + dy);
-			Map[p1.x, p1.y] = 0;
+
+			if (IsWall(p1.x, p1.y)) {
+				Map[p1.x, p1.y] = 2;
+			}
+			
 
 			// escape if we arrived to goal
 			if (p1.x == p2.x && p1.y == p2.x) {
@@ -102,6 +109,7 @@ public class CaveGenerator : MonoSingleton <CaveGenerator> {
 			}
 		}
 	}
+
 
 
 	// note: not in use
@@ -130,6 +138,17 @@ public class CaveGenerator : MonoSingleton <CaveGenerator> {
 		foreach (List<Point> area in FloodFill.areas) {
 			foreach (Point p in area) {
 				Map[p.x, p.y] = 1;
+			}
+		}
+	}
+
+
+	public void RemoveInnerWalls () {
+		for(int x = 0, y = 0; y <= MapHeight - 1; y++) {
+			for(x = 0; x <= MapWidth - 1; x++) {
+				if (GetAdjacentWalls(x, y, 1) >= 9) {
+					Map[x, y] = 3;
+				}
 			}
 		}
 	}
@@ -216,7 +235,7 @@ public class CaveGenerator : MonoSingleton <CaveGenerator> {
 			return true;
 		}
  
-		if (Map[x,y] == 1) {
+		if (Map[x,y] == 1 || Map[x,y] == 3) {
 			return true;
 		}
  

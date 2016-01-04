@@ -46,7 +46,7 @@ public class Dungeon : MonoSingleton <Dungeon> {
 		currentDungeonLevel += direction;
 
 		// Generate a new random seed, or get it from previously stored
-		if (currentDungeonLevel > dungeonSeeds.Count - 1) {
+		if (currentDungeonLevel > dungeonSeeds.Count - 1 || direction == 0) {
 			// Set a random seed if we are entering a new dungeon level
 			seed = System.DateTime.Now.Millisecond * 1000 + System.DateTime.Now.Minute * 100;
 			dungeonSeeds.Add(seed);
@@ -61,7 +61,7 @@ public class Dungeon : MonoSingleton <Dungeon> {
 		// choose between dungeon or cave
 		int r = Random.Range(1, 100);
 
-		if (r <= 50) {
+		if (r <= 0) {
 			// Generate dungeon data
 			dungeonType = DungeonType.Dungeon;
 			dungeonGenerator.Generate(seed);
@@ -129,7 +129,7 @@ public class Dungeon : MonoSingleton <Dungeon> {
 
 		// Generate monsters
 		MonsterGenerator monsters = new MonsterGenerator();
-		monsters.Generate(dungeonType == DungeonType.Dungeon ? 50 : 100, dungeonType == DungeonType.Dungeon ? 0.15f : 0.01f);
+		//monsters.Generate(dungeonType == DungeonType.Dungeon ? 50 : 100, dungeonType == DungeonType.Dungeon ? 0.15f : 0.01f);
 		//monsters.GenerateSingle("Zombie");
 		//monsters.GenerateSingle("Centaur");
 

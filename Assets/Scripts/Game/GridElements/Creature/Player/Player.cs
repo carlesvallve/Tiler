@@ -288,6 +288,10 @@ public class Player : Creature {
 			return; 
 		}
 
+		if (Camera2D.instance == null) {
+			return;
+		}
+
 		Camera2D.instance.StopAllCoroutines();
 
 		if (interpolate) {
