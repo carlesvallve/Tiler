@@ -102,9 +102,7 @@ SKILL EXAMPLES
 		- Divination: 3
 		- Unarmed: 2
 		- Potions: 2
-
 */
-
 
 
 public class Game : MonoSingleton <Game> {
