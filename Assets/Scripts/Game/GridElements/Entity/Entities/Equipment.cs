@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+using AssetLoader;
+
 
 public class Equipment : Item {
 
@@ -65,16 +67,19 @@ public class Equipment : Item {
 	private Sprite LoadAsset (EquipmentData data) {
 		// set asset with alternative old way (boots / gloves / cloak)
 		if (type == "Boots" || type == "Gloves" || type == "Cloak") {
-			string fileName = data.assets[Random.Range(0, data.assets.Length)];
+			/*string fileName = data.assets[Random.Range(0, data.assets.Length)];
 			string path = "Tilesets/Equipment/" + this.type + "/" + fileName;
 			
 			Sprite asset = Resources.Load<Sprite>(path);
-			if (asset == null) { Debug.LogError(path); }
+			if (asset == null) { Debug.LogError(path); }*/
+
+			Sprite asset = null; //Assets.GetAsset("Equipment/" + type + "/" + fileName);
+
 			return asset;
 		}
 
 		// set asset form AssetManager
-		return AssetManager.LoadEquipmentPart(type, subtype);
+		return null; //AssetManager.LoadEquipmentPart(type, subtype);
 	}
 
 

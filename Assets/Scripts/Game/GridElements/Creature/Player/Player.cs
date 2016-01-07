@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 
+using AssetLoader;
+
 
 public class Player : Creature {
 
@@ -36,9 +38,8 @@ public class Player : Creature {
 		);
 
 		// set asset
-		string path = "Tilesets/Wear/Body/" + race;
-		asset = Resources.Load<Sprite>(path);
-		if (asset == null) { Debug.LogError(path); }
+		asset = Assets.GetAsset("Player/Body/" + race + "/" + race);
+		if (asset == null) { return; }
 
 		// initialize
 		base.Init(grid, x, y, scale, asset);

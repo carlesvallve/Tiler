@@ -2,6 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 
+using AssetLoader;
+
+
 public class AssetManager : MonoBehaviour {
 
 	private static bool verbose = false;
@@ -116,7 +119,7 @@ public class AssetManager : MonoBehaviour {
 		}
 
 		// get path to fileName by given part key
-		string[] fileNames = dict[key];
+		/*string[] fileNames = dict[key];
 		string fileName = fileNames[Random.Range(0, fileNames.Length)];
 		string path = "Tilesets/Wear/" + part + "/" + key + "/" + fileName;
 
@@ -124,7 +127,23 @@ public class AssetManager : MonoBehaviour {
 		Sprite asset = Resources.Load<Sprite>(path);
 		if (asset == null) {
 			Debug.LogError(path + " not found");
+		}*/
+
+		
+
+		string[] fileNames = dict[key];
+
+		print (dict[key] + " " + fileNames.Length);
+
+		foreach(string str in fileNames) {
+			print (str);
 		}
+
+
+		string fileName = fileNames[Random.Range(0, fileNames.Length)];
+
+		Sprite[] assets = Assets.GetCategory("Player/Furniture");
+		Sprite asset = Assets.GetAsset("Player/" + part + "/" + key + "/" + fileName);
 
 		// return sprite
 		// print (path + " -> " + asset.name);

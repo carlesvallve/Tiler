@@ -177,10 +177,12 @@ namespace AssetLoader {
 		public Monster monster;
 		public Player player;
 
+		private static Dictionary<string, Sprite[]> categories;
 		private static Dictionary<string, Sprite> assets;
 
 
 		void Awake () {
+			categories = new Dictionary<string, Sprite[]>();
 			assets = new Dictionary<string, Sprite>();
 
 			// dungeon
@@ -300,15 +302,40 @@ namespace AssetLoader {
 
 
 		private void AddCategory (string path, Sprite[] sprites) {
+			// set category
+			//print (path + " " + sprites.Length);
+			categories[path] = sprites;
+
+			// set assets
 			foreach(Sprite sprite in sprites) {
 				assets[path + "/" + sprite.name] = sprite;
 			}
 		}
 
 
-		// TODO: Turn into a generic method <T>
-		public static Sprite Load (string pathName) {
+		// TODO: Turn into generic methods <T>
+
+		public static Sprite GetAsset (string pathName) {
+			pathName = pathName.ToLower();
+
+			if (!assets.ContainsKey(pathName)) {
+				Debug.LogError("Asset not found. Key " + pathName + " doesnt exist.");
+				return null;
+			}
+
 			return assets[pathName];
+		}
+
+
+		public static Sprite[] GetCategory (string pathName) {
+			pathName = pathName.ToLower();
+
+			if (!categories.ContainsKey(pathName)) {
+				Debug.LogError("Category not found. Key " + pathName + " doesnt exist.");
+				return null;
+			}
+
+			return categories[pathName];
 		}
 
 	}

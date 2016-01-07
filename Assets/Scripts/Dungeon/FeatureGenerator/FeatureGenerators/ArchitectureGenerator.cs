@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 
+using AssetLoader;
+
 
 public class ArchitectureGenerator : DungeonFeatureGenerator {
 
@@ -49,7 +51,7 @@ public class ArchitectureGenerator : DungeonFeatureGenerator {
 
 					Sprite asset = floorAsset;
 					if (floorAsset == null) {
-						asset = Resources.Load<Sprite>("Tilesets/Dungeon/Floor/floor-" + Random.Range(1, 5));
+						asset = Assets.GetAsset("Dungeon/Architecture/Floor/floor-" + Random.Range(1, 5));
 					}
 					
 					Floor floor = (Floor)grid.CreateTile(typeof(Floor), x, y, 1, asset) as Floor;
@@ -67,7 +69,7 @@ public class ArchitectureGenerator : DungeonFeatureGenerator {
 
 					Sprite asset = wallAsset;
 					if (wallAsset == null) {
-						asset = Resources.Load<Sprite>("Tilesets/Dungeon/Wall/stone-" + Random.Range(1, 5));
+						asset = Assets.GetAsset("Dungeon/Architecture/Wall/stone-" + Random.Range(1, 5));
 					}
 
 					Wall wall = (Wall)grid.CreateEntity(typeof(Wall), x, y, 1, asset) as Wall;
@@ -110,7 +112,7 @@ public class ArchitectureGenerator : DungeonFeatureGenerator {
 
 						Sprite asset = floorAsset;;
 						if (floorAsset == null) {
-							asset = Resources.Load<Sprite>("Tilesets/Dungeon/Floor/floor-" + Random.Range(1, 5));
+							asset = Assets.GetAsset("Dungeon/Architecture/Floor/floor-" + Random.Range(1, 5));
 						}
 						
 						Floor floor = (Floor)grid.CreateTile(typeof(Floor), x, y, 1, asset) as Floor;
@@ -128,7 +130,7 @@ public class ArchitectureGenerator : DungeonFeatureGenerator {
 
 						Sprite asset = wallAsset;;
 						if (wallAsset == null) {
-							asset = Resources.Load<Sprite>("Tilesets/Dungeon/Wall/stone-" + Random.Range(1, 5));
+							asset = Assets.GetAsset("Dungeon/Architecture/Wall/stone-" + Random.Range(1, 5));
 						}
 
 						Wall wall = (Wall)grid.CreateEntity(typeof(Wall), x, y, 1, asset) as Wall;
@@ -167,8 +169,8 @@ public class ArchitectureGenerator : DungeonFeatureGenerator {
 		floorColor = baseColor * 1f;
 		wallColor = baseColor * 1f;
 
-		floorAsset = Resources.Load<Sprite>("Tilesets/Dungeon/Floor/floor-gray-" + Random.Range(1, 6));
-		wallAsset = Resources.Load<Sprite>("Tilesets/Dungeon/Wall/wall-gray-" + Random.Range(1, 8));
+		floorAsset = Assets.GetAsset("Dungeon/Architecture/Floor/floor-gray-" + Random.Range(1, 4));
+		wallAsset = Assets.GetAsset("Dungeon/Architecture/Wall/wall-gray-" + Random.Range(1, 6));
 	}
 
 }

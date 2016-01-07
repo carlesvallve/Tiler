@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
+using AssetLoader;
+
 
 public class Container : Entity {
 
@@ -15,7 +17,6 @@ public class Container : Entity {
 	// =====================================================
 
 	public override void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null, string id = null) {
-
 		base.Init(grid, x, y, scale, asset);
 
 		walkable = false;
@@ -40,7 +41,7 @@ public class Container : Entity {
 		}
 
 		string id = state == EntityStates.Open ? assetType + "-open" : assetType + "-closed";
-		SetAsset(Resources.Load<Sprite>("Tilesets/Container/" + id));
+		SetAsset(Assets.GetAsset("Dungeon/Container/" + id));
 		
 		this.state = state;
 	}
@@ -60,7 +61,7 @@ public class Container : Entity {
 		sfx.Play("Audio/Sfx/Door/key", 0.5f, Random.Range(0.4f, 0.6f));
 		state = EntityStates.Open;
 
-		SetAsset(Resources.Load<Sprite>("Tilesets/Container/"+ assetType + "-open"));
+		SetAsset(Assets.GetAsset("Dungeon/Container/" + assetType + "-open"));
 
 		// spawn all the items contained by the container
 		grid.SetEntity(this.x, this.y, null);

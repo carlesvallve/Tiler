@@ -2,19 +2,21 @@
 using System.Collections;
 using System.Collections.Generic;
 
+using AssetLoader;
+
 
 public class Barrel : Container {
 
-
 	public override void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null, string id = null) {
 		this.assetType = GetRandomAssetName();
-		asset = Resources.Load<Sprite>("Tilesets/Container/" + assetType + "-closed");
+		asset = Assets.GetAsset("Dungeon/Container/" + assetType + "-closed");
 
 		base.Init(grid, x, y, scale, asset);
 		
 		breakable = true;
 		maxItems = 1;
 	}
+	
 
 	protected override string GetRandomAssetName () {
 		string[] arr = new string[] { 

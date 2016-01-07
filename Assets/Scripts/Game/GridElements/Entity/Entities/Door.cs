@@ -1,12 +1,14 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+using AssetLoader;
+
 
 public class Door : Entity {
 
 
 	public override void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null, string id = null) {
-		asset = Resources.Load<Sprite>("Tilesets/Dungeon/door-closed");
+		asset = Assets.GetAsset("Dungeon/Architecture/Door/door-closed");
 
 		base.Init(grid, x, y, scale, asset);
 		walkable = true;
@@ -21,7 +23,7 @@ public class Door : Entity {
 		this.state = state;
 
 		string id = state == EntityStates.Open ? "door-open" : "door-closed";
-		SetAsset(Resources.Load<Sprite>("Tilesets/Dungeon/Door/" + id));
+		SetAsset(Assets.GetAsset("Dungeon/Architecture/Door/" + id));
 	}
 
 
@@ -31,7 +33,7 @@ public class Door : Entity {
 		sfx.Play("Audio/Sfx/Door/key", 0.5f, Random.Range(0.4f, 0.6f));
 		state = EntityStates.Open;
 
-		SetAsset(Resources.Load<Sprite>("Tilesets/Dungeon/Door/door-open"));
+		SetAsset(Assets.GetAsset("Dungeon/Architecture/Door/door-open"));
 
 		if (creature is Player) { 
 			if (!hasBeenUnlocked) { 

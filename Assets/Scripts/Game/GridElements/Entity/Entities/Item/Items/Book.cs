@@ -1,13 +1,14 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+using AssetLoader;
+
 
 public class Book : Item {
 
 	public override void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null, string id = null) {
-		string path = "Tilesets/Item/Book/" + GetRandomAssetName();
-		asset = Resources.Load<Sprite>(path);
-		if (asset == null) { Debug.LogError(path); }
+		Sprite[] assets = Assets.GetCategory("Item/Book");
+		asset = assets[Random.Range(0, assets.Length)];
 
 		base.Init(grid, x, y, scale, asset);
 		walkable = true;
