@@ -83,14 +83,7 @@ public class CreatureEquipment : CreatureModule {
 
 		Sprite asset = null;
 		if (type != "none") {
-			/*string path = "Tilesets/Wear/Body/" + me.race + "-" + type;
-			asset = Resources.Load<Sprite>(path);
-			if (asset == null) {
-				Debug.LogError(path + " not found");
-			}*/
-
 			asset = Assets.GetAsset("Player/Body/" + me.race + "/" + me.race + "-" + type);
-			//if (asset == null) { return; }
 		}
 		
 		GameObject obj = (GameObject)Instantiate(grid.tilePrefab);
@@ -151,15 +144,7 @@ public class CreatureEquipment : CreatureModule {
 
 			// Body parts: Gloves, Boots, Pants, Hair, Beard
 			if (id == "Hair" || id == "Beard" || id == "Pants" || id == "Gloves" || id == "Boots" || id == "Shoes") {
-				/*string path = "Tilesets/Wear/Body/" + me.race + "-" + type;
-				Sprite asset = Resources.Load<Sprite>(path);
-				if (asset == null) {
-					Debug.LogError(path + " not found");
-				}*/
-
 				Sprite asset = Assets.GetAsset("Player/Body/" + me.race + "/" + me.race + "-" + type);
-				//if (asset == null) { return; }
-
 				tile.img.sprite = asset;
 				tile.img.color = item.color;
 			}
@@ -261,15 +246,8 @@ public class CreatureEquipment : CreatureModule {
 
 				pos += new Vector3(outlineDistance / 1, outlineDistance / 1, 0);
 
-				// special case for loading the cloak
-				/*string path = "Tilesets/Wear/Cloak/Cloak/" + AssetManager.cloakParts["Cloak"][0];
-				Sprite asset = Resources.Load<Sprite>(path);
-				if (asset == null) {
-					Debug.LogError(path + " not found");
-				}*/
-
-				Sprite asset = Assets.GetAsset("Player/Cloak/Cloak/Cloak");// + AssetManager.cloakParts["Cloak"][0]);
-				//if (asset == null) { return; }
+				// special case for loading the cloak asset
+				Sprite asset = Assets.GetAsset("Player/Cloak/Cloak/Cloak");
 				
 				tile.SetAsset(asset);
 				tile.SetImages(scale, pos, outlineDistance);

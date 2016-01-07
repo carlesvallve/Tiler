@@ -124,8 +124,6 @@ public class Game : MonoSingleton <Game> {
 		navigator = Navigator.instance; navigator.transform.Translate(Vector3.zero);
 		sfx = AudioManager.instance;
 
-		//AssetManager.SetEquipmentAssets();
-
 		SetBgm();
 
 		grid = Grid.instance;

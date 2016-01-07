@@ -14,8 +14,6 @@ public class Equipment : Item {
 	public int hands;
 	public int weight;
 
-	//public string tileType;
-
 
 	public override void Init (Grid grid, int x, int y, float scale = 1, Sprite asset = null, string id = null) {
 		base.Init(grid, x, y, scale, asset);
@@ -65,21 +63,20 @@ public class Equipment : Item {
 
 
 	private Sprite LoadAsset (EquipmentData data) {
+		Sprite[] category;
+		Sprite asset;
+
 		// set asset with alternative old way (boots / gloves / cloak)
 		if (type == "Boots" || type == "Gloves" || type == "Cloak") {
-			/*string fileName = data.assets[Random.Range(0, data.assets.Length)];
-			string path = "Tilesets/Equipment/" + this.type + "/" + fileName;
-			
-			Sprite asset = Resources.Load<Sprite>(path);
-			if (asset == null) { Debug.LogError(path); }*/
-
-			Sprite asset = null; //Assets.GetAsset("Equipment/" + type + "/" + fileName);
-
+			category = Assets.GetCategory("Equipment/" + type);
+			asset = category[Random.Range(0, category.Length)];
 			return asset;
 		}
 
-		// set asset form AssetManager
-		return null; //AssetManager.LoadEquipmentPart(type, subtype);
+		// set asset
+		category = Assets.GetCategory("Player/" + type + "/" + subtype);
+		asset = category[Random.Range(0, category.Length)];
+		return asset;
 	}
 
 

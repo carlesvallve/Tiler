@@ -10,30 +10,37 @@ namespace AssetLoader {
 	[System.Serializable]
 	public class Dungeon {
 		public DungeonArchitecture architecture;
-		public Sprite[] container; public Dictionary<string, Sprite> containerDic;
-		public Sprite[] furniture; public Dictionary<string, Sprite> furnitureDic;
+		public Sprite[] container;
+		public Sprite[] furniture;
 	}
 
 	[System.Serializable]
 	public class DungeonArchitecture {
-		public Sprite[] door; public Dictionary<string, Sprite> doorDic;
-		public Sprite[] floor; public Dictionary<string, Sprite> floorDic;
-		public Sprite[] stair; public Dictionary<string, Sprite> stairDic;
-		public Sprite[] wall; public Dictionary<string, Sprite> wallDic;
+		public Sprite[] door;
+		public Sprite[] floor;
+		public Sprite[] stair;
+		public Sprite[] wall;
 	}
 
+	// EQUIPMENT (Alternative assets)
+
+	[System.Serializable]
+	public class Equipment {
+		public Sprite[] boots; 
+		public Sprite[] cloak;
+		public Sprite[] gloves;
+	}
 
 	// ITEM
 
 	[System.Serializable]
 	public class Item {
-		public Sprite[] book; public Dictionary<string, Sprite> bookDic;
-		public Sprite[] food; public Dictionary<string, Sprite> foodDic;
-		public Sprite[] potion; public Dictionary<string, Sprite> potionDic;
-		public Sprite[] tool; public Dictionary<string, Sprite> toolDic;
-		public Sprite[] treasure; public Dictionary<string, Sprite> treasureDic;
+		public Sprite[] book;
+		public Sprite[] food;
+		public Sprite[] potion;
+		public Sprite[] tool;
+		public Sprite[] treasure;
 	}
-
 
 	// MONSTER
 
@@ -173,6 +180,7 @@ namespace AssetLoader {
 	public class Assets : MonoBehaviour {
 
 		public Dungeon dungeon;
+		public Equipment equipment;
 		public Item item;
 		public Monster monster;
 		public Player player;
@@ -193,6 +201,12 @@ namespace AssetLoader {
 			AddCategory("dungeon/architecture/wall", dungeon.architecture.wall);
 			AddCategory("dungeon/container", dungeon.container);
 			AddCategory("dungeon/furniture", dungeon.furniture);
+
+			// equipment
+
+			AddCategory("equipment/boots", equipment.boots);
+			AddCategory("equipment/cloak", equipment.cloak);
+			AddCategory("equipment/gloves", equipment.gloves);
 
 			// item
 
