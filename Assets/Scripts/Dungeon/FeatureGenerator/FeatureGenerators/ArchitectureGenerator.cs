@@ -46,34 +46,20 @@ public class ArchitectureGenerator : DungeonFeatureGenerator {
 		// convert cavern to grid
 		for (int y = 0; y <= Map.GetLength(1) - 1; y++) {
 			for (int x = 0; x <= Map.GetLength(0) - 1; x++) {
-				// create floors
-				if (Map[x, y] == 0 || Map[x, y] == 2) { // 2 are supposed to be corridors painted in red
-
-					Sprite asset = floorAsset;
-					if (floorAsset == null) {
-						asset = Assets.GetAsset("Dungeon/Architecture/Floor/floor-" + Random.Range(1, 5));
-					}
-					
-					Floor floor = (Floor)grid.CreateTile(typeof(Floor), x, y, 1, asset) as Floor;
-					floor.SetColor(Map[x, y] == 2 ? Color.red : floorColor, true);
-					floor.roomId = 0;
-
-					DungeonTile dtile = new DungeonTile(DungeonTileType.ROOM, x, y);
+				DungeonTile dtile = new DungeonTile(DungeonTileType.ROOM, x, y);
+				if (Map[x, y] <= 2) {
 					DungeonGenerator.instance.rooms[0].tiles.Add(dtile);
 				}
 
+				// create floors
+				if (Map[x, y] == 0 || Map[x, y] == 2) { // 0 = room / 2 = corridor
+					CreateFloor(x, y, dtile);
+				}
+
 				// create walls
-				if (Map[x, y] == 1) {
-					Tile tile = grid.CreateTile(typeof(Tile), x, y, 1, null); // necessary for visibility
-					tile.gameObject.name = "WallFloor";
-
-					Sprite asset = wallAsset;
-					if (wallAsset == null) {
-						asset = Assets.GetAsset("Dungeon/Architecture/Wall/stone-" + Random.Range(1, 5));
-					}
-
-					Wall wall = (Wall)grid.CreateEntity(typeof(Wall), x, y, 1, asset) as Wall;
-					wall.SetColor(wallColor, true);
+				if (Map[x, y] == 1) { // 1 = wall
+					CreateFloor(x, y, dtile); // necessary for visibility
+					CreateWall(x, y);
 				}
 			}
 		}
@@ -96,8 +82,6 @@ public class ArchitectureGenerator : DungeonFeatureGenerator {
 	public void GenerateQuadTree (QuadTree quadtree) {
 		if (quadtree.HasChildren() == false) {
 
-			
-
 			for (int y = quadtree.boundary.BottomTile(); y <= quadtree.boundary.TopTile() - 1; y++) {
 				for (int x = quadtree.boundary.LeftTile(); x <= quadtree.boundary.RightTile() - 1; x++) {
 					// get dungeon tile on the quadtree zone
@@ -109,41 +93,18 @@ public class ArchitectureGenerator : DungeonFeatureGenerator {
 					// create floors
 					if (dtile.id == DungeonTileType.ROOM || dtile.id == DungeonTileType.CORRIDOR || 
 						dtile.id == DungeonTileType.DOORH || dtile.id == DungeonTileType.DOORV) {
-
-						Sprite asset = floorAsset;;
-						if (floorAsset == null) {
-							asset = Assets.GetAsset("Dungeon/Architecture/Floor/floor-" + Random.Range(1, 5));
-						}
-						
-						Floor floor = (Floor)grid.CreateTile(typeof(Floor), x, y, 1, asset) as Floor;
-						floor.SetColor(floorColor, true);
-
-						// set room info in floor tile
-						if (dtile.room != null) {
-							floor.roomId = dtile.room.id;
-						}
+						CreateFloor(x, y, dtile);
 					}
 
 					// create walls
 					if (dtile.id == DungeonTileType.WALL || dtile.id == DungeonTileType.WALLCORNER) {
-						grid.CreateTile(typeof(Tile), x, y, 1, null); // necessary for visibility
-
-						Sprite asset = wallAsset;;
-						if (wallAsset == null) {
-							asset = Assets.GetAsset("Dungeon/Architecture/Wall/stone-" + Random.Range(1, 5));
-						}
-
-						Wall wall = (Wall)grid.CreateEntity(typeof(Wall), x, y, 1, asset) as Wall;
-						wall.SetColor(wallColor, true);
+						CreateFloor(x, y, dtile); // necessary for viibility
+						CreateWall(x, y);
 					}
 					
 					// create doors
 					if (dtile.id == DungeonTileType.DOORH || dtile.id == DungeonTileType.DOORV) {
-						Door door = (Door)grid.CreateEntity(typeof(Door), x, y, 1, null) as Door;
-						EntityStates[] states = new EntityStates[] { 
-							EntityStates.Open, EntityStates.Closed, EntityStates.Locked 
-						};
-						door.SetState(states[Random.Range(0, states.Length)]);
+						CreateDoor(x, y);
 					}
 				}
 			}
@@ -154,6 +115,42 @@ public class ArchitectureGenerator : DungeonFeatureGenerator {
 			GenerateQuadTree(quadtree.southWest);
 			GenerateQuadTree(quadtree.southEast);
 		}
+	}
+
+
+	private void CreateFloor (int x, int y, DungeonTile dtile) {
+		Sprite asset = floorAsset;;
+		if (floorAsset == null) {
+			asset = Assets.GetAsset("Dungeon/Architecture/Floor/floor-" + Random.Range(1, 5));
+		}
+		
+		Floor floor = (Floor)grid.CreateTile(typeof(Floor), x, y, 1, asset) as Floor;
+		floor.SetColor(floorColor, true);
+
+		// set room info in floor tile
+		if (dtile.room != null) {
+			floor.roomId = dtile.room.id;
+		}
+	}
+
+
+	private void CreateWall (int x, int y) {
+		Sprite asset = wallAsset;;
+		if (wallAsset == null) {
+			asset = Assets.GetAsset("Dungeon/Architecture/Wall/stone-" + Random.Range(1, 5));
+		}
+
+		Wall wall = (Wall)grid.CreateEntity(typeof(Wall), x, y, 1, asset) as Wall;
+		wall.SetColor(wallColor, true);
+	}
+
+
+	private void CreateDoor (int x, int y) {
+		Door door = (Door)grid.CreateEntity(typeof(Door), x, y, 1, null) as Door;
+		EntityStates[] states = new EntityStates[] { 
+			EntityStates.Open, EntityStates.Closed, EntityStates.Locked 
+		};
+		door.SetState(states[Random.Range(0, states.Length)]);
 	}
 
 

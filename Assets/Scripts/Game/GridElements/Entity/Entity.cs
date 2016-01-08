@@ -50,4 +50,23 @@ public class Entity: Tile {
 		Destroy(gameObject);
 	}
 
+
+	/*public override void SetVisibility (Tile tile, bool visible, float shadowValue) {
+		// note: we need to pass the tile because we want 
+		// to use the original tile's 'explored' flag for entities and creatures
+
+		// seen by the player right now
+		this.visible = visible; 
+		container.gameObject.SetActive(visible || tile.explored);
+
+		// apply shadow
+		SetShadow(visible ? shadowValue : 1);
+		if (!visible && tile.explored) { SetShadow(0.6f); }
+
+		// once we have seen the tile, mark the tile as explored
+		if (visible) {
+			tile.explored = true;
+		}
+	}*/
+
 }

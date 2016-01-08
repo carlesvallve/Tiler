@@ -166,6 +166,8 @@ public class Tile : MonoBehaviour {
 		// note: we need to pass the tile because we want 
 		// to use the original tile's 'explored' flag for entities and creatures
 
+		//print(name);
+
 		// seen by the player right now
 		this.visible = visible; 
 		container.gameObject.SetActive(visible || tile.explored);
