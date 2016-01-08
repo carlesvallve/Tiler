@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using UnityEngine.SceneManagement;
+
 
 public class Navigator : MonoSingleton<Navigator> {
 	
@@ -56,9 +58,7 @@ public class Navigator : MonoSingleton<Navigator> {
 			yield return StartCoroutine(FadeOut(Duration));
 		}
 
-		Application.LoadLevel(sceneName);
-		
-		//yield return null;
+		SceneManager.LoadScene(sceneName);
 
 		transitioning = false;
 
@@ -71,7 +71,6 @@ public class Navigator : MonoSingleton<Navigator> {
 	public IEnumerator FadeIn(float duration, float delay = 0) {
 		yield return new WaitForSeconds(delay);
 
-		//group.alpha = 1;
 		group.gameObject.SetActive(true);
 		
 		float elapsedTime = 0;
@@ -91,8 +90,6 @@ public class Navigator : MonoSingleton<Navigator> {
 		yield return new WaitForSeconds(delay);
 
 		group.gameObject.SetActive(true);
-		//group.alpha = 0;
-		//yield return null;
 		
 		float elapsedTime = 0;
 		while (elapsedTime < duration) {

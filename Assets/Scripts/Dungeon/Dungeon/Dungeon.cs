@@ -59,9 +59,9 @@ public class Dungeon : MonoSingleton <Dungeon> {
 		Random.seed = seed;
 
 		// choose between dungeon or cave
-		int r = Random.Range(1, 100);
+		int r = Random.Range(0, 100);
 
-		if (r <= 0) {
+		if (r <= 50) {
 			// Generate dungeon data
 			dungeonType = DungeonType.Dungeon;
 			dungeonGenerator.Generate(seed);
