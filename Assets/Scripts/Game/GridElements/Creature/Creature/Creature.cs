@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 
+using AssetLoader;
+
 // require necessary creature modules
 [RequireComponent (typeof (CreatureInventory))]
 [RequireComponent (typeof (CreatureCombat))]
@@ -106,11 +108,8 @@ public class Creature : Tile {
 		stats.xpValue = Mathf.RoundToInt((stats.hp + stats.armour) * stats.energy);
 
 		// set asset
-		string fileName = data.assets[Random.Range(0, data.assets.Length)];
-		string path = "Tilesets/Monster/" + data.type + "/" + data.id + "/" + fileName;
-		this.asset = Resources.Load<Sprite>(path);
-		if (asset == null) { Debug.LogError(path); }
-
+		Sprite[] assets = Assets.GetCategory("Monster/" + data.type + "/" + data.id);
+		asset = assets[Random.Range(0, assets.Length)];
 		SetAsset(asset);
 
 		// set initial items (only for humanoids)
