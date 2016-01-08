@@ -142,13 +142,9 @@ public class Tile : MonoBehaviour {
 
 
 	public virtual void SetSortingOrder () {
-		//this.zIndex = zIndex;
-
-		//zIndex += grid.height - this.y;
 		outline.sortingOrder = zIndex;
 		img.sortingOrder = zIndex + 2;
 		shadow.sortingOrder = zIndex + 3;
-		//label.offsetZ = -1; //zIndex + 2;
 	}
 
 
@@ -165,8 +161,6 @@ public class Tile : MonoBehaviour {
 	public virtual void SetVisibility (Tile tile, bool visible, float shadowValue) {
 		// note: we need to pass the tile because we want 
 		// to use the original tile's 'explored' flag for entities and creatures
-
-		//print(name);
 
 		// seen by the player right now
 		this.visible = visible; 
