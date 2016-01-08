@@ -80,13 +80,13 @@ public class Camera2D : MonoBehaviour {
 
 
 	public void CenterCamera (Player player, bool interpolate = true) {
-		/*if (state == CreatureStates.Descending) { 
+		if (player.state == CreatureStates.Descending) { 
 			return; 
-		}*/
+		}
 
-		/*if (Camera2D.instance == null) {
+		if (instance == null) {
 			return;
-		}*/
+		}
 
 		StopAllCoroutines();
 

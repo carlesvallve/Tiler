@@ -17,7 +17,7 @@ public class PlayerGenerator : DungeonFeatureGenerator {
 			Camera.main.transform.position = new Vector3(grid.player.x, grid.player.y, -10);
 		} else {
 			grid.player.LocateAtCoords(x, y);
-			grid.player.CenterCamera(false);
+			Camera2D.instance.CenterCamera(grid.player, false);
 		}
 	}
 

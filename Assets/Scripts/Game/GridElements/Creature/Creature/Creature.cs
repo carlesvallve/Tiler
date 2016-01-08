@@ -723,7 +723,6 @@ public class Creature : Tile {
 	// =====================================================
 
 	public virtual void MoveCameraTo (int x, int y) {}
-	public virtual void CenterCamera (bool interpolate = true) {}
 	public virtual void UpdateVision (int x, int y) {}
 
 	public virtual void Think () {}

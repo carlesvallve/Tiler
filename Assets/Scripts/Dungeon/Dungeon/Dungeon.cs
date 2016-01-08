@@ -127,7 +127,7 @@ public class Dungeon : MonoSingleton <Dungeon> {
 
 		// Generate monsters
 		MonsterGenerator monsters = new MonsterGenerator();
-		monsters.Generate(dungeonType == DungeonType.Dungeon ? 50 : 100, dungeonType == DungeonType.Dungeon ? 0.15f : 0.01f);
+		//monsters.Generate(dungeonType == DungeonType.Dungeon ? 50 : 100, dungeonType == DungeonType.Dungeon ? 0.15f : 0.01f);
 		//monsters.GenerateSingle("Zombie");
 		//monsters.GenerateSingle("Centaur");
 
@@ -185,7 +185,7 @@ public class Dungeon : MonoSingleton <Dungeon> {
 	
 	private  IEnumerator ExitLevelCoroutine (int direction) {
 		game.CrossFadeRandomBgm();
-		yield return new WaitForSeconds(0f);
+		//yield return new WaitForSeconds(0f);
 
 		// fade out
 		yield return StartCoroutine(hud.FadeOut(0.5f));
