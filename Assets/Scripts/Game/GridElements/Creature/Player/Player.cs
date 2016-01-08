@@ -13,8 +13,6 @@ public class Player : Creature {
 	public delegate void GameOverHandler();
 	public event GameOverHandler OnGameOver;
 
-	protected int cameraMargin = 4;
-
 	protected string playerName;
 
 	// list of monster that are currently attacking the player
@@ -203,7 +201,7 @@ public class Player : Creature {
 		yield return StartCoroutine(base.FollowPathStep(x, y));
 
 		// check if camera needs to track player
-		CheckCamera();
+		Camera2D.instance.CheckPlayerLimits(this);
 
 		// wait one frame more than other creatures
 		//yield return null;
@@ -281,36 +279,6 @@ public class Player : Creature {
 	public override void MoveCameraTo (int x, int y) {
 		Camera2D.instance.StopAllCoroutines();
 		Camera2D.instance.StartCoroutine(Camera2D.instance.MoveToPos(new Vector2(x, y)));
-	}
-
-
-	public override void CenterCamera (bool interpolate = true) {
-		if (state == CreatureStates.Descending) { 
-			return; 
-		}
-
-		if (Camera2D.instance == null) {
-			return;
-		}
-
-		Camera2D.instance.StopAllCoroutines();
-
-		if (interpolate) {
-			Camera2D.instance.StartCoroutine(Camera2D.instance.MoveToPos(new Vector2(this.x, this.y)));
-		} else {
-			Camera2D.instance.LocateAtPos(new Vector2(this.x, this.y));
-		}
-	}
-
-
-	protected void CheckCamera () {
-		Vector3 screenPos = Camera.main.WorldToScreenPoint(transform.position);
-
-		int margin = 16 + 32 * cameraMargin;
-		if (screenPos.x < margin || screenPos.x > Screen.width - margin || 
-			screenPos.y < margin || screenPos.y > Screen.height - margin) {
-			CenterCamera();
-		}
 	}
 
 

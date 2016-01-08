@@ -8,13 +8,8 @@ public class Camera2D : MonoBehaviour {
 	public static Camera2D instance;
 
 	// resolution
-	int pixelsPerUnit = 32; //32; //40;
+	public int pixelsPerUnit { get; set; }
 	
-	// zoom
-	//private float zoomSpeed = 0.5f;
-	//private float minZoom = 0;
-	//private float maxZoom = 1024 / 2;
-
 	// panning
 	public float panSpeed = 1f;
 	private Vector3 lastMousePos;
@@ -23,9 +18,16 @@ public class Camera2D : MonoBehaviour {
 	void Start () {
 		instance = this;
 
-		//maxZoom = ((Screen.height / 2) / pixelsPerUnit) * 2;
-		//Camera.main.orthographicSize = maxZoom / 2;
+		float ratio = ((float)Screen.width / (float)Screen.height);
+		Debug.Log(Screen.width + " x " + Screen.height + " =  ratio " + ratio);
 
+		if (Application.platform == RuntimePlatform.Android ||
+			Application.platform == RuntimePlatform.IPhonePlayer) {
+			pixelsPerUnit = 72;
+		} else {
+			pixelsPerUnit = 32;
+		}
+			
 		Camera.main.orthographicSize = (Screen.height / 2) / pixelsPerUnit;
 	}
 
@@ -33,16 +35,6 @@ public class Camera2D : MonoBehaviour {
 	void Update () {
 
 		Camera.main.orthographicSize = (Screen.height / 2) / pixelsPerUnit;
-
-		// apply scroll forward
-		/*if (Input.GetAxis("Mouse ScrollWheel") > 0) {
-			ZoomOrthoCamera(Camera.main.ScreenToWorldPoint(Input.mousePosition), 1 * zoomSpeed);
-		}
-
-		// apply scoll back
-		if (Input.GetAxis("Mouse ScrollWheel") < 0) {
-			ZoomOrthoCamera(Camera.main.ScreenToWorldPoint(Input.mousePosition), -1 * zoomSpeed);
-		}*/
 
 		// apply panning
 		if (Input.GetMouseButtonDown(1)) {
@@ -52,28 +44,7 @@ public class Camera2D : MonoBehaviour {
 			PanOrthoCamera(delta);
 			lastMousePos = Input.mousePosition;
 		}	
-
-
-		// constrain camera to bg bounds
-		//ConstrainToBounds();
 	}
-
-
-	/*private void ZoomOrthoCamera (Vector3 zoomTowards, float amount) {
-		zoomTowards = Camera.main.transform.position;
-
-		// Calculate how much we will have to move towards the zoomTowards position
-		float multiplier = (1.0f / Camera.main.orthographicSize * amount);
-
-		// Move camera
-		transform.position += (zoomTowards - transform.position) * multiplier; 
-
-		// Zoom camera
-		Camera.main.orthographicSize -= amount;
-
-		// Limit zoom
-		Camera.main.orthographicSize = Mathf.Clamp(Camera.main.orthographicSize, minZoom, maxZoom);
-	}*/
 
 
 	private void PanOrthoCamera (Vector2 delta) {
@@ -89,23 +60,42 @@ public class Camera2D : MonoBehaviour {
 	}
 
 
-	/*private void ConstrainToBounds () {
-		// calculate bg sprite bounds
-		float vertExtent = Camera.main.orthographicSize;  
-		float horzExtent = vertExtent * Screen.width / Screen.height;
-		spriteBounds = bg.GetComponentInChildren<SpriteRenderer>();
-		leftBound = (float)(horzExtent - spriteBounds.sprite.bounds.size.x / 2.0f);
-		rightBound = (float)(spriteBounds.sprite.bounds.size.x / 2.0f - horzExtent);
-		bottomBound = (float)(vertExtent - spriteBounds.sprite.bounds.size.y / 2.0f);
-		topBound = (float)(spriteBounds.sprite.bounds.size.y  / 2.0f - vertExtent);
+	public void CheckPlayerLimits (Player player) {
+		Vector3 screenPos = Camera.main.WorldToScreenPoint(player.transform.position);
 
-		Vector3 pos = Camera.main.transform.position; //new Vector3(target.position.x, target.position.y, transform.position.z);
-		//print ("left: " + leftBound + " right: " + rightBound + " top: " + topBound + " bottom: " + bottomBound + " pos: " + pos);
+		float d = 2f * pixelsPerUnit;
+		
+		float marginLeft = d;
+		float marginRight = d;
+		float marginTop = d + Hud.instance.headerHeight;
+		float marginBottom = d + Hud.instance.footerHeight;
 
-		pos.x = Mathf.Clamp(pos.x, leftBound, rightBound);
-		pos.y = Mathf.Clamp(pos.y, bottomBound, topBound);
-		Camera.main.transform.position = pos;
-	}*/
+		//Debug.Log("X: " + screenPos.x + ", Y: " + screenPos.y);
+
+		if (screenPos.x < marginLeft || screenPos.x > Screen.width - marginRight || 
+			screenPos.y < marginTop || screenPos.y > Screen.height - marginBottom) {
+			CenterCamera(player);
+		}
+	}
+
+
+	public void CenterCamera (Player player, bool interpolate = true) {
+		/*if (state == CreatureStates.Descending) { 
+			return; 
+		}*/
+
+		/*if (Camera2D.instance == null) {
+			return;
+		}*/
+
+		StopAllCoroutines();
+
+		if (interpolate) {
+			StartCoroutine(MoveToPos(new Vector2(player.x, player.y)));
+		} else {
+			LocateAtPos(new Vector2(player.x, player.y));
+		}
+	}
 
 
 	public IEnumerator MoveToPos (Vector2 pos) {

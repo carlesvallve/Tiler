@@ -301,7 +301,7 @@ public class Creature : Tile {
 		float distance = Vector2.Distance(new Vector2(this.x, this.y), new Vector2(target.x, target.y));
 		int range = GetAttackRange();
 
-		if (range > 1 && distance <= range && distance > 1) {
+		if (range > 1 && distance <= range && distance > 1.44f) {
 			return true;
 		}
 

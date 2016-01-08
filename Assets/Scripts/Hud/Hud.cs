@@ -31,7 +31,13 @@ public class Hud : MonoSingleton <Hud> {
 	private List<Slot> inventorySlots;
 	
 
+	public int headerHeight = 48;
+	public int footerHeight = 48;
+
 	void Awake () {
+
+		headerHeight = (int)transform.Find("Header").GetComponent<RectTransform>().sizeDelta.y;
+		footerHeight = (int)transform.Find("Footer").GetComponent<RectTransform>().sizeDelta.y;
 
 		// audio
 		sfx = AudioManager.instance;
@@ -59,8 +65,6 @@ public class Hud : MonoSingleton <Hud> {
 
 		inventoryInfo = popupInventory.Find("Main/Bag/Info");
 		inventoryInfo.gameObject.SetActive(false);
-
-		
 
 		// in-game labels
 		overlayGroup = transform.Find("Overlay").GetComponent<CanvasGroup>();
