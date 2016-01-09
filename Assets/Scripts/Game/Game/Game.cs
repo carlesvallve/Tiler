@@ -197,6 +197,14 @@ public class Game : MonoSingleton <Game> {
 	}
 
 
+	public void GameQuit () {
+		if (bgm1 != null) { sfx.Fade(bgm1, 0, 0.5f); }
+		if (bgm2 != null) { sfx.Fade(bgm2, 0, 0.5f); }
+		
+		Navigator.instance.Open("Home");
+	}
+
+
 	// =====================================================
 	// Game Names
 	// =====================================================
