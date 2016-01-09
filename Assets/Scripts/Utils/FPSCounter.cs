@@ -16,6 +16,10 @@ public class FpsCounter : MonoSingleton<FpsCounter> {
 	
 	void Awake() {
 		textElement = GetComponent<Text>();
+
+		if (!Debug.isDebugBuild) { 
+			gameObject.SetActive(false);
+		}
 	}
 
 
