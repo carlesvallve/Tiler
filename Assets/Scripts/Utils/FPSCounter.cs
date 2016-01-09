@@ -5,9 +5,6 @@ using System.Collections;
 
 public class FpsCounter : MonoSingleton<FpsCounter> {
 
-	public short sortOrder = short.MaxValue;
-
-	private Canvas canvas;
 	private Text textElement;
 	private int currentFps;
 
@@ -18,26 +15,12 @@ public class FpsCounter : MonoSingleton<FpsCounter> {
 
 	
 	void Awake() {
-		canvas = gameObject.AddComponent<Canvas>();
-		canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-
-		textElement = gameObject.AddComponent<Text>();
-		textElement.transform.SetParent(canvas.transform);
+		textElement = GetComponent<Text>();
 	}
 
 
 	void Start() {
-		// Sample period 
 		fpsNextPeriod = Time.realtimeSinceStartup + FPS_MEASURE_PERIOD;
-
-		// Text
-		textElement.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
-		textElement.color = Color.yellow;
-		textElement.fontSize = 10;
-		textElement.alignment = TextAnchor.LowerRight;
-
-		// Sorting layer
-		canvas.sortingOrder = sortOrder;
 	}
 
 
