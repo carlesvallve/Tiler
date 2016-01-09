@@ -157,21 +157,21 @@ public class Creature : Tile {
 		stats.xp = stats.xp - stats.xpMax; 
 		stats.xpMax = 100 * stats.level;
 		stats.xpValue = 20 * stats.level;
-		Speak("LEVEL-UP", Color.green, 0.25f, true);
+		Speak("LEVEL UP", Color.green, 1.0f, true, 28);
 
 		// increase hp
 		int hpIncrease = Dice.Roll("1d6");
 		stats.hpMax = stats.hpMax + hpIncrease;
 		stats.hp = stats.hpMax;
 		bar.UpdateHp();
-		Speak ("HP +" + hpIncrease, Color.cyan, 0.75f, true);
+		Speak ("HP +" + hpIncrease, Color.cyan, 1.5f, true, 28);
 
 		// increase random stat
 		UpdateRandomStat(1);
 
 		// play levelup sound
 		if (this is Player) {
-			sfx.Play("Audio/Sfx/Stats/trumpets", 0.25f, Random.Range(0.8f, 1.2f));
+			sfx.Play("Audio/Sfx/Stats/trumpets", 0.5f, Random.Range(0.8f, 1.2f));
 		}
 	}
 
@@ -189,7 +189,7 @@ public class Creature : Tile {
 			case "DEF": ammount *= Dice.Roll("2d4"); stats.defense += ammount; break;
 		}
 
-		Speak (statName + " +" + ammount, Color.cyan, 1.25f, true);
+		Speak (statName + " +" + ammount, Color.cyan, 2.0f, true, 28);
 	}
 
 

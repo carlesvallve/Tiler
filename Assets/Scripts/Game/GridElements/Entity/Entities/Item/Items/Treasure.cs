@@ -29,7 +29,7 @@ public class Treasure : Item {
 		creature.stats.gold += ammount;
 
 		if (creature.visible) {
-			Speak("+" + ammount, Color.yellow);
+			Speak("+" + ammount, Color.yellow, 0, true, 32);
 		}
 
 		return base.Pickup(creature);

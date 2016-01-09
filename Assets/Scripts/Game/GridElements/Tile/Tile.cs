@@ -97,10 +97,10 @@ public class Tile : MonoBehaviour {
 	// Set tile elements
 	// =====================================================
 
-	public virtual void Speak (string str, Color color, float delay = 0, bool stick = false) {
+	public virtual void Speak (string str, Color color, float delay = 0, bool stick = false, int fontSize = 24) {
 		//if (!visible) { return; }
 
-		Hud.instance.CreateLabel(this, str, color, delay, stick);
+		Hud.instance.CreateLabel(this, str, color, delay, stick, fontSize);
 	}
 
 

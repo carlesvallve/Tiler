@@ -13,7 +13,7 @@ public class Hud : MonoSingleton <Hud> {
 	public float textSpeed = 0.025f;
 
 	private Text playerName;
-	private Text playerInfo;
+	private Text playerStats;
 	private Text dungeonLevel;
 	private Text gameTurn;
 
@@ -51,7 +51,7 @@ public class Hud : MonoSingleton <Hud> {
 
 		// header
 		playerName = transform.Find("Header/PlayerName/Text").GetComponent<Text>();
-		playerInfo = transform.Find("Header/PlayerXp/Text").GetComponent<Text>();
+		playerStats = transform.Find("Header/PlayerStats/Text").GetComponent<Text>();
 		dungeonLevel = transform.Find("Header/DungeonLevel/Text").GetComponent<Text>();
 		gameTurn = transform.Find("Header/Turn/Text").GetComponent<Text>();
 
@@ -289,8 +289,8 @@ public class Hud : MonoSingleton <Hud> {
 		playerName.text = str;
 	}
 
-	public void LogPlayerInfo (string str) {
-		playerInfo.text = str;
+	public void LogPlayerStats (string str) {
+		playerStats.text = str;
 	}
 
 	public void LogTurn (string str) {
@@ -418,15 +418,16 @@ public class Hud : MonoSingleton <Hud> {
 
 	// TODO:  We probably want to create a 'Label' class to handle all these
 	
-	public void CreateLabel (Tile tile, string str, Color color, float delay = 0, bool stick = false, float duration = 1f, float startY = 24) {
+	public void CreateLabel (Tile tile, string str, Color color, float delay = 0, bool stick = false, int fontSize = 24, float duration = 1f, float startY = 24) {
 		GameObject obj = (GameObject)Instantiate(labelPrefab);
 		obj.transform.SetParent(world, false);
 		obj.name = "Label";
 
 		Text text = obj.transform.Find("Text").GetComponent<Text>();
 		text.color = color;
+		text.fontSize = fontSize;
 		text.text = str;
-
+		
 		obj.SetActive(false);
 
 		StartCoroutine(AnimateLabel(tile, obj, stick, duration, delay, startY));
@@ -438,11 +439,19 @@ public class Hud : MonoSingleton <Hud> {
 		yield return new WaitForSeconds(delay);
 		//if (tile == null) { yield break; }
 
+		startY = Camera2D.instance.pixelsPerUnit * 0.65f;
+
 		obj.SetActive(true);
 
 		// we need to use position because tile does not update coords once reparented to a creature
-		Vector3 startPos = tile.transform.position; // new Vector3(tile.x, tile.y, 0); //
-		float endY = startY + 32;
+		//Vector3 startPos = tile.transform.position; // new Vector3(tile.x, tile.y, 0); //
+		Vector3 startPos = new Vector3(
+			Mathf.RoundToInt(tile.transform.position.x), 
+			Mathf.RoundToInt(tile.transform.position.y), 
+			0
+		);
+
+		float endY = startY + Camera2D.instance.pixelsPerUnit * 1f;
 		float t = 0;
 		
 		while (t <= 1) {
@@ -450,8 +459,14 @@ public class Hud : MonoSingleton <Hud> {
 
 			float y = Mathf.Lerp(startY, endY, Mathf.SmoothStep(0f, 1f, t));
 
-			Vector3 pos = Camera.main.WorldToScreenPoint(
-				tile != null && stick ? tile.transform.position : startPos
+			Vector3 pos = new Vector3(
+				Mathf.RoundToInt(tile.transform.position.x), 
+				Mathf.RoundToInt(tile.transform.position.y), 
+				0
+			);
+
+			pos = Camera.main.WorldToScreenPoint(
+				tile != null && stick ? pos : startPos
 			) + Vector3.up * y;
 
 			if (obj != null) { obj.transform.position = pos; } 

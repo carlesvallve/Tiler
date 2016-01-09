@@ -53,20 +53,20 @@ public class CreatureCombat : CreatureModule {
 
 	private void Miss (Creature attacker, Creature defender) {
 		sfx.Play("Audio/Sfx/Combat/swishA", 0.1f, Random.Range(0.5f, 1.2f));
-		defender.Speak("Miss", Color.white);
+		defender.Speak("Miss", Color.white, 0, true);
 	}
 
 
 	private void Block (Creature attacker, Creature defender) {
 		string[] arr = new string[] { "swordB", "swordC" };
 		sfx.Play("Audio/Sfx/Combat/" + arr[Random.Range(0, arr.Length)], 0.15f, Random.Range(0.6f, 1.8f));
-		defender.Speak("Block", Color.white);
+		defender.Speak("Block", Color.white, 0, true);
 	}
 
 
 	private void Dodge (Creature attacker, Creature defender) {
 		sfx.Play("Audio/Sfx/Combat/swishA", 0.1f, Random.Range(0.5f, 1.2f));
-		defender.Speak("Dodge", Color.white);
+		defender.Speak("Dodge", Color.white, 0, true);
 	}
 
 
@@ -86,7 +86,7 @@ public class CreatureCombat : CreatureModule {
 			// create blood
 			grid.CreateBlood(defender.transform.position, damage, Color.red);
 			
-			defender.Speak("-" + damage, Color.red, 0);
+			defender.Speak("-" + damage, Color.red, 0, true, 32);
 
 			// set isDead to true
 			if (defender.stats.hp == 0) {
@@ -356,7 +356,7 @@ public class CreatureCombat : CreatureModule {
 		
 		// update attacker xp
 		if (!(me is Player)) {
-			me.Speak("XP +" + me.stats.xpValue, Color.yellow, 0.25f);
+			attacker.Speak("XP +" + me.stats.xpValue, Color.yellow, 0.5f, true, 28);
 			attacker.UpdateXp(me.stats.xpValue);
 		}
 

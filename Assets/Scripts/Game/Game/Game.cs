@@ -277,7 +277,7 @@ public class Game : MonoSingleton <Game> {
 
 		bgm1 = GetRandomBgm(musicList, 90);
 		if (bgm1 != null) {
-			sfx.Play(bgm1, 0, Random.Range(0.8f, 1.2f), true); 
+			sfx.Play(bgm1, 0, 1, true); //Random.Range(0.8f, 1.2f)
 			sfx.Fade(bgm1, 0.25f, 1f);	
 		}
 		

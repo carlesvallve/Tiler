@@ -134,7 +134,7 @@ public class Player : Creature {
 	// Player Info
 	// =====================================================
 
-	protected void LogPlayerInfo () {
+	protected void LogPlayerStats () {
 		string info = "";
 
 		//print (stats.xp);
@@ -156,12 +156,12 @@ public class Player : Creature {
 
 		
 
-		Hud.instance.LogPlayerInfo(info);
+		Hud.instance.LogPlayerStats(info);
 	}
 
 
 	void Update() {
-		LogPlayerInfo();
+		LogPlayerStats();
 	}
 
 
@@ -247,7 +247,7 @@ public class Player : Creature {
 		}
 
 		StopMoving();
-		Speak("!", Color.white); //, true);
+		Speak("!", Color.white, 0, true); //, true);
 
 		/*string str = "";
 		string punctuation = "";
