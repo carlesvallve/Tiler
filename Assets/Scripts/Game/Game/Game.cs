@@ -9,6 +9,14 @@ KNOWN BUGS
 - sometimes, we attack a monster before he arrived to our adjacent tile
 - when carrying a ranged weapon and shooting a monster, monsters dont react until some time has passed
 
+ANDROID
+- Set hud width/height ratio at 0.5 -> OK
+- Implement cool custom font that accepts norml and bold
+- interaction on finger-up, info and camera center in long press -> OK
+- implement inventory icon on hud -> OK
+- Reskin hood to be more full-screen like, bigger on the phone -> OK
+- avoid interaction with game when we tap over hud
+
 
 NEW EQUIPMENT SYSTEM
 - generate new speadsheet -> OK

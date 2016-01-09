@@ -23,6 +23,8 @@ public class Hud : MonoSingleton <Hud> {
 	private CanvasGroup overlayGroup;
 
 	private Transform world;
+
+	private Transform popupOptions;
 	
 	private Transform popupInventory;
 	private Transform inventoryItems;
@@ -56,6 +58,10 @@ public class Hud : MonoSingleton <Hud> {
 		// footer
 		logText = transform.Find("Footer/Log/Text").GetComponent<Text>();
 
+		// options
+		popupOptions = transform.Find("Popups/PopupOptions");
+		popupOptions.gameObject.SetActive(false);
+
 		// inventory
 		popupInventory = transform.Find("Popups/PopupInventory");
 		popupInventory.gameObject.SetActive(false);
@@ -87,14 +93,53 @@ public class Hud : MonoSingleton <Hud> {
 		if (Input.GetKeyDown(KeyCode.V)) {
 			Grid.instance.player.SeeAll(Grid.instance.player.x, Grid.instance.player.y);
 		}
-
 	}
+
+	// ==============================================================
+	// Buttons
+	// ==============================================================
+
+	public void ButtonInventory () {
+		bool value = !popupInventory.gameObject.activeSelf;
+		DisplayInventory(value);
+		if (value) { sfx.Play("Audio/Sfx/Item/book", 0.15f, Random.Range(0.8f, 1.2f)); }
+	}
+
+
+	public void ButtonOptions () {
+		bool value = !popupOptions.gameObject.activeSelf;
+		DisplayOptions(value);
+	}
+
+
+	public void ButtonQuit () {
+		sfx.Play("Audio/Sfx/Item/book", 0.15f, Random.Range(0.8f, 1.2f));
+		Navigator.instance.Open("Home");
+	}
+
+
+	// ==============================================================
+	// Options
+	// ==============================================================
+
+	public void DisplayOptions (bool value) {
+		// close any existing popups
+		popupInventory.gameObject.SetActive(false);
+
+		// display popup
+		popupOptions.gameObject.SetActive(value);
+		sfx.Play("Audio/Sfx/Item/book", 0.15f, Random.Range(0.8f, 1.2f));
+	}
+
 
 	// ==============================================================
 	// Inventory
 	// ==============================================================
 
 	public void DisplayInventory (bool value) {
+		// close any existing popups
+		popupOptions.gameObject.SetActive(false);
+
 		// display popup, and escape if it was closed
 		popupInventory.gameObject.SetActive(value);
 		
@@ -129,7 +174,7 @@ public class Hud : MonoSingleton <Hud> {
 				Transform container = equipmentContainer.Find(invItem.item.equipmentSlot);
 				CreateInventorySlot(container, invItem);
 				
-				// display 2 handed weapons in bot weapon and shield slots
+				// display 2 handed weapons in both weapon and shield slots
 				if (invItem.item.equipmentSlot == "Weapon" && ((Equipment)invItem.item).hands == 2) {
 					Transform shieldContainer = equipmentContainer.Find("Shield");
 					CreateInventorySlot(shieldContainer, invItem);
@@ -139,6 +184,9 @@ public class Hud : MonoSingleton <Hud> {
 				inventorySlots.Add(CreateInventorySlot(inventoryContainer, invItem));
 			}
 		}
+
+		// erase log
+		Log("");
 	}
 
 
@@ -225,6 +273,14 @@ public class Hud : MonoSingleton <Hud> {
 	}
 
 
+	public bool IsPopupOpen () {
+		return 
+		popupOptions.gameObject.activeSelf ||
+		popupInventory.gameObject.activeSelf;
+
+	}
+
+
 	// ==============================================================
 	// Header
 	// ==============================================================
@@ -239,6 +295,7 @@ public class Hud : MonoSingleton <Hud> {
 
 	public void LogTurn (string str) {
 		gameTurn.text = str;
+		gameTurn.gameObject.SetActive(false);
 	}
 
 

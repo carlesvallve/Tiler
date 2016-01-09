@@ -18,14 +18,15 @@ public class Camera2D : MonoBehaviour {
 	void Start () {
 		instance = this;
 
-		float ratio = ((float)Screen.width / (float)Screen.height);
-		Debug.Log(Screen.width + " x " + Screen.height + " =  ratio " + ratio);
+		//float ratio = ((float)Screen.width / (float)Screen.height);
+		//Debug.Log(Screen.width + " x " + Screen.height + " =  ratio " + ratio);
 
+		// set pixels per unit depending on device
 		if (Application.platform == RuntimePlatform.Android ||
 			Application.platform == RuntimePlatform.IPhonePlayer) {
-			pixelsPerUnit = 72;
+			pixelsPerUnit = 72; // device
 		} else {
-			pixelsPerUnit = 32;
+			pixelsPerUnit = 28; // desktop
 		}
 			
 		Camera.main.orthographicSize = (Screen.height / 2) / pixelsPerUnit;
@@ -60,30 +61,26 @@ public class Camera2D : MonoBehaviour {
 	}
 
 
-	public void CheckPlayerLimits (Player player) {
-		Vector3 screenPos = Camera.main.WorldToScreenPoint(player.transform.position);
+	public void CheckTileLimits (Tile tile) {
+		Vector3 screenPos = Camera.main.WorldToScreenPoint(tile.transform.position);
 
-		float d = 2f * pixelsPerUnit;
+		float d = 2.5f * pixelsPerUnit;
 		
 		float marginLeft = d;
 		float marginRight = d;
-		float marginTop = d + Hud.instance.headerHeight;
-		float marginBottom = d + Hud.instance.footerHeight;
+		float marginTop = d * 1.0f + Hud.instance.headerHeight;
+		float marginBottom = d * 1.0f + Hud.instance.footerHeight;
 
 		//Debug.Log("X: " + screenPos.x + ", Y: " + screenPos.y);
 
 		if (screenPos.x < marginLeft || screenPos.x > Screen.width - marginRight || 
 			screenPos.y < marginTop || screenPos.y > Screen.height - marginBottom) {
-			CenterCamera(player);
+			CenterCamera(tile);
 		}
 	}
 
 
-	public void CenterCamera (Player player, bool interpolate = true) {
-		if (player.state == CreatureStates.Descending) { 
-			return; 
-		}
-
+	public void CenterCamera (Tile target, bool interpolate = true) {
 		if (instance == null) {
 			return;
 		}
@@ -91,9 +88,9 @@ public class Camera2D : MonoBehaviour {
 		StopAllCoroutines();
 
 		if (interpolate) {
-			StartCoroutine(MoveToPos(new Vector2(player.x, player.y)));
+			StartCoroutine(MoveToPos(new Vector2(target.x, target.y)));
 		} else {
-			LocateAtPos(new Vector2(player.x, player.y));
+			LocateAtPos(new Vector2(target.x, target.y));
 		}
 	}
 

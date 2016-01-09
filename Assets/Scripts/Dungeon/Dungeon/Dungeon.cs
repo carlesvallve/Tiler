@@ -99,7 +99,7 @@ public class Dungeon : MonoSingleton <Dungeon> {
 		// Log dungeon level
 		int dlevel = currentDungeonLevel + 1;
 		hud.Log("Welcome to dungeon level " + dlevel);
-		hud.LogDungeon("DUNGEON " + dlevel);
+		hud.LogDungeon("Dungeon " + dlevel);
 	}
 
 
@@ -127,7 +127,7 @@ public class Dungeon : MonoSingleton <Dungeon> {
 
 		// Generate monsters
 		MonsterGenerator monsters = new MonsterGenerator();
-		//monsters.Generate(dungeonType == DungeonType.Dungeon ? 50 : 100, dungeonType == DungeonType.Dungeon ? 0.15f : 0.01f);
+		monsters.Generate(dungeonType == DungeonType.Dungeon ? 50 : 100, dungeonType == DungeonType.Dungeon ? 0.125f : 0.01f);
 		//monsters.GenerateSingle("Zombie");
 		//monsters.GenerateSingle("Centaur");
 

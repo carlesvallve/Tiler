@@ -6,24 +6,50 @@ using UnityEngine.EventSystems;
 public class Controls : MonoBehaviour {
 
 	private Grid grid;
-	
+
+	private bool longPress = false;
+	private float longPressDuration = 0.25f;
+	private float tapStartTime = 0;
+	private float timeDelta = 0;
+
 
 	void Awake () {
 		grid = Grid.instance;
 	}
+
 	
 	void Update () {
-		// escape if mouse is over hud
-		if (EventSystem.current.IsPointerOverGameObject()) {
+		// Escape if mouse is over any UI
+		if (EventSystem.current.IsPointerOverGameObject()  || 
+			EventSystem.current.IsPointerOverGameObject(0) || 
+			EventSystem.current.IsPointerOverGameObject(-1)
+		) { return; }
+
+		// Escape if any popup is active
+		if (Hud.instance.IsPopupOpen()) {
 			return;
 		}
 
+		// tap start
 		if (Input.GetMouseButtonDown(0)) {
-			TapAtPos(Input.mousePosition);
+			tapStartTime = Time.time;
 		}
 
-		if (Input.GetMouseButtonDown(1)) {
-			InfoAtPos(Input.mousePosition);
+		// tapping
+		if (Input.GetMouseButton(0)) {
+			timeDelta = Time.time - tapStartTime;
+			if (longPress == false && timeDelta >= longPressDuration) {
+				SetInfoAtPos(Input.mousePosition);
+				longPress = true;
+			}
+		}
+
+		// tap release
+		if (Input.GetMouseButtonUp(0)) {
+			if (!longPress) {
+				TapAtPos(Input.mousePosition);
+			}
+			longPress = false;
 		}
 	}
 
@@ -78,13 +104,19 @@ public class Controls : MonoBehaviour {
 	}
 
 
-	private void InfoAtPos (Vector3 pos) {
+	private void SetInfoAtPos (Vector3 pos) {
 		// get tap position in world/grid units
 		pos = Camera.main.ScreenToWorldPoint(new Vector3(pos.x, pos.y, Camera.main.nearClipPlane));
 
 		// get goal coordinates
 		int x = Mathf.RoundToInt(pos.x);
 		int y = Mathf.RoundToInt(pos.y);
+
+		// center camera on tile
+		Tile tile = grid.GetTile(x, y);
+		if (tile != null) {
+			Camera2D.instance.CenterCamera(tile, true);
+		}
 
 		Creature creature = grid.GetCreature(x, y);
 		if (creature != null) {
@@ -101,7 +133,7 @@ public class Controls : MonoBehaviour {
 			return;
 		}
 
-		Tile tile = grid.GetTile(x, y);
+		//Tile tile = grid.GetTile(x, y);
 		if (tile != null) {
 			Hud.instance.Log("You see " + Descriptions.GetTileDescription(tile));
 			return;

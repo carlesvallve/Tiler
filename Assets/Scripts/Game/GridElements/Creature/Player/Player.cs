@@ -138,20 +138,23 @@ public class Player : Creature {
 		string info = "";
 
 		//print (stats.xp);
+		info += "HP " + stats.hp + " / " + stats.hpMax + "  ";
 
-		info = "LEVEL " + stats.level;
-		info += "    XP: " + stats.xp + " / " + stats.xpMax;
-		info += "    HP: " + stats.hp + " / " + stats.hpMax;
-
-		info += "  " +
+		info +=
 		"  <color='#ff0000'>STR " + stats.str + "</color>" +  
 		"  <color='#00ff00'>DEX " + stats.dex + "</color>" +  
 		"  <color='#00ffff'>CON " + stats.con + "</color>" +  
-		"  <color='#ffff00'>INT " + stats.intel + "</color>";
+		"  <color='#ffff00'>INT " + stats.intel + "</color>\n";
 
-		info += "    Combat: " + combatModule.GetTotalAttack(this) + " / " + combatModule.GetTotalDefense(this);
-		info += "    Armour: " + combatModule.GetTotalArmour(this);
-		info += "    Gold: " + stats.gold;
+		info += "LEVEL " + stats.level;
+		info += "    XP " + stats.xp + " / " + stats.xpMax;
+		
+
+		info += "    COMBAT " + combatModule.GetTotalAttack(this) + " / " + combatModule.GetTotalDefense(this);
+		info += "    ARMOUR " + combatModule.GetTotalArmour(this);
+		info += "    GOLD " + stats.gold; // + "\n";
+
+		
 
 		Hud.instance.LogPlayerInfo(info);
 	}
@@ -201,7 +204,9 @@ public class Player : Creature {
 		yield return StartCoroutine(base.FollowPathStep(x, y));
 
 		// check if camera needs to track player
-		Camera2D.instance.CheckPlayerLimits(this);
+		if (state != CreatureStates.Descending) { 
+			Camera2D.instance.CheckTileLimits(this);
+		}
 
 		// wait one frame more than other creatures
 		//yield return null;
