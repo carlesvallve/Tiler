@@ -5,6 +5,8 @@ using System.Collections.Generic;
 
 public class CreatureCombat : CreatureModule {
 
+	private float dur = 0.25f; // combat animation speed factor
+
 	// =====================================================
 	// Combat Outcome
 	// =====================================================
@@ -259,7 +261,7 @@ public class CreatureCombat : CreatureModule {
 		yield return new WaitForSeconds(delay);
 		if (target == null) { yield break; }
 		
-		float duration = me.speed * 0.5f;
+		float duration = me.speed * dur; //0.5f;
 
 		sfx.Play("Audio/Sfx/Combat/woosh", 0.4f, Random.Range(0.5f, 1.5f));
 
@@ -291,7 +293,7 @@ public class CreatureCombat : CreatureModule {
 	// =====================================================
 
 	private IEnumerator DefendAnimation (Creature attacker, float delay = 0, float advanceDiv = 8) {
-		float duration = me.speed * 0.5f;
+		float duration = me.speed * dur; //0.5f;
 		me.state = CreatureStates.Defending;
 
 		// wait for impact
