@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 public class CreatureCombat : CreatureModule {
 
-	private float dur = 0.25f; // combat animation speed factor
+	private float dur = 0.35f; // combat animation speed factor
 
 	// =====================================================
 	// Combat Outcome
@@ -232,14 +232,14 @@ public class CreatureCombat : CreatureModule {
 
 	private IEnumerator CombatAnimation (Tile target, float delay = 0) {
 		// play both attack and defend animations
-		me.StartCoroutine(AttackAnimation(target, delay, 3));
+		me.StartCoroutine(AttackAnimation(target, delay, 4));
 
 		if (target is Creature) {
 			// play both attack and defend animations
-			me.StartCoroutine(AttackAnimation((Creature)target, delay, 3));
+			me.StartCoroutine(AttackAnimation((Creature)target, delay, 4));
 			yield return target.StartCoroutine(((Creature)target).combatModule.DefendAnimation(me, delay, 8));
 		} else {
-			yield return me.StartCoroutine(AttackAnimation(target, delay, 3));
+			yield return me.StartCoroutine(AttackAnimation(target, delay, 4));
 		}
 		
 
@@ -254,7 +254,7 @@ public class CreatureCombat : CreatureModule {
 	}
 
 
-	private IEnumerator AttackAnimation (Tile target, float delay = 0, float advanceDiv = 2) {
+	private IEnumerator AttackAnimation (Tile target, float delay = 0, float advanceDiv = 3) {
 		me.state = CreatureStates.Attacking;
 
 		// wait for attack to start

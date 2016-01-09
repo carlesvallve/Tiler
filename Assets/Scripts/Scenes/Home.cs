@@ -9,6 +9,9 @@ public class Home : MonoBehaviour {
 	
 
 	void Awake () {
+		// force framerate to 60 fps
+		Application.targetFrameRate = 60;
+
 		sfx = AudioManager.instance;
 		DontDestroyOnLoad(sfx.gameObject);
 
