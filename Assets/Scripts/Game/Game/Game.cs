@@ -15,7 +15,8 @@ ANDROID
 - interaction on finger-up, info and camera center in long press -> OK
 - implement inventory icon on hud -> OK
 - Reskin hood to be more full-screen like, bigger on the phone -> OK
-- avoid interaction with game when we tap over hud
+- avoid interaction with game when we tap over hud -> OK
+- display info when long tapping on inventory item
 
 
 NEW EQUIPMENT SYSTEM

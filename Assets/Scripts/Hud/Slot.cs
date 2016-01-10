@@ -2,11 +2,19 @@
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
  
-public class Slot : MonoBehaviour, IPointerClickHandler {
+public class Slot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler {
 
 	public CreatureInventoryItem invItem;
 	public Image image;
 	public Text text;
+
+
+	private bool longPress = false;
+	private float longPressDuration = 0.25f;
+	private float tapStartTime = 0;
+	private float timeDelta = 0;
+
+	private bool isDown = false;
 
  
 	public void Init (CreatureInventoryItem invItem) {
@@ -57,7 +65,7 @@ public class Slot : MonoBehaviour, IPointerClickHandler {
 	}
 
 
-	public void OnPointerClick (PointerEventData eventData) {
+	/*public void OnPointerClick (PointerEventData eventData) {
 		if (eventData.button == PointerEventData.InputButton.Left) {
 			Hud.instance.ApplyItem(this);
 		
@@ -67,5 +75,50 @@ public class Slot : MonoBehaviour, IPointerClickHandler {
 		} else if (eventData.button == PointerEventData.InputButton.Right) {
 			Hud.instance.OpenItemInfo(this);
 		}
+	}*/
+
+
+	public void OnPointerDown (PointerEventData eventData) {
+		if (eventData.button == PointerEventData.InputButton.Left) {
+			Debug.Log("Tap down on slot");
+			tapStartTime = Time.time;
+			//Hud.instance.ApplyItem(this);
+		
+		}/* else if (eventData.button == PointerEventData.InputButton.Middle) {
+			Debug.Log("Middle click");
+		
+		} else if (eventData.button == PointerEventData.InputButton.Right) {
+			Hud.instance.OpenItemInfo(this);
+		}*/
 	}
+
+
+	public void OnPointerUp (PointerEventData eventData) {
+		if (eventData.button == PointerEventData.InputButton.Left) {
+			Debug.Log("Tap up on slot");
+			if (!longPress) {
+				Hud.instance.ApplyItem(this);
+			}
+			longPress = false;
+		
+		}/* else if (eventData.button == PointerEventData.InputButton.Middle) {
+			Debug.Log("Middle click");
+		
+		} else if (eventData.button == PointerEventData.InputButton.Right) {
+			Hud.instance.OpenItemInfo(this);
+		}*/
+	}
+
+
+	void Update () {
+		if (!isDown) { return; }
+
+		timeDelta = Time.time - tapStartTime;
+		if (longPress == false && timeDelta >= longPressDuration) {
+			Hud.instance.OpenItemInfo(this);
+			longPress = true;
+		}
+
+	}
+
 }
