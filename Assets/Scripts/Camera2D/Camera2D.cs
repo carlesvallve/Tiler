@@ -95,6 +95,11 @@ public class Camera2D : MonoBehaviour {
 	}
 
 
+	public void MoveToCoords (int x, int y) {
+		StartCoroutine(MoveToPos(new Vector2(x, y)));
+	}
+
+
 	public IEnumerator MoveToPos (Vector2 pos) {
 		float duration = 0.5f;
 		float t = 0;

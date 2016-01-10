@@ -437,39 +437,41 @@ public class Hud : MonoSingleton <Hud> {
 	
 	private IEnumerator AnimateLabel(Tile tile, GameObject obj, bool stick, float duration, float delay, float startY) {
 		yield return new WaitForSeconds(delay);
-		//if (tile == null) { yield break; }
 
 		startY = Camera2D.instance.pixelsPerUnit * 0.65f;
 
 		obj.SetActive(true);
 
 		// we need to use position because tile does not update coords once reparented to a creature
-		//Vector3 startPos = tile.transform.position; // new Vector3(tile.x, tile.y, 0); //
-		Vector3 startPos = new Vector3(
-			Mathf.RoundToInt(tile.transform.position.x), 
-			Mathf.RoundToInt(tile.transform.position.y), 
-			0
-		);
+		Vector3 startPos = tile.transform.position;
 
 		float endY = startY + Camera2D.instance.pixelsPerUnit * 1f;
 		float t = 0;
 		
 		while (t <= 1) {
 			t += Time.deltaTime / duration;
-
 			float y = Mathf.Lerp(startY, endY, Mathf.SmoothStep(0f, 1f, t));
 
-			Vector3 pos = new Vector3(
-				Mathf.RoundToInt(tile.transform.position.x), 
-				Mathf.RoundToInt(tile.transform.position.y), 
-				0
-			);
-
+			// get label world pos
+			Vector3 pos = tile.transform.position;
+			Creature creature = tile as Creature;
+			if (creature != null && creature.state != CreatureStates.Moving) {
+				pos = new Vector3(
+					Mathf.RoundToInt(tile.transform.position.x), 
+					Mathf.RoundToInt(tile.transform.position.y), 
+					0
+				);
+			}
+			
+			// get label screen pos
 			pos = Camera.main.WorldToScreenPoint(
 				tile != null && stick ? pos : startPos
 			) + Vector3.up * y;
 
-			if (obj != null) { obj.transform.position = pos; } 
+			// update label at pos
+			if (obj != null) { 
+				obj.transform.position = pos; 
+			} 
 			
 			yield return null;
 		}
@@ -478,7 +480,6 @@ public class Hud : MonoSingleton <Hud> {
 
 	private IEnumerator FadeLabel(Tile tile, GameObject obj, float duration, float delay) {
 		yield return new WaitForSeconds(delay);
-		//if (tile == null) { yield break; }
 
 		obj.SetActive(true);
 

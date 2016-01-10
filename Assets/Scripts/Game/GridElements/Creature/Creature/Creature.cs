@@ -722,7 +722,6 @@ public class Creature : Tile {
 	// Functions overriden by Player or Monster class
 	// =====================================================
 
-	public virtual void MoveCameraTo (int x, int y) {}
 	public virtual void UpdateVision (int x, int y) {}
 
 	public virtual void Think () {}

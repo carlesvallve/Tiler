@@ -62,7 +62,7 @@ public class Monster : Creature {
 			// at this point, monster sees the player
 			// if monster wasnt in alert mode, speak surprise message and start alert mode
 			if (visible && stats.alert == 0) {
-				Speak(isAgressive ? "Hey!" : "!", Color.white, 0, true); //, 0, true);
+				Speak("!", Color.white, 0, true, 32);
 				stats.alert = stats.alertMax;
 			}
 		}

@@ -95,7 +95,7 @@ public class Player : Creature {
 
 	// TODO: Refactor to use new equipment system
 
-	public override void SetInitialItems (int maxItems = 0, int minRarity = 100) {
+	/*public override void SetInitialItems (int maxItems = 0, int minRarity = 100) {
 		ItemGenerator generator = new ItemGenerator();
 
 		if (clase == "guard") {
@@ -127,7 +127,7 @@ public class Player : Creature {
 		foreach(CreatureInventoryItem invItem in inventoryModule.items) {
 			ApplyItem(invItem);
 		}
-	}
+	}*/
 
 
 	// =====================================================
@@ -137,8 +137,8 @@ public class Player : Creature {
 	protected void LogPlayerStats () {
 		string info = "";
 
-		//print (stats.xp);
-		info += "HP " + stats.hp + " / " + stats.hpMax + "  ";
+		info += "LEVEL " + stats.level; // + "  ";
+		info += "  XP " + stats.xp + "/" + stats.xpMax;
 
 		info +=
 		"  <color='#ff0000'>STR " + stats.str + "</color>" +  
@@ -146,15 +146,11 @@ public class Player : Creature {
 		"  <color='#00ffff'>CON " + stats.con + "</color>" +  
 		"  <color='#ffff00'>INT " + stats.intel + "</color>\n";
 
-		info += "LEVEL " + stats.level;
-		info += "    XP " + stats.xp + " / " + stats.xpMax;
+		info += "HP " + stats.hp + "/" + stats.hpMax; // + "  ";
 		
-
-		info += "    COMBAT " + combatModule.GetTotalAttack(this) + " / " + combatModule.GetTotalDefense(this);
-		info += "    ARMOUR " + combatModule.GetTotalArmour(this);
-		info += "    GOLD " + stats.gold; // + "\n";
-
-		
+		info += "  COMBAT " + combatModule.GetTotalAttack(this) + "/" + combatModule.GetTotalDefense(this);
+		info += "  ARMOUR " + combatModule.GetTotalArmour(this);
+		info += "  GOLD " + stats.gold;
 
 		Hud.instance.LogPlayerStats(info);
 	}
@@ -238,29 +234,11 @@ public class Player : Creature {
 
 
 	private void LogNewVisibleMonsters () {
-		if (state == CreatureStates.Descending) {
-			return;
-		}
-
-		if (newVisibleMonsters.Count == 0) {
-			return;
-		}
+		if (state == CreatureStates.Descending) { return; }
+		if (newVisibleMonsters.Count == 0) { return; }
 
 		StopMoving();
-		Speak("!", Color.white, 0, true); //, true);
-
-		/*string str = "";
-		string punctuation = "";
-		for (int i = 0; i < newVisibleMonsters.Count; i++) {
-			if (newVisibleMonsters.Count > 1) {
-				if (i > 0 && i < newVisibleMonsters.Count - 1) { punctuation = ", "; }
-				if (i == newVisibleMonsters.Count - 1) { punctuation = " and "; }
-			}
-			string desc = newVisibleMonsters[i].GetType().ToString(); 
-			str += punctuation + Utils.GetStringPrepositions(desc) + " " + desc; 
-		}
-		Hud.instance.Log("You see " + str);
-		Utils.DebugList(newVisibleMonsters);*/
+		Speak("!", Color.white, 0, true, 32);
 
 		// pick a random monster from the list and move camera to center pint between him and us
 		Creature creature = newVisibleMonsters[Random.Range(0, newVisibleMonsters.Count)];
@@ -268,7 +246,7 @@ public class Player : Creature {
 		
 		Vector2 point = transform.localPosition + 
 		(creature.transform.localPosition - transform.localPosition) / 2;
-		MoveCameraTo((int)point.x, (int)point.y);
+		Camera2D.instance.MoveToCoords((int)point.x, (int)point.y);
 
 		Hud.instance.Log("You see " + 
 			Descriptions.GetTileDescription(creature) + " " + 
@@ -276,16 +254,6 @@ public class Player : Creature {
 		);
 	}
 	
-
-	// =====================================================
-	// Camera
-	// =====================================================
-
-	public override void MoveCameraTo (int x, int y) {
-		Camera2D.instance.StopAllCoroutines();
-		Camera2D.instance.StartCoroutine(Camera2D.instance.MoveToPos(new Vector2(x, y)));
-	}
-
 
 	// =====================================================
 	// Vision
@@ -305,8 +273,6 @@ public class Player : Creature {
 			(x2, y2) => { 
 				if (grid.IsInsideBounds(x2, y2)) {
 					lit[x2, y2] = true; 
-				} else {
-					//Debug.LogError ("ShadowCaster is out of bounds -> " + x2 + "," + y2);
 				}
 			});
 

@@ -39,7 +39,7 @@ public class Door : Entity {
 			if (!hasBeenUnlocked) { 
 				Hud.instance.Log("You open the door."); 
 			}
-			creature.MoveCameraTo(this.x, this.y);
+			Camera2D.instance.MoveToCoords(this.x, this.y);
 		}
 		
 		yield break;
