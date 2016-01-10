@@ -438,7 +438,7 @@ public class Hud : MonoSingleton <Hud> {
 	private IEnumerator AnimateLabel(Tile tile, GameObject obj, bool stick, float duration, float delay, float startY) {
 		yield return new WaitForSeconds(delay);
 
-		startY = Camera2D.instance.pixelsPerUnit * 0.65f;
+		startY = Camera2D.instance.pixelsPerUnit * 0.75f;
 
 		obj.SetActive(true);
 

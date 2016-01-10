@@ -24,7 +24,7 @@ public class Home : MonoBehaviour {
 		// start label blink
 		Transform startLabel = transform.Find("Button/TextStart");
 		CanvasGroup group = startLabel.GetComponent<CanvasGroup>();
-		StartCoroutine(Blink(group, 1f));
+		StartCoroutine(Blink(group, 0.5f));
 	}
 
 
@@ -44,7 +44,7 @@ public class Home : MonoBehaviour {
 		yield return new WaitForSeconds(delay);
 		
 		yield return StartCoroutine(Fade(group, 1, 0.5f, 0.25f));
-		yield return StartCoroutine(Fade(group, 0, 0.25f, 2f));
+		yield return StartCoroutine(Fade(group, 0, 0.25f, 1.5f));
 
 		StartCoroutine(Blink(group, 0));
 	}
