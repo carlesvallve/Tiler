@@ -32,6 +32,8 @@ public class Home : MonoBehaviour {
 		if (transitioning) { return; }
 		transitioning = true;
 
+		StopAllCoroutines();
+
 		sfx.Fade("Audio/Bgm/Scenes/PeacefulTown", 0, 1f);
 		navigator.Open(sceneName, true);
 	}
@@ -42,7 +44,7 @@ public class Home : MonoBehaviour {
 		yield return new WaitForSeconds(delay);
 		
 		yield return StartCoroutine(Fade(group, 1, 0.5f, 0.25f));
-		yield return StartCoroutine(Fade(group, 0, 0.25f, 1f));
+		yield return StartCoroutine(Fade(group, 0, 0.25f, 2f));
 
 		StartCoroutine(Blink(group, 0));
 	}
