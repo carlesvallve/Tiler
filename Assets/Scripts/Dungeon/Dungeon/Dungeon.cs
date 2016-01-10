@@ -32,8 +32,16 @@ public class Dungeon : MonoSingleton <Dungeon> {
 		dungeonGenerator = DungeonGenerator.instance;
 		caveGenerator = CaveGenerator.instance;
 
-		// set initial dungeon level
-		currentDungeonLevel = 0;
+		
+	}
+
+	// =====================================================
+	// Enter Dungeon for the first time
+	// =====================================================
+
+	public void EnterDungeon () {
+		currentDungeonLevel = -1;
+		GenerateDungeon(1);
 	}
 
 
@@ -45,18 +53,13 @@ public class Dungeon : MonoSingleton <Dungeon> {
 		// Update current dungeon level
 		currentDungeonLevel += direction;
 
-		// Generate a new random seed, or get it from previously stored
-		if (currentDungeonLevel > dungeonSeeds.Count - 1 || direction == 0) {
-			// Set a random seed if we are entering a new dungeon level
-			seed = System.DateTime.Now.Millisecond * 1000 + System.DateTime.Now.Minute * 100;
-			dungeonSeeds.Add(seed);
-		} else {
-			// Recover a previously stored seed on current dungeon level
-			seed = dungeonSeeds[currentDungeonLevel];
-		}
+		// Set the random seed
+		SetRandomSeed(direction);
 
-		// set new random seed
-		Random.seed = seed;
+		print ((direction == 0 ? "Re-generating" : "Generating") + 
+			" level " + currentDungeonLevel + 
+			" with seed " + Random.seed // + " / " + dungeonSeeds[currentDungeonLevel]
+		);
 
 		// choose between dungeon or cave
 		int r = Random.Range(0, 100);
@@ -78,17 +81,43 @@ public class Dungeon : MonoSingleton <Dungeon> {
 	}
 
 
+	private void SetRandomSeed (int direction = 0) {
+		// Generate a new random seed, or get it from previously stored
+
+		if (!LevelIsVisited()) {
+			// Set a random seed if we are entering a new dungeon level
+			seed = System.DateTime.Now.Millisecond * 1000 + System.DateTime.Now.Minute * 100; // Random.Range(0, int.MaxValue); //
+			dungeonSeeds.Add(seed);
+
+		} else if (direction == 0) {
+			// Update with a new random seed if we are regenerating this level for any reason
+			seed = System.DateTime.Now.Millisecond * 1000 + System.DateTime.Now.Minute * 100; // Random.Range(0, int.MaxValue); //
+			dungeonSeeds[currentDungeonLevel] = seed;
+
+		} else {
+			// Recover a previously stored seed on current dungeon level
+			seed = dungeonSeeds[currentDungeonLevel];
+		}
+
+		// set new random seed
+		Random.seed = seed;
+	}
+
+
 	// =====================================================
 	// Generate Dungeon Features
 	// =====================================================
-
 
 	public void RenderDungeon (int direction) {
 		// init grid
 		grid.InitializeGrid (dungeonGenerator.MAP_WIDTH, dungeonGenerator.MAP_HEIGHT);
 
 		// Generate dungeon features
-		GenerateDungeonFeatures(direction);
+		bool success = GenerateDungeonFeatures(direction);
+
+		if (!success) {
+			return;
+		}
 
 		// initialize player's vision after everything has been created
 		grid.player.UpdateVision(grid.player.x, grid.player.y);
@@ -103,7 +132,7 @@ public class Dungeon : MonoSingleton <Dungeon> {
 	}
 
 
-	private void GenerateDungeonFeatures (int direction) {
+	private bool GenerateDungeonFeatures (int direction) {
 		// Generate architecture for each tree quad recursively
 		ArchitectureGenerator architecture = new ArchitectureGenerator();
 		if (dungeonType == DungeonType.Dungeon) {
@@ -116,8 +145,11 @@ public class Dungeon : MonoSingleton <Dungeon> {
 		StairGenerator stairs = new StairGenerator();
 		stairs.Generate();
 
-		if (!CheckSolvable()) {
-			return;
+		// roll again if we could not place stairs (becasue there were not enough free tiles)
+		if (grid.stairUp == null || grid.stairDown == null) {
+			//Debug.LogWarning("Missing stairs, generating again...");
+			GenerateAgain();
+			return false;
 		}
 
 		// Generate player 
@@ -129,12 +161,6 @@ public class Dungeon : MonoSingleton <Dungeon> {
 		FurnitureGenerator furniture = new FurnitureGenerator();
 		furniture.Generate(dungeonType == DungeonType.Dungeon ? 50 : 100, dungeonType == DungeonType.Dungeon ? 0.35f : 0.025f);
 
-		// Generate monsters
-		MonsterGenerator monsters = new MonsterGenerator();
-		//monsters.Generate(dungeonType == DungeonType.Dungeon ? 50 : 100, dungeonType == DungeonType.Dungeon ? 0.125f : 0.01f);
-		//monsters.GenerateSingle("Zombie");
-		//monsters.GenerateSingle("Centaur");
-
 		// Generate containers
 		ContainerGenerator containers = new ContainerGenerator();
 		containers.Generate(dungeonType == DungeonType.Dungeon ? 50 : 100, dungeonType == DungeonType.Dungeon ? 0.15f : 0.01f);
@@ -143,34 +169,39 @@ public class Dungeon : MonoSingleton <Dungeon> {
 		ItemGenerator items = new ItemGenerator();
 		items.Generate(dungeonType == DungeonType.Dungeon ? 50 : 100, dungeonType == DungeonType.Dungeon ? 0.15f : 0.01f);
 
-		if (!CheckSolvable()) {
-			return;
-		}
-	}
-
-
-	private bool CheckSolvable () {
-		// If we cannot solve the level, we need to generate a different one
+		// roll again if we could not complete the dungeon after non-movable tiles were all placed
 		if (!LevelIsSolvable()) {
-			generationTries++;
-			if (generationTries == 100) {
-				Debug.LogError("Dungeon unsolvable after 100 iterations. Escaping application...");
-				return false;
-			}
-			Debug.LogError("Dungeon level cannot be solved. Generating again...");
-			GenerateDungeon(0);
-
+			//Debug.LogWarning("Level not solvable, generating again...");
+			GenerateAgain();
 			return false;
 		}
+
+		// Generate monsters
+		MonsterGenerator monsters = new MonsterGenerator();
+		monsters.Generate(dungeonType == DungeonType.Dungeon ? 50 : 100, dungeonType == DungeonType.Dungeon ? 0.125f : 0.01f);
+		//monsters.GenerateSingle("Zombie");
+		//monsters.GenerateSingle("Centaur");
 
 		return true;
 	}
 
 
+	private void GenerateAgain () {
+		generationTries++;
+		if (generationTries == 100) {
+			Debug.LogError("Dungeon unsolvable after 100 iterations. Escaping application...");
+			return;
+		}
+
+		//Debug.LogError("Dungeon level cannot be solved. Generating again...");
+		GenerateDungeon(0);
+	}
+
+
 	private bool LevelIsSolvable () {
-		// if we could not place one of the stairs, level is not solvable
-		if (grid.stairUp == null || grid.stairDown == null) {
-			return false;
+		// if we already visited this level, we know is solvable
+		if (LevelIsVisited()) {
+			return true;
 		}
 
 		// if no available path from stair to stair, level is not solvable
@@ -178,12 +209,19 @@ public class Dungeon : MonoSingleton <Dungeon> {
 			grid.stairUp.x, grid.stairUp.y, grid.stairDown.x, grid.stairDown.y
 		);
 
-		if (path == null || path.Count == 0) {
+		//print (grid.stairUp.x + "," + grid.stairUp.y + " -> " +  grid.stairDown.x + "," +  grid.stairDown.y + " -> " + path.Count);
+
+		if (path.Count == 0) { // path == null || 
 			return false;
 		}
 
 		// otherwise, we can solve the level
 		return true;
+	}
+
+
+	private bool LevelIsVisited () {
+		return currentDungeonLevel <= dungeonSeeds.Count - 1;
 	}
 
 
@@ -203,7 +241,7 @@ public class Dungeon : MonoSingleton <Dungeon> {
 		// fade out
 		yield return StartCoroutine(hud.FadeOut(0.5f));
 
-		Debug.Log("Exiting level " + currentDungeonLevel + " in direction " + direction);
+		//Debug.Log("Exiting level " + currentDungeonLevel + " in direction " + direction);
 		
 		// generate next dungeon level
 		if (currentDungeonLevel + direction >= 0) {

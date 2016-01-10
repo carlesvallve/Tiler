@@ -58,7 +58,8 @@ public class ArchitectureGenerator : DungeonFeatureGenerator {
 
 				// create walls
 				if (Map[x, y] == 1) { // 1 = wall
-					CreateFloor(x, y, dtile); // necessary for visibility
+					Floor floor = CreateFloor(x, y, dtile); // necessary for visibility
+					floor.name = "WallFloor";
 					CreateWall(x, y);
 				}
 			}
@@ -98,7 +99,8 @@ public class ArchitectureGenerator : DungeonFeatureGenerator {
 
 					// create walls
 					if (dtile.id == DungeonTileType.WALL || dtile.id == DungeonTileType.WALLCORNER) {
-						CreateFloor(x, y, dtile); // necessary for viibility
+						Floor floor = CreateFloor(x, y, dtile); // necessary for viibility
+						floor.name = "WallFloor";
 						CreateWall(x, y);
 					}
 					
@@ -118,7 +120,7 @@ public class ArchitectureGenerator : DungeonFeatureGenerator {
 	}
 
 
-	private void CreateFloor (int x, int y, DungeonTile dtile) {
+	private Floor CreateFloor (int x, int y, DungeonTile dtile) {
 		Sprite asset = floorAsset;;
 		if (floorAsset == null) {
 			asset = Assets.GetAsset("Dungeon/Architecture/Floor/floor-" + Random.Range(1, 5));
@@ -131,10 +133,12 @@ public class ArchitectureGenerator : DungeonFeatureGenerator {
 		if (dtile.room != null) {
 			floor.roomId = dtile.room.id;
 		}
+
+		return floor;
 	}
 
 
-	private void CreateWall (int x, int y) {
+	private Wall CreateWall (int x, int y) {
 		Sprite asset = wallAsset;;
 		if (wallAsset == null) {
 			asset = Assets.GetAsset("Dungeon/Architecture/Wall/stone-" + Random.Range(1, 5));
@@ -142,15 +146,19 @@ public class ArchitectureGenerator : DungeonFeatureGenerator {
 
 		Wall wall = (Wall)grid.CreateEntity(typeof(Wall), x, y, 1, asset) as Wall;
 		wall.SetColor(wallColor, true);
+
+		return wall;
 	}
 
 
-	private void CreateDoor (int x, int y) {
+	private Door CreateDoor (int x, int y) {
 		Door door = (Door)grid.CreateEntity(typeof(Door), x, y, 1, null) as Door;
 		EntityStates[] states = new EntityStates[] { 
 			EntityStates.Open, EntityStates.Closed, EntityStates.Locked 
 		};
 		door.SetState(states[Random.Range(0, states.Length)]);
+
+		return door;
 	}
 
 

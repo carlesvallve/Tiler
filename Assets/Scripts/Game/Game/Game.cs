@@ -154,7 +154,8 @@ public class Game : MonoSingleton <Game> {
 
 		// Generate dungeon level and render it in the game grid
 		Dungeon dungeon = Dungeon.instance; 
-		dungeon.GenerateDungeon();
+		dungeon.EnterDungeon();
+		//dungeon.GenerateDungeon();
 
 		// Game events
 		grid.player.OnGameTurnUpdate += () => {

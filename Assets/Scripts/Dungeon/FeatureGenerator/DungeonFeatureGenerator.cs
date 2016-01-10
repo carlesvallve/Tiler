@@ -53,41 +53,57 @@ public class DungeonFeatureGenerator {
 	}
 
 
-	protected Tile GetFreeTileOnRoom (DungeonRoom room, int radius = 0) {
-		// get a random free tile inside the given room
-		int c = 0;
+	protected Tile GetFreeTileOnGrid (int radius = 0) {
+		List<Tile> freeTiles = GetFreeTilesOnGrid(radius);
 
-		while (true) {
-			DungeonTile dtile = room.tiles[Random.Range(0, room.tiles.Count)];
-			Tile tile = grid.GetTile(dtile.x, dtile.y);
-			if (tile != null && TileIsFree(tile, radius)) {
-				return tile;
-			}
-
-			c++; if (c == 1000) { break; }
+		if (freeTiles.Count == 0) {
+			//Debug.LogError("No free tile available in grid. Escaping...");
+			return null;
 		}
 
-		//Debug.LogWarning ("No free tile available in room " + room.id + ". Escaping...");
-		return null;
+		return freeTiles[Random.Range(0, freeTiles.Count)];
 	}
 
 
-	protected Tile GetFreeTileOnGrid (int radius = 0) {
-		// get a random free tile inside the grid
-		int c = 0;
+	protected Tile GetFreeTileOnRoom (DungeonRoom room, int radius = 0) {
+		List<Tile> freeTiles =GetFreeTilesOnRoom(room, radius);
 
-		while (true) {
-			Tile tile = grid.GetTile(Random.Range(0, grid.width), Random.Range(0, grid.height));
-
-			if (tile != null && TileIsFree(tile, radius)) {
-				return tile;
-			}
-
-			c++; if (c == 1000) { break; }
+		if (freeTiles.Count == 0) {
+			//Debug.LogError("No free tile available in grid. Escaping...");
+			return null;
 		}
 
-		Debug.LogWarning("No free tile available in grid. Escaping...");
-		return null;
+		return freeTiles[Random.Range(0, freeTiles.Count)];
+	}
+
+
+	public List<Tile> GetFreeTilesOnGrid (int radius = 0) {
+		List<Tile> freeTiles = new List<Tile>();
+		
+		for (int y = 0; y < grid.height; y++) {
+			for (int x = 0; x < grid.width; x++) {
+				Tile tile = grid.GetTile(x, y);
+				if (tile != null && TileIsFree(tile, radius)) {
+					freeTiles.Add(tile);
+				}
+			}
+		}
+
+		return freeTiles;
+	}
+
+
+	public List<Tile> GetFreeTilesOnRoom (DungeonRoom room, int radius) {
+		List<Tile> freeTiles = new List<Tile>();
+		
+		foreach (DungeonTile dtile in room.tiles) {
+			Tile tile = grid.GetTile(dtile.x, dtile.y);
+			if (tile != null && TileIsFree(tile, radius)) {
+				freeTiles.Add(tile);
+			}
+		}
+
+		return freeTiles;
 	}
 
 

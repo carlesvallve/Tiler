@@ -12,6 +12,9 @@ public class StairGenerator : DungeonFeatureGenerator {
 	public override void Generate () {
 		Tile tile = null;
 
+		grid.stairUp = null;
+		grid.stairDown = null;
+
 		// locate ladderUp so it has no entities on 1 tile radius
 		tile = GetFreeTileOnGrid(0);
 		if (tile != null) {

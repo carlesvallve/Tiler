@@ -8,12 +8,9 @@ public class Slot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler {
 	public Image image;
 	public Text text;
 
-
 	private bool longPress = false;
 	private float longPressDuration = 0.25f;
 	private float tapStartTime = 0;
-	//private float timeDelta = 0;
-
 	private bool isDown = false;
 
  

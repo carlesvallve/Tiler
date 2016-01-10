@@ -641,7 +641,8 @@ public class Creature : Tile {
 
 					if (stair.state == EntityStates.Open) {
 						state = CreatureStates.Descending;
-						Dungeon.instance.ExitLevel (stair.direction);
+						Dungeon.instance.ExitLevel(stair.direction);
+						//print ("found a stair going " + stair.direction);
 						return true;
 					} else {
 						Hud.instance.Log("The stair doors are locked.");

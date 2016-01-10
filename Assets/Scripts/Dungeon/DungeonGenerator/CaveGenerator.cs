@@ -5,6 +5,9 @@ using System.Collections.Generic;
 
 public class CaveGenerator : MonoSingleton <CaveGenerator> {
 
+	// The Random Seed
+	public int seed = -1;
+
 	public int[,] Map;
 	public int MapWidth	{ get; set; }
 	public int MapHeight { get; set; }
@@ -14,9 +17,12 @@ public class CaveGenerator : MonoSingleton <CaveGenerator> {
 
 
 	public void Generate (int seed) {
+		// set and store random seed
+		this.seed = seed;
+
 		MapWidth = DungeonGenerator.instance.MAP_WIDTH;
 		MapHeight = DungeonGenerator.instance.MAP_HEIGHT;
-		PercentAreWalls = 35;
+		PercentAreWalls = 35; // 35
  
  		// fill map randomly
 		RandomFillMap();
