@@ -153,7 +153,7 @@ public class GameData {
 	private static char arraySeparator = '$';
 
 	private string [,] LoadCsv (string path, bool debug = false) {
-		Debug.Log(path);
+		//Debug.Log(path);
 
 		TextAsset csvFile = Resources.Load(path) as TextAsset;
 

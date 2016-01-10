@@ -45,42 +45,29 @@ public class DungeonGenerator : MonoSingleton <DungeonGenerator> {
 	public List<DungeonRoom> rooms;
 	
 	// Auxiliar vars
-	public bool verbose = false;
+	public bool verbose = true;
 	
 
 	// *************************************************************
 	// Dungeon Initialization
 	// *************************************************************
 
-	public override void Init() {
+	public void Reset () {
 		// Initialize the tilemap
-		tiles = new DungeonTile[MAP_HEIGHT,MAP_WIDTH];
-		for (int i = 0; i < MAP_HEIGHT; i++) {
-			for (int j = 0; j < MAP_WIDTH; j++) {
-				tiles[i,j] = new DungeonTile(DungeonTileType.EMPTY, j, i);
+		tiles = new DungeonTile[MAP_HEIGHT, MAP_WIDTH];
+
+		for (int y = 0; y < MAP_HEIGHT; y++) {
+			for (int x = 0; x < MAP_WIDTH; x++) {
+				tiles[y, x] = new DungeonTile(DungeonTileType.EMPTY, x, y);
+				//print (">>> x " + x + "/" + tiles.GetLength(1) + " y " + y + "/" + tiles.GetLength(0));
 			}
 		}
 		
-		// Init QuadTree
-		quadTree = new QuadTree(new AABB(new XY(MAP_WIDTH/2.0f,  MAP_HEIGHT/2.0f), new XY(MAP_WIDTH/2.0f, MAP_HEIGHT/2.0f)));
+		// Initialize the QuadTree
+		quadTree = new QuadTree(new AABB(new XY(MAP_WIDTH / 2f, MAP_HEIGHT / 2f), new XY(MAP_WIDTH / 2f, MAP_HEIGHT / 2f)));
 
-		// List of rooms
+		//  Initialize the list of rooms
 		rooms = new List<DungeonRoom>();
-	}
-	
-	
-	// Clean everything
-	public void Reset() {
-		// Reset tilemap
-		for (int i = 0; i < MAP_HEIGHT; i++) 
-			for (int j = 0; j < MAP_WIDTH; j++) 
-				tiles[i,j] = new DungeonTile(DungeonTileType.EMPTY, j, i);
-		
-		// Reset QuadTree
-		quadTree = new QuadTree(new AABB(new XY(MAP_WIDTH/2.0f,MAP_HEIGHT/2.0f),new XY(MAP_WIDTH/2.0f, MAP_HEIGHT/2.0f)));
-
-		// Reset rooms
-		rooms.Clear();
 	}
 
 	
@@ -89,18 +76,11 @@ public class DungeonGenerator : MonoSingleton <DungeonGenerator> {
 		// set and store random seed
 		this.seed = seed;
 
-		// set random dungeon size
-		// TODO: For some reason setting astar walkability fails with random sizes
-		//int size = Random.Range(16, 33); // TODO: vision doesnt like non-square maps (?)
-		//MAP_WIDTH = size; // Random.Range(16, 33); 
-		//MAP_HEIGHT = size; //Random.Range(16, 33);
-
 		// Clean
 		Reset();
 			
 		// Generate QuadTree
 		if (verbose) { Debug.Log ("Generating QuadTree"); }
-		//zones = new List<QuadTree>();
 		GenerateQuadTree (ref quadTree);
 		
 		// Generate Rooms
@@ -202,9 +182,9 @@ public class DungeonGenerator : MonoSingleton <DungeonGenerator> {
 				if (IsPassable(x,y)) continue;
 
 				if (x > 0) if (IsPassable(x - 1, y)) room_near = true;
-				if (x < MAP_HEIGHT - 1) if (IsPassable(x + 1, y)) room_near = true;
+				if (x < MAP_WIDTH - 1) if (IsPassable(x + 1, y)) room_near = true;
 				if (y > 0) if (IsPassable(x, y - 1)) room_near = true;
-				if (y < MAP_WIDTH - 1) if (IsPassable(x, y + 1)) room_near = true;
+				if (y < MAP_HEIGHT - 1) if (IsPassable(x, y + 1)) room_near = true;
 				if (room_near) SetWall(x, y);
 			}
 		}
@@ -226,15 +206,15 @@ public class DungeonGenerator : MonoSingleton <DungeonGenerator> {
 		for (int y = 0; y < MAP_HEIGHT; y++) {
 			for (int x = 0; x < MAP_WIDTH; x++) {
 				if (x == 0 || y == 0 || x == MAP_WIDTH - 1 || y == MAP_HEIGHT - 1) {
-					DungeonTile tile = tiles[x, y];
+					DungeonTile tile = tiles[y, x];
 					if (!tile.isEmpty()) {
 						SetWall(x, y);
-						if (x == 0 && tiles[x + 1, y].isWall()) SetWallCorner(x, y);
-						if (y == 0 && tiles[x, y + 1].isWall()) SetWallCorner(x, y);
-						if (x == MAP_WIDTH - 1 && tiles[x - 1, y].isWall()) SetWallCorner(x, y);
-						if (y == MAP_HEIGHT - 1 && tiles[x, y - 1].isWall()) SetWallCorner(x, y);
-						if (x == 0 && y == 0) SetWallCorner(x, y);
-						if (x == MAP_WIDTH - 1 && y == MAP_HEIGHT - 1)  SetWallCorner(x, y);
+						if (x == 0 && tiles[y, x + 1].isWall()) { SetWallCorner(x, y); }
+						if (y == 0 && tiles[y + 1, x].isWall()) { SetWallCorner(x, y); }
+						if (x == MAP_WIDTH - 1 && tiles[y, x - 1].isWall()) { SetWallCorner(x, y); }
+						if (y == MAP_HEIGHT - 1 && tiles[y - 1, x].isWall()) { SetWallCorner(x, y); }
+						if (x == 0 && y == 0) { SetWallCorner(x, y); }
+						if (x == MAP_WIDTH - 1 && y == MAP_HEIGHT - 1) { SetWallCorner(x, y); }
 					}
 				}
 			}
@@ -249,28 +229,28 @@ public class DungeonGenerator : MonoSingleton <DungeonGenerator> {
 		// Define at which tiles doors should be placed
 		for (int y = 1; y < MAP_HEIGHT - 1; y++) {
 			for (int x = 1; x < MAP_WIDTH - 1; x++) {
-				DungeonTile tile = tiles[x, y];
+				DungeonTile tile = tiles[y, x];
 				if (tile.id != DungeonTileType.CORRIDOR) continue;
 
 				// Vertical doors
-				if (isDoorWall(tiles[x, y - 1].id) || isDoorWall(tiles[x, y + 1].id)) {
-					if (tiles[x + 1, y].id == DungeonTileType.ROOM && tiles[x - 1, y].id == DungeonTileType.CORRIDOR) {
-						doorsV.Add(tiles[x, y]);
+				if (isDoorWall(tiles[y - 1, x].id) || isDoorWall(tiles[y + 1, x].id)) {
+					if (tiles[y, x + 1].id == DungeonTileType.ROOM && tiles[y, x - 1].id == DungeonTileType.CORRIDOR) {
+						doorsV.Add(tiles[y, x]);
 					}
 
-					if (tiles[x - 1, y].id == DungeonTileType.ROOM && tiles[x + 1, y].id == DungeonTileType.CORRIDOR) {
-						doorsV.Add(tiles[x, y]);
+					if (tiles[y, x - 1].id == DungeonTileType.ROOM && tiles[y, x + 1].id == DungeonTileType.CORRIDOR) {
+						doorsV.Add(tiles[y, x]);
 					}
 				}
 
 				// Horizontal doors
-				if (isDoorWall(tiles[x - 1, y].id) || isDoorWall(tiles[x + 1, y].id)) {
-					if (tiles[x, y + 1].id == DungeonTileType.ROOM && tiles[x, y - 1].id == DungeonTileType.CORRIDOR) {
-						doorsH.Add(tiles[x, y]);
+				if (isDoorWall(tiles[y, x - 1].id) || isDoorWall(tiles[y, x + 1].id)) {
+					if (tiles[y + 1, x].id == DungeonTileType.ROOM && tiles[y - 1, x].id == DungeonTileType.CORRIDOR) {
+						doorsH.Add(tiles[y, x]);
 					}
 
-					if (tiles[x, y - 1].id == DungeonTileType.ROOM && tiles[x, y + 1].id == DungeonTileType.CORRIDOR) {
-						doorsH.Add(tiles[x, y]);
+					if (tiles[y - 1, x].id == DungeonTileType.ROOM && tiles[y + 1, x].id == DungeonTileType.CORRIDOR) {
+						doorsH.Add(tiles[y, x]);
 					}
 				}
 
@@ -291,24 +271,24 @@ public class DungeonGenerator : MonoSingleton <DungeonGenerator> {
 		// remove any bad or undesired  doors
 		for (int y = 1; y < MAP_HEIGHT - 1; y++) {
 			for (int x = 1; x < MAP_WIDTH - 1; x++) {
-				DungeonTile tile = tiles[x, y];
+				DungeonTile tile = tiles[y, x];
 				
 				// remove undesired doors
 				if (tile.id == DungeonTileType.DOORV) {
-					if (isDoorFloor(tiles[x, y - 1].id) || isDoorFloor(tiles[x, y + 1].id)) {
+					if (isDoorFloor(tiles[y - 1, x].id) || isDoorFloor(tiles[y + 1, x].id)) {
 						tile.id = DungeonTileType.CORRIDOR;
 					}
 
-					if (isDoorDoor(tiles[x - 1, y].id) || isDoorDoor(tiles[x + 1, y].id)) {
+					if (isDoorDoor(tiles[y, x - 1].id) || isDoorDoor(tiles[y, x + 1].id)) {
 						tile.id = DungeonTileType.CORRIDOR;
 					}
 				}
 
 				if (tile.id == DungeonTileType.DOORH) {
-					if (isDoorFloor(tiles[x - 1, y].id) || isDoorFloor(tiles[x + 1, y].id)) {
+					if (isDoorFloor(tiles[y, x - 1].id) || isDoorFloor(tiles[y, x + 1].id)) {
 						tile.id = DungeonTileType.CORRIDOR;
 					}
-					if (isDoorDoor(tiles[x, y - 1].id) || isDoorDoor(tiles[x, y + 1].id)) {
+					if (isDoorDoor(tiles[y - 1, x].id) || isDoorDoor(tiles[y + 1, x].id)) {
 						tile.id = DungeonTileType.CORRIDOR;
 					}
 				}
@@ -334,238 +314,57 @@ public class DungeonGenerator : MonoSingleton <DungeonGenerator> {
 
 
 	// *************************************************************
-	// Read tilemap and instantiate GameObjects
-	// *************************************************************
-	
-	/*void GenerateGameObjects(QuadTree _quadtree) {
-		// If it's an end quadtree, read every pos and make a chunk of combined meshes
-		if (_quadtree.HasChildren() == false) {
-
-			_quadtree.id = zones.Count;
-			zones.Add(_quadtree);
-			
-			GameObject container = GameObject.Instantiate(meshCombiner) as GameObject;
-			container.transform.parent = containerRooms.transform;
-			container.name = "Zone" + _quadtree.id;
-
-			for (int row = _quadtree.boundary.BottomTile(); row <= _quadtree.boundary.TopTile()-1; row++) {
-				for (int col = _quadtree.boundary.LeftTile(); col <= _quadtree.boundary.RightTile()-1; col++) {
-					// get tile and add it to quadtree zone
-					DungeonTile tile = tiles[row,col];
-					_quadtree.tiles.Add(tile);
-
-					// set tile color and material
-					tile.color = _quadtree.color;
-					tile.material = tile.isWall() ? _quadtree.materialWall : _quadtree.materialFloor;
-					
-					// create floors
-					if (tile.id == DungeonTileType.ROOM || tile.id == DungeonTileType.CORRIDOR) {
-						GameObject floor = createFloor(container, tile.material, row, col);
-						tiles[row,col].obj = floor;
-					}
-
-					// create walls
-					if (tile.id == DungeonTileType.WALL || tile.id == DungeonTileType.WALLCORNER) {
-						GameObject wall = createWall(container, tile.material, row, col);
-						createFloorUnderWall(container, wall, _quadtree.materialFloor, row, col);
-						tiles[row,col].obj = wall;
-					}
-
-					// create doors
-					if (tile.id == DungeonTileType.DOOR) {
-						createFloor(container, tile.material, row, col);
-						GameObject door = createDoor(container, row, col);
-						tiles[row,col].obj = door;
-					}
-				}
-			}
-			
-		} else {
-			GenerateGameObjects(_quadtree.northWest);
-			GenerateGameObjects(_quadtree.northEast);
-			GenerateGameObjects(_quadtree.southWest);
-			GenerateGameObjects(_quadtree.southEast);
-		}
-	}
-
-
-	private GameObject createFloor (GameObject container, Material material, int x, int y) {
-		GameObject floor = GameObject.Instantiate(prefabFloor,new Vector3(x, 0.0f, y),Quaternion.identity) as GameObject;
-		floor.transform.parent = container.transform;
-
-		float h = 0.01f;
-		floor.transform.localScale = new Vector3(1, h, 1);
-		floor.transform.localPosition = new Vector3(x, 0, y);
-
-		// color floor
-		if (coloredZones) floor.transform.Find("Cube").gameObject.GetComponent<Renderer>().material = material;
-
-		return floor;
-	}
-
-
-	private GameObject createFloorUnderWall (GameObject container, GameObject wall, Material material, int x, int y) {
-		GameObject floor = GameObject.Instantiate(prefabFloor,new Vector3(x, 0.0f, y),Quaternion.identity) as GameObject;
-		floor.transform.parent = container.transform;
-
-		float h = 0.01f;
-		floor.transform.localScale = new Vector3(1, h, 1);
-		floor.transform.localPosition = new Vector3(x, 0, y);
-
-		// color floor under wall
-		if (coloredZones) floor.transform.Find("Cube").gameObject.GetComponent<Renderer>().material = material;
-
-		// adapt floor under wall to direction x
-		if (wall.transform.localScale.x < 1) {
-			if (x > 0 && !tiles[x - 1, y].isWall() 
-				&& x < MAP_WIDTH - 1 && tiles[x + 1, y].isEmpty()) {
-				floor.transform.localScale = new Vector3(0.7f, h, 1);
-				floor.transform.Translate(-0.15f, 0, 0);
-			}
-			if (x > 0 && tiles[x - 1, y].isEmpty() && x < MAP_WIDTH - 1 && !tiles[x + 1, y].isWall()) {
-				floor.transform.localScale = new Vector3(0.7f, h, 1);
-				floor.transform.Translate(0.15f, 0, 0);
-			}
-
-			if (x == 0) {
-				floor.transform.localScale = new Vector3(0.7f, h, 1);
-				floor.transform.Translate(0.15f, 0, 0);
-			}
-
-			if (x == MAP_WIDTH - 1) {
-				floor.transform.localScale = new Vector3(0.7f, h, 1);
-				floor.transform.Translate(-0.15f, 0, 0);
-			}
-		}
-
-		// adapt floor under wall to direction y
-		if (wall.transform.localScale.z < 1) {
-			if (y > 0 && !tiles[x, y - 1].isWall() && y < MAP_HEIGHT - 1 && tiles[x, y + 1].isEmpty()) {
-				floor.transform.localScale = new Vector3(1, h, 0.7f);
-				floor.transform.Translate(0, 0, -0.15f);
-			}
-			if (y > 0 && tiles[x, y - 1].isEmpty() && y < MAP_HEIGHT - 1 && !tiles[x, y + 1].isWall()) {
-				floor.transform.localScale = new Vector3(1, h, 0.7f);
-				floor.transform.Translate(0, 0, 0.15f);
-			}
-
-			if (y == 0) {
-				floor.transform.localScale = new Vector3(1, h, 0.7f);
-				floor.transform.Translate(0, 0, 0.15f);
-			}
-
-			if (y == MAP_HEIGHT - 1) {
-				floor.transform.localScale = new Vector3(1, h, 0.7f);
-				floor.transform.Translate(0, 0, -0.15f);
-			}
-		}
-
-		return floor;
-	}
-
-
-	private GameObject createWall (GameObject container, Material material, int x, int y) {
-		GameObject wall = GameObject.Instantiate(prefabWall,new Vector3(x, 0.0f, y),Quaternion.identity) as GameObject;
-		wall.transform.parent = container.transform;
-
-		float h = 1.0f;
-		wall.transform.localScale = new Vector3(1, h, 1);
-		wall.transform.localPosition = new Vector3(wall.transform.position.x, 0, wall.transform.position.z);
-
-		// color wall
-		if (coloredZones) wall.transform.Find("Cube").gameObject.GetComponent<Renderer>().material = material;
-
-		// adapt wall to direction x
-		if (x > 0 && tiles[x - 1, y].isWall() && x < MAP_WIDTH - 1 && tiles[x + 1, y].isWall()) {
-			if (y > 0 && !tiles[x, y - 1].isWall() && y < MAP_HEIGHT - 1 && !tiles[x, y + 1].isWall()) {
-				wall.transform.localScale = new Vector3(1, h, 0.35f);
-			}
-		}
-
-		// adap wall to direction y
-		if (y > 0 && tiles[x, y - 1].isWall() && y < MAP_HEIGHT - 1 && tiles[x, y + 1].isWall()) {
-			if (x > 0 && !tiles[x - 1, y].isWall() && x < MAP_WIDTH - 1 && !tiles[x + 1, y].isWall()) {
-				wall.transform.localScale = new Vector3(0.35f, h, 1);
-			}
-		}
-
-		// adapt walls on grid borders
-		if (tiles[x, y].id == DungeonTileType.WALL) {
-			if (x == 0 || x == MAP_WIDTH - 1) wall.transform.localScale = new Vector3(0.35f, h, 1);
-			if (y == 0 || y == MAP_HEIGHT - 1) wall.transform.localScale = new Vector3(1, h, 0.35f);
-		}
-		
-		return wall;
-	}
-
-
-	private GameObject createDoor (GameObject container, int x, int y) {
-		GameObject door = GameObject.Instantiate(prefabDoor,new Vector3(x, 0.0f, y),Quaternion.identity) as GameObject;
-		door.transform.parent = container.transform;
-
-		float h = 1f;
-		door.transform.localScale = new Vector3(0.9f, h, 0.9f);
-		door.transform.localPosition = new Vector3(door.transform.position.x, 0, door.transform.position.z);
-
-		if (x > 0 && tiles[x - 1, y].isWall() && x < MAP_WIDTH - 1 && tiles[x + 1, y].isWall()) {
-			if (y > 0 && !tiles[x, y - 1].isWall() && y < MAP_HEIGHT - 1 && !tiles[x, y + 1].isWall()) {
-				door.transform.localScale = new Vector3(1, h, 0.2f);
-			}
-		}
-
-		if (y > 0 && tiles[x, y - 1].isWall() && y < MAP_HEIGHT - 1 && tiles[x, y + 1].isWall()) {
-			if (x > 0 && !tiles[x - 1, y].isWall() && x < MAP_WIDTH - 1 && !tiles[x + 1, y].isWall()) {
-				door.transform.localScale = new Vector3(0.2f, h, 1);
-			}
-		}
-
-		return door;
-	}*/
-
-
-	// *************************************************************
 	// Helper Methods
 	// *************************************************************
 
-	public bool IsEmpty(int row, int col) { 
-		return tiles[row,col].id == DungeonTileType.EMPTY; 
+	public bool IsEmpty(int x, int y) { 
+		return tiles[y, x].id == DungeonTileType.EMPTY; 
 	}
 	
 
-	public bool IsPassable(int row, int col) { 
+	public bool IsPassable(int x, int y) { 
 		return 
-			tiles[row,col].id == DungeonTileType.ROOM || 
-			tiles[row,col].id == DungeonTileType.CORRIDOR;
+			tiles[y, x].id == DungeonTileType.ROOM || 
+			tiles[y, x].id == DungeonTileType.CORRIDOR;
 	}
 
 	
 	public bool IsPassable(XY xy) { 
-		return IsPassable((int) xy.y, (int) xy.x);
+		return IsPassable((int) xy.x, (int) xy.y);
 	}
 
 
-	public bool IsWallCorner(int row, int col) { 
-		if (tiles[row, col].id != DungeonTileType.EMPTY) return false;
-		if (row > 0  && col > 0 && tiles[row - 1, col].id == DungeonTileType.WALL && tiles[row, col - 1].id == DungeonTileType.WALL && tiles[row - 1, col - 1].id != DungeonTileType.WALL) return true;
-		if (row > 0  && col < MAP_HEIGHT - 1 && tiles[row - 1, col].id == DungeonTileType.WALL && tiles[row, col + 1].id == DungeonTileType.WALL && tiles[row - 1, col + 1].id != DungeonTileType.WALL) return true;
-		if (row < MAP_HEIGHT - 1  && col > 0 && tiles[row + 1, col].id == DungeonTileType.WALL && tiles[row, col - 1].id == DungeonTileType.WALL && tiles[row + 1, col - 1].id != DungeonTileType.WALL) return true;
-		if (row < MAP_HEIGHT - 1  && col < MAP_HEIGHT - 1 && tiles[row + 1, col].id == DungeonTileType.WALL && tiles[row, col + 1].id == DungeonTileType.WALL && tiles[row + 1, col + 1].id != DungeonTileType.WALL) return true;
+	public bool IsWallCorner(int x, int y) { 
+		if (tiles[y, x].id != DungeonTileType.EMPTY) { return false; }
+
+		if (y > 0 && x > 0 && 
+			tiles[y - 1, x].id == DungeonTileType.WALL && tiles[y, x - 1].id == DungeonTileType.WALL && tiles[y - 1, x - 1].id != DungeonTileType.WALL) { return true; }
+		
+		if (y > 0 && x < MAP_WIDTH - 1 && 
+			tiles[y - 1, x].id == DungeonTileType.WALL && tiles[y, x + 1].id == DungeonTileType.WALL && tiles[y - 1, x + 1].id != DungeonTileType.WALL) { return true; }
+		
+		if (y < MAP_HEIGHT - 1 && x > 0 && 
+			tiles[y + 1, x].id == DungeonTileType.WALL && tiles[y, x - 1].id == DungeonTileType.WALL && tiles[y + 1, x - 1].id != DungeonTileType.WALL) { return true; }
+		
+		if (y < MAP_HEIGHT - 1 && x < MAP_WIDTH - 1 && 
+			tiles[y + 1, x].id == DungeonTileType.WALL && tiles[y, x + 1].id == DungeonTileType.WALL && tiles[y + 1, x + 1].id != DungeonTileType.WALL) { return true; }
+		
 		return false;
 	}
 
 	
-	public void SetWall(int row, int col) {
-		tiles[row,col].id = DungeonTileType.WALL;
+	public void SetWall(int x, int y) {
+		tiles[y, x].id = DungeonTileType.WALL;
 	}
 
 
-	public void SetWallCorner(int row, int col) {
-		tiles[row,col].id = DungeonTileType.WALLCORNER;
+	public void SetWallCorner(int x, int y) {
+		tiles[y, x].id = DungeonTileType.WALLCORNER;
 	}
 
 
-	public void SetDoor(int row, int col, string direction) {
-		tiles[row,col].id = direction == "h" ? DungeonTileType.DOORH : DungeonTileType.DOORV;
+	public void SetDoor(int x, int y, string direction) {
+		tiles[y, x].id = direction == "h" ? DungeonTileType.DOORH : DungeonTileType.DOORV;
 	}
 
 

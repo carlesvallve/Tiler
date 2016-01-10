@@ -56,23 +56,29 @@ public class Dungeon : MonoSingleton <Dungeon> {
 		// Set the random seed
 		SetRandomSeed(direction);
 
-		print ((direction == 0 ? "Re-generating" : "Generating") + 
-			" level " + currentDungeonLevel + 
-			" with seed " + Random.seed // + " / " + dungeonSeeds[currentDungeonLevel]
-		);
-
+		// Set random parameters (dimensions, rooms, corridors, etc...)
+		SetRandomParameters();
+		
 		// choose between dungeon or cave
 		int r = Random.Range(0, 100);
-
-		if (r <= 50) {
+		if (r <= 60) {
 			// Generate dungeon data
 			dungeonType = DungeonType.Dungeon;
 			dungeonGenerator.Generate(seed);
 		} else {
 			// Generate cave data
+			DungeonGenerator.instance.MAP_WIDTH +=  Random.Range(1, 9);;
+			DungeonGenerator.instance.MAP_HEIGHT += Random.Range(1, 9);;
 			dungeonType = DungeonType.Cave;
 			caveGenerator.Generate(seed);
 		}
+
+		// Print dungeon configuration
+		print ((direction == 0 ? "Re-generating" : "Generating") + 
+			" level " + currentDungeonLevel + " [" +
+			DungeonGenerator.instance.MAP_WIDTH + " x " + DungeonGenerator.instance.MAP_HEIGHT + "]" +
+			" with seed " + Random.seed
+		);
 
 		// Render dungeon on grid
 		RenderDungeon(direction);
@@ -86,12 +92,12 @@ public class Dungeon : MonoSingleton <Dungeon> {
 
 		if (!LevelIsVisited()) {
 			// Set a random seed if we are entering a new dungeon level
-			seed = System.DateTime.Now.Millisecond * 1000 + System.DateTime.Now.Minute * 100; // Random.Range(0, int.MaxValue); //
+			seed = System.DateTime.Now.Millisecond * 1000 + System.DateTime.Now.Minute * 100;
 			dungeonSeeds.Add(seed);
 
 		} else if (direction == 0) {
 			// Update with a new random seed if we are regenerating this level for any reason
-			seed = System.DateTime.Now.Millisecond * 1000 + System.DateTime.Now.Minute * 100; // Random.Range(0, int.MaxValue); //
+			seed = System.DateTime.Now.Millisecond * 1000 + System.DateTime.Now.Minute * 100;
 			dungeonSeeds[currentDungeonLevel] = seed;
 
 		} else {
@@ -101,6 +107,27 @@ public class Dungeon : MonoSingleton <Dungeon> {
 
 		// set new random seed
 		Random.seed = seed;
+	}
+
+
+	private void SetRandomParameters () {
+		// Set random dimensions
+		int w = Random.Range(12, 21);
+		int h = Random.Range(12, 21);
+		DungeonGenerator.instance.MAP_WIDTH = w;
+		DungeonGenerator.instance.MAP_HEIGHT = h;
+
+		// Set random parameters:
+		// room size
+		// int max = w > h ? w : h;
+		// DungeonGenerator.instance.ROOM_MAX_SIZE = Random.Range(max / 2, max + 1);
+		// DungeonGenerator.instance.ROOM_MIN_SIZE = Random.Range(max / 4, (max / 2) + 1);
+		// room wall border (empty space between rooms in tiles)
+		DungeonGenerator.instance.ROOM_WALL_BORDER = Random.Range(0, 2);
+		// room ugly enabled (?)
+		DungeonGenerator.instance.ROOM_UGLY_ENABLED = Random.Range(0, 2) == 1 ? true : false;
+		// corridor max width
+		//DungeonGenerator.instance.CORRIDOR_WIDTH = Random.Range(0, 3);
 	}
 
 
@@ -178,9 +205,8 @@ public class Dungeon : MonoSingleton <Dungeon> {
 
 		// Generate monsters
 		MonsterGenerator monsters = new MonsterGenerator();
-		monsters.Generate(dungeonType == DungeonType.Dungeon ? 50 : 100, dungeonType == DungeonType.Dungeon ? 0.125f : 0.01f);
+		monsters.Generate(dungeonType == DungeonType.Dungeon ? 60 : 100, dungeonType == DungeonType.Dungeon ? 0.05f : 0.01f);
 		//monsters.GenerateSingle("Zombie");
-		//monsters.GenerateSingle("Centaur");
 
 		return true;
 	}
@@ -209,9 +235,7 @@ public class Dungeon : MonoSingleton <Dungeon> {
 			grid.stairUp.x, grid.stairUp.y, grid.stairDown.x, grid.stairDown.y
 		);
 
-		//print (grid.stairUp.x + "," + grid.stairUp.y + " -> " +  grid.stairDown.x + "," +  grid.stairDown.y + " -> " + path.Count);
-
-		if (path.Count == 0) { // path == null || 
+		if (path.Count == 0) {
 			return false;
 		}
 

@@ -32,7 +32,7 @@ public class ArchitectureGenerator : DungeonFeatureGenerator {
 		int[,] Map = cave.Map;
 
 		// set each cave cavern as a dungeon room
-		DungeonGenerator.instance.rooms.Clear();
+		DungeonGenerator.instance.Reset();
 
 		for (int i = 0; i < cave.caverns.Count; i++) {
 			DungeonRoom room = new DungeonRoom(i);
