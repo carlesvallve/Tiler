@@ -16,7 +16,11 @@ ANDROID
 - implement inventory icon on hud -> OK
 - Reskin hood to be more full-screen like, bigger on the phone -> OK
 - avoid interaction with game when we tap over hud -> OK
-- display info when long tapping on inventory item
+- display info when long tapping on inventory item -> OK
+
+- when going up levels we dont get previous dungeon
+- when going up levelswe appear at stairsUp instead of down
+- when we need to rerenerate the dungeon app breaks
 
 
 NEW EQUIPMENT SYSTEM

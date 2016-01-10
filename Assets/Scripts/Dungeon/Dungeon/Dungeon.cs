@@ -116,6 +116,10 @@ public class Dungeon : MonoSingleton <Dungeon> {
 		StairGenerator stairs = new StairGenerator();
 		stairs.Generate();
 
+		if (!CheckSolvable()) {
+			return;
+		}
+
 		// Generate player 
 		PlayerGenerator player = new PlayerGenerator();
 		Stair stair = direction == -1 ? grid.stairDown : grid.stairUp;
@@ -127,7 +131,7 @@ public class Dungeon : MonoSingleton <Dungeon> {
 
 		// Generate monsters
 		MonsterGenerator monsters = new MonsterGenerator();
-		monsters.Generate(dungeonType == DungeonType.Dungeon ? 50 : 100, dungeonType == DungeonType.Dungeon ? 0.125f : 0.01f);
+		//monsters.Generate(dungeonType == DungeonType.Dungeon ? 50 : 100, dungeonType == DungeonType.Dungeon ? 0.125f : 0.01f);
 		//monsters.GenerateSingle("Zombie");
 		//monsters.GenerateSingle("Centaur");
 
@@ -139,18 +143,27 @@ public class Dungeon : MonoSingleton <Dungeon> {
 		ItemGenerator items = new ItemGenerator();
 		items.Generate(dungeonType == DungeonType.Dungeon ? 50 : 100, dungeonType == DungeonType.Dungeon ? 0.15f : 0.01f);
 
+		if (!CheckSolvable()) {
+			return;
+		}
+	}
+
+
+	private bool CheckSolvable () {
 		// If we cannot solve the level, we need to generate a different one
 		if (!LevelIsSolvable()) {
 			generationTries++;
 			if (generationTries == 100) {
 				Debug.LogError("Dungeon unsolvable after 100 iterations. Escaping application...");
-				return;
+				return false;
 			}
 			Debug.LogError("Dungeon level cannot be solved. Generating again...");
 			GenerateDungeon(0);
 
-			return;
+			return false;
 		}
+
+		return true;
 	}
 
 
@@ -189,6 +202,8 @@ public class Dungeon : MonoSingleton <Dungeon> {
 
 		// fade out
 		yield return StartCoroutine(hud.FadeOut(0.5f));
+
+		Debug.Log("Exiting level " + currentDungeonLevel + " in direction " + direction);
 		
 		// generate next dungeon level
 		if (currentDungeonLevel + direction >= 0) {

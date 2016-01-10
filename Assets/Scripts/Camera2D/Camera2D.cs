@@ -96,6 +96,7 @@ public class Camera2D : MonoBehaviour {
 
 
 	public void MoveToCoords (int x, int y) {
+		StopAllCoroutines();
 		StartCoroutine(MoveToPos(new Vector2(x, y)));
 	}
 

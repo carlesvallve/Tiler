@@ -238,7 +238,7 @@ public class Hud : MonoSingleton <Hud> {
 		image.sprite = item.asset;
 
 		image.transform.localScale = slot.image.transform.localScale;
-		image.transform.localPosition = slot.image.transform.localPosition + new Vector3(24, -24, 0);
+		image.transform.localPosition = slot.image.transform.localPosition + Vector3.right * 32; // + new Vector3(24, -24, 0);
 
 		inventoryInfo.Find("Container/Name").GetComponent<Text>().text = slot.name;
 		Text info = inventoryInfo.Find("Container/Stats").GetComponent<Text>();

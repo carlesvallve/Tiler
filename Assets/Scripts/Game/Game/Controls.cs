@@ -10,7 +10,7 @@ public class Controls : MonoBehaviour {
 	private bool longPress = false;
 	private float longPressDuration = 0.25f;
 	private float tapStartTime = 0;
-	private float timeDelta = 0;
+	//private float timeDelta = 0;
 
 
 	void Awake () {
@@ -37,7 +37,7 @@ public class Controls : MonoBehaviour {
 
 		// tapping
 		if (Input.GetMouseButton(0)) {
-			timeDelta = Time.time - tapStartTime;
+			float timeDelta = Time.time - tapStartTime;
 			if (longPress == false && timeDelta >= longPressDuration) {
 				SetInfoAtPos(Input.mousePosition);
 				longPress = true;
