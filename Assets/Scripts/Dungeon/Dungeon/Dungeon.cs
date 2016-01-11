@@ -59,23 +59,25 @@ public class Dungeon : MonoSingleton <Dungeon> {
 		// Set random parameters (dimensions, rooms, corridors, etc...)
 		SetRandomParameters();
 		
-		// choose between dungeon or cave
+		// Choose dungeon type (dungeon / cave)
 		int r = Random.Range(0, 100);
-		if (r <= 60) {
-			// Generate dungeon data
-			dungeonType = DungeonType.Dungeon;
+		dungeonType = r <= 60 ? DungeonType.Dungeon : DungeonType.Cave;
+
+		//Generate dungeon type
+		switch (dungeonType) {
+		case DungeonType.Dungeon:
 			dungeonGenerator.Generate(seed);
-		} else {
-			// Generate cave data
+			break;
+		case DungeonType.Cave:
 			DungeonGenerator.instance.MAP_WIDTH +=  Random.Range(1, 9);;
 			DungeonGenerator.instance.MAP_HEIGHT += Random.Range(1, 9);;
-			dungeonType = DungeonType.Cave;
 			caveGenerator.Generate(seed);
+			break;
 		}
 
-		// Print dungeon configuration
-		print ((direction == 0 ? "Re-generating" : "Generating") + 
-			" level " + currentDungeonLevel + " [" +
+		// Print dungeon final config
+		print ((direction == 0 ? "Re-generating" : "Generating ") + 
+			dungeonType + " Level " + currentDungeonLevel + " [" +
 			DungeonGenerator.instance.MAP_WIDTH + " x " + DungeonGenerator.instance.MAP_HEIGHT + "]" +
 			" with seed " + Random.seed
 		);
@@ -83,6 +85,7 @@ public class Dungeon : MonoSingleton <Dungeon> {
 		// Render dungeon on grid
 		RenderDungeon(direction);
 
+		// Play ready sound when all is done
 		sfx.Play("Audio/Sfx/Musical/gong", 0.2f, Random.Range(0.8f, 1.6f));
 	}
 

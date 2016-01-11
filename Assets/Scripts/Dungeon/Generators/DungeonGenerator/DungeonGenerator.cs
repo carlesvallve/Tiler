@@ -3,14 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 
 
-/*
-TODO:
-- stairs and diferent height levels 
-- start and end spots that allow us to navigate through dungeon levels
-*/
-
-
-// DungeonGenerator class. Singleton.
 public class DungeonGenerator : MonoSingleton <DungeonGenerator> {
 	
 	// Dungeon Parameters
@@ -45,7 +37,7 @@ public class DungeonGenerator : MonoSingleton <DungeonGenerator> {
 	public List<DungeonRoom> rooms;
 	
 	// Auxiliar vars
-	public bool verbose = true;
+	public bool verbose = false;
 	
 
 	// *************************************************************
@@ -59,7 +51,6 @@ public class DungeonGenerator : MonoSingleton <DungeonGenerator> {
 		for (int y = 0; y < MAP_HEIGHT; y++) {
 			for (int x = 0; x < MAP_WIDTH; x++) {
 				tiles[y, x] = new DungeonTile(DungeonTileType.EMPTY, x, y);
-				//print (">>> x " + x + "/" + tiles.GetLength(1) + " y " + y + "/" + tiles.GetLength(0));
 			}
 		}
 		
@@ -253,9 +244,7 @@ public class DungeonGenerator : MonoSingleton <DungeonGenerator> {
 						doorsH.Add(tiles[y, x]);
 					}
 				}
-
 			}
-
 		}
 
 		// set those tiles as doors
@@ -338,16 +327,24 @@ public class DungeonGenerator : MonoSingleton <DungeonGenerator> {
 		if (tiles[y, x].id != DungeonTileType.EMPTY) { return false; }
 
 		if (y > 0 && x > 0 && 
-			tiles[y - 1, x].id == DungeonTileType.WALL && tiles[y, x - 1].id == DungeonTileType.WALL && tiles[y - 1, x - 1].id != DungeonTileType.WALL) { return true; }
+			tiles[y - 1, x].id == DungeonTileType.WALL && tiles[y, x - 1].id == DungeonTileType.WALL && tiles[y - 1, x - 1].id != DungeonTileType.WALL) { 
+			return true; 
+		}
 		
 		if (y > 0 && x < MAP_WIDTH - 1 && 
-			tiles[y - 1, x].id == DungeonTileType.WALL && tiles[y, x + 1].id == DungeonTileType.WALL && tiles[y - 1, x + 1].id != DungeonTileType.WALL) { return true; }
+			tiles[y - 1, x].id == DungeonTileType.WALL && tiles[y, x + 1].id == DungeonTileType.WALL && tiles[y - 1, x + 1].id != DungeonTileType.WALL) { 
+			return true; 
+		}
 		
 		if (y < MAP_HEIGHT - 1 && x > 0 && 
-			tiles[y + 1, x].id == DungeonTileType.WALL && tiles[y, x - 1].id == DungeonTileType.WALL && tiles[y + 1, x - 1].id != DungeonTileType.WALL) { return true; }
+			tiles[y + 1, x].id == DungeonTileType.WALL && tiles[y, x - 1].id == DungeonTileType.WALL && tiles[y + 1, x - 1].id != DungeonTileType.WALL) { 
+			return true; 
+		}
 		
 		if (y < MAP_HEIGHT - 1 && x < MAP_WIDTH - 1 && 
-			tiles[y + 1, x].id == DungeonTileType.WALL && tiles[y, x + 1].id == DungeonTileType.WALL && tiles[y + 1, x + 1].id != DungeonTileType.WALL) { return true; }
+			tiles[y + 1, x].id == DungeonTileType.WALL && tiles[y, x + 1].id == DungeonTileType.WALL && tiles[y + 1, x + 1].id != DungeonTileType.WALL) { 
+			return true; 
+		}
 		
 		return false;
 	}
@@ -444,35 +441,6 @@ public class DungeonGenerator : MonoSingleton <DungeonGenerator> {
 					DigCorridor(row2,col);
 		}
 	}
-
-
-	// *************************************************************
-	// More Helper Methods
-	// *************************************************************
-
-	/*public DungeonTile getTileAtPos (Vector3 pos) {
-		int x = (int)pos.x;
-		int y = (int)pos.z;
-
-		if (x < 0 || y < 0 || x > MAP_WIDTH - 1 || y > MAP_HEIGHT - 1) {
-			return null;
-		}
-
-		return tiles[x, y];
-	}
-
-	public Vector3 getRandomPosInDungeon () {
-		bool ok = false;
-		int x = 0;
-		int y = 0;
-		while (!ok) {
-			x = Random.Range(1, MAP_WIDTH - 1);
-			y = Random.Range(1, MAP_HEIGHT - 1);
-			ok = IsPassable(x, y);
-		}
-
-		return new Vector3(x, 0, y);
-	}*/
 
 
 	// *************************************************************
