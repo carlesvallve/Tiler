@@ -86,7 +86,7 @@ public class CreatureCombat : CreatureModule {
 			// create blood
 			grid.CreateBlood(defender.transform.position, damage, Color.red);
 			
-			defender.Speak("-" + damage, Color.red, 0, true, 32);
+			defender.Speak("-" + damage, Color.red, 0, true); //, 20);
 
 			// set isDead to true
 			if (defender.stats.hp == 0) {
