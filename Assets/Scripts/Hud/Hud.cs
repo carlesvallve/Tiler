@@ -36,7 +36,9 @@ public class Hud : MonoSingleton <Hud> {
 	public int headerHeight = 48;
 	public int footerHeight = 48;
 
+
 	void Awake () {
+		transform.Find("Dpi").GetComponent<Text>().text = "DPI " + Screen.dpi;
 
 		headerHeight = (int)transform.Find("Header").GetComponent<RectTransform>().sizeDelta.y;
 		footerHeight = (int)transform.Find("Footer").GetComponent<RectTransform>().sizeDelta.y;

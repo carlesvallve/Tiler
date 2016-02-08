@@ -24,7 +24,7 @@ public class Camera2D : MonoBehaviour {
 		// set pixels per unit depending on device
 		if (Application.platform == RuntimePlatform.Android ||
 			Application.platform == RuntimePlatform.IPhonePlayer) {
-			pixelsPerUnit = 72; // device
+			pixelsPerUnit = 96; //128; //72; // device
 		} else {
 			pixelsPerUnit = 28; // desktop
 		}
