@@ -420,14 +420,14 @@ public class Hud : MonoSingleton <Hud> {
 
 	// TODO:  We probably want to create a 'Label' class to handle all these
 	
-	public void CreateLabel (Tile tile, string str, Color color, float delay = 0, bool stick = false, int fontSize = 24, float duration = 1f, float startY = 24) {
+	public void CreateLabel (Tile tile, string str, Color color, float delay = 0, bool stick = false, int fontSize = 6, float duration = 1f, float startY = 24) {
 		GameObject obj = (GameObject)Instantiate(labelPrefab);
 		obj.transform.SetParent(world, false);
 		obj.name = "Label";
 
 		Text text = obj.transform.Find("Text").GetComponent<Text>();
 		text.color = color;
-		text.fontSize = fontSize;
+		text.fontSize = 16; //fontSize;
 		text.text = str;
 		
 		obj.SetActive(false);

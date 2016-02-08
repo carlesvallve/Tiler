@@ -15,7 +15,7 @@ public class HpBar : MonoBehaviour {
 		shadow = transform.Find("Shadow").GetComponent<SpriteRenderer>();
 		shadow.gameObject.SetActive(false);
 
-		transform.localPosition = Vector3.zero + Vector3.up * 0.75f;
+		transform.localPosition = Vector3.zero + Vector3.up * 0.65f;
 	}
 
 

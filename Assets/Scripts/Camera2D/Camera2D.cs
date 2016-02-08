@@ -8,11 +8,16 @@ public class Camera2D : MonoBehaviour {
 	public static Camera2D instance;
 
 	// resolution
-	public int pixelsPerUnit { get; set; }
+	//public int pixelsPerUnit { get; set; }
 	
 	// panning
 	public float panSpeed = 1f;
 	private Vector3 lastMousePos;
+
+	// orthographic size
+	private float TARGET_WIDTH = 1024; //Screen.width; //960.0f;
+	private float TARGET_HEIGHT = 768; //Screen.height; //540.0f;
+	public int pixelsPerUnit = 64; // 1:1 ratio of pixels to units
 
 
 	void Start () {
@@ -22,20 +27,21 @@ public class Camera2D : MonoBehaviour {
 		//Debug.Log(Screen.width + " x " + Screen.height + " =  ratio " + ratio);
 
 		// set pixels per unit depending on device
-		if (Application.platform == RuntimePlatform.Android ||
+		/*if (Application.platform == RuntimePlatform.Android ||
 			Application.platform == RuntimePlatform.IPhonePlayer) {
 			pixelsPerUnit = 96; //128; //72; // device
 		} else {
 			pixelsPerUnit = 28; // desktop
-		}
+		}*/
 			
-		Camera.main.orthographicSize = (Screen.height / 2) / pixelsPerUnit;
+		//Camera.main.orthographicSize = (Screen.height / 2) / 28; //pixelsPerUnit;
 	}
 
 
 	void Update () {
 
-		Camera.main.orthographicSize = (Screen.height / 2) / pixelsPerUnit;
+		//Camera.main.orthographicSize = (Screen.height / 2) / pixelsPerUnit;
+		SetOrthographicSize();
 
 		// apply panning
 		if (Input.GetMouseButtonDown(1)) {
@@ -45,6 +51,23 @@ public class Camera2D : MonoBehaviour {
 			PanOrthoCamera(delta);
 			lastMousePos = Input.mousePosition;
 		}	
+	}
+
+
+	private void SetOrthographicSize () {
+
+		float desiredRatio = TARGET_WIDTH / TARGET_HEIGHT;
+		float currentRatio = (float)Screen.width/(float)Screen.height;
+
+		if(currentRatio >= desiredRatio) {
+			// Our resolution has plenty of width, so we just need to use the height to determine the camera size
+			Camera.main.orthographicSize = TARGET_HEIGHT / 4 / pixelsPerUnit;
+		} else {
+			// Our camera needs to zoom out further than just fitting in the height of the image.
+			// Determine how much bigger it needs to be, then apply that to our original algorithm.
+			float differenceInSize = desiredRatio / currentRatio;
+			Camera.main.orthographicSize = TARGET_HEIGHT / 4 / pixelsPerUnit * differenceInSize;
+		}
 	}
 
 
