@@ -76,7 +76,7 @@ public class Hud : MonoSingleton <Hud> {
 
 		// in-game labels
 		overlayGroup = transform.Find("Overlay").GetComponent<CanvasGroup>();
-		world = transform.Find("World");
+		world = GameObject.Find("HudWorld").transform;
 	}
 
 
@@ -427,8 +427,18 @@ public class Hud : MonoSingleton <Hud> {
 
 		Text text = obj.transform.Find("Text").GetComponent<Text>();
 		text.color = color;
-		text.fontSize = 16; //fontSize;
+		//text.fontSize = 16; //fontSize;
 		text.text = str;
+
+		if (Application.platform == RuntimePlatform.Android ||
+			Application.platform == RuntimePlatform.IPhonePlayer) {
+			text.fontSize = 24;
+		} else {
+			text.fontSize = 12;
+		}
+
+		//text.fontSize = Camera2D.instance.pixelsPerUnit;
+		//text.fontSize = Mathf.RoundToInt(64 / Camera.main.orthographicSize);
 		
 		obj.SetActive(false);
 
@@ -440,7 +450,9 @@ public class Hud : MonoSingleton <Hud> {
 	private IEnumerator AnimateLabel(Tile tile, GameObject obj, bool stick, float duration, float delay, float startY) {
 		yield return new WaitForSeconds(delay);
 
-		startY = Camera2D.instance.pixelsPerUnit * 0.75f;
+		// TODO: We prolly should use Camera2D's orthographic size instead of pixelsPerUnit (?)
+
+		startY = Camera2D.instance.pixelsPerUnit * 0.5f;
 
 		obj.SetActive(true);
 

@@ -17,7 +17,9 @@ public class Camera2D : MonoBehaviour {
 	// orthographic size
 	private float TARGET_WIDTH = 1024; //Screen.width; //960.0f;
 	private float TARGET_HEIGHT = 768; //Screen.height; //540.0f;
-	public int pixelsPerUnit = 64; // 1:1 ratio of pixels to units
+	public int pixelsPerUnit; // 1:1 ratio of pixels to units (setup from the inspector)
+
+	//private int basePixelsPerUnit;
 
 
 	void Start () {
@@ -35,10 +37,27 @@ public class Camera2D : MonoBehaviour {
 		}*/
 			
 		//Camera.main.orthographicSize = (Screen.height / 2) / 28; //pixelsPerUnit;
+
+		//basePixelsPerUnit = pixelsPerUnit;
 	}
 
 
 	void Update () {
+
+		/*if (Screen.height > 1024 / 2) {
+			pixelsPerUnit = basePixelsPerUnit / 2;
+		}*/
+
+		if (Application.platform == RuntimePlatform.Android ||
+			Application.platform == RuntimePlatform.IPhonePlayer) {
+			pixelsPerUnit = 960 * 64 / Screen.height;
+		} else {
+			pixelsPerUnit = 480 * 72 / Screen.height;
+		}
+
+		
+
+		print (Screen.height + " " + pixelsPerUnit);
 
 		//Camera.main.orthographicSize = (Screen.height / 2) / pixelsPerUnit;
 		SetOrthographicSize();
