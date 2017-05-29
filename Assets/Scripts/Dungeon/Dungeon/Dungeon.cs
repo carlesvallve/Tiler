@@ -116,9 +116,9 @@ public class Dungeon : MonoSingleton <Dungeon> {
 		StairGenerator stairs = new StairGenerator();
 		stairs.Generate();
 
-		
 
-		// Generate player 
+
+		// Generate player
 		PlayerGenerator player = new PlayerGenerator();
 		Stair stair = direction == -1 ? grid.stairDown : grid.stairUp;
 		player.GenerateAtPos(stair.x, stair.y);
@@ -130,8 +130,8 @@ public class Dungeon : MonoSingleton <Dungeon> {
 		// Generate monsters
 		MonsterGenerator monsters = new MonsterGenerator();
 		//monsters.Generate(dungeonType == DungeonType.Dungeon ? 50 : 100, dungeonType == DungeonType.Dungeon ? 0.15f : 0.01f);
-		//monsters.GenerateSingle("Zombie");
-		//monsters.GenerateSingle("Centaur");
+		monsters.GenerateSingle("Zombie");
+		monsters.GenerateSingle("Centaur");
 
 		// Generate containers
 		ContainerGenerator containers = new ContainerGenerator();
@@ -184,14 +184,14 @@ public class Dungeon : MonoSingleton <Dungeon> {
 		StartCoroutine(ExitLevelCoroutine(direction));
 	}
 
-	
+
 	private  IEnumerator ExitLevelCoroutine (int direction) {
 		game.CrossFadeRandomBgm();
 		yield return new WaitForSeconds(0f);
 
 		// fade out
 		yield return StartCoroutine(hud.FadeOut(0.5f));
-		
+
 		// generate next dungeon level
 		if (currentDungeonLevel + direction >= 0) {
 			generationTries = 0;

@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 
+using AssetLoader;
+
 // require necessary creature modules
 [RequireComponent (typeof (CreatureInventory))]
 [RequireComponent (typeof (CreatureCombat))]
@@ -36,7 +38,7 @@ public class Creature : Tile {
 	public CreatureInventory inventoryModule;
 	public CreatureEquipment equipmentModule;
 
-	
+
 	// =====================================================
 	// Initialization
 	// =====================================================
@@ -107,9 +109,18 @@ public class Creature : Tile {
 
 		// set asset
 		string fileName = data.assets[Random.Range(0, data.assets.Length)];
-		string path = "Tilesets/Monster/" + data.type + "/" + data.id + "/" + fileName;
-		this.asset = Resources.Load<Sprite>(path);
-		if (asset == null) { Debug.LogError(path); }
+		//string path = "Tilesets/Monster/" + data.type + "/" + data.id + "/" + fileName;
+		//asset = Resources.Load<Sprite>(path);
+
+		string path = "Monster/" + data.type + "/" + data.id + "/" + fileName;
+		Sprite asset = Assets.GetAsset(path);
+
+		//Debug.Log("Attempting to load asset from Resources:" + path + " " + asset);
+
+		if (asset == null) {
+			Debug.LogError(path);
+			return;
+		}
 
 		SetAsset(asset);
 
@@ -119,7 +130,7 @@ public class Creature : Tile {
 			int minRarity = GameData.GetDefaultEquipmentMinRarity();
 			SetInitialItems(Random.Range(0, 4), minRarity);
 		} */
-		
+
 	}
 
 
@@ -134,19 +145,19 @@ public class Creature : Tile {
 		//SetInfo(stats.attack + "/" + stats.defense, Color.yellow);
 	//}
 
-	
+
 	// =====================================================
 	// Stats
 	// =====================================================
 
-	
+
 	// Experience
 
 	public virtual void UpdateXp (int ammount) {
-		stats.xp += ammount * 2; 
+		stats.xp += ammount * 2;
 
 		// level up
-		if (stats.xp >= stats.xpMax) { 
+		if (stats.xp >= stats.xpMax) {
 			LevelUp();
 		}
 	}
@@ -155,7 +166,7 @@ public class Creature : Tile {
 	protected void LevelUp () {
 		// increase level
 		stats.level += 1;
-		stats.xp = stats.xp - stats.xpMax; 
+		stats.xp = stats.xp - stats.xpMax;
 		stats.xpMax = 100 * stats.level;
 		stats.xpValue = 20 * stats.level;
 		Speak("LEVEL-UP", Color.green, 0.25f, true);
@@ -197,7 +208,7 @@ public class Creature : Tile {
 	// Health
 
 	public virtual void UpdateHp (int ammount) {
-		stats.hp += ammount; 
+		stats.hp += ammount;
 
 		if (stats.hp > stats.hpMax) { stats.hp = stats.hpMax; }
 		if (stats.hp < 0) { stats.hp = 0; }
@@ -221,7 +232,7 @@ public class Creature : Tile {
 
 	public override void SetVisibility (Tile tile, bool visible, float shadowValue) {
 		// creature is being seen by the player right now
-		this.visible = visible; 
+		this.visible = visible;
 		container.gameObject.SetActive(visible);
 
 		// apply shadow
@@ -233,14 +244,14 @@ public class Creature : Tile {
 			foreach (KeyValuePair<string, Tile> part in equipmentModule.parts) {
 				if (part.Value == null) { continue; }
 
-				part.Value.visible = visible; 
+				part.Value.visible = visible;
 				part.Value.container.gameObject.SetActive(visible);
 
 				part.Value.SetShadow(visible ? shadowValue : 1);
 				if (!visible && tile.explored) { part.Value.SetShadow(0.6f); }
 			};
 		}
-		
+
 
 
 		// apply hpBar shadow
@@ -256,9 +267,9 @@ public class Creature : Tile {
 
 	public virtual void UpdateAlert (int ammount) {
 		// only alerted monsters are able to chase the player
-		// alert decreases each turn, when it reaches 0, 
+		// alert decreases each turn, when it reaches 0,
 		// monsters will be surprised by the player and wont move the turn they see him
-		stats.alert += ammount; 
+		stats.alert += ammount;
 
 		if (stats.alert > stats.alertMax) { stats.alert = stats.alertMax; }
 		if (stats.alert < 0) { stats.alert = 0; }
@@ -270,7 +281,7 @@ public class Creature : Tile {
 	// =====================================================
 
 	protected bool IsAware () {
-		if (stats.alert > 0) { 
+		if (stats.alert > 0) {
 			if (!this.visible) { UpdateAlert(-1); }
 			return true;
 		}
@@ -332,8 +343,8 @@ public class Creature : Tile {
 		if (x == this.x && y == this.y) {
 			// if goal is ourselves, wait one turn instead
 			path = new List<Vector2>() { new Vector2(this.x, this.y) };
-			if (this is Player) { 
-				Hud.instance.Log("You wait..."); 
+			if (this is Player) {
+				Hud.instance.Log("You wait...");
 			}
 			//Speak("...", Color.yellow);
 		} else {
@@ -343,12 +354,12 @@ public class Creature : Tile {
 			if (escape) {
 				return;
 			}
-			
+
 			// search for new path
 			path = Astar.instance.SearchPath(this.x, this.y, x, y);
 			path = CapPathToFirstEncounter(path);
 		}
-		
+
 		// escape if no path was found
 		if (path.Count == 0) {
 			StopMoving();
@@ -404,21 +415,21 @@ public class Creature : Tile {
 		// adjust speed to energy rate
 		speedMove = Mathf.Min(0.15f / stats.energyBase, 0.15f);
 
-		if (state != CreatureStates.Moving) { 
-			yield break; 
+		if (state != CreatureStates.Moving) {
+			yield break;
 		}
 
 		// clear logs
-		if (this is Player) { 
-			Hud.instance.Log(""); 
+		if (this is Player) {
+			Hud.instance.Log("");
 		}
-		
+
 		// resolve encounters with next tile
 		ResolveEntityEncounters(x, y);
 		ResolveCreatureEncounters(x, y);
 
 		// escape if we are no longer moving because of encounters on next tile
-		if (state != CreatureStates.Moving) { 
+		if (state != CreatureStates.Moving) {
 
 			// wait enough time for monsters to complete their actions
 			yield return new WaitForSeconds(speed); // is this enough always?
@@ -436,7 +447,7 @@ public class Creature : Tile {
 			StopMoving();
 			yield break;
 		}
-		
+
 		// interpolate creature position
 		float t = 0;
 		Vector3 startPos = transform.localPosition;
@@ -461,7 +472,7 @@ public class Creature : Tile {
 			if (this.visible) {
 				sfx.Play("Audio/Sfx/Step/step", 0.4f, Random.Range(0.8f, 1.2f));
 			}
-			
+
 		}
 
 		// resolve encounters with current tile after moving
@@ -537,7 +548,7 @@ public class Creature : Tile {
 						return true;
 					}
 				}
-				
+
 				// otherwise, set target as walkable in astar walkability
 				Astar.instance.walkability[targetEntity.x, targetEntity.y] = 0;
 			}
@@ -581,13 +592,13 @@ public class Creature : Tile {
 			Door door = (Door)entity;
 			if (door.state != EntityStates.Open) {
 				// open the door
-				if (door.state == EntityStates.Closed) { 
+				if (door.state == EntityStates.Closed) {
 					state = CreatureStates.Using;
 					StartCoroutine(door.Open(this));
-					return; 
-					
+					return;
+
 				// unlock the door
-				} else if (door.state == EntityStates.Locked) { 
+				} else if (door.state == EntityStates.Locked) {
 					state = CreatureStates.Using;
 					StartCoroutine(door.Unlock(this));
 					return;
@@ -600,13 +611,13 @@ public class Creature : Tile {
 			Container container = (Container)entity;
 			if (container.state != EntityStates.Open) {
 				// open the door
-				if (container.state == EntityStates.Closed) { 
+				if (container.state == EntityStates.Closed) {
 					state = CreatureStates.Using;
 					StartCoroutine(container.Open(this));
-					return; 
-					
+					return;
+
 				// unlock the door
-				} else if (container.state == EntityStates.Locked) { 
+				} else if (container.state == EntityStates.Locked) {
 					state = CreatureStates.Using;
 					StartCoroutine(container.Unlock(this));
 					return;
@@ -699,7 +710,7 @@ public class Creature : Tile {
 			if (stats.hp <= stats.hpMax * 0.5f) {
 				inventoryModule.UseItem(invItem);
 			}
-			
+
 		} else {
 			// equip item if is better thatn what we own already
 			if (inventoryModule.IsBestEquipment(invItem)) {
@@ -735,4 +746,3 @@ public class Creature : Tile {
 	public virtual void GameOver () {}
 
 }
-
