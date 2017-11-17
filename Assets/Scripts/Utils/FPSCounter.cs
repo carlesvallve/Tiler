@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using System.Collections;
 
 
-public class FpsCounter : MonoSingleton<FpsCounter> {
+public class FPSCounter : MonoSingleton<FPSCounter> {
 
 	private Text textElement;
 	private int currentFps;
@@ -13,11 +13,11 @@ public class FpsCounter : MonoSingleton<FpsCounter> {
 	private int fpsAccumulator = 0;
 	private float fpsNextPeriod = 0;
 
-	
+
 	void Awake() {
 		textElement = GetComponent<Text>();
 
-		if (!Debug.isDebugBuild) { 
+		if (!Debug.isDebugBuild) {
 			gameObject.SetActive(false);
 		}
 	}
@@ -29,12 +29,13 @@ public class FpsCounter : MonoSingleton<FpsCounter> {
 
 
 	void Update() {
-		if (!Debug.isDebugBuild) { 
-			return; 
+		if (!Debug.isDebugBuild) {
+			return;
 		}
-		
+
 		// measure average frames per second
 		fpsAccumulator++;
+
 		if (Time.realtimeSinceStartup > fpsNextPeriod) {
 			currentFps = (int) (fpsAccumulator/FPS_MEASURE_PERIOD);
 			fpsAccumulator = 0;

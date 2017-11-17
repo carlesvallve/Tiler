@@ -32,7 +32,7 @@ public class Dungeon : MonoSingleton <Dungeon> {
 		dungeonGenerator = DungeonGenerator.instance;
 		caveGenerator = CaveGenerator.instance;
 
-		
+
 	}
 
 	// =====================================================
@@ -58,7 +58,7 @@ public class Dungeon : MonoSingleton <Dungeon> {
 
 		// Set random parameters (dimensions, rooms, corridors, etc...)
 		SetRandomParameters();
-		
+
 		// Choose dungeon type (dungeon / cave)
 		int r = Random.Range(0, 100);
 		dungeonType = r <= 60 ? DungeonType.Dungeon : DungeonType.Cave;
@@ -76,10 +76,10 @@ public class Dungeon : MonoSingleton <Dungeon> {
 		}
 
 		// Print dungeon final config
-		print ((direction == 0 ? "Re-generating" : "Generating ") + 
+		print ((direction == 0 ? "Re-generating" : "Generating ") +
 			dungeonType + " Level " + currentDungeonLevel + " [" +
 			DungeonGenerator.instance.MAP_WIDTH + " x " + DungeonGenerator.instance.MAP_HEIGHT + "]" +
-			" with seed " + Random.seed
+			" with seed " + seed
 		);
 
 		// Render dungeon on grid
@@ -109,7 +109,8 @@ public class Dungeon : MonoSingleton <Dungeon> {
 		}
 
 		// set new random seed
-		Random.seed = seed;
+		//Random.seed = seed;
+    Random.InitState(seed);
 	}
 
 
@@ -182,7 +183,7 @@ public class Dungeon : MonoSingleton <Dungeon> {
 			return false;
 		}
 
-		// Generate player 
+		// Generate player
 		PlayerGenerator player = new PlayerGenerator();
 		Stair stair = direction == -1 ? grid.stairDown : grid.stairUp;
 		player.GenerateAtPos(stair.x, stair.y);
@@ -260,7 +261,7 @@ public class Dungeon : MonoSingleton <Dungeon> {
 		StartCoroutine(ExitLevelCoroutine(direction));
 	}
 
-	
+
 	private  IEnumerator ExitLevelCoroutine (int direction) {
 		game.CrossFadeRandomBgm();
 		//yield return new WaitForSeconds(0f);
@@ -269,7 +270,7 @@ public class Dungeon : MonoSingleton <Dungeon> {
 		yield return StartCoroutine(hud.FadeOut(0.5f));
 
 		//Debug.Log("Exiting level " + currentDungeonLevel + " in direction " + direction);
-		
+
 		// generate next dungeon level
 		if (currentDungeonLevel + direction >= 0) {
 			generationTries = 0;

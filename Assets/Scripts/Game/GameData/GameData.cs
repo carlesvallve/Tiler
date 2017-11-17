@@ -15,7 +15,6 @@ public class GameData {
 
 	}
 
-	
 	// =====================================================
 	// Monster Data
 	// =====================================================
@@ -35,12 +34,12 @@ public class GameData {
 			MonsterData monster = new MonsterData();
 			monster.id = 		table[y, 0];
 			monster.assets = 	table[y, 1].Split(arraySeparator);
-			
+
 			monster.type = 		table[y, 2];
 			monster.race = 		table[y, 3];
 			monster.subtype = 	table[y, 4];
 			monster.rarity = 	int.Parse(table[y, 5]);
-			
+
 			monster.level = 	int.Parse(table[y, 6]);
 			monster.hp = 		int.Parse(table[y, 7]);
 			monster.movement = 	float.Parse(table[y, 8]);
@@ -62,7 +61,7 @@ public class GameData {
 		foreach (KeyValuePair<string, MonsterData> entry in GameData.monsters) {
 			// use entry.Value.rarity once we setup final monster spreadsheet
 			// for now rarity depends on monster overall dangerousness
-			
+
 			int dlevel = Dungeon.instance.currentDungeonLevel;
 			int rarity = 100 + (dlevel * 3) - ((entry.Value.hp + entry.Value.armour) * 2);
 
@@ -98,11 +97,11 @@ public class GameData {
 			EquipmentData equipment = new EquipmentData();
 			equipment.id = 		table[y, 0];
 			equipment.assets = 	table[y, 1].Split(arraySeparator);
-			
+
 			equipment.type = 	table[y, 2];
-			equipment.subtype = table[y, 3]; // equipment.type == "Armour" ? "Robe" : 
+			equipment.subtype = table[y, 3]; // equipment.type == "Armour" ? "Robe" :
 			equipment.rarity = 	int.Parse(table[y, 4]);
-			
+
 			equipment.attack = 	int.Parse(table[y, 5]);
 			equipment.defense = int.Parse(table[y, 6]);
 			equipment.damage = 	table[y, 7];
@@ -125,7 +124,7 @@ public class GameData {
 
 	public static Dictionary<string, double> GenerateEquipmentRarityTable (int minRarity = 0) {
 		Dictionary<string, double> rarities = new Dictionary<string, double>();
-		
+
 		foreach (KeyValuePair<string, EquipmentData> entry in GameData.equipments) {
 			/*int rarity = entry.Value.rarity;
 			if (rarity < minRarity) {
@@ -186,11 +185,7 @@ public class GameData {
 				Debug.Log(str);
 			}
 		}
-		
+
 		return table;
 	}
 }
-
-
-
-

@@ -4,10 +4,10 @@ using System.Collections.Generic;
 
 
 public class CreatureInventory : CreatureModule  {
-	
+
 	public List<CreatureInventoryItem> items;
 
-	public Dictionary<string, CreatureInventoryItem> equipment = 
+	public Dictionary<string, CreatureInventoryItem> equipment =
 	new Dictionary<string, CreatureInventoryItem>() {
 		{ "Head",  	null },
 		{ "Cloak",  null },
@@ -37,7 +37,7 @@ public class CreatureInventory : CreatureModule  {
 				}
 			}
 		}
-		
+
 		CreatureInventoryItem invItem = new CreatureInventoryItem(item, sprite);
 		items.Add(invItem);
 
@@ -56,7 +56,7 @@ public class CreatureInventory : CreatureModule  {
 					items.Remove(invItem);
 				}
 				return;
-			} 
+			}
 		}
 	}
 
@@ -79,7 +79,7 @@ public class CreatureInventory : CreatureModule  {
 			item.Use(me);
 			RemoveItem(item);
 			return true;
-		} 
+		}
 
 		return false;
 	}
@@ -97,10 +97,10 @@ public class CreatureInventory : CreatureModule  {
 
 			if (wasEquipped) {
 				me.UpdateEquipmentStats();
-				return; 
+				return;
 			}
 		}
-		
+
 		// equip non-equipped item
 		if (!invItem.equipped) {
 			equipment[item.equipmentSlot] = invItem;
@@ -115,7 +115,7 @@ public class CreatureInventory : CreatureModule  {
 			if (equipment["Shield"] != null) {
 				UnequipItem(equipment["Shield"]);
 			}
-			
+
 		// equipping a shield removes equipped 2 hand weapon
 		} else if (eq.equipmentSlot == "Shield") {
 			if (equipment["Weapon"] != null && ((Equipment)equipment["Weapon"].item).hands == 2) {
@@ -148,8 +148,8 @@ public class CreatureInventory : CreatureModule  {
 
 
 	public bool IsBestEquipment (CreatureInventoryItem invItem) {
-		// debug purposes
-		return true;
+		// debug purposes (always equip new equipment)
+		//return true;
 
 		// escape if item is not equippable
 		if (!(invItem.item is Equipment)) {
@@ -165,32 +165,25 @@ public class CreatureInventory : CreatureModule  {
 			return true;
 		}
 
-		// get currently equipped item in the item's slot 
+		// get currently equipped item in the item's slot
 		Equipment itm = (Equipment)equipment[slot].item;
 
 		// check if item is a better weapon
-		if (item.damage != "" && Dice.GetMaxValue(item.damage) > Dice.GetMaxValue(itm.damage)) { 
-			return true; 
+		if (item.damage != "" && Dice.GetMaxValue(item.damage) > Dice.GetMaxValue(itm.damage)) {
+			return true;
 		}
-		
+
 		// check if item is a better armour
-		if (item.armour > 0 && item.armour > itm.armour) { 
-			return true; 
+		if (item.armour > 0 && item.armour > itm.armour) {
+			return true;
 		}
 
 		// check if item is a better shield
-		if (item.defense > 0 && item.defense > itm.defense) { 
-			return true; 
+		if (item.defense > 0 && item.defense > itm.defense) {
+			return true;
 		}
 
 		return false;
 	}
 
 }
-
-
-
-
-
-
-

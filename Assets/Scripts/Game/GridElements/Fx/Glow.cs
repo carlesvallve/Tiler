@@ -10,7 +10,8 @@ public class Glow : MonoBehaviour {
 
 		particles = GetComponent<ParticleSystem>();
 		particles.GetComponent<Renderer>().sortingLayerName = "Ui";
-		particles.startColor = color;
+    var main = particles.main;
+		main.startColor = color;
 		particles.Emit(maxParticles);
 		Destroy(gameObject, 1f);
 	}

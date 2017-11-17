@@ -5,7 +5,6 @@ using System.Collections.Generic;
 
 
 public class Hud : MonoSingleton <Hud> {
-
 	protected AudioManager sfx;
 
 	public GameObject labelPrefab;
@@ -25,20 +24,28 @@ public class Hud : MonoSingleton <Hud> {
 	private Transform world;
 
 	private Transform popupOptions;
-	
+  private Slider optionsSlider;
+
 	private Transform popupInventory;
 	private Transform inventoryItems;
 	private Transform inventoryInfo;
 
 	private List<Slot> inventorySlots;
-	
 
 	public int headerHeight = 48;
 	public int footerHeight = 48;
 
 
 	void Awake () {
-		transform.Find("Dpi").GetComponent<Text>().text = "DPI " + Screen.dpi;
+		// system info
+    if (Debug.isDebugBuild) {
+      transform.Find("Dpi").GetComponent<Text>().text = "DPI " + Screen.dpi;
+      transform.Find("Ppu").GetComponent<Text>().text = "PPU " + Camera2D.instance.pixelsPerUnit;
+    } else {
+      transform.Find("Fps").gameObject.SetActive(false);
+      transform.Find("Dpi").gameObject.SetActive(false);
+      transform.Find("Ppu").gameObject.SetActive(false);
+    }
 
 		headerHeight = (int)transform.Find("Header").GetComponent<RectTransform>().sizeDelta.y;
 		footerHeight = (int)transform.Find("Footer").GetComponent<RectTransform>().sizeDelta.y;
@@ -62,7 +69,9 @@ public class Hud : MonoSingleton <Hud> {
 
 		// options
 		popupOptions = transform.Find("Popups/PopupOptions");
-		popupOptions.gameObject.SetActive(false);
+    optionsSlider = popupOptions.Find("Main/Buttons/Slider").GetComponent<Slider>();
+    optionsSlider.onValueChanged.AddListener(delegate {OptionsSliderValueChanged(); });
+    popupOptions.gameObject.SetActive(false);
 
 		// inventory
 		popupInventory = transform.Find("Popups/PopupInventory");
@@ -78,6 +87,11 @@ public class Hud : MonoSingleton <Hud> {
 		overlayGroup = transform.Find("Overlay").GetComponent<CanvasGroup>();
 		world = GameObject.Find("HudWorld").transform;
 	}
+
+
+  public void loadOptions() {
+    optionsSlider.value = PlayerPrefs.GetFloat("Options-Slider");
+  }
 
 
 	void Update () {
@@ -133,6 +147,12 @@ public class Hud : MonoSingleton <Hud> {
 		sfx.Play("Audio/Sfx/Item/book", 0.15f, Random.Range(0.8f, 1.2f));
 	}
 
+  // Invoked when the value of the slider changes.
+  private void OptionsSliderValueChanged() {
+    PlayerPrefs.SetFloat("Options-Slider", optionsSlider.value);
+    Camera2D.instance.SetCameraGlobalSize(optionsSlider.value);
+  }
+
 
 	// ==============================================================
 	// Inventory
@@ -144,7 +164,7 @@ public class Hud : MonoSingleton <Hud> {
 
 		// display popup, and escape if it was closed
 		popupInventory.gameObject.SetActive(value);
-		
+
 		if (!value) {
 			if (inventoryInfo.gameObject.activeSelf) {
 				CloseItemInfo();
@@ -175,7 +195,7 @@ public class Hud : MonoSingleton <Hud> {
 				// equipment slots
 				Transform container = equipmentContainer.Find(invItem.item.equipmentSlot);
 				CreateInventorySlot(container, invItem);
-				
+
 				// display 2 handed weapons in both weapon and shield slots
 				if (invItem.item.equipmentSlot == "Weapon" && ((Equipment)invItem.item).hands == 2) {
 					Transform shieldContainer = equipmentContainer.Find("Shield");
@@ -205,7 +225,7 @@ public class Hud : MonoSingleton <Hud> {
 		return slot;
 	}
 
-	
+
 	public void ApplyItem (Slot slot) {
 		string id = slot.name;
 		CreatureInventoryItem invItem = slot.invItem; //Grid.instance.player.inventoryModule.GetInventoryItemById(id);
@@ -245,7 +265,7 @@ public class Hud : MonoSingleton <Hud> {
 		inventoryInfo.Find("Container/Name").GetComponent<Text>().text = slot.name;
 		Text info = inventoryInfo.Find("Container/Stats").GetComponent<Text>();
 
-		info.text = 
+		info.text =
 		item.type + " | " + item.subtype + " | " +
 		"rarity: " + item.rarity + "\n\n";
 
@@ -276,10 +296,9 @@ public class Hud : MonoSingleton <Hud> {
 
 
 	public bool IsPopupOpen () {
-		return 
+		return
 		popupOptions.gameObject.activeSelf ||
 		popupInventory.gameObject.activeSelf;
-
 	}
 
 
@@ -330,14 +349,14 @@ public class Hud : MonoSingleton <Hud> {
 
 	public void WriteText (Text dialogText, string str, float speed, bool preRender = false) {
 		StartCoroutine(AnimateText(dialogText, str, speed));
-	}	
+	}
 
 
 	private IEnumerator AnimateText (Text dialogText, string str, float speed, bool preRender = false) {
 		//print ("Animating text " + dialogText + " " +  str + " " + speed);
 
-		if (preRender) { 
-			dialogText.text = Invisible(str); 
+		if (preRender) {
+			dialogText.text = Invisible(str);
 		}
 
 		float textTime = Time.time;
@@ -384,11 +403,11 @@ public class Hud : MonoSingleton <Hud> {
 		float elapsedTime = 0;
 		while (elapsedTime < duration) {
 			float t = elapsedTime / duration;
-			group.alpha = Mathf.Lerp(1, 0, Mathf.SmoothStep(0f, 1f, t)); 
+			group.alpha = Mathf.Lerp(1, 0, Mathf.SmoothStep(0f, 1f, t));
 			elapsedTime += Time.deltaTime;
 			yield return null;
 		}
-		
+
 		group.alpha = 0;
 		group.interactable = false;
 		group.blocksRaycasts = false;
@@ -401,15 +420,15 @@ public class Hud : MonoSingleton <Hud> {
 		group.blocksRaycasts = true;
 
 		yield return new WaitForSeconds(delay);
-		
+
 		float elapsedTime = 0;
 		while (elapsedTime < duration) {
 			float t = elapsedTime / duration;
-			group.alpha = Mathf.Lerp(0, 1, Mathf.SmoothStep(0f, 1f, t)); 
+			group.alpha = Mathf.Lerp(0, 1, Mathf.SmoothStep(0f, 1f, t));
 			elapsedTime += Time.deltaTime;
 			yield return null;
 		}
-		
+
 		group.alpha = 1;
 	}
 
@@ -419,7 +438,7 @@ public class Hud : MonoSingleton <Hud> {
 	// ==============================================================
 
 	// TODO:  We probably want to create a 'Label' class to handle all these
-	
+
 	public void CreateLabel (Tile tile, string str, Color color, float delay = 0, bool stick = false, int fontSize = 6, float duration = 1f, float startY = 24) {
 		GameObject obj = (GameObject)Instantiate(labelPrefab);
 		obj.transform.SetParent(world, false);
@@ -439,14 +458,14 @@ public class Hud : MonoSingleton <Hud> {
 
 		//text.fontSize = Camera2D.instance.pixelsPerUnit;
 		//text.fontSize = Mathf.RoundToInt(64 / Camera.main.orthographicSize);
-		
+
 		obj.SetActive(false);
 
 		StartCoroutine(AnimateLabel(tile, obj, stick, duration, delay, startY));
 		StartCoroutine(FadeLabel(tile, obj, duration, delay));
-	} 
+	}
 
-	
+
 	private IEnumerator AnimateLabel(Tile tile, GameObject obj, bool stick, float duration, float delay, float startY) {
 		yield return new WaitForSeconds(delay);
 
@@ -461,7 +480,7 @@ public class Hud : MonoSingleton <Hud> {
 
 		float endY = startY + Camera2D.instance.pixelsPerUnit * 1f;
 		float t = 0;
-		
+
 		while (t <= 1) {
 			t += Time.deltaTime / duration;
 			float y = Mathf.Lerp(startY, endY, Mathf.SmoothStep(0f, 1f, t));
@@ -471,22 +490,22 @@ public class Hud : MonoSingleton <Hud> {
 			Creature creature = tile as Creature;
 			if (creature != null && creature.state != CreatureStates.Moving) {
 				pos = new Vector3(
-					Mathf.RoundToInt(tile.transform.position.x), 
-					Mathf.RoundToInt(tile.transform.position.y), 
+					Mathf.RoundToInt(tile.transform.position.x),
+					Mathf.RoundToInt(tile.transform.position.y),
 					0
 				);
 			}
-			
+
 			// get label screen pos
 			pos = Camera.main.WorldToScreenPoint(
 				tile != null && stick ? pos : startPos
 			) + Vector3.up * y;
 
 			// update label at pos
-			if (obj != null) { 
-				obj.transform.position = pos; 
-			} 
-			
+			if (obj != null) {
+				obj.transform.position = pos;
+			}
+
 			yield return null;
 		}
 	}

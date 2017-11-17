@@ -9,7 +9,7 @@ public class Camera2D : MonoBehaviour {
 
 	// resolution
 	//public int pixelsPerUnit { get; set; }
-	
+
 	// panning
 	public float panSpeed = 1f;
 	private Vector3 lastMousePos;
@@ -17,13 +17,16 @@ public class Camera2D : MonoBehaviour {
 	// orthographic size
 	private float TARGET_WIDTH = 1024; //Screen.width; //960.0f;
 	private float TARGET_HEIGHT = 768; //Screen.height; //540.0f;
-	public int pixelsPerUnit; // 1:1 ratio of pixels to units (setup from the inspector)
+	public int pixelsPerUnit; // 1:1 ratio of pixels to units (setup from the inspector) -> Actually, we are setting this dinamically from this script
+	private int basePixelsPerUnit;
 
-	//private int basePixelsPerUnit;
+  //public float globalSize = 1;
 
 
-	void Start () {
+	void Awake () {
 		instance = this;
+
+    basePixelsPerUnit = pixelsPerUnit;
 
 		//float ratio = ((float)Screen.width / (float)Screen.height);
 		//Debug.Log(Screen.width + " x " + Screen.height + " =  ratio " + ratio);
@@ -35,11 +38,16 @@ public class Camera2D : MonoBehaviour {
 		} else {
 			pixelsPerUnit = 28; // desktop
 		}*/
-			
+
 		//Camera.main.orthographicSize = (Screen.height / 2) / 28; //pixelsPerUnit;
 
 		//basePixelsPerUnit = pixelsPerUnit;
 	}
+
+  public void SetCameraGlobalSize(float sliderValue) {
+    //globalSize = 1 - sliderValue * 0.1f;
+    pixelsPerUnit = basePixelsPerUnit + (int)(sliderValue * 4); //(int)(sliderValue * 0.1f);
+  }
 
 
 	void Update () {
@@ -48,16 +56,16 @@ public class Camera2D : MonoBehaviour {
 			pixelsPerUnit = basePixelsPerUnit / 2;
 		}*/
 
-		if (Application.platform == RuntimePlatform.Android ||
-			Application.platform == RuntimePlatform.IPhonePlayer) {
-			pixelsPerUnit = 960 * 64 / Screen.height;
-		} else {
-			pixelsPerUnit = 480 * 72 / Screen.height;
-		}
+		// if (Application.platform == RuntimePlatform.Android ||
+		// 	Application.platform == RuntimePlatform.IPhonePlayer) {
+		// 	pixelsPerUnit = 960 * 64 / Screen.height;
+		// } else {
+		// 	pixelsPerUnit = 480 * 72 / Screen.height;
+		// }
+    //
+    // pixelsPerUnit = 32; //480 * 72 / Screen.height;
 
-		
-
-		print (Screen.height + " " + pixelsPerUnit);
+		//print (Screen.height + " " + pixelsPerUnit);
 
 		//Camera.main.orthographicSize = (Screen.height / 2) / pixelsPerUnit;
 		SetOrthographicSize();
@@ -69,7 +77,7 @@ public class Camera2D : MonoBehaviour {
 			Vector2 delta = (Input.mousePosition - lastMousePos) * panSpeed;
 			PanOrthoCamera(delta);
 			lastMousePos = Input.mousePosition;
-		}	
+		}
 	}
 
 
@@ -107,7 +115,7 @@ public class Camera2D : MonoBehaviour {
 		Vector3 screenPos = Camera.main.WorldToScreenPoint(tile.transform.position);
 
 		float d = 2.5f * pixelsPerUnit;
-		
+
 		float marginLeft = d;
 		float marginRight = d;
 		float marginTop = d * 1.0f + Hud.instance.headerHeight;
@@ -115,7 +123,7 @@ public class Camera2D : MonoBehaviour {
 
 		//Debug.Log("X: " + screenPos.x + ", Y: " + screenPos.y);
 
-		if (screenPos.x < marginLeft || screenPos.x > Screen.width - marginRight || 
+		if (screenPos.x < marginLeft || screenPos.x > Screen.width - marginRight ||
 			screenPos.y < marginTop || screenPos.y > Screen.height - marginBottom) {
 			CenterCamera(tile);
 		}
@@ -150,9 +158,9 @@ public class Camera2D : MonoBehaviour {
 
 		while (t <= 1) {
 			t += Time.deltaTime / duration;
-			
+
 			Vector3 p = Vector3.Lerp(transform.localPosition, endPos, Mathf.SmoothStep(0f, 1f, t));
-			
+
 			transform.localPosition = new Vector3(
 				Mathf.Round(p.x * 100f) / 100f, Mathf.Round(p.y * 100f) / 100f, p.z
 			);

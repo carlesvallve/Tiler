@@ -10,8 +10,9 @@ public class ContainerGenerator : DungeonFeatureGenerator {
 	// =====================================================
 
 	public override void Generate (int chancePerRoom, float ratioPerFreeTile) {
-		Random.seed = Dungeon.seed;
-		
+		//Random.seed = Dungeon.seed;
+    Random.InitState(Dungeon.seed);
+
 		for (int n = 0; n < dungeonGenerator.rooms.Count; n++) {
 
 			DungeonRoom room = dungeonGenerator.rooms[n];
@@ -30,10 +31,10 @@ public class ContainerGenerator : DungeonFeatureGenerator {
 				});
 
 				Container container = (Container)grid.CreateEntity(containerType, tile.x, tile.y, 0.7f, null) as Container;
-				
+
 				EntityStates[] states = new EntityStates[] { EntityStates.Closed, EntityStates.Locked };
 				container.SetState(states[Random.Range(0, states.Length)]);
-				
+
 				container.SetItems();
 			}
 		}

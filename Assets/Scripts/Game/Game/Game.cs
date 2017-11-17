@@ -73,7 +73,7 @@ SPELLS
 SKILLS
 - implement player skills
 	- armour
-	- weapon 
+	- weapon
 	- shield
 	- magic
 	- resistance
@@ -96,7 +96,7 @@ SKILL EXAMPLES
 		- 2Handed: 6
 		- MagicResistance: 4
 		- LightArmour: 2
-		- 
+		-
 
 	Skills (Protector)
 		- Spears: 3
@@ -124,7 +124,7 @@ public class Game : MonoSingleton <Game> {
 	private Grid grid;
 
 	public int turn = 0;
-	
+
 	public Dictionary<string, ProceduralNameGenerator> gameNames;
 
 	private List<string> musicList;
@@ -148,12 +148,16 @@ public class Game : MonoSingleton <Game> {
 		// initialize game name lists of each category
 		InitializeGameNames();
 
-		// load gmae external fata
+    // load game options from PlayerPrefs
+    Hud hud = GameObject.Find("Hud").GetComponent<Hud>();
+    hud.loadOptions();
+
+		// load game external fata
 		GameData gameData = new GameData();
 		gameData.LoadAll();
 
 		// Generate dungeon level and render it in the game grid
-		Dungeon dungeon = Dungeon.instance; 
+		Dungeon dungeon = Dungeon.instance;
 		dungeon.EnterDungeon();
 		//dungeon.GenerateDungeon();
 
@@ -164,7 +168,7 @@ public class Game : MonoSingleton <Game> {
 		};
 
 		grid.player.OnGameOver += () => {
-			StartCoroutine(GameOver());	
+			StartCoroutine(GameOver());
 		};
 	}
 
@@ -198,7 +202,7 @@ public class Game : MonoSingleton <Game> {
 
 		if (bgm1 != null) { sfx.Fade(bgm1, 0, 0.5f); }
 		if (bgm2 != null) { sfx.Fade(bgm2, 0, 0.5f); }
-		
+
 		Navigator.instance.Open("GameOver");
 	}
 
@@ -206,7 +210,7 @@ public class Game : MonoSingleton <Game> {
 	public void GameQuit () {
 		if (bgm1 != null) { sfx.Fade(bgm1, 0, 0.5f); }
 		if (bgm2 != null) { sfx.Fade(bgm2, 0, 0.5f); }
-		
+
 		Navigator.instance.Open("Home");
 	}
 
@@ -284,9 +288,9 @@ public class Game : MonoSingleton <Game> {
 		bgm1 = GetRandomBgm(musicList, 90);
 		if (bgm1 != null) {
 			sfx.Play(bgm1, 0, 1, true); //Random.Range(0.8f, 1.2f)
-			sfx.Fade(bgm1, 0.25f, 1f);	
+			sfx.Fade(bgm1, 0.25f, 1f);
 		}
-		
+
 
 		bgm2 = GetRandomBgm(ambientList, 60);
 		if (bgm2 != null) {
@@ -296,10 +300,3 @@ public class Game : MonoSingleton <Game> {
 	}
 
 }
-
-
-
-
-
-
-

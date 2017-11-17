@@ -12,17 +12,18 @@ public class MonsterGenerator : DungeonFeatureGenerator {
 
 	// TODO:
 	// Implement a balanced level spawning algorithm
-	// Monsters should be spawned by affinity groups, relative to the dungeon level 
-	
+	// Monsters should be spawned by affinity groups, relative to the dungeon level
+
 	public void GenerateSingle (string id) {
-		Random.seed = Dungeon.seed;
-		
+		//Random.seed = Dungeon.seed;
+		Random.InitState(Dungeon.seed);
+
 		int roomId = Grid.instance.GetTile(Grid.instance.player.x, Grid.instance.player.y).roomId;
 		DungeonRoom room = dungeonGenerator.rooms[roomId];
 
 		Tile tile = GetFreeTileOnRoom(room, 0);
-		if (tile == null) { 
-			Debug.LogError ("Monster could not be placed anywhere!"); 
+		if (tile == null) {
+			Debug.LogError ("Monster could not be placed anywhere!");
 			return;
 		}
 
@@ -32,8 +33,9 @@ public class MonsterGenerator : DungeonFeatureGenerator {
 
 
 	public override void Generate (int chancePerRoom, float ratioPerFreeTiles) {
-		Random.seed = Dungeon.seed;
-
+		//Random.seed = Dungeon.seed;
+    Random.InitState(Dungeon.seed);
+    
 		// generate monster rarity table dictionary
 		Dictionary<string, double> rarities = GameData.GenerateMonsterRarityTable();
 
@@ -51,7 +53,7 @@ public class MonsterGenerator : DungeonFeatureGenerator {
 				int maxTiles = Mathf.RoundToInt(room.tiles.Count * ratioPerFreeTiles);
 				maxMonsters = Random.Range(1, maxTiles);
 			}
-			
+
 			// continue if this room has no monsters
 			if (maxMonsters == 0) { continue; }
 

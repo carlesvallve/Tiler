@@ -11,14 +11,15 @@ public class FurnitureGenerator : DungeonFeatureGenerator {
 	// Furniture generation
 	// =====================================================
 
-	// TODO: 
+	// TODO:
 	// Organize furniture into theme categories, and use one theme per dungeon room
 	// We may want to relate this theme to the dungeon Room or TreeQuad theme
 
 
 	public override void Generate (int chancePerRoom, float ratioPerFreeTiles) {
-		Random.seed = Dungeon.seed;
-
+		//Random.seed = Dungeon.seed;
+    Random.InitState(Dungeon.seed);
+    
 		for (int n = 0; n < dungeonGenerator.rooms.Count; n++) {
 
 			DungeonRoom room = dungeonGenerator.rooms[n];
@@ -27,11 +28,11 @@ public class FurnitureGenerator : DungeonFeatureGenerator {
 			// place furniture in room
 			for (int i = 1; i <= maxFurniture; i ++) {
 				Tile tile = GetFreeTileOnRoom(room, 0);
-				if (tile == null) { 
+				if (tile == null) {
 					//Debug.Log("Furniture could not be placed anywhere. Escaping...");
-					continue; 
+					continue;
 				}
-				
+
 				Sprite[] assets = Assets.GetCategory("Dungeon/Furniture");
 				Sprite asset = assets[Random.Range(0, assets.Length)];
 

@@ -13,8 +13,9 @@ public class ItemGenerator : DungeonFeatureGenerator {
 	// generate random items in dungeon level
 
 	public override void Generate (int chancePerRoom, float ratioPerFreeTile) {
-		Random.seed = Dungeon.seed;
-
+		//Random.seed = Dungeon.seed;
+    Random.InitState(Dungeon.seed);
+    
 		// generate equipment rarity table dictionary
 		int minRarity = GameData.GetDefaultEquipmentMinRarity();
 		Dictionary<string, double> rarities = GameData.GenerateEquipmentRarityTable(minRarity);
@@ -41,7 +42,7 @@ public class ItemGenerator : DungeonFeatureGenerator {
 
 				// pick a random id
 				string id = Dice.GetRandomStringFromDict(rarities);
-				
+
 				// create item
 				grid.CreateEntity(itemType, tile.x, tile.y, 0.8f, null, id);
 			}
@@ -60,7 +61,7 @@ public class ItemGenerator : DungeonFeatureGenerator {
 
 			// pick a random id
 			string id = Dice.GetRandomStringFromDict(rarities);
-				
+
 			// create item
 			GenerateSingle(tile, itemType, id);
 		}
@@ -70,7 +71,7 @@ public class ItemGenerator : DungeonFeatureGenerator {
 	public Item GenerateSingle (Tile tile, System.Type type, string id) {
 		// create item
 		Item item = (Item)grid.CreateEntity(type, 0, 0, 0.8f, null, id, false) as Item;
-		
+
 		// put the item inside the container
 		item.transform.SetParent(tile.transform, false);
 		item.transform.localPosition = Vector3.zero;
